@@ -1448,7 +1448,6 @@ gimp_call_procedure (proc_name, ...)
 		    int runmode = nparams
 		                  && params[0].type == GIMP_PDB_INT32
 		                  && !strcmp (params[0].name, "run_mode");
-		    printf("params[0].name = %s\n", params[0].name); 
 		    g_free (proc_blurb);
 		    g_free (proc_help);
 		    g_free (proc_author);
