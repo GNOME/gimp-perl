@@ -1,4 +1,4 @@
-#!/opt/bin/perl 
+#!/usr/bin/perl 
 
 # Effect taken from http://tigert.gimp.org/gimp/tutorials/beveled_text/
 # perl-ified by Seth Burgess <sjburges@gimp.org>
@@ -29,6 +29,12 @@ $regname = "inner_bevel";
 $author =~ m/^(.*) </;
 $authorname = $1;
 
+sub gimp13_text_wh{
+   ($text, $fn) = ($_[0], $_[1]);
+   Gimp->text_get_extents_fontname($text,(split(/ /,$fn))[-1],PIXELS,$fn)
+   }
+   
+
 register $regname, $shortdesc, $longdesc, $authorname, $author, $date, $path, $imgtypes,
   [ 
    [PF_FONT, "font", "Font Name"],
@@ -50,8 +56,9 @@ my ($font, $text, $color1, $color2, $azimuth, $elevation, $depth, $maptype) = @_
 gimp_palette_set_background($color1);
 gimp_palette_set_foreground($color2);
 
-@dims = gimp_text_wh($text, $font);
+@dims = gimp13_text_wh($text, $font);
 
+print $dims[0], " x ", $dims[1], "\n";
 $img = gimp_image_new($dims[0]+10, $dims[1]+10, RGB);
 
 # none of the macro's did quite what I was looking for here.  
@@ -59,14 +66,14 @@ $img = gimp_image_new($dims[0]+10, $dims[1]+10, RGB);
 
 # -- step 2 --
 $layertmp = $img->add_new_layer(0,TRANSPARENT_FILL);
-$txtlayer = $img->text_fontname(-1, 10, 10, $text, 0, 1, xlfd_size($font), $font);
+$txtlayer = $img->text_fontname(-1, 10, 10, $text, 0, 1, (split / /,$font)[-1], PIXELS, $font);
 $dsp = gimp_display_new($img);  # display the image early
 $layer = $img->merge_visible_layers(EXPAND_AS_NECESSARY);
 @pt1 = ($layer->width * 0.5 -1, 0);
 @pt2 = ($layer->width * 0.5 +1, $layer->height);
 # -- step 3 --
 $layer->set_preserve_trans(1);
-$layer->blend(FG_BG_RGB_MODE, 0, LINEAR, 100, 0, REPEAT_NONE, 0, 3, 0.20, @pt1, @pt2); # NORMAL isn't recognized
+$layer->blend(FG_BG_RGB_MODE, NORMAL_MODE, LINEAR, 100, 0, REPEAT_NONE, 0, 0, 0, 3, 0.20, @pt1, @pt2); 
 # -- step 4 -- 
 $layer2 = $layer->copy(0);     # Can you override these to have a default? (would be nice)
 $img->add_layer($layer2, 0);
@@ -77,7 +84,7 @@ gimp_palette_set_background([255,255,255]);
 $layer2->edit_fill(BACKGROUND_FILL);
 # -- step 6 -- 
 $layer2->set_preserve_trans(0);
-$layer2->gauss_rle(6,1,1);     # Defaults would be cool here too :)
+$layer2->gauss_rle(6,1,1);     
 # -- step 7 --
 $layer->plug_in_bump_map($layer2, $azimuth, $elevation, $depth, 0,0,0,0,1,0,$maptype);
 # -- step 8 --
@@ -93,4 +100,4 @@ $img->gimp_selection_none();
 return();
 };
 
-exit main;  # <-- This lil' bugger caused me much grief.  I suppose its very much required?
+exit main;  # <-- This lil' bugger caused me much grief.  
