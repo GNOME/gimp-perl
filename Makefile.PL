@@ -65,8 +65,6 @@ if ($ARGV[0] ne "--writemakefile") {
    );  
 
 eval "use Gtk2;"; $GTK = $@ eq "";
-# eval "use Parse::RecDescent;"; $PRD = $@ eq "";
-
 $GTK or print <<EOF;
 
 NOTICE:  unable to use the Perl-Gtk2 interface. Many features (like
@@ -77,14 +75,6 @@ NOTICE:  unable to use the Perl-Gtk2 interface. Many features (like
 	 http://gtk2-perl.sourceforge.net/ or any CPAN mirror.
 
 EOF
-
-# $PRD or print <<EOF;
-
-# NOTICE: Parse::RecDescent not found, scm2perl, the Scheme->Perl
-#        translator, will not work. This is normally not a problem, since
-#        it is quite unimportant for most people.
-#
-#EOF
 
 require ExtUtils::MakeMaker;
 import ExtUtils::MakeMaker;
@@ -258,7 +248,7 @@ print "writing Gimp/Config.pm... ";
 print "ok\n";
 
 @EXE_FILES = qw(gimpdoc xcftopnm embedxpm);
-push @EXE_FILES, qw(scm2perl scm2scm) if $PRD;
+push @EXE_FILES, qw(scm2perl) if $PRD;
 
 WriteMakefile(
     'dist'	=> {
@@ -267,10 +257,9 @@ WriteMakefile(
 	            SUFFIX	=> '.gz',
 	           },
     'PREREQ_PM'	=> {
-    		    Gtk2		=> 0.90,
+    		    Gtk2		=> 1.0,
                     PDL			=> 1.99,
     		    Data::Dumper	=> 2.0,
-  #                  Parse::RecDescent	=> 1.6,
 		   },
     'DIR'	=> [@DIRS],
     'NAME'	=> 'Gimp',

@@ -1,30 +1,6 @@
 Remove or fix:
 
-alpha2color: oh-my-god ugly.  Color specifiers not 1.3 compatibile.  In a lousy menu spot.  Just remove this one, since its simple to do by hand anyway. 
-avi: I can't read back one that I've saved in gimp.  And the image is shifted ~50 pixels when viewed in xanim.  This needs some help.
-border: broken; probably color speicifiers, but hard to tell without learning PDL a lot better.  May be my color conversion routine in Fu.pm is broken too.
-circular_text: polar coordinates does a better job, more flexibly, and with preview.  
-clear_alpha: I don't understand what this is supposed to do.  It crashes on an image with alpha.  It doesn't seem to have any effect on an image without.  
-colourtoalpha: this algorithm isn't right.  There's a C plugin that does it right.  Get rid of this.
-Create_Images (leaning towards removal, along with the file "image_list", since it doesn't do much)
-fire: xlfd problems
-fit-text: doesn't work due to differences in fonts; xlfd_szie no longer works, because we don't have an xlfd any longer.  Can the font widget do better in returning values?
-gap-vcr: <sjburges@gimp.org> needs gtk2 update - looks easy on surface, if anyone is intrested.
-gimpmagick: <sjburges@gimp.org> gtk2 rework - needs preview->gdk::pixbuf conversion.  Crashes in imagemagick now (using version 5.5.7.9) with : Exception 410: No images defined (AddNoise) at /home/seth/.gimp-1.3/plug-ins/gimpmagick line 257.  Or unable to open temporary file, if you instead click "apply".  Also one of the uglier guis ever to grace gimp.
-miff: <sjburges@gimp.org> can't load a convert'ed 24bit image from ImageMagick 5.5.7.
-PDB: <sjburges@gimp.org> major gtk2 rework required.  May just let this one go.
-perlcc: <sjburges@gimp.org> would need some major Gtk2 rework, also not useful to make it an EXTENSION since it spawns no temporary procedures.
-logulator: the name is awful, and its not working very well; pdb errors all over.  This useful enough to keep?
-parasite-editor: ugly dialog.  Some Gtk1.2 clist stuff still blocking from working in 2.0.  Can probably be brought back with a little work if anyone is intrested enough.
-povray: I can't get it to find my .inc files.  Perhaps an install issue on my system?  I don't use povray, so hard to tell.
-roundrectsel: redundant, remove this
-terral_text: xlfd problems
-triangu: It produces something, but gives some Gimp-Core-CRITICAL's in the process as well as some perl error (prototype mismatch on main::qsort).  I can't tell if the result is close to correct or not.
-visual: I don't know if this ever worked, but its a nice idea.  It has all sorts of Gtk->Gtk2 conversion that would need to take place.
-homepage-logo: paths are hard-coded; unless your system looks like Marc's, this isn't gonna work.  
-
-
-=============
+<removed all broken scripts>
 
 Untested:
 

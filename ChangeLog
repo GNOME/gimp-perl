@@ -1,3 +1,18 @@
+2004-05-15  Seth Burgess <sjburges@gimp.org>
+	* Changes
+	* README
+	* README.win32
+	* TODO: updated to bring into line with current 2.0
+
+	* examples/examples.TODO: removed scripts from here
+
+	* MANIFEST: alphabetized scripts for easier maintenance
+	* Makefile.PL: upped Gtk requirement to at least rev 1.0, removed
+	scm2scm from EXE_FILES, removed REC_DECENT warning.
+
+        * Gimp.pm: reordered docuemntation, so that canonicalize_colour 
+	doesn't come first on CPAN listing for GIMP.
+
 2004-05-07  Seth Burgess <sjburges@gimp.org>
 	* examples/alpha2color
 	* examples/avi

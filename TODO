@@ -1,13 +1,11 @@
 <Seth's random notes>
 Convince someone that knows auto* to redo the compilation/installation.  Or move to ExtUtils::PkgConfig for this purpose.
 
-Fix broken behavior when NONINTERACTIVE is used explicitly (I disable the check in the run.t currently so make test can pass).
+Make a 'utils' directory for gimpdoc, scm2perl, embedxpm, xcf2pnm and move out of the root directory.
 
-Remove known broken examples from being installed immediately; remove from distribution eventually.  Remove unknown status examples from being installed eventually.
+Install 1.2 C libs/dev headers, and see if it interferes; it did for one user at least, so is likely a bug in my auto* or MakeMaker stuff.
 
-Generate a new web presence for Gimp-Perl, with a friendlier face to it.  Redo my scripts page, possibly expanding to cover all working scripts?
-
-Remove scm2scm and Rec::Decent dependencies.
+Generate a new web presence for Gimp-Perl, with a friendlier face to it.  Redo my scripts page, possibly expanding to cover all working scripts?  Regenerate documentation there.
 
 Add optional podviewer for help.  Add POD docs to all example scripts/documentation, to encourage good style.
 
@@ -17,9 +15,13 @@ Figure out i18n some day.
 
 Fix the code so I don't get "
 Gtk-CRITICAL **: file gtktooltips.c: line 314 (gtk_tooltips_set_tip): assertion `GTK_IS_TOOLTIPS (tooltips)' failed at ..../Gimp/UI.pm line 821.
-" repeated whenever I use a color picker.
+" repeated sometimes when I use a color picker.
 
-Remove 'embed/*' unless I can find some use for it.  I don't think we're going to be embedding directly in gimp anytime soon.
+Determine what if anything is needed in the enums* in the root.  I expect I can remove all of this.
+
+Remove unused(?) extra.[ch]
+
+Remove ugly logo.xpm
 
 <Marc's previous stuff>
 this is mostly my personal worksheet and notepad, which may not be

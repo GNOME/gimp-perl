@@ -291,32 +291,6 @@ sub set_rgb_db($) {
    undef %rgb_db;
 }
 
-=head1 NAME
-
-canonicalize_colour - utility function for color conversion
-
-=head1 SYNOPSIS
-  
-  $color = canonicalize_colour ("#ff00bb");
-  $color = canonicalize_colour ([255,255,34]);
-  $color = canonicalize_colour ([255,255,34,255]);
-  $color = canonicalize_colour ([1.0,1.0,0.32]);
-  $color = canonicalize_colour ('red');
-
-=head1 DESCRIPTION
-
-Take in a color specifier in a variety of different formats, and return 
-a valid gimp color specifier, consisting of 3 or 4 numbers in the range 
-between 0 and 1.0.
-
-=head1 BUGS
- 
-  * bounds checking is excessively lax; assumes relatively good input
-  * should emit more warnings
-  * has an extra 'u' in 'color' :)
-
-=cut 
-
 sub canonicalize_colour {
    if ((scalar(@_) == 3) or (scalar(@_) == 4)) { # if 3 or 4 entries already
       if (($_[0] > 1.0) or ($_[1] > 1.0) or ($_[2] > 1.0)) {
@@ -1954,4 +1928,30 @@ __DATA__
 255 255	  0		yellow1
 238 238	  0		yellow2
 205 205	  0		yellow3
-139 139	  0		yellow4
+=head1 NAME
+
+canonicalize_colour - utility function for color conversion
+
+=head1 SYNOPSIS
+  
+  $color = canonicalize_colour ("#ff00bb");
+  $color = canonicalize_colour ([255,255,34]);
+  $color = canonicalize_colour ([255,255,34,255]);
+  $color = canonicalize_colour ([1.0,1.0,0.32]);
+  $color = canonicalize_colour ('red');
+
+=head1 DESCRIPTION
+
+Take in a color specifier in a variety of different formats, and return 
+a valid gimp color specifier, consisting of 3 or 4 numbers in the range 
+between 0 and 1.0.
+
+=head1 BUGS
+ 
+  * bounds checking is excessively lax; assumes relatively good input
+  * should emit more warnings
+  * has an extra 'u' in 'color' :)
+
+=cut 
+
+s139 139	  0		yellow4
