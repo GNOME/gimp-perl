@@ -10,7 +10,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK $AUTOLOAD %EXPORT_TAGS @EXPORT_FAIL
 use subs qw(init end lock unlock canonicalize_color);
 
 BEGIN {
-   $VERSION = 1.201;
+   $VERSION = 1.3;
    eval {
       require XSLoader;
       XSLoader::load Gimp $VERSION;
@@ -622,21 +622,14 @@ package Gimp; # for __DATA__
 
 Gimp - Perl extension for writing Gimp Extensions/Plug-ins/Load & Save-Handlers
 
+WARNING: This is a pre-release of gimp-perl for gimp-1.3 I might not have
+much time to work on this this, so stay tuned and send patches. If you are
+interested in a version for gimp-1.3, use version 1.2* of the Gimp-Perl
+module.
+
 This is mostly a reference manual. For a quick intro, look at
 L<Gimp::Fu>. For more information, including tutorials, look at the
 Gimp-Perl pages at http://gimp.pages.de.
-
-=head1 RATIONALE
-
-Well, scheme (which is used by script-fu), is IMnsHO the crappiest language
-ever (well, the crappiest language that one actually can use, so it's not
-_that_ bad). Scheme has the worst of all languages, no data types, but still
-using variables. Look at Haskell (http://www.haskell.org) to see how
-functional is done right.
-
-Since I was unable to write a Haskell interface (and perl is the
-traditional scripting language), I wrote a Perl interface instead. Not too
-bad a decision I believe...
 
 =head1 SYNOPSIS
 
