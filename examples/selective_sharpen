@@ -1,0 +1,132 @@
+#!/usr/bin/perl 
+
+use Gimp ":auto";
+use Gimp::Fu;
+
+# some #define's for edge detect plugin
+sub WRAP()         {0}
+sub SMEAR()        {1}
+sub BLACK()        {2}
+
+sub SOBEL()        {0} 
+sub PREWITT()      {1} 
+sub GRADIENT()     {2} 
+sub ROBERTS()      {3}
+sub DIFFERENTIAL() {4}
+sub LAPLACE        {5}
+
+# Gimp::set_trace(TRACE_ALL); 
+
+sub my_code { 
+    my ($img,$original_layer,$sharpen_radius,$sharpen_amt,$sharpen_threshold) = @_;
+    my $edge_layer;
+    my $saved_selection;
+   
+    # sanity stuff 
+    $original_layer->is_layer || die "Can only operate on layers";
+    $img->undo_group_start;
+   
+    $saved_selection = $img->selection_save;
+    $img->selection_clear;
+
+    # 1) take the original photo, duplicate the layer
+    $edge_layer = $original_layer->copy(1);
+    $img->add_layer($edge_layer,-1);
+
+    # 2) convert the copy to grayscale
+    $edge_layer->desaturate;
+
+    # 3) run edge detect to the gray layer (default works)
+    $edge_layer->edge(2.0, BLACK, SOBEL);
+
+    # 4) blur it slightly
+    $edge_layer->gauss_iir2(3.0, 3.0);
+
+    # 5) boost contrast (I can give you a specific curve or such)
+#TODO: adjust this curve - I have no idea what you're looking for.  You can
+# have up to 17 pairs describing coordinates on the curve.
+    $edge_layer->curves_spline(HISTOGRAM_VALUE, 
+                              [0,0,
+                               10,5,
+                               20,11,
+                               30,20,
+                               50,50,
+                               80,100,
+                               130,150,
+                               200,210,
+                               255,255]
+                              );
+
+    # 6) then make the boosted, gray edge-detection into a selection mask
+    my $selchan = $img->channel_new($img->width, $img->height, "sharpen_mask", 
+                      100.0, [1.0,0,0]);
+
+    $img->add_channel($selchan, -1);
+    $edge_layer->edit_copy;
+    $selchan->edit_paste(1);
+    $img->get_floating_sel->anchor;
+    $selchan->combine_masks($saved_selection, CHANNEL_OP_INTERSECT, 0, 0);
+    $selchan->selection_load;
+
+    # 7) then use unsharp mask to that selection (scratch the gray layer)  
+    $original_layer->unsharp_mask($sharpen_radius, $sharpen_amt, $sharpen_threshold);
+    
+    # cleanup
+    selection_load($saved_selection);
+    $img->remove_channel($saved_selection);
+    $img->remove_channel($selchan);
+    $img->remove_layer($edge_layer);
+   
+    $img->undo_group_end;    
+    undef;
+}
+
+register "selective_sharpen",
+         "Selective Sharpen - A method used by tigert to sharpen edges",
+	 "",
+	 "Seth Burgess <sjburges\@gimp.org>",
+         "(c) Seth Burgess 2004",
+	 "2004/14/04",
+	 N_"<Image>/Filters/Enhance/Selective Sharpen...", 
+	 "RGB*", [
+         [ PF_SPINNER, "sharpen_radius", "Radius of unsharp", 5.0, [1.0,120,1]],
+         [ PF_SPINNER, "sharpen_amt", "Amount to unsharp", 1.0, [0.0,4.0,0.1]], 
+         [ PF_SPINNER, "threshold", "What delta to decide to sharp on", 20, [1,255,1]],
+   	 ],  
+	 \&my_code;
+	
+exit main;
+
+=head1 LICENSE
+Copyright 2004, Seth Burgess.
+This filter may be distributed under the same terms as Gimp-Perl.
+
+Taken from an IRC log:
+
+02:00 <@         tigert> selective sharpening
+02:00 <@         tigert> UnNamed: 1) take the original photo, duplicate the
+                         layer
+02:01 <@         tigert> UnNamed: 2) convert the copy to grayscale
+02:01 <@         tigert> 3) run edge detect to the gray layer
+02:01 <@         tigert> 4) blur it slightly
+02:01 <@         tigert> 5) boost contrast (I can give you a specific curve or
+                         such)
+02:01 <        sjburges> tigert: on 3, what edge detect?
+02:01 <@         tigert> sjburges: default works
+02:01 <@         tigert> sjburges: size: 3 or 2 (default)
+02:02 <@         tigert> sjburges: then make the boosted, gray edge-detection
+                         into a selection mask
+02:02 <@         tigert> sjburges: then use unsharp mask to that selection
+                         (scratch the gray layer)
+02:03 <@         tigert> sjburges: sjburges now, one could do two versions
+02:03 <@         tigert> sjburges: so one version could just be "Select edges"
+02:04 <@         tigert> sjburges: another could ask for unsharp mask
+                         parameters as well and sharpen
+02:04 <@         tigert> sjburges: the idea for the script is to sharpen it
+                         without sharpening the noise on flat areas
+02:04 <        sjburges> tigert: could you fire me an email, and I can try to
+                         get to it tonight/tomorrow?  It sounds simple enough.
+                         I need to head to a party for work shortly here
+02:04 <@         tigert> sjburges: ok
+
+=cut
