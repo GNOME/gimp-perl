@@ -198,13 +198,9 @@ my $gtk_init = 1;
 
 sub gtk_init() {
    if ($gtk_init) {
-      require Gtk;
-      Gtk->init;
-      Gtk::Rc->parse (Gimp->gtkrc);
-      Gtk::Preview->set_gamma (Gimp->gamma);
-      Gtk::Preview->set_install_cmap (Gimp->install_cmap);
-      Gtk::Widget->set_default_visual (Gtk::Preview->get_visual);
-      Gtk::Widget->set_default_colormap (Gtk::Preview->get_cmap);
+      require Gtk2;
+      Gtk2->init;
+      Gtk2::Rc->parse (Gimp->gtkrc);
       $gtk_init = 0;
    }
    &{shift @init_functions} while @init_functions;

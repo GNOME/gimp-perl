@@ -5,14 +5,8 @@ use vars qw($VERSION @ISA);
 
 BEGIN {
    $VERSION = 1.3;
-   eval {
-      require XSLoader;
-      XSLoader::load Gimp::Lib $VERSION;
-   } or do {
-      require DynaLoader;
-      @ISA=qw(DynaLoader);
-      bootstrap Gimp::Lib $VERSION;
-   }
+   require XSLoader;
+   XSLoader::load Gimp::Lib $VERSION;
 }
 
 use subs qw(

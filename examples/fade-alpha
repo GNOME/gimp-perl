@@ -1,7 +1,6 @@
 #!/usr/bin/perl -w
 
-use Gtk;
-use Gtk::Atoms;
+use Gtk2;
 use Gimp qw(:auto);
 
 use strict 'vars';
@@ -910,11 +909,11 @@ sub add_pixmap
 {
   my ($window, $but, $num) = @_;
   my @tar = @{$arr[$num]};
-  my ($pixmap, $mask) = Gtk::Gdk::Pixmap->colormap_create_from_xpm_d(undef,
+  my ($pixmap, $mask) = Gtk2::Gdk::Pixmap->colormap_create_from_xpm_d(undef,
                         $but->get_colormap,
                         $but->style->bg('normal'), 
 			@{$arr[$num]});
-  my ($pixmapId) = new Gtk::Pixmap $pixmap, $mask;
+  my ($pixmapId) = new Gtk2::Pixmap $pixmap, $mask;
   
   $pixmapId->show;
   $but->add($pixmapId);
@@ -923,39 +922,39 @@ sub add_pixmap
 sub okCbk
 {
   $cancelFlag = 0;
-  Gtk->main_quit;
+  Gtk2->main_quit;
 } 
 
 sub create_window
 { 
   my ($window, $frm, $box1, $hbox, $hsep, $btnTable, $i, $j, $btn);
 
-  $window = new Gtk::Window('toplevel');
+  $window = new Gtk2::Window('toplevel');
   $window->set_name("Alpha Fader");
   $window->set_wmclass("Gimp", "AlphaFader");
   
-  $window->signal_connect("destroy" => \&Gtk::main_quit);
-  $window->signal_connect("delete_event" => \&Gtk::false);
+  $window->signal_connect("destroy" => \&Gtk2::main_quit);
+  $window->signal_connect("delete_event" => \&Gtk2::false);
 
-  $box1 = new Gtk::VBox(0, 0);
+  $box1 = new Gtk2::VBox(0, 0);
   $box1->set_spacing(2);
   $window->add($box1);
 
-  $frm = new Gtk::Frame "Fade Type";
+  $frm = new Gtk2::Frame "Fade Type";
   $frm->set_border_width(6);
   $frm->show;
 
   $box1->pack_start($frm, 1, 1, 0);
-  $btnTable = new Gtk::Table(3,3,1);
+  $btnTable = new Gtk2::Table(3,3,1);
   $btnTable->set_border_width(6);
   $frm->add($btnTable);
   
-  $btn = new Gtk::RadioButton;
+  $btn = new Gtk2::RadioButton;
   for ($i=0;$i<3;$i++)
     {
       for ($j=0;$j<3;$j++)
         {
-	   $btn = Gtk::RadioButton->new_from_widget($btn);
+	   $btn = Gtk2::RadioButton->new_from_widget($btn);
 	   $btn->set_mode(0);
 	   $btn->signal_connect("clicked", \&btn_pressed, $i*3+$j);
 	   $btn->show;
@@ -979,26 +978,26 @@ sub create_window
 	}
     }
 
-  $hsep = new Gtk::HSeparator;
+  $hsep = new Gtk2::HSeparator;
   $box1->pack_start($hsep, 0, 0, 0);
   $hsep->show;
  
-  $hbox = new Gtk::HButtonBox;
+  $hbox = new Gtk2::HButtonBox;
   $hbox->set_border_width(2);
   $hbox->set_spacing(4);
   $box1->pack_start($hbox, 0, 0, 0);
   $hbox->show;
  
-  $btn = new Gtk::Button "OK";
+  $btn = new Gtk2::Button "OK";
   $btn->can_default(1);
   $btn->signal_connect("clicked" => \&okCbk);
   $btn->show;
   $hbox->pack_start($btn, 0, 0, 0);
   $btn->grab_default;
 
-  $btn = new Gtk::Button "Cancel";
+  $btn = new Gtk2::Button "Cancel";
   $btn->can_default(1);
-  $btn->signal_connect("clicked" => \&Gtk::main_quit);
+  $btn->signal_connect("clicked" => \&Gtk2::main_quit);
   $btn->show;
   $hbox->pack_start($btn, 0, 0, 0);
   
@@ -1024,9 +1023,9 @@ Gimp::on_run
     }
   else
     {
-      init Gtk;
+      init Gtk2;
       create_window;
-      main Gtk;
+      main Gtk2;
     }
     
   # Do the gimply stuff on it

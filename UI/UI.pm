@@ -508,8 +508,8 @@ sub _new_adjustment {
 # find a suitable value for the "digits" value
 sub _find_digits {
    my $adj = shift;
-   my $digits = log($adj->step_increment || 1)/log(0.1);
-   $digits>0 ? int $digits+0.9 : 0;
+   my $digits = log ($adj->step_increment || 1) / log(0.1);
+   $digits>0 ? int $digits + 0.9 : 0;
 }
 
 sub help_window(\$$$) {
@@ -520,7 +520,7 @@ sub help_window(\$$$) {
       $$helpwin->action_area->set_border_width(2);
       my($font,$b);
 
-      $b = new Gtk2::TextView;
+      $b = new Gtk2::TextView; #d# buffer
       $b->set_editable (0);
       $b->set_word_wrap (1);
 
@@ -532,7 +532,7 @@ sub help_window(\$$$) {
       $cs->add($b);
       $$helpwin->vbox->add($cs);
       $b->insert($font,$b->style->fg(-normal),undef,__"BLURB:\n\n$blurb\n\nHELP:\n\n$help");
-      $b->set_usize($font->string_width('M')*80,($font->ascent+$font->descent)*26);
+      #d#$b->set_usize($font->string_width('M')*80,($font->ascent+$font->descent)*26);
 
       my $button = Gtk2::Button->new(__"OK");
       signal_connect $button "clicked",sub { hide $$helpwin };
@@ -655,7 +655,6 @@ sub interact($$$$@) {
            my $adj = _new_adjustment ($value,$extra);
            $a=new Gtk2::SpinButton $adj,1,0;
            $a->set_digits (_find_digits $adj);
-           $a->set_usize (120,0);
            push(@setvals,sub{$adj->set_value($_[0])});
            push(@getvals,sub{$adj->get_value});
            
@@ -663,7 +662,6 @@ sub interact($$$$@) {
            my $adj = _new_adjustment ($value,$extra);
            $a=new Gtk2::HScale $adj;
            $a->set_digits (_find_digits $adj);
-           $a->set_usize (120,0);
            push(@setvals,sub{$adj->set_value($_[0])});
            push(@getvals,sub{$adj->get_value});
            
@@ -802,7 +800,7 @@ sub interact($$$$@) {
            $a = new Gtk2::Frame;
            my $h = new Gtk2::VBox 0,5;
            $a->add($h);
-           my $e = new Gtk2::TextView;
+           my $e = new Gtk2::TextView; #d# buffer
            my %e;
            %e = $$extra if ref $extra eq "HASH";
 

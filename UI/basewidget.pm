@@ -79,6 +79,7 @@ sub DESTROY {
 *new = \&Gtk::Object::new;
 
 sub import {
+   return;
    my $self  = shift;
    my $super = shift;
    my $class = caller;

@@ -5,7 +5,7 @@
 use Gimp::Feature qw(perl-5.005 gtk-1.2);
 use Gimp ('__','N_');
 use Gimp::Fu;
-use Gtk;
+use Gtk2;
 
 $VERSION=0.91;
 
@@ -120,8 +120,8 @@ sub refresh_names {
 }
 
 sub new_Entry {
-   my $hbox = new Gtk::HBox 0,0;
-   my $label = new Gtk::Label $_[1];
+   my $hbox = new Gtk2::HBox 0,0;
+   my $label = new Gtk2::Label $_[1];
    my $name = $_[2];
 
    $label->set_alignment (0, 0.5);
@@ -139,8 +139,8 @@ sub create_main {
    my $b;
    my $t;
 
-   $t = new Gtk::Tooltips;
-   my $w = new Gtk::Dialog;
+   $t = new Gtk2::Tooltips;
+   my $w = new Gtk2::Dialog;
 
    $ex = $w->style->font->string_width ('Mn')*0.5;
    $eX = $w->style->font->ascent + $w->style->font->descent + 10;
@@ -148,25 +148,25 @@ sub create_main {
    $window = $w;
 
    $w->set_title("Parasite Editor - version $VERSION");
-   $w->signal_connect("destroy",sub {main_quit Gtk});
+   $w->signal_connect("destroy",sub {main_quit Gtk2});
 
-   $b = new Gtk::Button "Close";
+   $b = new Gtk2::Button "Close";
    $w->action_area->add($b);
-   $b->signal_connect("clicked",sub {main_quit Gtk});
+   $b->signal_connect("clicked",sub {main_quit Gtk2});
 
-   my $v = new Gtk::VBox (0,5);
+   my $v = new Gtk2::VBox (0,5);
    $w->vbox->add ($v);
 
-   my $top = new Gtk::HBox (0,5);
+   my $top = new Gtk2::HBox (0,5);
    $v->pack_start($top,0,1,5);
-   my $bot = new Gtk::HBox (0,5);
+   my $bot = new Gtk2::HBox (0,5);
    $v->add($bot);
-   my $cmd = new Gtk::HBox (0,5);
+   my $cmd = new Gtk2::HBox (0,5);
    $v->pack_start($cmd,0,1,5);
 
    $top->set_usize (-1, $eX+5);
 
-   $clist = new Gtk::CList (1);
+   $clist = new Gtk2::CList (1);
    $clist->set_selection_mode (-single);
    $clist->signal_connect ("select_row" => sub {
       $parasite = $_[0]->get_text($_[1],$_[2]);
@@ -176,29 +176,29 @@ sub create_main {
       $data->set_text (escape $par->[2]);
    });
 
-   my $cs = new Gtk::ScrolledWindow undef,undef;
+   my $cs = new Gtk2::ScrolledWindow undef,undef;
    $cs->set_policy(-automatic,-automatic);
    $cs->add ($clist);
    $bot->add ($cs);
 
-   my $parbox = new Gtk::VBox (0,5);
+   my $parbox = new Gtk2::VBox (0,5);
    $bot->set_usize ($ex*80,$eX*4);
    $bot->add ($parbox);
 
-   $name  = new_Entry $parbox,"Name: ",new Gtk::Entry;
-   $flags = new_Entry $parbox,"Flags: ",new Gtk::Entry;
-   $data  = new_Entry $parbox,"Data: ",new Gtk::Entry;
+   $name  = new_Entry $parbox,"Name: ",new Gtk2::Entry;
+   $flags = new_Entry $parbox,"Flags: ",new Gtk2::Entry;
+   $data  = new_Entry $parbox,"Data: ",new Gtk2::Entry;
 
    {
-      my $menu = new Gtk::Menu;
+      my $menu = new Gtk2::Menu;
       my $item;
-      my $subtype = new Gtk::OptionMenu;
+      my $subtype = new Gtk2::OptionMenu;
 
       my $set_submenu = sub {
-         my $submenu = new Gtk::Menu;
+         my $submenu = new Gtk2::Menu;
          for(@_) {
             my $cur = $_->[0];
-            my $item = new Gtk::MenuItem $_->[1];
+            my $item = new Gtk2::MenuItem $_->[1];
             $item->signal_connect ("activate" => sub { $current = $cur; refresh_names });
             $submenu->append ($item);
          }
@@ -212,7 +212,7 @@ sub create_main {
          }
       };
 
-      $item = new Gtk::MenuItem "Global";
+      $item = new Gtk2::MenuItem "Global";
       my $act_global = sub {
          $list_func   = sub { Gimp->parasite_list   };
          $find_func   = sub { shift; Gimp->parasite_find   (shift) };
@@ -223,7 +223,7 @@ sub create_main {
       $item->signal_connect("activate", $act_global);
       $menu->append($item);
 
-      $item = new Gtk::MenuItem "Image";
+      $item = new Gtk2::MenuItem "Image";
       $item->signal_connect("activate", sub {
          $list_func   = sub { $_[0] ? shift->parasite_list : () };
          $find_func   = sub { shift->parasite_find   (shift) };
@@ -233,7 +233,7 @@ sub create_main {
       });
       $menu->append($item);
 
-      $item = new Gtk::MenuItem "Drawable";
+      $item = new Gtk2::MenuItem "Drawable";
       $item->signal_connect("activate", sub {
          $list_func   = sub { $_[0] ? shift->parasite_list : () };
          $find_func   = sub { shift->parasite_find   (shift) };
@@ -245,7 +245,7 @@ sub create_main {
       });
       $menu->append($item);
 
-      my $type = new Gtk::OptionMenu;
+      my $type = new Gtk2::OptionMenu;
       $type->set_menu ($menu);
 
       $top->add($type);
@@ -255,7 +255,7 @@ sub create_main {
    }
 
    local *addcmd = sub {
-      my $label = new Gtk::Button shift;
+      my $label = new Gtk2::Button shift;
       $label->signal_connect(clicked => shift);
       $cmd->add($label);
    };
@@ -285,15 +285,15 @@ register "extension_parasite_editor",
 
    Gimp::gtk_init;
    create_main;
-   main Gtk;
+   main Gtk2;
 
    ();
 };
 
 package ParasiteEditor;
 
-use Gtk;
-use Gimp::basewidget Gtk::Dialog;
+use Gtk2;
+use Gimp::basewidget Gtk2::Dialog;
 
 my $init;
 
@@ -328,24 +328,24 @@ sub GTK_OBJECT_INIT {
    @{$self}{qw(name  flags  data)}=
    @{$self}{qw(name_ flags_ data_)}=@{$self->{find_func}->(@{$self}{qw(current parasite)})};
 
-   my $table = new Gtk::Table (2,3,0);
-   $table->attach(new Gtk::Label("Name")	,0,1,0,1,{},{},0,0);
-   $table->attach(new Gtk::Label("Flags")	,0,1,1,2,{},{},0,0);
-   $table->attach(new Gtk::Label("Format")	,0,1,2,3,{},{},0,0);
-   $table->attach(new Gtk::Label("Data")	,0,1,3,4,{},{},0,0);
+   my $table = new Gtk2::Table (2,3,0);
+   $table->attach(new Gtk2::Label("Name")	,0,1,0,1,{},{},0,0);
+   $table->attach(new Gtk2::Label("Flags")	,0,1,1,2,{},{},0,0);
+   $table->attach(new Gtk2::Label("Format")	,0,1,2,3,{},{},0,0);
+   $table->attach(new Gtk2::Label("Data")	,0,1,3,4,{},{},0,0);
 
-   $self->{-name} = new Gtk::Entry;
-   $self->{-flags} = new Gtk::Entry;
-   $self->{-data} = new Gtk::Text;
+   $self->{-name} = new Gtk2::Entry;
+   $self->{-flags} = new Gtk2::Entry;
+   $self->{-data} = new Gtk2::Text;
 
    $self->{format} = \&::format_plain;
    $self->refresh;
 
-   my $format = new Gtk::HBox 0,5;
+   my $format = new Gtk2::HBox 0,5;
    my $radio;
    local *newformat = sub {
       my ($label,$in,$out,$enable)=@_;
-      my $r = new Gtk::RadioButton $label,$radio ? $radio : ();
+      my $r = new Gtk2::RadioButton $label,$radio ? $radio : ();
       $format->add($r);
       $r->signal_connect(clicked => sub {
          $self->unformat;
@@ -376,7 +376,7 @@ sub GTK_OBJECT_INIT {
 
    $self->{-data}->set_editable(1);
 
-   my $b = new Gtk::Button "OK";
+   my $b = new Gtk2::Button "OK";
    $b->signal_connect(clicked => sub {
       $self->unformat;
       $self->{detach_func}->(@{$self}{'current','parasite'});
@@ -385,14 +385,14 @@ sub GTK_OBJECT_INIT {
       destroy $self;
    });
    $self->action_area->add($b);
-   my $b = new Gtk::Button "Cancel";
+   my $b = new Gtk2::Button "Cancel";
    $b->signal_connect(clicked => sub { destroy $self });
    $self->action_area->add($b);
 }
 
 sub new {
    $init=\@_;
-   Gtk::Object::new shift;
+   Gtk2::Object::new shift;
 }
 
 package main;

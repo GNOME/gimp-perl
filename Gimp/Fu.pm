@@ -169,7 +169,7 @@ sub expand_podsections() {
 my $old_trace;
 
 sub interact {
-   eval { require Gtk };
+   eval { require Gtk2 };
 
    if ($@) {
       my @res = map {
