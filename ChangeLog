@@ -1,3 +1,10 @@
+2005-04-03  Carol Spears <carol@gimp.org>
+	* examples/burst: changed deprecated pdb calls. 
+	* examples/sethspin: changed deprecated pdb calls, including changing
+          gimp-rotate to a much longer name that also wanted new information and
+          in a different order.  removed the -1 to the progress_init to stop those
+          pop-ups. 
+
 2004-07-30  Seth Burgess <sjburges@gimp.org>
 	* Gimp/Lib.xs: fixup longstanding bug of not being able to 
 	               use RUN_NONINTERACTIVE

@@ -1,4 +1,7 @@
-#!/opt/bin/perl
+#!/usr/bin/perl
+
+eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
+    if 0; # not running under some shell
 
 #
 # Note: Seth has transferred the maintainer `position' to me, so bother me
@@ -105,11 +108,12 @@ sub spin_layer { # the function for actually spinning the layer
 	# height must be != 0
         $y3++ if ($y1 == $y3);
 
-        $floater = Gimp->perspective($floater, 1,
+        $floater = Gimp->gimp_drawable_transform_perspective_default($floater, 
                        $x[1]+saw($i)*$prp*$framelay->width,$y1,  
                        $x[3]-saw($i)*$prp*$framelay->width,$y1,
                        $x[1]-saw($i)*$prp*$framelay->width,$y3,  
-                       $x[3]+saw($i)*$prp*$framelay->width,$y3);
+                       $x[3]+saw($i)*$prp*$framelay->width,$y3,
+                       0,1);
         $framelay->fill(1); # BG-IMAGE-FILL
 
 	# merge the two layers together before we continue
@@ -143,12 +147,12 @@ register "seth_spin",
          sub {
     my($src,$dest,$frames,$color,$perspective,$spinback,$indexed) = @_;
     
-    $oldbackground = Gimp->palette_get_background();
-    Gimp->palette_set_background($color);
+    $oldbackground = Gimp->context_get_background();
+    Gimp->context_set_background($color);
 
     $perspective = $perspective/255.0; # PF_SLIDER doesn't work right for < 1
 
-    Gimp->progress_init(__"Seth Spin...",-1);
+    Gimp->progress_init(__"Seth Spin...");
 
     # Copy souce and destination to new image
     
@@ -206,7 +210,7 @@ register "seth_spin",
         $img->convert_indexed(1,MAKE_PALETTE,255,0,1,"buffy" ); 
     } 
 
-    Gimp->palette_set_background($oldbackground);
+    Gimp->context_set_background($oldbackground);
     return();
 };
 
