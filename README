@@ -12,6 +12,9 @@ WARNING
        When calling a plug-in, cannot currently specify RUN_NONINTERACTIVE or
        RUN_INTERACTIVE; omit this when calling.
 
+       There may be problems installing on a system with a Gimp 1.2 development
+       still installed (reported once).  I've not yet looked into this.
+
 SYNOPSIS
 
        my $img = new Image (600, 300, RGB);
@@ -138,7 +141,9 @@ SUPPORT/MAILING LISTS/MORE INFO
        
        If you think your script is of general intrest, please let 
        <sjburges@gimp.org> know and it will be considered for 
-       inclusion in future Gimp module releases.
+       inclusion in future Gimp module releases.  If you just want 
+       a link to your gimp-perl project, please mail <sjburges@gimp.org>
+       also.
 
 BLURB
 

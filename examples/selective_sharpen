@@ -21,11 +21,18 @@ sub my_code {
     my ($img,$original_layer,$sharpen_radius,$sharpen_amt,$sharpen_threshold) = @_;
     my $edge_layer;
     my $saved_selection;
-   
+    my @selbounds;
+
     # sanity stuff 
     $original_layer->is_layer || die "Can only operate on layers";
     $img->undo_group_start;
-   
+  
+    @selbounds = $img->selection_bounds;
+    if ($selbounds[0] == 0) # if empty   
+      {
+        $img->selection_all;
+      }     
+
     $saved_selection = $img->selection_save;
     $img->selection_clear;
 
@@ -82,9 +89,9 @@ register "selective_sharpen",
 	 "2004/14/04",
 	 N_"<Image>/Filters/Enhance/Selective Sharpen...", 
 	 "RGB*", [
-         [ PF_SPINNER, "sharpen_radius", "Radius of unsharp", 5.0, [1.0,120,1]],
+         [ PF_SPINNER, "sharpen_radius", "Radius of unsharp", 5.0, [0.1,120,0.1]],
          [ PF_SPINNER, "sharpen_amt", "Amount to unsharp", 1.0, [0.0,4.0,0.1]], 
-         [ PF_SPINNER, "threshold", "What delta to decide to sharp on", 20, [1,255,1]],
+         [ PF_SPINNER, "threshold", "What delta to decide to sharp on", 20, [0,255,1]],
    	 ],  
 	 \&my_code;
 	
