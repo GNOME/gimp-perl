@@ -1,3 +1,14 @@
+2004-2-29 Seth Burgess <sjburges@gimp.org>
+	* Gimp.pm: change canonicalize_color to detect and fix 0-255=>0-1.0 
+	  problems for a reference passed in.  Still has lousy error detection.
+	  Can hose up gimp's color selection pretty well.  Needs more testing.
+
+ 	* examples/fade-alpha
+	* examples/innerbevel
+	* examples/randomart1
+	* examples/randomblends: s/blend/edit_blend to remove deprecated
+	* examples/examples.TODO: changed appropropriately
+
 2004-2-25 Seth Burgess <sjburges@gimp.org>
 	* Gimp/Util.pm: s/Gradient->get_active/Gradient->get_gradient/
 

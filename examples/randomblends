@@ -40,7 +40,7 @@ register "random_blends",
     Gimp->progress_init("Random blends...");
     for ($i=0; $i<$numgradients; $i++) {
         gimp_gradients_set_gradient(@gradientlist[randint($#gradientlist)]);
-	$layer->blend(CUSTOM_MODE,  
+	$layer->edit_blend(CUSTOM_MODE,  
                        DIFFERENCE_MODE,
                        randint(10),      # gradient type
                        randint(100),     # opacity

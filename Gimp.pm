@@ -301,13 +301,16 @@ between 0 and 1.0.
 =cut 
 
 sub canonicalize_colour {
+   print "Canonicalizing!!\n";
    if ((scalar(@_) == 3) or (scalar(@_) == 4)) { # if 3 or 4 entries already
       if (($_[0] > 1.0) or ($_[1] > 1.0) or ($_[2] > 1.0)) {
         @_ = @_ / 255.0;
       }
       return [@_];
-   } elsif (ref $_[0]) { 
-      return $_[0];
+   } elsif (ref $_[0]) {
+      my @loc_col = @{$_[0]};
+      @loc_col = map {$_ = ($_>1) ? $_/255.0 : $_} @loc_col;
+      return [@loc_col];
    } elsif  
    ($_[0] =~ /^#([0-9a-fA-F]{2,2})([0-9a-fA-F]{2,2})([0-9a-fA-F]{2,2})$/) {
     # convert hex specfier of #xxyyzz  

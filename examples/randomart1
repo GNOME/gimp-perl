@@ -77,7 +77,7 @@ register "random_art_1",			# Funktionsname
       Palette->set_background([rand(256)/256.0,rand(256)/256.0,rand(256)/256.0]);
       
       # Und erzeuge einen Farbverlauf über das Bild
-      $layer->blend (FG_BG_HSV_MODE,      
+      $layer->edit_blend (FG_BG_HSV_MODE,      
                      DIFFERENCE_MODE, 
 		     LINEAR,                  # gradient type
 		     100,                     # opacity

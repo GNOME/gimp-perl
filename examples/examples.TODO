@@ -63,7 +63,7 @@ animate_cells
 Tested:
 bricks: 2/25/04 <sjburges@gimp.org> lots of changes (see plugin).  This seems to work now, with a bit of work that could be done by anyone with an intrest.
 burst: 12/6/03 <sjburges@gimp.org>  basic functionality works
-fade-alpha: 12/12/03 <sjburges@gimp.org> removed deprecated stuff, so works again.
+fade-alpha: 12/12/03 <sjburges@gimp.org> removed deprecated stuff, so works again.  2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
 centerguide: 12/12/03 <sjburges@gimp.org> works. (Gimp-Fu is ugly for radio buttons)
 dots: 12/12/03 <sjburges@gimp.org> works.  (Gimp-Fu is ugly for color selectors, and for spinbuttons)  Needs to be added to the install list.
 dust: 2/25/04 <sjburges@gimp.org> its more worm-like than dust-like, but it works (I think it does what its supposed to?).  I removed deprecated stuff, including fixing Util.pm.
@@ -72,14 +72,14 @@ glowing_steel: 12/13/03 <sjburges@gimp.org> fixed. 12/26/03 fixed again (color
                specifiers 0-1.0)
 guide_remove: 12/12/03 <sjburges@gimp.org> works.
 guidegrid: 12/12/03 <sjburges@gimp.org> works
-innerbevel: 12/13/03 <sjburges@gimp.org> fixed.
+innerbevel: 12/13/03 <sjburges@gimp.org> fixed. 2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
 layerfuncs: 12/12/03 <sjburges@gimp.org> Center Layer works.  Probably could use repositioning in menus.  Could use a namechange since I removed the layer_to_image_size functionality, which is ported to C.
 map_to_gradient: 2/25/04 <sjburges@gimp.org> added param to gradients_get data.  Works, but its identical to Filters/Color/Map/Map Gradient in C.  Its a good example because it shows off the Gradient selector and PDL, but its bad in that it reimplements something already shipped with gimp.  I'm thinking of not installing this by default...
 mirrorsplit: 2/25/04 <sjburges@gimp.org> s/undo_push/undo/, have to add a layer to flip/select it in current gimp; removed when done w/ it.  Changed enums to be &Gimp::*.  fixed.
 prep4gif: 2/25/04 <sjburges@gimp.org> s/layer_set_visible/drawable_set_visible/.  fixed.
 perlotine: 12/13/03 <sjburges@gimp.org> fixed; tested on gif only.
-randomart1: 12/13/03 <sjburges@gimp.org> fixed; could use spinners instead of sliders.
-randomblends: 12/13/03 <sjburges@gimp.org> fixed.
+randomart1: 12/13/03 <sjburges@gimp.org> fixed; could use spinners instead of sliders.  2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
+randomblends: 12/13/03 <sjburges@gimp.org> fixed. 2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
 roundsel: 12/12/03 <sjburges@gimp.org> works.
 sethspin: 12/13/03 <sjburges@gimp.org> fixed.
 triangle: 2/25/03 <sjburges@gimp.org> works.  Not installed by default.
