@@ -2254,18 +2254,18 @@ fi;
   if test x$gimptool_exec_prefix != x ; then
      gimptool_args="$gimptool_args --exec-prefix=$gimptool_exec_prefix"
      if test x${GIMPTOOL+set} != xset ; then
-        GIMPTOOL=$gimptool_exec_prefix/bin/gimptool-1.3
+        GIMPTOOL=$gimptool_exec_prefix/bin/gimptool-2.0
      fi
   fi
   if test x$gimptool_prefix != x ; then
      gimptool_args="$gimptool_args --prefix=$gimptool_prefix"
      if test x${GIMPTOOL+set} != xset ; then
-        GIMPTOOL=$gimptool_prefix/bin/gimptool-1.3
+        GIMPTOOL=$gimptool_prefix/bin/gimptool-2.0
      fi
   fi
 
-  # Extract the first word of "gimptool-1.3", so it can be a program name with args.
-set dummy gimptool-1.3; ac_word=$2
+  # Extract the first word of "gimptool-2.0", so it can be a program name with args.
+set dummy gimptool-2.0; ac_word=$2
 echo "$as_me:$LINENO: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_path_GIMPTOOL+set}" = set; then
@@ -2389,11 +2389,11 @@ int main ()
     }
   else
     {
-      printf("\n*** 'gimptool-1.3 --version' returned %d.%d.%d, but the minimum version\n", $gimptool_major_version, $gimptool_minor_version, $gimptool_micro_version);
-      printf("*** of GIMP required is %d.%d.%d. If gimptool-1.3 is correct, then it is\n", major, minor, micro);
+      printf("\n*** 'gimptool-2.0 --version' returned %d.%d.%d, but the minimum version\n", $gimptool_major_version, $gimptool_minor_version, $gimptool_micro_version);
+      printf("*** of GIMP required is %d.%d.%d. If gimptool-2.0 is correct, then it is\n", major, minor, micro);
       printf("*** best to upgrade to the required version.\n");
-      printf("*** If gimptool-1.3 was wrong, set the environment variable GIMPTOOL\n");
-      printf("*** to point to the correct copy of gimptool-1.3, and remove the file\n");
+      printf("*** If gimptool-2.0 was wrong, set the environment variable GIMPTOOL\n");
+      printf("*** to point to the correct copy of gimptool-2.0, and remove the file\n");
       printf("*** config.cache before re-running configure\n");
       return 1;
     }
@@ -2435,10 +2435,10 @@ echo "${ECHO_T}yes" >&6
      echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
      if test "$GIMPTOOL" = "no" ; then
-       echo "*** The gimptool-1.3 script installed by GIMP could not be found"
+       echo "*** The gimptool-2.0 script installed by GIMP could not be found"
        echo "*** If GIMP was installed in PREFIX, make sure PREFIX/bin is in"
        echo "*** your path, or set the GIMPTOOL environment variable to the"
-       echo "*** full path to gimptool-1.3."
+       echo "*** full path to gimptool-2.0."
      else
        if test -f conf.gimptest ; then
         :
@@ -2501,7 +2501,7 @@ sed 's/^/| /' conftest.$ac_ext >&5
  echo "*** The test program failed to compile or link. See the file config.log for the"
           echo "*** exact error that occured. This usually means GIMP was incorrectly installed"
           echo "*** or that you have moved GIMP since it was installed. In the latter case, you"
-          echo "*** may want to edit the gimptool-1.3 script: $GIMPTOOL"
+          echo "*** may want to edit the gimptool-2.0 script: $GIMPTOOL"
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
           CFLAGS="$ac_save_CFLAGS"
