@@ -4,6 +4,24 @@ Revision history for Gimp-Perl extension.
 	* updated enums.pl... watch out.
 	* removed old workaround for even older PDL versions.
 	* Seth Burgess <sjburges@gimp.org>:
+	   examples/randomblends: pass a null argument to match all
+	   examples/mirrorsplit
+	   examples/ditherize: strict subs doesn't like barewords -
+	    enclose GIMP_FOO in "'" characters instead.
+	   examples/layerfuncs: don't do layer to imagesize, since its
+	    now in C.  Put "center layer" in Layer rather than Layers
+           examples/frame_reshuffle: put in Layer rather than Layers
+
+	   Gimp.pm: Require version 1.3 of Gimp now
+	   
+	   UI/Ui.xs
+	   UI/typemap: Change to use GimpFileEntry rather than 
+	   GimpFileSelection to match the move in Gimp 
+	  
+	   UI/basewidget.pm: changed Gtk to Gtk2
+	   Gimp/Feature.pm: bumped the Gtk to Gtk2; no longer will
+	   install with the Gtk module, requires Gtk2
+
 	   Net/Net.xs: removed same old PDL work-around
 	   examples/dots: new plug-in, to create uniformly spaced dots
 
