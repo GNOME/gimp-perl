@@ -96,7 +96,7 @@ fades from if you have Fade set\n",
         $end_angle = $start_angle + $arc_angle;
       }
       
-    eval { $img->undo_push_group_start };
+    eval { $img->undo_group_start };
 
     Gimp->progress_init("Burst");    
     $progress_increment = 1/$points;
@@ -270,7 +270,7 @@ fades from if you have Fade set\n",
           Gimp->progress_update($progress);
         }
     } 
-  eval { $img->undo_push_group_end };
+  eval { $img->undo_group_end };
   return();
 };
 

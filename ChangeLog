@@ -1,3 +1,12 @@
+2004-06-28  Seth Burgess <sjburges@gimp.org>
+	* UI/UI.xs: fixed an XS error that shows up for GCC 2.95; 
+          shouldn't create a temp variable in CODE: - put it in PREINIT:
+          Reported by Marc 'HE' Brockschmidt <he@debian.org>.
+          Fixed a typo in GradientSelect.
+        
+        * examples/burst: s/undo_push/undo
+       
+
 2004-04-17  Seth Burgess <sjburges@gimp.org>
 	* updated TODO for suggestion in bug 117349
 
@@ -13,7 +22,7 @@
         * Changes: updated docs to reflect
 
 2004-05-15  Seth Burgess <sjburges@gimp.org>
-	* exmaples/fade-alpha: s/RADIAL/GRADIENT_RADIAL/ fixes bug #141444
+	* examples/fade-alpha: s/RADIAL/GRADIENT_RADIAL/ fixes bug #141444
         * examples/selective_sharpen: change threshold to be zero based, fix 
           a bug if no selection was present. 
 

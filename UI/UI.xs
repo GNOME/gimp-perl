@@ -51,12 +51,15 @@ export_image(image_ID, drawable_ID, format_name, capabilities)
         SV *	drawable_ID
         gchar *	format_name
         gint	capabilities
+        PREINIT:
+          gint32 image;       
+          gint32 drawable;
         CODE:
-        gint32 image = SvIV (SvRV (image_ID));
-        gint32 drawable = SvIV (SvRV (drawable_ID));
-        RETVAL = gimp_export_image (&image, &drawable, format_name, capabilities);
-        sv_setiv (SvRV (image_ID), image);
-        sv_setiv (SvRV (drawable_ID), drawable);
+          image = SvIV (SvRV (image_ID));
+          drawable = SvIV (SvRV (drawable_ID));
+          RETVAL = gimp_export_image (&image, &drawable, format_name, capabilities);
+          sv_setiv (SvRV (image_ID), image);
+          sv_setiv (SvRV (drawable_ID), drawable);
 	OUTPUT:
         image_ID
         drawable_ID
