@@ -78,6 +78,7 @@ EOF
 
 require ExtUtils::MakeMaker;
 import ExtUtils::MakeMaker;
+#require ExtUtils::Depends;
 
 push @pins, @pdl_pins if $PDL;
 push @pins, @gtk_pins if $GTK;
@@ -217,6 +218,9 @@ autoconf:
 setver:
 	\$(PERL) -pi -e 's/^(\\s*\\\$\$VERSION\\s*=\\s*).*\$\$/\$\${1}\$(VERSION);/' *.pm Gimp/*.pm UI/*.pm Net/*.pm
 
+gimpenums.c: makeenums.pl
+	perl makeenums.pl arrays /opt/gimp/include/gimp-1.3/libgimp*/*.h >gimpenums.c
+
 ";
 
    $postamble;
@@ -321,6 +325,7 @@ distclean maintainer-clean realclean clobber: clean
 	\$(RM_F) Makefile config.cache config.pl config.log
         \$(RM_F) config.h config.status stamp-h Makefile.old Gimp/Config.pm
         \$(RM_RF) test-dir inst-temp
+
 EOF
    close MAKEFILE;
    exit;

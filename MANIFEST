@@ -19,7 +19,9 @@ gimpdoc
 xcftopnm
 embedxpm
 logo.xpm
-extradefs.h
+extra.h
+extra.c
+gimpenums.c
 gppport.h
 Perl-Server
 configure
@@ -55,6 +57,7 @@ Net/Makefile.PL
 Net/Net.xs
 Net/Net.pm
 UI/Makefile.PL
+UI/typemap
 UI/UI.pm
 UI/UI.xs
 UI/basewidget.pm

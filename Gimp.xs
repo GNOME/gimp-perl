@@ -26,12 +26,13 @@
 #ifdef dirty
 # undef dirty
 #endif
-#include "extradefs.h"
 
 #ifndef HAVE_EXIT
 /* expect iso-c here.  */
 # include <signal.h>
 #endif
+
+#include "extra.h"
 
 MODULE = Gimp	PACKAGE = Gimp
 

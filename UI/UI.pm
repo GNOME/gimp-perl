@@ -581,6 +581,12 @@ sub interact($$$$@) {
      realize $w;
      my $l = logo($w);
      $h->add($l);
+
+     #d#
+     my $demo = new Gimp::UI::MemsizeEntry 32*1e7, 16*1e7, 64*1e7;#d#
+        warn $demo->get_value ();
+     $h->add ($demo);#d#
+     #d#
      
      $g = new Gtk2::Table scalar@types,2,0;
      $g->set(border_width => 4);

@@ -37,7 +37,7 @@
 # undef dirty
 #endif
 
-#include "extradefs.h"
+#include "extra.h"
 
 #define GIMP_PKG	"Gimp::"	/* the package name */
 
