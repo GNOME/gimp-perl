@@ -72,7 +72,7 @@ $layer = $img->merge_visible_layers(EXPAND_AS_NECESSARY);
 @pt2 = ($layer->width * 0.5 +1, $layer->height);
 # -- step 3 --
 $layer->set_preserve_trans(1);
-$layer->edit_blend(FG_BG_RGB_MODE, NORMAL_MODE, LINEAR, 100, 0, REPEAT_NONE, 0, 0, 0, 3, 0.20, @pt1, @pt2); 
+$layer->edit_blend(FG_BG_RGB_MODE, NORMAL_MODE, GRADIENT_LINEAR, 100, 0, REPEAT_NONE, 0, 0, 0, 3, 0.20, @pt1, @pt2); 
 # -- step 4 -- 
 $layer2 = $layer->copy(0);     # Can you override these to have a default? (would be nice)
 $img->add_layer($layer2, 0);

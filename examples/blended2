@@ -1,17 +1,15 @@
 #!/opt/bin/perl
 
-# 12/6/03: <sjburges@gimp.org>
-# s/gimp_convert/gimp_image_convert/
-# s/->image/->get_image/
-
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 use Gimp::Util;
 
-#Gimp::set_trace(TRACE_CALL);
+Gimp::set_trace(TRACE_ALL);
 
 sub my_innerbevel {
 	my ($image, $drawable, $bg_col, $bl1, $bl2, $elev, $depth, $rad_tog) = @_;
+	# if you specify RGBA as your type, this die is only there for 
+	# running it non-interactively
 	$drawable->has_alpha or die "You can't run this script without an ALPHA CHANNEL!!";
 	my $img = gimp_image_new (256, 100, RGB_IMAGE);
 	$drawable->get_image->selection_all;
@@ -35,9 +33,22 @@ sub my_innerbevel {
 	gimp_palette_set_background ($bl2);
 	@start = ($text1_lay->width / 2 - 5, 0);
 	@end = ($text1_lay->width / 2 + 5, $text1_lay->height);
-	gimp_blend ($text1_lay, 0, 0, 0, 100, 0, 0, 0, 2, 0.30, @start, @end);
+	gimp_edit_blend ($text1_lay, 
+	                 FG_BG_RGB_MODE, 
+			 NORMAL_MODE, 
+			 GRADIENT_LINEAR, 
+			 100, 
+			 FALSE, 
+			 REPEAT_NONE, 
+			 FALSE, # reverse
+			 FALSE, # supersampling
+			 2, # recursion levels
+			 0.30, # threshold
+			 FALSE, # dithering
+			 @start, @end);
 	my $text2_lay;
 	$text2_lay=$text1_lay->copy(1);
+	$text2_lay->add_alpha;
 	$img->add_layer($text2_lay, -1);
 	gimp_palette_set_background ([255, 255, 255]);
 	$text2_lay->edit_fill(BACKGROUND_FILL);
@@ -61,7 +72,7 @@ sub my_innerbevel {
 		$img->flatten;
 	}
 	gimp_display_new ($img);
-	exit main;
+	$img;
 }
 $help=<<EOF.$help;
 This script will produce a nice blended beveled logo from your alpha
@@ -77,8 +88,8 @@ register "make_bevel_logos",
          "Michele Gherlone <mikem\@enet.it>",
          "(c) 2000 M. Gherlone",
          "20000130",
-         N_"<Image>/Filters/Logulator/Blended II...",
-         "*",
+         N_"<Image>/Filters/Render/Blended Logo...",
+         "RGBA",
          [
            [PF_COLOUR	, 'choose_bg_colour', "Choose the background colour", [255, 255, 255]],
            [PF_COLOUR	, 'blend_start',  "Choose the 1st blend colour", [247, 231, 9]],

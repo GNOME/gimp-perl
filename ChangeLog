@@ -1,3 +1,18 @@
+2004-3-27 Seth Burgess <sjburges@gimp.org>
+	* GIMP.pm: updated enums
+	
+	* examples/blended2: fixed, updated enums, removed 
+	extraneous 'exit main'.
+	* examples/tex-to-float: moved to Render
+	* examples/translogo: moved to Web
+	* examples/webify: s/push_group/push/
+
+	* examples/fade-alpha 
+	* examples/innerbevel 
+	* examples/randomart1: updated enums
+
+	* examples/examples.TODO: updated accordingly
+
 2004-3-22 Seth Burgess <sjburges@gimp.org>
 	* Makefile.PL: don't install known broken plugins
 	* TODO: split between Marc and Seth lists 

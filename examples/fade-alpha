@@ -832,7 +832,7 @@ sub do_fade
     {
       $mask->edit_blend(FG_BG_RGB_MODE, 
                    NORMAL_MODE, 
-		   LINEAR, 
+		   GRADIENT_LINEAR, 
 		   100.0,             # opacity
 		   0.0,               # offset
                    REPEAT_NONE, 
@@ -846,7 +846,7 @@ sub do_fade
     }
   elsif ($direction==1)
     {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
+      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0, 
                    REPEAT_NONE, 0, 0, 0, 1, 0,
 		   $bounds[3], ($bounds[2]+$bounds[4])/2,
 		   $bounds[1], ($bounds[2]+$bounds[4])/2);
@@ -854,7 +854,7 @@ sub do_fade
     }
   elsif ($direction==2)
     {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
+      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0, 
                    REPEAT_NONE, 0, 0, 0, 1, 0, 
 		   $bounds[3], $bounds[2],
 		   $bounds[1], $bounds[4]);
@@ -862,7 +862,7 @@ sub do_fade
     }
   elsif ($direction==3)
     {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
+      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0, 
                    REPEAT_NONE, 0, 0, 0, 1, 0,
 		   ($bounds[3]+$bounds[1])/2, $bounds[4],
 		   ($bounds[3]+$bounds[1])/2, $bounds[2]);
@@ -878,28 +878,28 @@ sub do_fade
     }
   elsif ($direction==5)
     {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
+      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0, 
                    REPEAT_NONE, 0, 0, 0, 1, 0, 
 		   ($bounds[3]+$bounds[1])/2, $bounds[2],
 		   ($bounds[3]+$bounds[1])/2, $bounds[4]);
     }
   elsif ($direction==6)
     {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
+      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0, 
                    REPEAT_NONE, 0, 0, 0, 1, 0, 
 		   $bounds[1], $bounds[4],
 		   $bounds[3], $bounds[2]);
     }
   elsif ($direction==7)
     {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
+      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0, 
                    REPEAT_NONE, 0, 0, 0, 1, 0, 
 		   $bounds[1], ($bounds[2]+$bounds[4])/2,
 		   $bounds[3], ($bounds[2]+$bounds[4])/2);
     }
   elsif ($direction==8)
     {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
+      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0, 
                    REPEAT_NONE, 0, 0, 0, 1, 0, 
 		   $bounds[1], $bounds[2],
 		   $bounds[3], $bounds[4]);

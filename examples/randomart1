@@ -79,7 +79,7 @@ register "random_art_1",			# Funktionsname
       # Und erzeuge einen Farbverlauf über das Bild
       $layer->edit_blend (FG_BG_HSV_MODE,      
                      DIFFERENCE_MODE, 
-		     LINEAR,                  # gradient type
+		     GRADIENT_LINEAR,         # gradient type
 		     100,                     # opacity
                      0,                       # offset
 		     REPEAT_TRIANGULAR,       # repeat

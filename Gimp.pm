@@ -35,19 +35,18 @@ my @_consts = (@_param,
 'NEGATIVE_CONVOL',       'ABSOLUTE_CONVOL',       'NORMAL_CONVOL',         'DODGE',                 
 'BURN',                  'PDB_SUCCESS',           'PDB_CANCEL',            'PDB_CALLING_ERROR',     
 'PDB_PASS_THROUGH',      'PDB_EXECUTION_ERROR',   'SHARPEN_CONVOLVE',      'BLUR_CONVOLVE',         
-'GRADIENT_LOOP_SAWTOOTH','GRADIENT_ONCE_BACKWARD','GRADIENT_ONCE_FORWARD', 'GRADIENT_LOOP_TRIANGLE',
 'PAINT_INCREMENTAL',     'PAINT_CONSTANT',        'ORIENTATION_HORIZONTAL','ORIENTATION_UNKNOWN',   
-'ORIENTATION_VERTICAL',  'OFFSET_TRANSPARENT',    'OFFSET_BACKGROUND',     'SPIRAL_CLOCKWISE',      
-'CONICAL_ASYMMETRIC',    'SPIRAL_ANTICLOCKWISE',  'SHAPEBURST_DIMPLED',    'CONICAL_SYMMETRIC',     
-'BILINEAR',              'LINEAR',                'RADIAL',                'SHAPEBURST_ANGULAR',    
-'SHAPEBURST_SPHERICAL',  'SQUARE',                'PDB_COLOR',             'PDB_END',               
+'ORIENTATION_VERTICAL',  'OFFSET_TRANSPARENT',    'OFFSET_BACKGROUND',     'GRADIENT_SPIRAL_CLOCKWISE',      
+'GRADIENT_CONICAL_ASYMMETRIC',    'GRADIENT_SPIRAL_ANTICLOCKWISE',  'GRADIENT_SHAPEBURST_DIMPLED',    'GRADIENT_CONICAL_SYMMETRIC',     
+'GRADIENT_BILINEAR',              'GRADIENT_LINEAR',                'GRADIENT_RADIAL',                'GRADIENT_SHAPEBURST_ANGULAR',    
+'GRADIENT_SHAPEBURST_SPHERICAL',  'GRADIENT_SQUARE',                'PDB_COLOR',             'PDB_END',               
 'PDB_LAYER',             'PDB_INT8ARRAY',         'PDB_PATH',              'PDB_INT16',             
 'PDB_FLOAT',             'PDB_DISPLAY',           'PDB_STRING',            'PDB_INT16ARRAY',        
 'PDB_IMAGE',             'PDB_INT32',             'PDB_SELECTION',         'PDB_STATUS',            
 'PDB_STRINGARRAY',       'PDB_CHANNEL',           'PDB_FLOATARRAY',        'PDB_INT32ARRAY',        
 'PDB_DRAWABLE',          'PDB_BOUNDARY',          'PDB_REGION',            'PDB_PARASITE',          
-'PDB_INT8',              'BLUE_LUT',              'VALUE_LUT',             'GREEN_LUT',             
-'ALPHA_LUT',             'RED_LUT',               'SHADOWS',               'HIGHLIGHTS',            
+'PDB_INT8',              'HISTOGRAM_BLUE',              'HISTOGRAM_VALUE',             'HISTOGRAM_GREEN',             
+'HISTOGRAM_ALPHA',             'HISTOGRAM_RED',               'SHADOWS',               'HIGHLIGHTS',            
 'MIDTONES',              'POINTS',                'PIXELS',                'STACK_TRACE_ALWAYS',    
 'STACK_TRACE_NEVER',     'STACK_TRACE_QUERY',     'GRAIN_EXTRACT_MODE',    'COLOR_ERASE_MODE',      
 'COLOR_MODE',            'LIGHTEN_ONLY_MODE',     'DIFFERENCE_MODE',       'DODGE_MODE',            
@@ -70,9 +69,9 @@ my @_consts = (@_param,
 'ALPHA_CHANNEL',         'GRAY_CHANNEL',          'RED_CHANNEL',           'GREEN_CHANNEL',         
 'RUN_NONINTERACTIVE',    'RUN_WITH_LAST_VALS',    'RUN_INTERACTIVE',       'REPEAT_NONE',           
 'REPEAT_TRIANGULAR',     'REPEAT_SAWTOOTH',       'MASK_DISCARD',          'MASK_APPLY',            
-'ADD_WHITE_MASK',        'ADD_SELECTION_MASK',    'ADD_BLACK_MASK',        'ADD_ALPHA_MASK',        
+'ADD_WHITE_MASK',        'ADD_SELECTION_MASK',    'ADD_ALPHA_TRANSFER_MASK', 'ADD_BLACK_MASK',        'ADD_ALPHA_MASK',        
 'ADD_COPY_MASK',         'TRANSPARENT_FILL',      'BACKGROUND_FILL',       'FOREGROUND_FILL',       
-'WHITE_FILL',            'NO_FILL',               'CHANNEL_OP_SUBTRACT',   'CHANNEL_OP_REPLACE',    
+'WHITE_FILL',            'PATTERN_FILL',               'CHANNEL_OP_SUBTRACT',   'CHANNEL_OP_REPLACE',    
 'CHANNEL_OP_INTERSECT',  'CHANNEL_OP_ADD',        'FLATTEN_IMAGE',         'EXPAND_AS_NECESSARY',   
 'CLIP_TO_BOTTOM_LAYER',  'CLIP_TO_IMAGE',         'CUSTOM_MODE',           'FG_TRANSPARENT_MODE',   
 'FG_BG_HSV_MODE',        'FG_BG_RGB_MODE',        
@@ -88,7 +87,9 @@ my @_consts = (@_param,
 	'EXPORT_CAN_HANDLE_RGB',	'EXPORT_CAN_HANDLE_GRAY',	'EXPORT_CAN_HANDLE_INDEXED',
         'EXPORT_CAN_HANDLE_ALPHA',	'EXPORT_CAN_HANDLE_LAYERS',	'EXPORT_CAN_HANDLE_LAYERS_AS_ANIMATION',
         'EXPORT_NEEDS_ALPHA',
-	'EXPORT_CANCEL',		'EXPORT_IGNORE',		'EXPORT_EXPORT',
+	'EXPORT_CANCEL',		'EXPORT_IGNORE',		'EXPORT_EXPORT', 
+	'ROTATE_90', 			'ROTATE_270',			'ROTATE_180',
+	'TRUE', 			'FALSE'
 );
 
 #ENUM_DEFS#
@@ -96,13 +97,12 @@ sub NEGATIVE_CONVOL       (){ 2} sub ABSOLUTE_CONVOL       (){ 1} sub NORMAL_CON
 sub DODGE                 (){ 0} sub BURN                  (){ 1} sub PDB_SUCCESS           (){ 3}
 sub PDB_CANCEL            (){ 4} sub PDB_CALLING_ERROR     (){ 1} sub PDB_PASS_THROUGH      (){ 2}
 sub PDB_EXECUTION_ERROR   (){ 0} sub SHARPEN_CONVOLVE      (){ 1} sub BLUR_CONVOLVE         (){ 0}
-sub GRADIENT_LOOP_SAWTOOTH(){ 2} sub GRADIENT_ONCE_BACKWARD(){ 1} sub GRADIENT_ONCE_FORWARD (){ 0}
-sub GRADIENT_LOOP_TRIANGLE(){ 3} sub PAINT_INCREMENTAL     (){ 1} sub PAINT_CONSTANT        (){ 0}
+sub PAINT_INCREMENTAL     (){ 1} sub PAINT_CONSTANT        (){ 0}
 sub ORIENTATION_HORIZONTAL(){ 0} sub ORIENTATION_UNKNOWN   (){ 2} sub ORIENTATION_VERTICAL  (){ 1}
-sub OFFSET_TRANSPARENT    (){ 1} sub OFFSET_BACKGROUND     (){ 0} sub SPIRAL_CLOCKWISE      (){ 9}
-sub CONICAL_ASYMMETRIC    (){ 5} sub SPIRAL_ANTICLOCKWISE  (){10} sub SHAPEBURST_DIMPLED    (){ 8}
-sub CONICAL_SYMMETRIC     (){ 4} sub BILINEAR              (){ 1} sub LINEAR                (){ 0}
-sub RADIAL                (){ 2} sub SHAPEBURST_ANGULAR    (){ 6} sub SHAPEBURST_SPHERICAL  (){ 7}
+sub OFFSET_TRANSPARENT    (){ 1} sub OFFSET_BACKGROUND     (){ 0} sub GRADIENT_SPIRAL_CLOCKWISE      (){ 9}
+sub GRADIENT_CONICAL_ASYMMETRIC    (){ 5} sub GRADIENT_SPIRAL_ANTICLOCKWISE  (){10} sub GRADIENT_SHAPEBURST_DIMPLED    (){ 8}
+sub GRADIENT_CONICAL_SYMMETRIC     (){ 4} sub GRADIENT_BILINEAR              (){ 1} sub GRADIENT_LINEAR                (){ 0}
+sub GRADIENT_RADIAL                (){ 2} sub GRADIENT_SHAPEBURST_ANGULAR    (){ 6} sub GRADIENT_SHAPEBURST_SPHERICAL  (){ 7}
 sub SQUARE                (){ 3} sub PDB_COLOR             (){10} sub PDB_END               (){22}
 sub PDB_LAYER             (){14} sub PDB_INT8ARRAY         (){ 7} sub PDB_PATH              (){19}
 sub PDB_INT16             (){ 1} sub PDB_FLOAT             (){ 3} sub PDB_DISPLAY           (){12}
@@ -143,13 +143,15 @@ sub GRAY_CHANNEL          (){ 3} sub RED_CHANNEL           (){ 0} sub GREEN_CHAN
 sub RUN_NONINTERACTIVE    (){ 1} sub RUN_WITH_LAST_VALS    (){ 2} sub RUN_INTERACTIVE       (){ 0}
 sub REPEAT_NONE           (){ 0} sub REPEAT_TRIANGULAR     (){ 2} sub REPEAT_SAWTOOTH       (){ 1}
 sub MASK_DISCARD          (){ 1} sub MASK_APPLY            (){ 0} sub ADD_WHITE_MASK        (){ 0}
-sub ADD_SELECTION_MASK    (){ 3} sub ADD_BLACK_MASK        (){ 1} sub ADD_ALPHA_MASK        (){ 2}
-sub ADD_COPY_MASK         (){ 4} sub TRANSPARENT_FILL      (){ 3} sub BACKGROUND_FILL       (){ 1}
+sub ADD_ALPHA_TRANSFER_MASK (){3 }
+sub ADD_SELECTION_MASK    (){ 4} sub ADD_BLACK_MASK        (){ 1} sub ADD_ALPHA_MASK        (){ 2}
+sub ADD_COPY_MASK         (){ 5} sub TRANSPARENT_FILL      (){ 3} sub BACKGROUND_FILL       (){ 1}
 sub FOREGROUND_FILL       (){ 0} sub WHITE_FILL            (){ 2} sub NO_FILL               (){ 4}
 sub CHANNEL_OP_SUBTRACT   (){ 1} sub CHANNEL_OP_REPLACE    (){ 2} sub CHANNEL_OP_INTERSECT  (){ 3}
 sub CHANNEL_OP_ADD        (){ 0} sub FLATTEN_IMAGE         (){ 3} sub EXPAND_AS_NECESSARY   (){ 0}
 sub CLIP_TO_BOTTOM_LAYER  (){ 2} sub CLIP_TO_IMAGE         (){ 1} sub CUSTOM_MODE           (){ 3}
 sub FG_TRANSPARENT_MODE   (){ 2} sub FG_BG_HSV_MODE        (){ 1} sub FG_BG_RGB_MODE        (){ 0}
+sub ROTATE_90             (){ 0} sub ROTATE_270            (){ 2} sub ROTATE_180            (){ 1}
 #ENUM_DEFS#
 
 sub WRAP		(){ 0 }
@@ -160,6 +162,10 @@ sub BLACK		(){ 2 }
 sub COMPRESSION_NONE		(){ 0 }
 sub COMPRESSION_LZW		(){ 1 }
 sub COMPRESSION_PACKBITS	(){ 2 }
+
+# True/False for PDB
+sub TRUE			(){ 1 }
+sub FALSE			(){ 0 }
 
 # internal constants shared with Perl-Server
 
