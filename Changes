@@ -4,6 +4,8 @@ Revision history for Gimp-Perl extension.
 	* updated enums.pl... watch out.
 	* removed old workaround for even older PDL versions.
 	* Seth Burgess <sjburges@gimp.org>:
+	   examples/dots: new plug-in, to create uniformly spaced dots
+
            Gimp/Util.pm : changed enum to BACKGROUND_FILL
 	   Minor fixes to some scripts for Gimp 1.3.x comformance:
            examples/innerbevel: changed font handling, blend arguments, 
