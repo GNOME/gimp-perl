@@ -1,6 +1,7 @@
 Revision history for Gimp-Perl extension.
 
 1.3  not released
+	* updated enums.pl... watch out (compatibility consts to be coming soon?).
 	* removed old workaround for even older PDL versions.
 	* Seth Burgess <sjburges@gimp.org>:
            Minor fixes to some scripts for Gimp 1.3.x comformance:

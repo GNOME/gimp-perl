@@ -10,6 +10,8 @@ gchar *						T_PV
 gint *						T_PTROBJ
 guchar *					T_PV
 
+utf8_str					T_UTF8
+
 GimpDrawable *					T_GDRAWABLE
 GimpTile *					T_TILE
 GimpPixelRgn *					T_PIXELRGN
@@ -28,6 +30,9 @@ DISPLAY						T_PREF
 REGION						T_PREF
 
 INPUT
+
+T_UTF8
+	$var = SvPVutf8_nolen ($arg);
 
 T_PREF
 	$var = unbless_croak ($arg, PKG_$ntype)
@@ -49,11 +54,15 @@ T_PIXELRGN_PDL
 
 OUTPUT
 
+T_UTF8
+	sv_setpv ($arg, $var);
+        SvUTF8_on ($arg);
+
 T_PREF
-	$arg = autobless (newSViv($var), GIMP_PDB_$ntype);
+	$arg = autobless (newSViv ($var), GIMP_PDB_$ntype);
 
 T_PREF_ANY
-	$arg = autobless (newSViv($var), GIMP_PDB_$ntype);
+	$arg = autobless (newSViv ($var), GIMP_PDB_$ntype);
 
 T_GDRAWABLE
 

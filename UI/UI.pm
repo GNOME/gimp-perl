@@ -593,9 +593,9 @@ sub interact($$$$@) {
         
         local *new_PF_STRING = sub {
            my $e = new Gtk2::Entry;
-           push(@setvals,sub{set_text $e defined $_[0] ? $_[0] : ""});
+           push @setvals, sub { set_text $e defined $_[0] ? $_[0] : "" };
            #select_region $e 0,1;
-           push(@getvals,sub{get_text $e});
+           push @getvals, sub { get_text $e };
            $a=$e;
         };
 
@@ -619,54 +619,54 @@ sub interact($$$$@) {
            &new_PF_STRING;
            
         } elsif ($type == PF_FONT) {
-           my $fs=new Gtk2::FontSelectionDialog __"Font Selection Dialog ($desc)";
+           my $fs = new Gtk2::FontSelectionDialog sprintf __"Font Selection Dialog (%s)", $desc;
            my $def = __"-*-helvetica-medium-r-normal-*-34-*-*-*-p-*-iso8859-1";
            my $val;
            
-           my $l=new Gtk2::Label "!error!";
+           my $l = new Gtk2::Label "!error!";
            my $setval = sub {
-              $val=$_[0];
+              $val = $_[0];
               unless (defined $val && $fs->set_font_name ($val)) {
                  warn __"Illegal default font description for $function: $val\n" if defined $val;
-                 $val=$def;
+                 $val = $def;
                  $fs->set_font_name ($val);
               }
               
-              my ($n,$t)=Gimp::xlfd_size($val);
-              $l->set((split(/-/,$val))[2]."\@$n".($t ? "p" : ""));
+              my ($n, $t) = Gimp::xlfd_size $val;
+              $l->set ((split /-/, $val)[2] . "\@$n" . ($t ? "p" : ""));
            };
            
-           $fs->ok_button->signal_connect("clicked",sub {$setval->($fs->get_font_name); $fs->hide});
-           $fs->cancel_button->signal_connect("clicked",sub {$fs->hide});
+           $fs->ok_button->signal_connect (clicked => sub {$setval->($fs->get_font_name); $fs->hide});
+           $fs->cancel_button->signal_connect (clicked => sub {$fs->hide});
            
-           push(@setvals,$setval);
-           push(@getvals,sub { $val });
+           push @setvals, $setval;
+           push @getvals, sub { $val };
            
-           $a=new Gtk2::Button;
-           $a->add($l);
-           $a->signal_connect("clicked", sub { show $fs });
+           $a = new Gtk2::Button;
+           $a->add ($l);
+           $a->signal_connect (clicked => sub { show $fs });
            
         } elsif ($type == PF_SPINNER) {
-           my $adj = _new_adjustment ($value,$extra);
-           $a=new Gtk2::SpinButton $adj,1,0;
+           my $adj = _new_adjustment ($value, $extra);
+           $a = new Gtk2::SpinButton $adj, 1, 0;
            $a->set_digits (_find_digits $adj);
-           push(@setvals,sub{$adj->set_value($_[0])});
-           push(@getvals,sub{$adj->get_value});
+           push @setvals, sub { $adj->set_value($_[0]) };
+           push @getvals, sub { $adj->get_value };
            
         } elsif ($type == PF_SLIDER) {
-           my $adj = _new_adjustment ($value,$extra);
-           $a=new Gtk2::HScale $adj;
+           my $adj = _new_adjustment ($value, $extra);
+           $a = new Gtk2::HScale $adj;
            $a->set_digits (_find_digits $adj);
-           push(@setvals,sub{$adj->set_value($_[0])});
-           push(@getvals,sub{$adj->get_value});
+           push @setvals, sub { $adj->set_value($_[0]) };
+           push @getvals, sub { $adj->get_value };
            
         } elsif ($type == PF_COLOR) {
-           $a=new Gtk2::HBox (0,5);
-           my $b=new Gimp::UI::ColorSelectButton -width => 90, -height => 18;
+           $a = new Gtk2::HBox 0,5;
+           my $b = new Gimp::UI::ColorSelectButton -width => 90, -height => 18;
            $a->pack_start ($b,1,1,0);
            $default = [216, 152, 32] unless defined $default;
-           push(@setvals,sub{$b->set('color', "@{defined $_[0] ? Gimp::canonicalize_color $_[0] : [216,152,32]}")});
-           push(@getvals,sub{[split ' ',$b->get('color')]});
+           push @setvals, sub { $b->set('color', "@{defined $_[0] ? Gimp::canonicalize_color $_[0] : [216,152,32]}") };
+           push @getvals, sub { [split ' ',$b->get('color')] };
            set_tip $t $b,$desc;
            
            my $c = new Gtk2::Button __"FG";
@@ -706,8 +706,8 @@ sub interact($$$$@) {
            }
            $a = new Gtk2::Frame;
            $a->add($b);
-           push(@setvals,$prev_sub);
-           push(@getvals,sub{$r});
+           push @setvals, $prev_sub;
+           push @getvals, sub { $r };
            
         } elsif ($type == PF_IMAGE) {
            my $res;
@@ -715,8 +715,8 @@ sub interact($$$$@) {
            my $b=new Gtk2::OptionMenu;
            $b->set_menu(new Gimp::UI::ImageMenu(sub {1},-1,\$res));
            $a->pack_start ($b,1,1,0);
-           push(@setvals,sub{});
-           push(@getvals,sub{$res});
+           push @setvals, sub { };
+           push @getvals, sub { $res };
            set_tip $t $b,$desc;
            
 #           my $c = new Gtk2::Button "Load";
@@ -729,43 +729,43 @@ sub interact($$$$@) {
            my $res;
            $a=new Gtk2::OptionMenu;
            $a->set_menu(new Gimp::UI::LayerMenu(sub {1},-1,\$res));
-           push(@setvals,sub{});
-           push(@getvals,sub{$res});
+           push @setvals, sub { };
+           push @getvals, sub { $res };
            
         } elsif ($type == PF_CHANNEL) {
            my $res;
            $a=new Gtk2::OptionMenu;
            $a->set_menu(new Gimp::UI::ChannelMenu(sub {1},-1,\$res));
-           push(@setvals,sub{});
-           push(@getvals,sub{$res});
+           push @setvals, sub { };
+           push @getvals, sub { $res };
            
         } elsif ($type == PF_DRAWABLE) {
            my $res=13;
            $a=new Gtk2::OptionMenu;
            $a->set_menu(new Gimp::UI::DrawableMenu(sub {1},-1,\$res));
-           push(@setvals,sub{});
-           push(@getvals,sub{$res});
+           push @setvals, sub {};
+           push @getvals, sub { $res };
            
         } elsif ($type == PF_PATTERN) {
            $a=new Gimp::UI::PatternSelect -active => defined $value ? $value : (Gimp->patterns_get_pattern)[0];
-           push(@setvals,sub{$a->set('active',$_[0])});
-           push(@getvals,sub{$a->get('active')});
+           push @setvals, sub { $a->set('active', $_[0]) };
+           push @getvals, sub { $a->get('active') };
            
         } elsif ($type == PF_BRUSH) {
            $a=new Gimp::UI::BrushSelect -active =>  defined $value ? $value : (Gimp->brushes_get_brush)[0];
-           push(@setvals,sub{$a->set('active',$_[0])});
-           push(@getvals,sub{$a->get('active')});
+           push @setvals, sub{ $a->set('active',$_[0]) };
+           push @getvals, sub{ $a->get('active') };
            
         } elsif ($type == PF_GRADIENT) {
            $a=new Gimp::UI::GradientSelect -active => defined $value ? $value : (Gimp->gimp_gradients_get_active)[0];
-           push(@setvals,sub{$a->set('active',$_[0])});
-           push(@getvals,sub{$a->get('active')});
+           push @setvals, sub { $a->set('active',$_[0]) };
+           push @getvals, sub { $a->get('active') };
            
         } elsif ($type == PF_CUSTOM) {
            my (@widget)=&$extra;
            $a=&{$widget[0]};
-           push(@setvals,$widget[1]);
-           push(@getvals,$widget[2]);
+           push @setvals, $widget[1];
+           push @getvals, $widget[2];
            
         } elsif ($type == PF_FILE) {
            &new_PF_STRING;
@@ -800,61 +800,63 @@ sub interact($$$$@) {
            $e->set_editable (1);
 
            my $buttons = new Gtk2::HBox 1,5;
-           $h->add($buttons);
+           $h->add ($buttons);
 
-           my $load = new Gtk2::Button __"Load"; $buttons->add($load);
-           my $save = new Gtk2::Button __"Save"; $buttons->add($save);
-           my $edit = new Gtk2::Button __"Edit"; $buttons->add($edit);
+           my $load = new Gtk2::Button __"Load"; $buttons->add ($load);
+           my $save = new Gtk2::Button __"Save"; $buttons->add ($save);
+           my $edit = new Gtk2::Button __"Edit"; $buttons->add ($edit);
 
-           $edit->signal_connect(clicked => sub {
+           $edit->signal_connect (clicked => sub {
               my $editor = $ENV{EDITOR} || "vi";
-              my $tmp = Gimp->temp_name("txt");
-              open TMP,">$tmp" or die __"FATAL: unable to create $tmp: $!\n"; print TMP &$gv; close TMP;
+              my $tmp = Gimp->temp_name ("txt");
+              open TMP,">:utf8", $tmp or die __"FATAL: unable to create $tmp: $!\n";
+              print TMP &$gv;
+              close TMP;
               $w->hide;
               main_iteration Gtk2;
-              system ('xterm','-T',"$editor: $name",'-e',$editor,$tmp);
+              system 'xterm', '-T', "$editor: $name", '-e', $editor, $tmp;
               $w->show;
-              if (open TMP,"<$tmp") {
+              if (open TMP,"<:utf8", $tmp) {
                  local $/; &$sv(scalar<TMP>); close TMP;
               } else {
-                 Gimp->message(__"unable to read temporary file $tmp: $!");
+                 Gimp->message(sprintf __"unable to read temporary file '%s': %s", $tmp, "$!");
               }
            });
 
            my $filename = ($e{prefix} || eval { Gimp->directory } || ".") . "/";
            
-           my $f = new Gtk2::FileSelection __"Fileselector for $name";
-           $f->set_filename($filename);
+           my $f = new Gtk2::FileSelection sprintf __"Fileselector for %s", $name;
+           $f->set_filename ($filename);
            $f->cancel_button->signal_connect (clicked => sub { $f->hide });
-           my $lf =sub {
+           my $lf = sub {
               $f->hide;
               my $fn = $f->get_filename;
-              if (open TMP,"<$fn") {
+              if (open TMP,"<:utf8", $fn) {
                  local $/; &$sv(scalar<TMP>);
                  close TMP;
               } else {
-                 Gimp->message(__"unable to read '$fn': $!");
+                 Gimp->message(sprintf __"unable to read '%s': %s", $fn, "$!");
               }
            };
-           my $sf =sub {
+           my $sf = sub {
               $f->hide;
               my $fn = $f->get_filename;
-              if (open TMP,">$fn") {
+              if (open TMP, ">:utf8", $fn) {
                  print TMP &$gv;
                  close TMP;
               } else {
-                 Gimp->message(__"unable to create '$fn': $!");
+                 Gimp->message(sprintf __"unable to create '%s': %s", $fn, "$!");
               }
            };
            my $lshandle;
            $load->signal_connect (clicked => sub {
-              $f->set_title(__"Load $name");
+              $f->set_title(sprintf __"Load %s", $name);
               $f->ok_button->signal_disconnect($lshandle) if $lshandle;
               $lshandle=$f->ok_button->signal_connect (clicked => $lf);
               $f->show_all;
            });
            $save->signal_connect (clicked => sub {
-              $f->set_title(__"Save $name");
+              $f->set_title(sprintf __"Save %s", $name);
               $f->ok_button->signal_disconnect($lshandle) if $lshandle;
               $lshandle=$f->ok_button->signal_connect (clicked => $sf);
               $f->show_all;
@@ -864,43 +866,43 @@ sub interact($$$$@) {
            push @getvals,$gv;
 
         } else {
-           $label=__"Unsupported argumenttype $type";
-           push(@setvals,sub{});
-           push(@getvals,sub{$value});
+           $label = sprintf __"Unsupported argumenttype %s", $type;
+           push @setvals, sub {};
+           push @getvals, sub { $value };
         }
         
-        push(@lastvals,$value);
-        push(@defaults,$default);
+        push @lastvals, $value;
+        push @defaults, $default;
         $setvals[-1]->($value);
         
-        $label=new Gtk2::Label $label;
-        $label->set_alignment(0,0.5);
-        $g->attach($label,0,1,$res,$res+1,[],[],4,2);
+        $label = new Gtk2::Label $label;
+        $label->set_alignment (0,0.5);
+        $g->attach ($label, 0, 1, $res, $res+1, [], [], 4, 2);
         $a && do {
            set_tip $t $a,$desc;
-           $g->attach($a,1,2,$res,$res+1,["expand","fill"],["expand","fill"],4,2);
+           $g->attach ($a, 1, 2, $res, $res+1, ["expand","fill"], ["expand","fill"], 4, 2);
         };
         $res++;
      }
      
      my $v = new Gtk2::HBox 0,4;
-     $w->vbox->pack_start($v,0,0,4);
+     $w->vbox->pack_start ($v, 0, 0, 4);
 
      my $hbbox = new Gtk2::HButtonBox;
-     $hbbox->set_spacing(4);
-     $v->pack_end($hbbox,0,0,2);
+     $hbbox->set_spacing (4);
+     $v->pack_end ($hbbox, 0, 0, 2);
      
      $button = new Gtk2::Button __"Defaults";
-     signal_connect $button "clicked", sub {
+     signal_connect $button clicked => sub {
        for my $i (0..$#defaults) {
          $setvals[$i]->($defaults[$i]);
        }
      };
-     $hbbox->pack_start($button,0,0,0);
+     $hbbox->pack_start ($button, 0, 0, 0);
      set_tip $t $button,__"Reset all values to their default";
      
      $button = new Gtk2::Button __"Previous";
-     signal_connect $button "clicked", sub {
+     signal_connect $button clickeds => sub {
        for my $i (0..$#lastvals) {
          $setvals[$i]->($lastvals[$i]);
        }
@@ -908,33 +910,33 @@ sub interact($$$$@) {
      $hbbox->pack_start($button,0,0,0);
      set_tip $t $button,__"Restore values to the previous ones";
      
-     signal_connect $w "destroy", sub { main_quit Gtk2 };
+     signal_connect $w destroy => sub { main_quit Gtk2 };
 
      $hbbox = new Gtk2::HButtonBox;
-     $hbbox->set_spacing(4);
-     $w->action_area->pack_start($hbbox,0,0,0);
+     $hbbox->set_spacing (4);
+     $w->action_area->pack_start ($hbbox, 0, 0, 0);
      show $hbbox;
 
      $button = new Gtk2::Button __"Help";
-     $hbbox->pack_start($button,0,0,0);
-     signal_connect $button "clicked", sub { help_window($helpwin,$blurb,$help) };
+     $hbbox->pack_start ($button, 0, 0, 0);
+     signal_connect $button clicked => sub { help_window ($helpwin, $blurb, $help) };
      can_default $button 1;
      
      $hbbox = new Gtk2::HButtonBox;
-     $hbbox->set_spacing(4);
-     $w->action_area->pack_end($hbbox,0,0,0);
+     $hbbox->set_spacing (4);
+     $w->action_area->pack_end ($hbbox, 0, 0, 0);
      show $hbbox;
 
      $button = new Gtk2::Button __"OK";
-     signal_connect $button "clicked", sub {$res = 1; hide $w; main_quit Gtk2};
-     $hbbox->pack_start($button,0,0,0);
+     signal_connect $button clicked => sub { $res = 1; hide $w; main_quit Gtk2 };
+     $hbbox->pack_start ($button, 0, 0, 0);
      can_default $button 1;
      grab_default $button;
      #d#add $accel 0xFF0D, [], [], $button, "clicked";
      
      $button = new Gtk2::Button __"Cancel";
-     signal_connect $button "clicked", sub {hide $w; main_quit Gtk2};
-     $hbbox->pack_start($button,0,0,0);
+     signal_connect $button clicked => sub { hide $w; main_quit Gtk2 };
+     $hbbox->pack_start ($button, 0, 0, 0);
      can_default $button 1;
      #d#add $accel 0xFF1B, [], [], $button, "clicked";
      

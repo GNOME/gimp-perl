@@ -9,3 +9,5 @@
 #define TRACE_DESC	0x41
 #define TRACE_ALL	0xff
 
+typedef char *utf8_str;
+

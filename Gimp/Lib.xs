@@ -1362,8 +1362,7 @@ gimp_micro_version()
 
 # checks wether a gimp procedure exists
 int
-_gimp_procedure_available(proc_name)
-	char * proc_name
+_gimp_procedure_available (utf8_str proc_name)
 	CODE:
 	{
 		char *proc_blurb;	
@@ -1442,7 +1441,7 @@ gimp_procedural_db_proc_info(proc_name)
 
 void
 gimp_call_procedure (proc_name, ...)
-	char *	proc_name
+	utf8_str 	proc_name
 	PPCODE:
 	{
 		char croak_str[MAX_STRING] = "";
@@ -1592,12 +1591,12 @@ gimp_call_procedure (proc_name, ...)
 
 void
 gimp_install_procedure(name, blurb, help, author, copyright, date, menu_path, image_types, type, params, return_vals)
-	char *	name
-	char *	blurb
-	char *	help
-	char *	author
-	char *	copyright
-	char *	date
+	utf8_str	name
+	utf8_str	blurb
+	utf8_str	help
+	utf8_str	author
+	utf8_str	copyright
+	utf8_str	date
 	SV *	menu_path
 	SV *	image_types
 	int	type
@@ -1634,7 +1633,7 @@ gimp_install_procedure(name, blurb, help, author, copyright, date, menu_path, im
 
 void
 gimp_uninstall_temp_proc(name)
-	char *	name
+	utf8_str	name
 
 void
 gimp_lib_quit()
@@ -2224,7 +2223,7 @@ gimp_patterns_get_pattern_data(name)
 
 void
 _gimp_progress_init (message)
-	gchar *	message
+	utf8_str	message
         CODE:
         gimp_progress_init (message);
 
