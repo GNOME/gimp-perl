@@ -1,4 +1,7 @@
 2004-05-15  Seth Burgess <sjburges@gimp.org>
+	* exmaples/fade-alpha: s/RADIAL/GRADIENT_RADIAL/ fixes bug #141444
+
+2004-05-15  Seth Burgess <sjburges@gimp.org>
 	* examples/selective_sharpen: use a curve suggested by tigert to "Basically 
         just darken the very dark noisy grays to black and boost everything else."
 
