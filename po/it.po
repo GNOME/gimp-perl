@@ -1,15 +1,13 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-perl 1\n"
+"Project-Id-Version: gimp-perl 2.0\n"
 "POT-Creation-Date: Wed Dec 20 08:22:38 2000\n"
-"PO-Revision-Date: 2003-01-14 12:17+0100\n"
-"Last-Translator: Daniele Medri <madrid@linux.it>\n"
+"PO-Revision-Date: 2004-02-23 12:52+0100\n"
+"Last-Translator: Marco Ciampa <ciampix@libero.it>\n"
 "Language-Team: http://gimp.linux.it\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Date: mer set  8 02:12:22 CEST 1999\n"
-"From: Marco Munari <mar@chiara.dei.unipd.it>\n"
 
 #: examples/PDB:0
 msgid " (press Tab to complete)"
@@ -519,7 +517,7 @@ msgid ""
 "An even number of frames is needed for spin back.\n"
 "Adjusted frames up to $frames"
 msgstr ""
-"Un dato numero di frame è richiesto per muoversi indietro.\n"
+"Un dato numero di frame Ã¨ richiesto per muoversi indietro.\n"
 "Aggiustati frame fino a $frames"
 
 #: examples/PDB:0
@@ -831,16 +829,15 @@ msgstr "ATTENZIONE: richiesta condivisa di lock, ma non implementata"
 
 #: examples/translogo:0
 msgid "You can't run this script with an INDEXED image!!"
-msgstr ""
-"Non è possibile eseguire lo script su una immagine in scala di colore!!"
+msgstr "Non Ã¨ possibile eseguire lo script su una immagine in scala di colore!!"
 
 #: examples/translogo:0
 msgid "You can't run this script without an ALPHA CHANNEL!!"
-msgstr "Non è possibile eseguire lo script senza un CANALE ALPHA!!"
+msgstr "Non Ã¨ possibile eseguire lo script senza un CANALE ALPHA!!"
 
 #: examples/prep4gif:0
 msgid "You need at least 2 layers to perform prep4gif"
-msgstr "E' necessario avere almeno 2 livelli per utilizzare prep4gif"
+msgstr "Ãˆ necessario avere almeno 2 livelli per utilizzare prep4gif"
 
 #: Gimp/Lib.xs:0
 msgid "[undefined]"
@@ -1205,7 +1202,6 @@ msgid "unable to accept unix connection: $!\n"
 msgstr "impossibile accettare connessioni unix: $!\n"
 
 #: Gimp/Lib.xs:0
-#, fuzzy
 msgid "unable to convert Gimp::Drawable into Gimp::GimpDrawable (id %d)"
 msgstr "non riesco a convertire Gimp::Drawable in Gimp::GDrawable (id %d)"
 
@@ -1265,119 +1261,3 @@ msgstr "Autorizzazione scorretta, ora interrompo la connessione"
 #: Gimp/Compat.pm:0
 msgid "xlfd_unpack: unmatched XLFD '$fontname'\n"
 msgstr "xlfd_unpack: carattere XLFD '$fontname' non riscontrato\n"
-
-#~ msgid "<Image>/Filters/Logulator/Bovination"
-#~ msgstr "<Image>/Filtri/Logulator/Bovination"
-
-#~ msgid "<Image>/Filters/Logulator/Blended"
-#~ msgstr "<Image>/Filtri/Logulator/Blended"
-
-#~ msgid "<Image>/Filters/Logulator/Basic I"
-#~ msgstr "<Image>/Filtri/Logulator/Basic I"
-
-#~ msgid "<Image>/Filters/Logulator/3D Outline..."
-#~ msgstr "<Image>/Filtri/Logulator/3D Outline..."
-
-#~ msgid "<Image>/Filters/Logulator/Glowing Hot"
-#~ msgstr "<Image>/Filtri/Logulator/Glowing Hot"
-
-#~ msgid "<Image>/Filters/Logulator/Basic II"
-#~ msgstr "<Image>/Filtri/Logulator/Basic II"
-
-#~ msgid "<Image>/Filters/Logulator/Starburst"
-#~ msgstr "<Image>/Filtri/Logulator/Starburst"
-
-#~ msgid "<Image>/Filters/Logulator/Comic Book"
-#~ msgstr "<Image>/Filtri/Logulator/Comic Book"
-
-#~ msgid "<Image>/Filters/Logulator/Chalk"
-#~ msgstr "<Image>/Filtri/Logulator/Chalk"
-
-#~ msgid "<Image>/Filters/Logulator/Glossy"
-#~ msgstr "<Image>/Filtri/Logulator/Glossy"
-
-#~ msgid "<Image>/Filters/Logulator/Particle Trace"
-#~ msgstr "<Image>/Filtri/Logulator/Particle Trace"
-
-#~ msgid "<Image>/Filters/Logulator/Alien Glow"
-#~ msgstr "<Image>/Filtri/Logulator/Alien Glow"
-
-#~ msgid "<Image>/Filters/Logulator/Cool Metal"
-#~ msgstr "<Image>/Filtri/Logulator/Cool Metal"
-
-#~ msgid "<Image>/Filters/Logulator/Textured"
-#~ msgstr "<Image>/Filtri/Logulator/Textured"
-
-#~ msgid "<Image>/Filters/Logulator/Gradient Bevel"
-#~ msgstr "<Image>/Filtri/Logulator/Gradient Bevel"
-
-#~ msgid "<Image>/Filters/Logulator/Frosty"
-#~ msgstr "<Image>/Filtri/Logulator/Frosty"
-
-#~ msgid "<Image>/Filters/Logulator/Neon"
-#~ msgstr "<Image>/Filtri/Logulator/Neon"
-
-#~ msgid "<Image>/Filters/Logulator/Chrome"
-#~ msgstr "<Image>/Filtri/Logulator/Chrome"
-
-#~ msgid "<Image>/Filters/Logulator/Chip Away"
-#~ msgstr "<Image>/Filtri/Logulator/Chip Away"
-
-#~ msgid "<Image>/Filters/Logulator/Starscape"
-#~ msgstr "<Image>/Filtri/Logulator/Starscape"
-
-#~ msgid "<Image>/Filters/"
-#~ msgstr "<Image>/Filtri/"
-
-#~ msgid "<Toolbox>/Xtns/"
-#~ msgstr "<Toolbox>/Xtns/"
-
-#~ msgid "internal error (please report): too many main arguments"
-#~ msgstr "Errore interno (please report): troppi argomenti di main"
-
-#~ msgid "use'ing Gimp::PDL is no longer necessary, please remove it!\n"
-#~ msgstr "l'uso di Gimp:PDL non e` piu` necessario, rimuovetelo pure!\n"
-
-#~ msgid ""
-#~ "Internal error: unable to convert reference in sv2net, please report!"
-#~ msgstr ""
-#~ "Errore interno: incapace di gestire argomento di tipoo '%c' in net2sv, per "
-#~ "cortesia riportare"
-
-#~ msgid "Internal error: stashname too long, please report!"
-#~ msgstr "Errore interno: stashname troppo lungo!"
-
-#~ msgid "Internal error: Gimp::Net #101, please report!"
-#~ msgstr "Errore Interno: Gimp::Net #101."
-
-#~ msgid ""
-#~ "Internal error: unable to handle argtype '%c' in net2sv, please report!"
-#~ msgstr ""
-#~ "Errore interno: incapace di gestire argomento di tipoo '%c' in net2sv, per "
-#~ "cortesia riportare"
-
-#~ msgid ""
-#~ "Internal error: asked to deobjectify an object not in the cache, please "
-#~ "report!"
-#~ msgstr ""
-#~ "Errore interno: incapace di gestire argomento di tipoo '%c' in net2sv, per "
-#~ "cortesia riportare"
-
-#~ msgid "gimp didn't return an execution status, fatal error"
-#~ msgstr "gimp non riesce a portare a termine l'operazione, errore fatale"
-
-#~ msgid "FATAL: Gimp::Compat version mismatch\n"
-#~ msgstr ""
-#~ "Avviso: la versione di Gimp::Compat non corrisponde a quella attesa\n"
-
-#~ msgid "Internal error: Gimp::Net #100, please report!"
-#~ msgstr "Errore Interno: Gimp::Net #100."
-
-#~ msgid "unsupported status code: %d, fatal error\n"
-#~ msgstr "codice di status non supportato: %d, errore fatale\n"
-
-#~ msgid "<Image>/Layers/Layer to Image Size"
-#~ msgstr "<Image>/Livelli/Livello a Grandezza Immagine"
-
-#~ msgid "<Image>/Script-Fu/Decor/Stampify"
-#~ msgstr "<Image>/Script-Fu/Decor/Stampify"
