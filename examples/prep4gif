@@ -28,7 +28,7 @@ sub prep {
 
 # Duplicate this image, and work on the duplicate for the rest of the
 # procedure.
-	my $out = gimp_channel_ops_duplicate($img);
+	my $out = $img->duplicate;
 
 # @layers is the ordered list, from top to bottom, of all layers in the
 # duplicated image.  To find length of the list, use $#layers

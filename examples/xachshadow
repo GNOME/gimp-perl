@@ -67,7 +67,7 @@ register "xach_shadows",
 	gimp_palette_set_background([0,0,0]);
 	$shadowlayer->fill(BG_IMAGE_FILL);	
 	$checkmask->plug_in_gauss_iir(0.3*$blocksize, 1, 1);
-	gimp_channel_ops_offset ($checkmask, 1, 0, 0.2*$blocksize, 0.2*$blocksize);
+	$checkmask->offset (1, 0, 0.2*$blocksize, 0.2*$blocksize);
 
 
 	$gridlayer = $img->layer_new($img->width, $img->height, RGBA_IMAGE, "Grid 1", 100, 0);
