@@ -3,7 +3,7 @@ AC_CHECK_FUNCS(vsnprintf,AC_DEFINE(HAVE_VSNPRINTF),[
 ])
 
 AC_MSG_CHECKING(for intelligent life)
-AC_MSG_RESULT(not found)
+AC_MSG_RESULT(found a cat in your bin)
 
 dnl disable some warnings I don't want to see
 dnl disabled, since $GCC does not correspond to perl's $(CC)

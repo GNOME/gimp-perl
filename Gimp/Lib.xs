@@ -5,11 +5,6 @@
 
 #include <libgimp/gimp.h>
 
-#if GIMP_MAJOR_VERSION>1 || (GIMP_MAJOR_VERSION==1 && GIMP_MINOR_VERSION>=1)
-# define GIMP11 1
-# define GIMP_PARASITE 1
-#endif
-
 /* FIXME */
 /* sys/param.h is redefining these! */
 #undef MIN
@@ -57,11 +52,7 @@
 #define PKG_DRAWABLE	GIMP_PKG "Drawable"
 #define PKG_SELECTION	GIMP_PKG "Selection"
 #define PKG_REGION	GIMP_PKG "Region"
-#if GIMP_PARASITE
-# define PKG_PARASITE	GIMP_PKG "Parasite"
-#else
-# define PKG_PARASITE	((char *)0)
-#endif
+#define PKG_PARASITE	GIMP_PKG "Parasite"
 
 #define PKG_GDRAWABLE	GIMP_PKG "GimpDrawable"
 #define PKG_TILE	GIMP_PKG "Tile"
@@ -440,9 +431,7 @@ dump_params (int nparams, GimpParam *args, GimpParamDef *params)
     "INT32ARRAY" , "INT16ARRAY" , "INT8ARRAY" , "FLOATARRAY" , "STRINGARRAY",
     "COLOR"      , "REGION"     , "DISPLAY"   , "IMAGE"      , "LAYER"      ,
     "CHANNEL"    , "DRAWABLE"   , "SELECTION" , "BOUNDARY"   , "PATH"       ,
-#if GIMP_PARASITE
     "PARASITE"   ,
-#endif
     "STATUS"     , "END"
   };
   int i;
@@ -488,20 +477,12 @@ dump_params (int nparams, GimpParam *args, GimpParamDef *params)
 	  case GIMP_PDB_STRINGARRAY:	dump_printarray (args, i, char* , d_stringarray, "'%s'"); break;
 	  
 	  case GIMP_PDB_COLOR:
-#if GIMP_CHECK_VERSION(1,3,0)
 	    trace_printf ("[%d,%d,%d]",
 	                  args[i].data.d_color.r,
 	                  args[i].data.d_color.g,
 	                  args[i].data.d_color.b);
-#else
-	    trace_printf ("[%d,%d,%d]",
-	                  args[i].data.d_color.red,
-	                  args[i].data.d_color.green,
-	                  args[i].data.d_color.blue);
-#endif
 	    break;
 
-#if GIMP_PARASITE
 	  case GIMP_PDB_PARASITE:
 	    {
 	      gint32 found = 0;
@@ -528,7 +509,6 @@ dump_params (int nparams, GimpParam *args, GimpParamDef *params)
                 trace_printf (__("[undefined]"));
 	    }
 	    break;
-#endif
 	    
 	  default:
 	    trace_printf ("(?%d?)", args[i].type);
@@ -640,9 +620,7 @@ param_stash (GimpPDBArgType type)
 	                    0		, 0		, 0		, 0		, 0		,
 	                    PKG_COLOR	, PKG_REGION	, PKG_DISPLAY	, PKG_IMAGE	, PKG_LAYER	,
 	                    PKG_CHANNEL	, PKG_DRAWABLE	, PKG_SELECTION	, 0		, 0		,
-#if GIMP_PARASITE
 	                    PKG_PARASITE,
-#endif
 	                    0
 	                   };
   
@@ -891,7 +869,6 @@ push_gimp_sv (GimpParam *arg, int array_as_ref)
 	}
 	break;
 
-#if GIMP_PARASITE
       case GIMP_PDB_PARASITE:
         if (arg->data.d_parasite.name)
           {
@@ -903,7 +880,6 @@ push_gimp_sv (GimpParam *arg, int array_as_ref)
           }
 
 	break;
-#endif
       
       /* did I say difficult before????  */
       case GIMP_PDB_INT32ARRAY:		push_gimp_av (arg, d_int32array , newSViv, array_as_ref); break;
@@ -1024,7 +1000,6 @@ convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
 	canonicalize_colour (croak_str, sv, &arg->data.d_color);
 	break;
 
-#if GIMP_PARASITE
       case GIMP_PDB_PARASITE:
 	if (SvROK(sv))
 	  {
@@ -1051,7 +1026,6 @@ convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
 	  sprintf (croak_str, __("illegal parasite specification, reference expected"));
 	
 	break;
-#endif
       
       case GIMP_PDB_INT32ARRAY:	av2gimp (arg, sv, d_int32array , gint32 , Sv32); break;
       case GIMP_PDB_INT16ARRAY:	av2gimp (arg, sv, d_int16array , gint16 , SvIV); break;
@@ -1331,7 +1305,7 @@ gimp_main(...)
 		      croak (__("arguments to main not yet supported!"));
 		    
 	            gimp_is_initialized = 1;
-		    RETVAL = gimp_main (argc, argv);
+		    RETVAL = gimp_main (&PLUG_IN_INFO, argc, argv);
 	            gimp_is_initialized = 0;
                     /*exit (0);*/ /*D*//* shit, some memory problem here, so just exit */
 		  }
@@ -1686,32 +1660,13 @@ gimp_gamma()
 gint
 gimp_install_cmap()
 
-gint
-gimp_use_xshm()
-
-void
-gimp_color_cube()
-	PPCODE:
-	{
-	 	guchar *cc = gimp_color_cube ();
-
-		EXTEND (SP, 4);
-
-		PUSHs (sv_2mortal (newSViv (cc [0])));
-		PUSHs (sv_2mortal (newSViv (cc [1])));
-		PUSHs (sv_2mortal (newSViv (cc [2])));
-		PUSHs (sv_2mortal (newSViv (cc [3])));
-	}
-	
-
-char *
+const char *
 gimp_gtkrc()
 
-#ifdef GIMP11
-char *
+const char *
 gimp_directory()
 
-char *
+const char *
 gimp_data_directory()
 
 SV *
@@ -1723,8 +1678,6 @@ gimp_personal_rc_file(basename)
         g_free (basename);
         OUTPUT:
         RETVAL
-
-#endif
 
 guint
 gimp_tile_width()

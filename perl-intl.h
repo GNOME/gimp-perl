@@ -1,6 +1,8 @@
 #ifndef ENABLE_NLS
 # ifdef HAVE_LIBINTL_H
 #  define ENABLE_NLS
+/* not yet */
+#  undef ENABLE_NLS
 # endif
 #endif
 

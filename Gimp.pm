@@ -388,7 +388,6 @@ sub cbchain($) {
 }
 
 sub callback {
-   warn "callback @_\n";#d#
    my $type = shift;
    my @cb;
    if ($type eq "-run") {

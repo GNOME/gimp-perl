@@ -3,6 +3,11 @@ NAME
        Gimp - Perl extension for writing Gimp Extensions/Plug-ins/Load &
        Save-Handlers
 
+WARNING
+
+       This version of the module is highly experimental and only works
+       for gimp-1.3 or higher.
+
 SYNOPSIS
 
        my $img = new Image (600, 300, RGB);
@@ -29,37 +34,30 @@ PREREQUISITES
        To install/use this perl extension, you need to have the following
        software packages installed (the given order is best):
 
-       Perl5.004 (or higher):
+       Perl5.008 (or higher):
 
-          While this extension should run fine with older versions (it has
-          been tested with 5.004_04), I work with Perl5.005 or higher,
-          which has much more bugs fixed than the old 5.004.
-
-          When in doubt, upgrade.
+          While this extension might run with perl 5.6, I do not support
+          nor encourage it in any way.
 
        GTK+, the X11 toolkit:
        http://www.gtk.org/
        ftp://ftp.gimp.org/pub/gtk/
 
-          gtk+-1.2 or higher is recommended, but older versions mostly
-          work (some features not implemented in gtk+-1.0 do not work
-          properly, of course).
+          gtk+-2.0 or higher is required.
 
        Gtk, the perl extension for the above:
-       ftp://ftp.gimp.org/pub/gtk/perl/
+       http://gtk2-perl.sourceforge.net
 
-          Gtk-0.6123 (or higher) is recommended. You might encounter some
-          problems compiling it for Perl5.004 (or any version), in that
-          case you might want to try the updated gnome-perl version on the
-          gnome-cvs-server. See the the gimp-perl pages for more info.
+          The special "gtk2-perl-xs" variant is required, the inline version
+          is *NOT* supported.
 
        The GNU Image Manipulation Program, i.e. The GIMP:
        http://www.gimp.org/
        ftp://ftp.gimp.org/pub/gimp/
 
-          gimp-1.1 (or newer, e.g. CVS or CVS snapshots) is recommended
-          for full functionality, but any version since 1.0.2 should do,
-          some features not implemented in 1.0 don't work, though.
+          gimp-1.3 (or newer, e.g. CVS or CVS snapshots) is required.  For
+          older versions of The Gimp, use version 1.2* of the Gimp-Pelr
+          module.
 
        PDL, the Perl Data Language
        http://www.cpan.org/
@@ -67,7 +65,7 @@ PREREQUISITES
           Optionally, you can install the PDL module to be able to
           manipulate pixel data (or to be able to run the example plug-ins
           that do pixel manipulation). PDL is available at any CPAN
-          mirror, version 1.9906 or higher is recommended. Without PDL,
+          mirror, version 2.4 or higher is recommended. Without PDL,
           some plug-ins do not work, and accessing raw image data is
           impossible.
 

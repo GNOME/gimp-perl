@@ -30,30 +30,11 @@ AC_ARG_WITH(libs,    [  --with-libs=DIR         Additionally search for librarie
 
 AC_PATH_PROGS(GIMP,gimp)
 
-AM_PATH_GIMP(1.0.4,, AC_MSG_WARN(
-** unable to find gimp, make sure it's in your path (version 1.0.4+ required!)
-** You can get the gimp from ftp://ftp.gimp.org/pub/gimp.
-))
+AM_PATH_GIMP_1_4(1.3.15,, [AC_MSG_ERROR([** unable to find gimp, make sure it's in your path (version 1.3.15+ required!)])])
 
-gimptool_major_version=`$GIMPTOOL $gimptool_args --version | \
-   sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\1/'`
-gimptool_minor_version=`$GIMPTOOL $gimptool_args --version | \
-   sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\2/'`
+AM_PATH_GLIB_2_0(2.0.0,, [AC_MSG_ERROR([** unable to find glib, make sure it's in your path (version 2.0+ required!)])])
 
-if test $gimptool_major_version -lt 2 && test $gimptool_minor_version -lt 1 ; then
-   echo
-   echo '** you are using a too old version of gimp (this includes all _stable_'
-   echo '** 1.0.x versions!). While this plug-in should still compile with the'
-   echo '** released 1.0.x versions of the gimp, many scripts will not, since they'
-   echo '** already use the new API.'
-   echo
-fi
-
-
-AM_PATH_GLIB(1.2.0,, AC_MSG_ERROR(
-** unable to find glib, make sure it's in your path (version 1.2.0+ required!)
-** You can get glib from ftp://ftp.gtk.org/pub/glib.
-))
+AM_PATH_GTK_2_0(2.0.0,, [AC_MSG_ERROR([** unable to find gtk+, make sure it's in your path (version 2.0+ required!)])])
 
 ac_gimp_save_CPPFLAGS="$CPPFLAGS"
 CPPFLAGS="$CPPFLAGS $GIMP_CFLAGS"

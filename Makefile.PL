@@ -1,4 +1,4 @@
-require 5.004_04;
+require 5.008;
 
 use Config;
 
@@ -54,15 +54,8 @@ if ($ARGV[0] ne "--writemakefile") {
       fire map_to_gradient
    ); # fire should use normal gradient map!
 
-eval "use Gtk;"; $GTK = $@ eq "";
+eval "use Gtk2;"; $GTK = $@ eq "";
 eval "use Parse::RecDescent;"; $PRD = $@ eq "";
-
-$] >= 5.005 or print <<EOF;
-
-NOTICE:  You are using a version of perl older than 5.005. This will slightly
-         reduce the features available to the Gimp-Perl extension.
-
-EOF
 
 $GTK or print <<EOF;
 
@@ -83,44 +76,8 @@ NOTICE: Parse::RecDescent not found, scm2perl, the Scheme->Perl
 
 EOF
 
-($major,$minor,$patch)=split /[._]/,$Gtk::VERSION;
-
 require ExtUtils::MakeMaker;
 import ExtUtils::MakeMaker;
-
-$MICRO = int ($] * 100000 % 100);
-
-if ($MICRO > 49) {
-   print <<EOF;
-
-WARNING: You are using perl version $]. This is an *ALPHA* version that is
-         very likely to have serious bugs that keep gimp-perl from working
-         properly. Please upgrade/downgrade to a stable release.
-
-EOF
-}
-
-if ($Config{usethreads} or $Config{use5005threads}) {
-   print <<EOF;
-
-WARNING: Your perl has been built with multithreading enabled. The 5.005
-         threading model is utterly broken (and about to be removed),
-         while the 5.6 threading model is about to change very soon.
-         Since I suppose you know how to fix perl since you enabled
-         threading, I'll proceed with building gimp-perl.
-
-EOF
-}
-
-if ($] < 5.006 && $Config{usethreads}) {
-   print <<EOF;
-
-WARNING: You are using the experimental (and very broken) multithread support.
-         While gimp-perl might seem to work, it is very likely to not work
-         properly (or at all). Please use a *stable* version of perl.
-            
-EOF
-}
 
 push @pins, @pdl_pins if $PDL;
 push @pins, @gtk_pins if $GTK;

@@ -78,9 +78,7 @@ if ($IN_GIMP) {
    $GIMP_PREFIX=expand($prefix);
 } else {
    chomp ($GIMP_PREFIX = `$GIMPTOOL --prefix`);
-   $gimpplugindir = `$GIMPTOOL -n --install-admin-bin /bin/sh`;
-   $gimpplugindir =~ s{^.*\s(.*?)(?:/+bin/sh)\r?\n?$}{$1} &&
-   $gimpplugindir =~ s{/plug-ins$}{} or die "\nFATAL: unable to deduce plugindir from gimptool script\n\n";
+   $gimpplugindir = `$GIMPTOOL --gimpplugindir`;
    $GIMP = expand($GIMP);
 }
 
