@@ -1,9 +1,8 @@
-#!/opt/bin/perl
-
+#!/usr/bin/perl 
 # internal script to insert enum values from enums.pl into
 # Gimp.pm. May trash your files, do NOT use!
 
-use File::Slurp;
+#use File::Slurp;
 
 do 'enums.pl' or die $@;
 
@@ -27,13 +26,5 @@ while(($type,$defs)=each(%Gimp::CodeGen::enums::enums)) {
 
 #print $subs,"\n";exit;
 
-$file=read_file "Gimp.pm";
-
-$file=~s/(#ENUM_NAME#).*?#ENUM_NAME#/$1\n$names\n$1/s or die;
-$file=~s/(#ENUM_DEFS#).*?#ENUM_DEFS#/$1\n$subs\n$1/s or die;
-
-$file=~/^package Gimp/ or die;
-$file=~/yellow4$/ or die;
-
-write_file "Gimp.pm",$file;
-
+print $names; 
+print $subs;

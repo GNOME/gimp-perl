@@ -19,6 +19,8 @@ Fix the code so I don't get "
 Gtk-CRITICAL **: file gtktooltips.c: line 314 (gtk_tooltips_set_tip): assertion `GTK_IS_TOOLTIPS (tooltips)' failed at ..../Gimp/UI.pm line 821.
 " repeated whenever I use a color picker.
 
+Remove 'embed/*' unless I can find some use for it.  I don't think we're going to be embedding directly in gimp anytime soon.
+
 <Marc's previous stuff>
 this is mostly my personal worksheet and notepad, which may not be
 up-to-date and may not even be readable ;)
