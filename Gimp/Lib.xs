@@ -716,20 +716,35 @@ canonicalize_colour (
       if (SvTYPE(SvRV(sv)) == SVt_PVAV)
 	{
 	  AV *av = (AV *)SvRV(sv);
-	  if (av_len(av) == 2)
-	    {
+
+          if (av_len(av) == 2)
+            {
 #if GIMP_CHECK_VERSION(1,3,0)
-	      c->r = SvIV(*av_fetch(av, 0, 0));
-	      c->g = SvIV(*av_fetch(av, 1, 0));
-	      c->b = SvIV(*av_fetch(av, 2, 0));
+              c->r = SvIV(*av_fetch(av, 0, 0));
+              c->g = SvIV(*av_fetch(av, 1, 0));
+              c->b = SvIV(*av_fetch(av, 2, 0));
+              c->a = 255;
 #else
-	      c->red   = SvIV(*av_fetch(av, 0, 0));
-	      c->green = SvIV(*av_fetch(av, 1, 0));
-	      c->blue  = SvIV(*av_fetch(av, 2, 0));
+              c->red   = SvIV(*av_fetch(av, 0, 0));
+              c->green = SvIV(*av_fetch(av, 1, 0));
+              c->blue  = SvIV(*av_fetch(av, 2, 0));
 #endif
-	    }
-	  else
-	    sprintf (err, __("a color must have three components (array elements)"));
+            }
+          else if (av_len(av) == 3)
+            {
+#if GIMP_CHECK_VERSION(1,3,0)
+              c->r = SvIV(*av_fetch(av, 0, 0));
+              c->g = SvIV(*av_fetch(av, 1, 0));
+              c->b = SvIV(*av_fetch(av, 2, 0));
+              c->a = SvIV(*av_fetch(av, 3, 0));
+#else
+              c->red   = SvIV(*av_fetch(av, 0, 0));
+              c->green = SvIV(*av_fetch(av, 1, 0));
+              c->blue  = SvIV(*av_fetch(av, 2, 0));
+#endif
+            }
+          else
+            sprintf (err, __("a color must have three (RGB) or four (RGBA) components (array elements)"));
 	}
       else
 	sprintf (err, __("illegal type for colour specification"));
