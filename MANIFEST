@@ -1,5 +1,4 @@
 README
-INSTALL
 NEWS
 Changes
 COPYING
@@ -24,11 +23,11 @@ extra.c
 gimpenums.c
 gppport.h
 Perl-Server
+configure.ac
 configure
 t/load.t
 t/loadlib.t
 t/run.t
-configure.in
 aclocal.m4
 acconfig.h
 config.h.in

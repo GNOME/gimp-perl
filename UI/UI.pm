@@ -6,12 +6,6 @@ use base 'DynaLoader';
 
 no warnings "all";
 
-BEGIN {
-   $VERSION = 1.3;
-   require XSLoader;
-   XSLoader::load Gimp::UI $VERSION;
-}
-
 =head1 NAME
 
 Gimp::UI - interface to libgimpui, and more!
@@ -23,7 +17,7 @@ Gimp::UI - interface to libgimpui, and more!
 =head1 DESCRIPTION
 
 The libgimpwidgets api has improved considerably in 1.4 (mostly due to
-it being based in gobjects), but the resulting widgets still are not
+it being based on gobjects), but the resulting widgets still are not
 full-featured gobjects, so a lot of manual workaround is neccessary. Most
 of the API has been converted.
 
@@ -42,8 +36,14 @@ of the API has been converted.
 
 =cut
 
+$VERSION = 1.3;
+
 if (eval { require Gtk2; import Gtk2 (); 1 }) {
    local $/;
+
+   require XSLoader;
+   XSLoader::load Gimp::UI $VERSION;
+
    eval <DATA>;
    die $@ if $@;
    close DATA;
