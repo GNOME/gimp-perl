@@ -1,6 +1,7 @@
-        * I broke something with the last commit.  I don't know what yet, but
-	am sleeping on it.
-  
+2004-2-22 Seth Burgess <sjburges@gimp.org>
+	* UI/basewidget.pm: still needs to compile and return a value (for now) 
+ 	so stuff should work again.
+
 2004-2-21 Seth Burgess <sjburges@gimp.org>
 	* examples/yinyang: s/gimp_bucket_fill/gimp_edit_bucket_fill/
 	* examples/examples.TODO: updated appropriately
