@@ -7,6 +7,7 @@
 # This is just a complete rip-off of Marc's first plug-in.
 # Doesn't really do much, but hey, we'll get there!
 
+
 use Gimp;
 
 $black  = "#000000";
@@ -26,7 +27,7 @@ $example = 1;
 sub index_and_save($$) {
   my($img,$path)=@_;
   gimp_image_flatten($img);
-  gimp_convert_indexed_palette($img,1,0,32,"");
+  gimp_image_convert_indexed_palette($img,1,0,32,"");
   file_gif_save(RUN_NONINTERACTIVE,$img,-1,$path,$path,1,0,0,0) unless $example;
 }
 

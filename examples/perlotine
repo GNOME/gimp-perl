@@ -23,6 +23,9 @@
 #
 # Added File::Path; for making the directory if it doesn't already exist.
 #
+# 12/13/03: fixed tigert's fix to use ORIENTATION_VERTICAL rather 
+#           than VERTICAL
+# 
 # If you have more additions, etc please don't hesitate to send them in!
 
 use File::Path;
@@ -43,7 +46,7 @@ sub get_vguides {
     $i=0;
     my @vguides;
     while ($i=$img->find_next_guide($i)) {
-        if ($img->get_guide_orientation($i) == &Gimp::VERTICAL){
+        if ($img->get_guide_orientation($i) == &Gimp::ORIENTATION_VERTICAL){
             $keyval = sprintf("%4d", $img->get_guide_position($i));
             $vkeys{$keyval} = $i;
             }
@@ -64,7 +67,7 @@ sub get_hguides {
     $i=0;
     my @hguides;
     while ($i=$img->find_next_guide($i)) {
-        if ($img->get_guide_orientation($i) == &Gimp::HORIZONTAL){
+        if ($img->get_guide_orientation($i) == &Gimp::ORIENTATION_HORIZONTAL){
             $keyval = sprintf("%4d", $img->get_guide_position($i));
             $hkeys{$keyval} = $i;
             }
@@ -88,21 +91,21 @@ sub dosel {
     # print "Cropping from $l to $r, $t to $b\n";
     $tmpimg->crop($r-$l, $b-$t, $l, $t);
     # Make sure that gif and jpg are of proper type before proceeding.
-    # I could move this outside the dosel for performance improvment, 
+    # I could move this outside the dosel for performance improvement, 
     # but then it would end up changing the user's image, which may 
     # not be desired/expected.
     if ($extension eq "gif")
       {
         if (!(($tmpimg->get_layers())[0]->is_indexed()))
 	{
-          $tmpimg->convert_indexed(0,0,255,0,0,"NULL");
+          $tmpimg->image_convert_indexed(0,0,255,0,0,"NULL");
 	}
       }
     if ($extension eq "jpg")
       {
         if (!(($tmpimg->get_layers())[0]->is_rgb()))
 	{
-          $tmpimg->convert_rgb();
+          $tmpimg->image_convert_rgb();
 	}
       }
 

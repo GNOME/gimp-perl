@@ -1,8 +1,5 @@
 #!/opt/bin/perl
 
-eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-
 use strict 'subs';
 use Gimp;
 use Gimp::Fu;
@@ -33,7 +30,7 @@ register "plug_in_ditherize",
          N_"<Image>/Filters/Noise/Ditherize...",
          "RGB*, GRAY*",
          [
-          [PF_RADIO,		"dither_type",	"The dither type (see gimp_convert_indexed)", 1,
+          [PF_RADIO,		"dither_type",	"The dither type (see gimp_image_convert_indexed)", 1,
           					[none => 0, fs => 1, "fs/low-bleed" => 2, ordered => 3]],
           [PF_SLIDER,		"colours",	"The number of colours to dither to", 10, [0, 256, 1, 1]],
          ],

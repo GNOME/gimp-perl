@@ -1,7 +1,5 @@
 #!/opt/bin/perl
 
-eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
 # This is (hopefully) a demonstration of how pathetically easy it is to script
 # a neato effect you've come up with.  This lil' effect was created by xach,
 # and translated by sjburges (me).  You can consider it released under the GPL
@@ -51,7 +49,7 @@ register "xach_blocks",
          sub {
    my($img,$drawable,$blocksize, $knobfactor)=@_;
  	$selection_flag = 0;
-        eval { $img->undo_push_group_start };
+        eval { $img->undo_group_start };
 	if (!$drawable->has_alpha) {
 		$drawable->add_alpha;
 		}; 
@@ -104,17 +102,13 @@ register "xach_blocks",
 # Clean up stuff
 
 	$img->remove_layer($cleangrid);
-#	$cleangrid->delete;  # Deleting these layers after removal seems to cause
-                         # strange problems (I think gimp handles this 
-                         # automatically now)
 	$img->remove_layer($gridlayer);
-#	$gridlayer->delete;
 	gimp_selection_load($selection);
 	gimp_palette_set_background($oldbackground);
 	if ($selection_flag ==1) {
 		$img->selection_none;
 		}
-        eval { $img->undo_push_group_end };
+        eval { $img->undo_group_end };
 	return ();
 };
 

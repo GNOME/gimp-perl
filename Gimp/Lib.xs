@@ -947,11 +947,11 @@ convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
             case GIMP_PDB_IMAGE:
               {
                 if (sv_derived_from (sv, PKG_DRAWABLE))
-                  arg->data.d_image = gimp_drawable_image_id    (unbless(sv, PKG_DRAWABLE, croak_str));
+                  arg->data.d_image = gimp_drawable_get_image    (unbless(sv, PKG_DRAWABLE, croak_str));
                 else if (sv_derived_from (sv, PKG_LAYER   ))
-                  arg->data.d_image = gimp_layer_get_image_id   (unbless(sv, PKG_LAYER   , croak_str));
+                  arg->data.d_image = gimp_drawable_get_image   (unbless(sv, PKG_LAYER   , croak_str));
                 else if (sv_derived_from (sv, PKG_CHANNEL ))
-                  arg->data.d_image = gimp_channel_get_image_id (unbless(sv, PKG_CHANNEL , croak_str));
+                  arg->data.d_image = gimp_drawable_get_image (unbless(sv, PKG_CHANNEL , croak_str));
                 else if (sv_derived_from (sv, PKG_IMAGE) || !SvROK (sv))
                   {
                     arg->data.d_image =                          unbless(sv, PKG_IMAGE   , croak_str); break;

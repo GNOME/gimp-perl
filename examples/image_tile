@@ -1,8 +1,5 @@
 #!/opt/bin/perl
 
-eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-#
 # A photo-tiling pluggin. Take an image, and tile it (much like the
 # mosaic operation, only using other images).
 #
@@ -25,6 +22,9 @@ eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
 #       o 04-22-2001, peter@kirchgessner.net: fix problems with functions
 #         that changed number of arguments
 #
+#12/5/03: <sjburges@gimp.org>
+# s/gimp_convert/gimp_image_convert/
+# s/gimp_drawable_image/gimp_drawable_get_image/
 
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
@@ -143,11 +143,11 @@ sub perl_fu_image_tile {
 	  my $subtype = gimp_image_base_type($img);
 	  if ($subtype != $type) {
 	    if ($type == RGB_IMAGE) {
-	      gimp_convert_rgb($img);
+	      gimp_image_convert_rgb($img);
             } elsif ($type == GRAY_IMAGE) {
-	      gimp_convert_grayscale($img);
+	      gimp_image_convert_grayscale($img);
 	    } elsif ($type == INDEXED_IMAGE) {
-	      gimp_convert_indexed($img,1,256);
+	      gimp_image_convert_indexed($img,1,256);
 	    }
 	  }
 	  my $cells = get_image_cells($img,$xcells,$ycells,
@@ -375,7 +375,7 @@ sub overlay_image {
     match_aspect($img,$width/$height,$subwidth,$subheight);
     gimp_image_scale($img,$width,$height);
     gimp_edit_copy(gimp_image_active_drawable($img)); #gimp 1.1 -deleted $img
-    my $baseimg = gimp_drawable_image($draw);
+    my $baseimg = gimp_drawable_get_image($draw);
     gimp_rect_select($baseimg,$x,$y,$width,$height,CHANNEL_OP_REPLACE,0,0);
     my $sel = gimp_edit_paste($draw,0); # gimp 1.1 -deleted $baseimg
     gimp_floating_sel_anchor($sel);

@@ -104,7 +104,7 @@ animation onto the corresponding frame in the current animation and using
 DARKEN_MODE to combine the frames. You might want to use other modes or
 maybe C<$f->set_opacity(50)> for your animation.
 
- $i2=$d2->image;
+ $i2=$d2->get_image;
  $l2=($i2->get_layers)[$i];
 
  $i2->selection_all;

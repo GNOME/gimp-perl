@@ -305,7 +305,7 @@ sub gimp_image_set_visible {
    my $image = shift;
    my %layers; @layers{map $$_,@_}=(1) x @_;
    for ($image->get_layers) {
-      $_->set_visible ($layers{$$_});
+      $_->drawable_set_visible ($layers{$$_});
    }
 }
 
@@ -313,13 +313,13 @@ sub gimp_image_set_invisible {
    my $image = shift;
    my %layers; @layers{map $$_,@_}=(1) x @_;
    for ($image->get_layers) {
-      $_->set_visible (!$layers{$$_});
+      $_->drawable_set_visible (!$layers{$$_});
    }
 }
 
 sub gimp_layer_get_position {
    my $layer = shift;
-   my @layers = $layer->image->get_layers;
+   my @layers = $layer->get_image->get_layers;
    for (0..$#layers) {
       # the my is necessary for broken perl (return $_ => undef)
       return (my $index=$_) if ${$layers[$_]} == $$layer;

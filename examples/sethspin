@@ -1,8 +1,5 @@
 #!/opt/bin/perl
 
-eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-
 #
 # Note: Seth has transferred the maintainer `position' to me, so bother me
 # instead of him now :-)
@@ -49,6 +46,7 @@ eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
 #       clearer whats going on this way.  It also works w/ any 2 layers now.
 # 1.5 - Some debugging by Steinar and myself to make it work again.
 # 1.6 - Moved some renaming into the main loop, more cleanups.
+# 1.7 - Fixed up set_name to drawable_set_name
 #
 # TODO: Clean it up; allow for other effects (skewing, ripples?) while spinning;        
 
@@ -59,7 +57,7 @@ use Gimp;  # No qw(:auto) - Trying to use all OO-styling
 use Gimp::Fu;
 use Gimp::Util;
 
-# Gimp::set_trace(TRACE_ALL);
+#Gimp::set_trace(TRACE_ALL);
 
 sub saw {  # a sawtooth function on PI
     ($val) = @_;
@@ -119,7 +117,7 @@ sub spin_layer { # the function for actually spinning the layer
         $framelay = $img->merge_visible_layers(0);
 
 	$frameno++;
-	$framelay->set_name("Spin Layer $frameno (50ms)");
+	$framelay->drawable_set_name("Spin Layer $frameno (50ms)");
     }
 }
 
@@ -128,7 +126,7 @@ register "seth_spin",
          "Take one image.  Spin it about the horizontal axis, and end up with another image.  I made it for easy web buttons.",
          "Seth Burgess",
          "Seth Burgess <sjburges\@gimp.org>",
-         "1.6",
+         "1.7",
          N_"<Toolbox>/Xtns/Animation/Seth Spin...",
          "*",
          [
@@ -194,13 +192,14 @@ register "seth_spin",
     $img->remove_layer($spinlayer);
 
     # unhide and name layers (Give timings)
+    # (note that image_set_visible used here is a Gimp::Util function)
     @all_layers = $img->get_layers;
     $img->set_visible(@all_layers);
 
     if ($spinback) {
-        $all_layers[$frames/2-1]->set_name(__"Spin Layer DEST (250ms)");
+        $all_layers[$frames/2-1]->drawable_set_name(__"Spin Layer DEST (250ms)");
     }
-    $all_layers[$frames-1]->set_name(__"Spin Layer SRC (250ms)");  
+    $all_layers[$frames-1]->drawable_set_name(__"Spin Layer SRC (250ms)");  
 
     # indexed conversion wants a display for some reason
     if ($indexed) { 

@@ -6,6 +6,10 @@ use Gimp::Util;
 
 N_"/Filters/Logulator";  # workaround for i18n weirdnesses
 
+# 12/5/03: <sjburges@gimp.org>
+#  s/gimp_convert/gimp_image_convert/
+#  s/->image/->get_image/
+
 #Gimp::set_trace(TRACE_CALL);
 
 my $global_drawable;
@@ -90,7 +94,7 @@ sub gimp_text_get_extents_fontname {
 # instead of the text layer, just return a copy of the drawable
 sub gimp_text_fontname {
    my($image,$layer,$x,$y,$text,$border,$antialias,$height,$size_type,$fontname)=@_;
-   $global_drawable->image->selection_all;
+   $global_drawable->get_image->selection_all;
    $global_drawable->edit_copy;
    my $newlay;
    if ($layer == -1) {
@@ -462,7 +466,7 @@ sub script_fu_crystal_logo {
       plug_in_gauss_rle ($img, $disp_map, $blur, 1, 1);
       gimp_levels ($disp_map, 0, 0, 255, 1.0, 96, 255);
       if (gimp_drawable_is_rgb ($bg_layer) == 1) {
-         gimp_convert_rgb ($img);
+         gimp_image_convert_rgb ($img);
       }
       copy_layer_crystal ($img, $bg_layer, $tile_img, $tile_layer);
       gimp_image_delete ($tile_img);
@@ -823,7 +827,7 @@ sub script_fu_sota_chrome_logo {
       gimp_patterns_set_pattern ("Marble #1");
       gimp_bucket_fill ($text_layer, PATTERN_BUCKET_FILL, NORMAL_MODE, 100, 0, 0, 0, 0);
       gimp_selection_none ($img);
-      gimp_convert_rgb ($img);
+      gimp_image_convert_rgb ($img);
       gimp_color_balance ($layer1, 0, 1, shadows (rval ($hc)), shadows (gval ($hc)), shadows (bval ($hc)));
       gimp_color_balance ($layer1, 1, 1, midtones (rval ($hc)), midtones (gval ($hc)), midtones (bval ($hc)));
       gimp_color_balance ($layer1, 2, 1, highlights (rval ($hc)), highlights (gval ($hc)), highlights (bval ($hc)));

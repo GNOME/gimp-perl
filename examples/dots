@@ -15,7 +15,7 @@ register "dots",
          "Seth Burgess", 
          "Seth Burgess <sjburges\@gimp.org>", 
          "2003-09-20",
-         N_"<Image>/Filters/Render/Dots...", 
+         N_"<Image>/Filters/Render/Pattern/Dots...", 
          "RGB*, GRAY*", 
          [ 
            [PF_SPINNER, "size", "Diameter of dots", 4, [1,255,1]], 
@@ -36,7 +36,7 @@ register "dots",
     $yoffset = $yoffset % $yspacing;
     $xoffset = $xoffset % $xspacing;
 
-    $img->undo_push_group_start;  
+    $img->undo_group_start;  
 
 # Get/save current selection info
     @bounds = $img->selection_bounds;
@@ -92,7 +92,7 @@ register "dots",
 
     Palette->set_foreground($oldfg);
     
-    $img->undo_push_group_end;
+    $img->undo_group_end;
     $layer->set_active_layer;
 
     return();

@@ -1,7 +1,5 @@
-#!/usr/bin/perl
+#!/opt/bin/perl
 
-eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
 # <sjburges@gimp.org>
 # This is adrian's idea - take random blends and difference them.  You're
 # bound to come up w/ something cool eventually.
@@ -18,8 +16,8 @@ sub randint {
     }    
 
 register "random_blends", 
-         "Random Blends - take a guess.", 
-         "A random approach to art.  Just try it. It might be good.",
+         "Random Blends - Perform N random blends", 
+         "A random approach to art, using the blend tool with DIFFERENCE_MODE.  Alpha is not affected; best used on opaque background.  Just try it. It might be good.",
          "Seth Burgess", 
          "Seth Burgess <sjburges\@gimp.org>", 
          "1999-03-18",
@@ -32,7 +30,7 @@ register "random_blends",
          ['gimp-1.1'],
          sub {
     my($img,$layer,$numgradients) =@_;
-    eval { $img->undo_push_group_start };  # undo is broked for this one.
+    eval { $img->undo_group_start };  
     $oldgradient = gimp_gradients_get_gradient();
     ($sel,$x1,$y1,$x2,$y2) = $img->gimp_selection_bounds;
     srand();
@@ -40,29 +38,27 @@ register "random_blends",
     @gradientlist = gimp_gradients_get_list("");  
    
     Gimp->progress_init("Random blends...");
-    for ($i=0; $i<=$numgradients; $i++) {
+    for ($i=0; $i<$numgradients; $i++) {
         gimp_gradients_set_gradient(@gradientlist[randint($#gradientlist)]);
-        $layer->gimp_blend(CUSTOM_MODE,  
-                           DIFFERENCE_MODE,
-# I'd really like to alternate how many arguments in gradient type depending
-# on what version of gimp is being run.. Hints anyone? -sjb
-                           randint(10),      # gradient type
-                           randint(100),     # opacity
-                           0,                # offset
-                           randint(2),       # repeat
-			   0,                # reverse
-                           0,                # disable supersampling..
-			   1,
-			   0.1,              
-			   0,                # no dithering
-                           randint($x2-$x1)+$x1, # x1
-                           randint($y2-$y1)+$y1, # y1
-                           randint($x2-$x1)+$x1, # x2
-                           randint($y2-$y1)+$y1, # y2
-                           );
+	$layer->blend(CUSTOM_MODE,  
+                       DIFFERENCE_MODE,
+                       randint(10),      # gradient type
+                       randint(100),     # opacity
+                       0,                # offset
+                       randint(2),       # repeat
+		       0,                # reverse
+                       0,                # disable supersampling..
+		       1,
+		       0.1,              
+		       0,                # no dithering
+                       randint($x2-$x1)+$x1, # x1
+                       randint($y2-$y1)+$y1, # y1
+                       randint($x2-$x1)+$x1, # x2
+                       randint($y2-$y1)+$y1, # y2
+                       );
         Gimp->progress_update($i/(1.0*$numgradients));		   
         }
-    eval { $img->undo_push_group_end };
+    eval { $img->undo_group_end };
     gimp_gradients_set_gradient($oldgradient);
     return();
 };

@@ -1,8 +1,5 @@
-#!/opt/bin/perl
+#!/opt/bin/perl 
 
-eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-#
 # A plug-in for GIMP for producing logos and other such nifty things
 # which appear to be made of steel and floating over a glowing cloud.
 # This plug-in also includes several filters and such for performing the
@@ -11,7 +8,6 @@ eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
 # Written in 1999 (c) by Aaron Sherman <ajs@ajs.com>.
 # This plugin may be distributed under the same terms as The Gimp itself.
 # See http://www.gimp.org/ for more information on The Gimp.
-#
 
 require 5.004;
 
@@ -71,7 +67,7 @@ sub perl_fu_glowing_steel {
     my $hl_layer = (gimp_image_get_layers($image))[0];
     $textlayer = gimp_image_merge_down($image, $hl_layer, EXPAND_AS_NECESSARY);
   }
-  gimp_layer_set_name($textlayer, "Text");
+  gimp_drawable_set_name($textlayer, "Text");
 
   # Fill the background
   gimp_selection_all($image);
@@ -99,7 +95,7 @@ sub perl_fu_add_glow {
   my $is_float = 0;
   my $old_sel = gimp_selection_save($image);
 
-  gimp_undo_push_group_start($image);
+  gimp_image_undo_group_start($image);
 
   if (!gimp_drawable_is_layer($drawable)) {
     die("add_glow: Only layers can have glow added");
@@ -144,7 +140,7 @@ sub perl_fu_add_glow {
   gimp_selection_load($old_sel);
   gimp_floating_sel_anchor($drawable) if $is_float;
   gimp_image_set_active_layer($image,$old_draw);
-  gimp_undo_push_group_end($image);
+  gimp_image_undo_group_end($image);
   gimp_displays_flush();
 }
 
@@ -156,7 +152,7 @@ sub perl_fu_brushed_metal {
   my $use_gradient = shift;
   my $gradient = shift;
 
-  gimp_undo_push_group_start($image);
+  gimp_image_undo_group_start($image);
 
   # A whole lot of layer fiddling to get around the fact that
   # plug_in_mblur does the wrong thing with borders....
@@ -202,7 +198,7 @@ sub perl_fu_brushed_metal {
   gimp_image_remove_layer($image,$templ);
   # gimp_layer_delete($templ);
 
-  gimp_undo_push_group_end($image);
+  gimp_image_undo_group_end($image);
 
   gimp_displays_flush();
 }
@@ -215,14 +211,14 @@ sub perl_fu_highlight_edges {
   my $is_float = 0;
   my $old_sel = gimp_selection_save($image);
 
-  gimp_undo_push_group_start($image);
+  gimp_image_undo_group_start($image);
 
   if (!gimp_drawable_is_layer($drawable)) {
     gimp_message("highlight_edges: Only layers can be highlighted!");
     return;
   }
 
-  if (!gimp_layer_get_visible($drawable)) {
+  if (!gimp_drawable_get_visible($drawable)) {
     gimp_message("highlight_edges: The active layer must be visible!");
     return;
   }
@@ -257,14 +253,14 @@ sub perl_fu_highlight_edges {
   gimp_layer_translate($white, $gimp_white_fudge, -1);
   gimp_layer_translate($black, 1, 1);
   $white = gimp_image_merge_down($image, $white, EXPAND_AS_NECESSARY);
-  gimp_layer_set_name($white, "Edge Highlight");
+  gimp_drawable_set_name($white, "Edge Highlight");
   gimp_selection_layer_alpha($drawable);
   gimp_edit_clear($white);
 
   gimp_selection_load($old_sel);
   gimp_floating_sel_anchor($drawable) if $is_float;
   # gimp_image_set_active_layer($image,$old_draw);
-  gimp_undo_push_group_end($image);
+  gimp_image_undo_group_end($image);
   gimp_displays_flush();
 }
 

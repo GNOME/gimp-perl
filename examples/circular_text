@@ -1,5 +1,8 @@
 #!/opt/bin/perl -w
 
+# 12/5/03: <sjburges@gimp.org>
+#  s/gimp_convert/gimp_image_convert/
+
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 use Gimp::Util;
@@ -14,10 +17,10 @@ sub circular_text {
         if ($test == INDEXEDA_IMAGE) {
                 die __"You can't run this script with an INDEXED image!!";
         } elsif ($test == GRAYA_IMAGE) {
-                gimp_convert_rgb ($image);
+                gimp_image_convert_rgb ($image);
         }
         my $img = gimp_image_new (100, 100, RGB_IMAGE);
-        $drawable->image->selection_all;
+        $drawable->get_image->selection_all;
         $drawable->edit_copy;
         gimp_selection_none ($image);
         my $layer;

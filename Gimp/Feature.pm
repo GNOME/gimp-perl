@@ -63,15 +63,9 @@ sub present {
 
    if ($_ eq "gtk") {
       _check_gtk;
-   } elsif ($_ eq "gtk-1.1") {
-      _check_gtk and (Gtk->major_version==1 && Gtk->minor_version>=1) || Gtk->major_version>1;
-   } elsif ($_ eq "gtk-1.2") {
-      _check_gtk and (Gtk->major_version==1 && Gtk->minor_version>=2) || Gtk->major_version>1;
-   } elsif ($_ eq "gtk-1.3") {
-      _check_gtk and (Gtk->major_version==1 && Gtk->minor_version>=3) || Gtk->major_version>1;
    } elsif ($_ eq "gtk-2.0") {
-      _check_gtk and (Gtk->major_version==2 && Gtk->minor_version>=0) || Gtk->major_version>2;
-
+#      _check_gtk and (Gtk2->version_info[0]>=2;
+1;
    } elsif ($_ eq "gimp-1.1") {
       (Gimp->major_version==1 && Gimp->minor_version>=1) || Gimp->major_version>1;
    } elsif ($_ eq "gimp-1.2") {

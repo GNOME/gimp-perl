@@ -7,6 +7,9 @@ use strict 'vars';
 
 # Gimp::set_trace(TRACE_ALL);
 
+# 12/5/03: <sjburges@gimp.org>
+#  s/->mask/->get_mask
+
 ###
 # Globals
 ###
@@ -15,6 +18,7 @@ my ($plugin) = "plug_in_AlphaFade";
 
 # XPM's that I removed the $ and the @'s from (they get intrepreted in 
 # strings, which makes for nasty problems).
+
 my @arr = (
 ["24 24 66 1",
 " 	c None",
@@ -790,7 +794,7 @@ sub do_fade
       die "$plugin: Cannot operate on anything other than layers\n";
     }
     
-  $image->undo_push_group_start;
+  $image->undo_group_start;
   @bounds = $image->selection_bounds;
  
   if (!$drawable->has_alpha)
@@ -798,9 +802,9 @@ sub do_fade
       $drawable->add_alpha;
     }
  
-  if ($drawable->mask)
+  if ($drawable->get_mask)
     {
-      $mask = $drawable->mask;
+      $mask = $drawable->get_mask;
     }
   else
     {
@@ -905,7 +909,7 @@ sub do_fade
   
   Palette->set_background($prevBack);
   Palette->set_foreground($prevFore);
-  $image->undo_push_group_end;
+  $image->undo_group_end;
 }
 
 sub btn_pressed 

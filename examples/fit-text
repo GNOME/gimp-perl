@@ -1,8 +1,5 @@
 #!/opt/bin/perl
 
-eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-
 # <sjburges@gimp.org>
 # This is adrian and xachs idea - take a rectangluar selection, and select
 # font type and string.  Then fill it with whatever size is needed.
@@ -47,12 +44,13 @@ register "fit_text",
            [PF_STRING, "string", "Text String to fill with", "Fit Text"],
             ],
          sub {
-    my($img,$layer,$xlfd,$string) =@_;
+    my($img,$layer,$fontname,$string) =@_;
     ($sel,$x1,$y1,$x2,$y2) = $img->gimp_selection_bounds;
     $width = $x2-$x1;
 	$height = $y2-$y1;
-
-	@extents=Gimp->text_get_extents_fontname($string,xlfd_size($xlfd),$xlfd);
+	my $fontsize;
+        print 
+	@extents=Gimp->text_get_extents_fontname($string,$fontsize,PIXELS,$fontname);
 	$growsize = ($extents[0]<$width && $extents[1]<$height) ? 288 : -288;
 	if ($growsize > 0 ) {
 		 while ($extents[0]<$width && $extents[1]<$height) {

@@ -10,6 +10,9 @@ $VERSION = '0.2.1';
 
 $preview_size = 160; # max. size for image preview
 
+# 12/6/03: <sjburges@gimp.org>
+# s/gimp_drawable_image/gimp_drawable_get_image/
+
 # this funny little function parses the Magick.xs file
 sub reparse {
    my $res;
@@ -148,7 +151,7 @@ sub write_pixels {
 
    if ($x2 ne $im->get('width') or $y2 ne $im->get('height')) {
       $drawable->resize ($im->get('width','height'),0,0);
-      $drawable->image->selection_none;
+      $drawable->get_image->selection_none;
       ($x1,$y1,$x2,$y2)=(0,0,$im->get('width','height'));
    }
 

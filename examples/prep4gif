@@ -1,8 +1,5 @@
 #!/opt/bin/perl
 
-eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-
 use Gimp qw(:auto N_ __);
 use Gimp::Fu;
 
@@ -20,6 +17,10 @@ use Gimp::Fu;
 #
 # TODO: Write a nicer GUI than Gimp::Fu provides (learn some gtk)
 #       Anything else that seems useful
+#
+# 12/5/03: <sjburges@gimp.org>
+#  s/gimp_convert/gimp_image_convert
+
 
 # Gimp::set_trace(TRACE_ALL);
 
@@ -81,7 +82,7 @@ sub prep {
 
 # Convert to indexed
 	if ($index) {
-		gimp_convert_indexed($out,1, MAKE_PALETTE, $colors, $dither, 1, "");
+		gimp_image_convert_indexed($out,1, MAKE_PALETTE, $colors, $dither, 1, "");
 		}
 
 # Show all the changes.

@@ -1,7 +1,8 @@
 #!/opt/bin/perl
 
-eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
+# 12/6/03: <sjburges@gimp.org>
+# s/gimp_convert/gimp_image_convert/
+# s/->image/->get_image/
 
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
@@ -13,7 +14,7 @@ sub my_innerbevel {
 	my ($image, $drawable, $bg_col, $bl1, $bl2, $elev, $depth, $rad_tog) = @_;
 	$drawable->has_alpha or die "You can't run this script without an ALPHA CHANNEL!!";
 	my $img = gimp_image_new (256, 100, RGB_IMAGE);
-	$drawable->image->selection_all;
+	$drawable->get_image->selection_all;
 	$drawable->edit_copy;
 	gimp_selection_none ($image);
 	if ($rad_tog == 0) {
@@ -50,7 +51,7 @@ sub my_innerbevel {
 	$text2_lay->set_opacity(75);
 	if ($rad_tog == 1) {
 		$img->flatten;
-		gimp_convert_indexed ($img, 0, MAKE_PALETTE, 256, 0, 0, "");
+		gimp_image_convert_indexed ($img, 0, MAKE_PALETTE, 256, 0, 0, "");
         	my $new = gimp_image_active_drawable ($img);
         	gimp_layer_add_alpha ($new);
         	gimp_by_color_select ($new, [255, 255, 255], 55, CHANNEL_OP_ADD, 0, 0, 0.0, 0);

@@ -1,0 +1,90 @@
+Remove or fix:
+
+alpha2color: oh-my-god ugly.  Color specifiers not 1.3 compatibile.  In a lousy menu spot.  Just remove this one, since its simple to do by hand anyway. 
+bricks: pattern select is broken in UI, so this script doesn't work.
+circular_text: polar coordinates does a better job, more flexibly, and with preview.  
+colourtoalpha: this algorithm isn't right.  There's a C plugin that does it right.  Get rid of this.
+Create_Images (leaning towards removal, along with the file "image_list", since it doesn't do much)
+fire: gradient selector broken
+fit-text: doesn't work due to differences in fonts; xlfd_szie no longer works, because we don't have an xlfd any longer.  Can the font widget do better in returning values?
+PDB: <sjburges@gimp.org> working on this; major gtk2 rework, probably change quite a bit to make the gui a bit more accessible
+logulator: the name is awful, and its not working very well; pdb errors all over.  This useful enough to keep?
+roundrectsel: redundant, remove this
+terral_text: xlfd problems
+=============
+
+Untested:
+
+webify
+warp-sharp
+visual
+view3d
+triangu
+triangle
+translogo
+tex-to-float
+stamps
+stampify
+scratches
+repdup
+redeye
+prep4gif
+povray
+pixelmap
+perlcc (rename to control_center)
+parasite-editor
+mirrorsplit
+miff
+map_to_gradient
+image_tile
+iland
+homepage-logo
+guides_to_selection
+gradtest
+gouge
+goldenmean
+gimpmagick
+gimp-make-img-map
+gap-vcr
+gallery
+frame_reshuffle
+frame_filter
+font_table
+example-oo
+example-net
+example-fu
+dust
+ditherize
+dataurl
+colorhtml
+clear_alpha
+border
+blowinout
+blended2
+billboard
+avi
+animate_cells
+
+=============
+
+Tested:
+burst: 12/6/03 <sjburges@gimp.org>  basic functionality works
+fade-alpha: 12/12/03 <sjburges@gimp.org> removed deprecated stuff, so works again.
+centerguide: 12/12/03 <sjburges@gimp.org> works. (Gimp-Fu is ugly for radio buttons)
+dots: 12/12/03 <sjburges@gimp.org> works.  (Gimp-Fu is ugly for color selectors, and for spinbuttons)  Needs to be added to the install list.
+feedback: 12/12/03 <sjburges@gimp.org> works; don't know how useful it is still.
+glowing_steel: 12/13/03 <sjburges@gimp.org> fixed.
+guide_remove: 12/12/03 <sjburges@gimp.org> works.
+guidegrid: 12/12/03 <sjburges@gimp.org> works
+innerbevel: 12/13/03 <sjburges@gimp.org> fixed.
+layerfuncs: 12/12/03 <sjburges@gimp.org> Center Layer works.  Probably could use repositioning in menus.  Could use a namechange since I removed the layer_to_image_size functionality, which is ported to C.
+perlotine: 12/13/03 <sjburges@gimp.org> fixed; tested on gif only.
+randomart1: 12/13/03 <sjburges@gimp.org> fixed; could use spinners instead of sliders.
+randomblends: 12/13/03 <sjburges@gimp.org> fixed.
+roundsel: 12/12/03 <sjburges@gimp.org> works.
+sethspin: 12/13/03 <sjburges@gimp.org> fixed.
+windify: 12/12/03 <sjburges@gimp.org> works.
+xachlego: 12/14/03 <sjburges@gimp.org> removed deprecated; works.
+xachshadow: 12/14/03 <sjburges@gimp.org> removed deprecated, added a selection->none.  works.
+xachvision: 12/14/03 <sjburges@gimp.org> fixed.  Changed orientation to be horizontal.
+yinyang: 12/12/03 <sjburges@gimp.org> basic functionality works
