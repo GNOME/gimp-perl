@@ -3,10 +3,17 @@ Revision history for Gimp-Perl extension.
 Please add detailed ChangeLog entries to the ChangeLog file, keeping this
 file to document revision changes (similar to a GNU-style NEWS file).
 
-2.0 Not yet released...
-	- Removed 'embed' whose purpose was unclear to me and wasn't built anyway
-	- Removed 'scm2scm'.  See http://pages.interlog.com/~kcozens/software/gimp/updates.html for a perl script with no dependencies that does the same thing.Removed Rec::Decent requirement, though scm2perl is still there and has said requirement.
-	
+2.0     Sat May 15, 2004
+	- added plug-in selective_sharpen
+        - removed gobs of plug-ins that were non-functional/non-useful
+        - documentation cleanup
+	- Removed 'embed' whose purpose was unclear to me and wasn't built 
+          anyway
+	- Removed 'scm2scm'.  S
+          See http://pages.interlog.com/~kcozens/software/gimp/updates.html 
+          for a perl script with no dependencies that does the same thing.
+          Removed Rec::Decent requirement, though scm2perl is still there 
+          and has said requirement.
 
 2.0pre3  Sun Apr 25, 2004
 	- Gimp::Init works
