@@ -686,11 +686,10 @@ package Gimp; # for __DATA__
 
 Gimp - Perl extension for writing Gimp Extensions/Plug-ins/Load & Save-Handlers
 
-WARNING: This is a pre-release of gimp-perl for gimp-2.0. If you are interested in a version for gimp-1.2, use version 1.2* of the Gimp-Perl module.
+This is a release of gimp-perl for gimp-2.0. If you are interested in a version for gimp-1.2, use version 1.2.x of the Gimp-Perl module instead.
 
 This is mostly a reference manual. For a quick intro, look at
-L<Gimp::Fu>. For more information, including tutorials, look at the
-Gimp-Perl pages at http://gimp.pages.de.
+L<Gimp::Fu>. 
 
 =head1 SYNOPSIS
 
@@ -742,11 +741,10 @@ The default (unless '' is specified) is C<'main', 'xlfd_size', ':consts', '__'>.
 
 =head1 GETTING STARTED
 
-You should first read the Gimp::Fu manpage and then come back. This manpage is mainly
-intended for reference purposes.
+You should first read the Gimp::Fu manpage and then come back. This manpage is mainly intended for reference purposes.
 
 Also, Dov Grobgeld has written an excellent tutorial for Gimp-Perl. You can
-find it at http://imagic.weizmann.ac.il/~dov/gimp/perl-tut.html
+find it at http://imagic.weizmann.ac.il/~dov/gimp/perl-tut-2.0/
 
 =head1 DESCRIPTION
 

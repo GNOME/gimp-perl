@@ -1,18 +1,22 @@
 2004-05-15  Seth Burgess <sjburges@gimp.org>
 	* Made 2.0 release.
 
-2004-05-15  Seth Burgess <sjburges@gimp.org>
-	* exmaples/fade-alpha: s/RADIAL/GRADIENT_RADIAL/ fixes bug #141444
-        * examples/selective_sharpen: change threshold to be zero based, fix a bug if no
-        selection was present. 
+        * Gimp.pm 
+        * Changes: updated docs to reflect
 
 2004-05-15  Seth Burgess <sjburges@gimp.org>
-	* examples/selective_sharpen: use a curve suggested by tigert to "Basically 
-        just darken the very dark noisy grays to black and boost everything else."
+	* exmaples/fade-alpha: s/RADIAL/GRADIENT_RADIAL/ fixes bug #141444
+        * examples/selective_sharpen: change threshold to be zero based, fix 
+          a bug if no selection was present. 
+
+2004-05-15  Seth Burgess <sjburges@gimp.org>
+	* examples/selective_sharpen: use a curve suggested by tigert 
+          to "Basically just darken the very dark noisy grays to black 
+          and boost everything else."
 
 2004-05-15  Seth Burgess <sjburges@gimp.org>
 	* examples/selective_sharpen: added new script based on tigert's 
-	method.
+	  method.
         * Makefile.PL: install it 
 	* MANIFEST: updated accordingly
 
