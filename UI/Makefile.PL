@@ -39,7 +39,9 @@ $pkg->add_pm (
               'UI.pm'		=> '$(INST_LIBDIR)/UI.pm',
               'basewidget.pm'	=> '$(INST_LIBDIR)/basewidget.pm',
              );
-$pkg->add_define ("$DEFINE1 $DEFS");
+# obsoleted in 2.0.  I'm not sure if this needs to be added to set_inc 
+# or not.
+# $pkg->add_define ("$DEFINE1 $DEFS");
 $pkg->add_typemaps ("$topdir/typemap", @pdl_typemaps);
 
 WriteMakefile(

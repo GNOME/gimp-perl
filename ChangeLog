@@ -1,3 +1,7 @@
+2004-3-28 Seth Burgess <sjburges@gimp.org>
+	* UI/Makefile.PL: removed pkg->add_define call, since its no longer in 
+	Extutils::Depends 0.20x.  Need to generate another release for this, 
+	since its a blocker for people installing (a somewhat-important step).   
 2004-3-27 Seth Burgess <sjburges@gimp.org>
 	* GIMP.pm: updated enums
 	
