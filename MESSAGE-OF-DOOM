@@ -1,0 +1,6 @@
+This used to be part of the GIMP source tree, but was taken out due to
+lack of activity on the perl bindings, on both the GIMP and GTK+ fronts.
+
+It currently is broken, and probably doesn't even compile. If you're serious
+about wanting to fix it, please do so. Bug reports without patches will
+not be accepted.
