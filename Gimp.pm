@@ -10,7 +10,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK $AUTOLOAD %EXPORT_TAGS @EXPORT_FAIL
 use subs qw(init end lock unlock canonicalize_color);
 
 BEGIN {
-   $VERSION = 1.3;
+   $VERSION = 2.0;
    eval {
       require XSLoader;
       XSLoader::load Gimp $VERSION;
