@@ -44,9 +44,12 @@ $n=!$EXTENSIVE_TESTS;
 # should look like:
 #  /usr/bin/install -c /bin/sh /usr/local/lib/gimp/2.0/plug-ins/sh
 
-# Test 2
-skip($n,1,sub {($plugins = `$GIMPTOOL -n --install-admin-bin /bin/sh`) =~ 
-                            s|^.*/bin/sh\s+(.+)/sh\r?\n?$|$1|});
+# Test 2 Get plugin directory
+skip($n,1,sub {$plugins = `$GIMPTOOL --gimpplugindir`;
+               chomp $plugins;
+	       $plugins = $plugins . '/plug-ins'; 
+	       return ($#plugins);}
+	);
 
 # Test 3 (Make sure plug-in directory exists)
 skip($n,1,sub {-d $plugins});

@@ -29,7 +29,6 @@ if ($ARGV[0] ne "--writemakefile") {
 }
 
 @otherdeps = qw(
-      povray 
 ); 
 @gtk_pins =
    qw(

@@ -1,3 +1,34 @@
+2004-05-07  Seth Burgess <sjburges@gimp.org>
+	* examples/alpha2color
+	* examples/avi
+	* examples/border
+	* examples/circular_text
+	* examples/clear_alpha
+	* examples/colour2alpha
+	* examples/Create_Images
+	* examples/fire
+	* examples/fit-text
+	* examples/gap-vcr
+	* examples/gimpmagick
+	* examples/homepage-logo
+	* examples/miff
+	* examples/PDB
+	* examples/perlcc
+	* examples/logulator
+	* examples/parasite-editor
+	* examples/povray
+	* examples/roundrectsel
+	* examples/terral_text
+	* examples/triangu
+	* examples/visual: removed
+
+	* Makefile.PL: removed reference to povray
+
+        * t/run.t: removed regex that wasn't matching; use 
+	  --gimpplugindir instead.  'make test' should work for more people.
+     
+        * examples/pixelmap: strip \n's from image title (prevent gui oddity)
+
 2004-04-24  Seth Burgess <sjburges@gimp.org>
 	* examples/animate_cells:  s/channel_ops_duplicate/image_duplicate/
 	* examples/billboard:  s/push_undo/undo/g

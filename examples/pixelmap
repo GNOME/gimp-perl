@@ -84,7 +84,9 @@ register "pixelgen",
          sub {
    my($w,$h,$type,$expr)=@_;
    my $image = new Image $w, $h, Gimp->layer2imagetype($type);
-   my $layer = new Layer $image, $w, $h, $type, $expr, 100, NORMAL_MODE;
+   my $layername = $expr;
+   $layername =~ s/\n//g;
+   my $layer = new Layer $image, $w, $h, $type, $layername, 100, NORMAL_MODE;
    $image->add_layer($layer, 0);
    eval { pixelmap($image, $layer, $expr) };
    if ($@) {
