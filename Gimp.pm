@@ -201,10 +201,8 @@ sub gtk_init() {
       require Gtk;
       Gtk->init;
       Gtk::Rc->parse (Gimp->gtkrc);
-      Gtk::Gdk->set_use_xshm (Gimp->use_xshm);
       Gtk::Preview->set_gamma (Gimp->gamma);
       Gtk::Preview->set_install_cmap (Gimp->install_cmap);
-      Gtk::Preview->set_color_cube (Gimp->color_cube);
       Gtk::Widget->set_default_visual (Gtk::Preview->get_visual);
       Gtk::Widget->set_default_colormap (Gtk::Preview->get_cmap);
       $gtk_init = 0;
