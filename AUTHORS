@@ -4,5 +4,4 @@ Marc Lehmann <pcg@goof.com>
 Seth Burgess <sjburges@gimp.org>
 	"everything since 1.2"
 
-For example/plug-in authors (may not be complete), please see the
-scripts in the examples/directory.
+For example/plug-in authors, please see individual scripts in the examples/directory.
