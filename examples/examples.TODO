@@ -73,7 +73,8 @@ fade-alpha: 12/12/03 <sjburges@gimp.org> removed deprecated stuff, so works agai
 centerguide: 12/12/03 <sjburges@gimp.org> works. (Gimp-Fu is ugly for radio buttons)
 dots: 12/12/03 <sjburges@gimp.org> works.  (Gimp-Fu is ugly for color selectors, and for spinbuttons)  Needs to be added to the install list.
 feedback: 12/12/03 <sjburges@gimp.org> works; don't know how useful it is still.
-glowing_steel: 12/13/03 <sjburges@gimp.org> fixed.
+glowing_steel: 12/13/03 <sjburges@gimp.org> fixed. 12/26/03 fixed again (color
+               specifiers 0-1.0)
 guide_remove: 12/12/03 <sjburges@gimp.org> works.
 guidegrid: 12/12/03 <sjburges@gimp.org> works
 innerbevel: 12/13/03 <sjburges@gimp.org> fixed.

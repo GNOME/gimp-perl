@@ -1,4 +1,4 @@
-#!/opt/bin/perl 
+#!/usr/bin/perl 
 
 # A plug-in for GIMP for producing logos and other such nifty things
 # which appear to be made of steel and floating over a glowing cloud.
@@ -305,7 +305,7 @@ register
   N_"<Image>/Filters/Render/Add Glow",
   "*",
   [
-   [PF_COLOR, "glow_color", "Color", [0x00, 0x00, 0xff]],
+   [PF_COLOR, "glow_color", "Color", [0,0,1.0]],
    [PF_SPINNER, "glow_radius", "Radius", 10, [1, 1000, 1]]
   ],
   \&perl_fu_add_glow;
@@ -324,7 +324,7 @@ register
    # The font in the poster was like "cobalt extended"
    [PF_FONT, "font", "Font", undef],
    [PF_SPINNER, "size", "Size", 100, [0, 3000, 1]],
-   [PF_COLOR, "glow_color", "Color", [0xff, 0xd0, 0x00]],
+   [PF_COLOR, "glow_color", "Color", [1.0, 0.8157, 0]],
    [PF_COLOR, "background", "Color", [0x00, 0x00, 0x00]],
    [PF_INT32, "glow_radius", "radius", 4],
    [PF_TOGGLE, "highlight_edges", "", 1],
