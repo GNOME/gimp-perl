@@ -4,7 +4,7 @@ use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 use Gimp::Util;
 
-Gimp::set_trace(TRACE_ALL);
+# Gimp::set_trace(TRACE_ALL);
 
 sub my_innerbevel {
 	my ($image, $drawable, $bg_col, $bl1, $bl2, $elev, $depth, $rad_tog) = @_;
