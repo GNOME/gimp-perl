@@ -116,7 +116,12 @@ register "edge_detect_2x2",
 
 exit main;
 
+=head1 LICENSE
 
+Copyright Marc Lehman.
+Distrubuted under the same terms as Gimp-Perl.
+
+=cut
 
 
 

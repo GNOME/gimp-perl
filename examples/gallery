@@ -243,3 +243,11 @@ Note : This plugin only processes JPG pictures.
 =head1 AUTHOR
 
 Written by Fabian Frederick <fabian.frederick@gmx.fr>, (c) 2001
+
+=head1 LICENSE
+
+Copyright Fabian Frederick.
+This plugin may be distributed under the same terms as The Gimp itself.
+
+=cut
+

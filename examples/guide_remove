@@ -48,4 +48,12 @@ register "guide_remove",
  
     return();
 };
-exit main;                                        
+exit main;                                       
+
+=head1 LICENSE
+
+Copyright unknown, but believed to be with Brenden Humphrey.
+Unknown distribution terms.
+
+=cut
+

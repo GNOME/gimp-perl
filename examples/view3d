@@ -35,3 +35,10 @@ sub {
 
 exit main;
 
+=head1 LICENSE
+
+(c) Tom Rathborne
+
+Released under the GNU Public License v2.
+
+=cut

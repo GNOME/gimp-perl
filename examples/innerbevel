@@ -100,3 +100,11 @@ return();
 };
 
 exit main;  # <-- This lil' bugger caused me much grief.  
+
+=head1 LICENSE
+
+Copyright Seth Burgess.  
+Distrubuted under the same terms as Gimp-Perl.
+
+=cut
+

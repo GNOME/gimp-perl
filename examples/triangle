@@ -43,3 +43,10 @@ register	"triangle",
 		$img->free_select(8, @lista, $mode, 0, 0, 0);
 	};
 exit main;
+
+=head1 LICENSE
+
+Copyright Claes G. Lindblad.
+Distrubuted under the terms of the GNU Public License, v2 or higher.
+
+=cut

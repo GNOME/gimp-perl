@@ -101,3 +101,11 @@ register "make_bevel_logos",
          \&my_innerbevel;
 exit main;
 
+=head1 LICENSE
+
+Copyright Michele Gherlone.
+
+Unknown license status.
+
+=cut
+

@@ -45,3 +45,10 @@ register	"repdup",
 		return $img;
 	};
 exit main;
+
+=head1 LICENSE
+
+Copyright Claes G. Lindblad.
+Distrubuted under the terms of the GNU Public License, v2 or higher. 
+
+=cut

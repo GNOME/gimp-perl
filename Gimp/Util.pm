@@ -106,7 +106,7 @@ sub layer_create {
                            RGB_IMAGE,$name,100,NORMAL_MODE);
   $tcol = Gimp->palette_get_background ();
   Gimp->palette_set_background ($color);
-  Gimp->drawable_fill ($layer,BG_IMAGE_FILL);
+  Gimp->drawable_fill ($layer,BACKGROUND_FILL);
   Gimp->image_add_layer($image, $layer, $pos);
   Gimp->palette_set_background ($tcol); # reset
   $layer;  
@@ -188,7 +188,7 @@ sub image_create_text {
   Gimp->palette_set_foreground ($fgcolor);
   # Create a layer for the text.
   $text_layer = Gimp->text($image,-1,0,0,$text,10,1,$size,
-                          PIXELS,"*",$font,"*","*","*","*"); 
+                          PIXELS,"*",$font,"*","*","*","*","*","*"); 
   Gimp->palette_set_foreground ($tcol);
     
   Gimp->layer_set_preserve_trans($text_layer, FALSE);

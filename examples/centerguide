@@ -42,4 +42,9 @@ register	"center_guide",
 		gimp_drawable_update($layer, 0, 0, $w, $h);
 	};
 exit main;
+=head1 LICENSE
 
+Copyright Claes G Lindblad.
+Distrubuted under the terms of the GNU Public License. 
+
+=cut

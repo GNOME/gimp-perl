@@ -85,4 +85,9 @@ Examples:
  -i        # reverse the order of layers
  (i+5)%n   # shift the order of frames by 5
 
+=head1 LICENSE
+
+Copyright Marc Lehman.
+Distrubuted under the same terms as Gimp-Perl.
+
 =cut

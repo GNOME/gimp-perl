@@ -9,6 +9,12 @@
 # This plugin may be distributed under the same terms as The Gimp itself.
 # See http://www.gimp.org/ for more information on The Gimp.
 
+=head1 LICENSE
+
+Written in 1999 (c) by Aaron Sherman <ajs@ajs.com>.
+This plugin may be distributed under the same terms as The Gimp itself.
+
+=cut
 require 5.004;
 
 use Gimp qw(:auto N_);

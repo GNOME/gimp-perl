@@ -45,3 +45,9 @@ register	"golden_mean",
 
 exit main;
 
+=head1 LICENSE
+
+Copyright Claes G Lindblad.
+Distrubuted under the terms of the GNU Public Licesne.
+
+=cut

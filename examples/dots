@@ -98,3 +98,11 @@ register "dots",
     return();
 };
 exit main;
+
+=head1 LICENSE
+
+Copyright Seth Burgess.  
+Distrubuted under the same terms as Gimp-Perl.
+
+=cut
+

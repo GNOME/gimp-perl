@@ -93,3 +93,9 @@ register "make_trans_logos",
          \&my_code;
 exit main;
 
+=head1 LICENSE
+
+Copyright Michele Gherlone.
+Distrubuted under unknown licensing terms.
+
+=cut

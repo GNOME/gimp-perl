@@ -28,7 +28,6 @@ few thousand pics to throw at this and let me know if it works?
 
 scratches
 repdup
-redeye
 povray
 perlcc (rename to control_center)
 parasite-editor
@@ -46,7 +45,6 @@ ditherize
 dataurl
 colorhtml
 clear_alpha
-blowinout
 billboard
 avi
 animate_cells
@@ -55,6 +53,7 @@ animate_cells
 
 Tested:
 blended2: 3/26/04 <sjburges@gimp.org> fixed - blend takes different params now. Moved to Render, since I'm killing Logulator.
+blowinout: 4/11/04 <sjburges@gimp.org> worked.  Updated email, license.
 bricks: 2/25/04 <sjburges@gimp.org> lots of changes (see plugin).  This seems to work now.
 burst: 12/6/03 <sjburges@gimp.org>  basic functionality works
 fade-alpha: 12/12/03 <sjburges@gimp.org> removed deprecated Gtk stuff, so works again.  2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
@@ -75,6 +74,7 @@ perlotine: 12/13/03 <sjburges@gimp.org> fixed; tested on gif only.
 pixelmap: 3/18/04 <sjburges@gimp.org> worked out of the box.  Hacked PF_TEXT to look good.  Moved to Generic.
 randomart1: 12/13/03 <sjburges@gimp.org> fixed; could use spinners instead of sliders.  2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
 randomblends: 12/13/03 <sjburges@gimp.org> fixed. 2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
+redeye: 4/3/04 <sjburges@gimp.org> works.  Moved to Filter/Colors/Redeye*
 roundsel: 12/12/03 <sjburges@gimp.org> works.
 sethspin: 12/13/03 <sjburges@gimp.org> fixed.
 tex-to-float: 3/24/04 <sjburges@gimp.org> works if you have TeX installed; breaks in a rather non-obvious way if you don't.  Lots of console output that should probably be redirected.  Moved to Render (rather than being alone in Text).

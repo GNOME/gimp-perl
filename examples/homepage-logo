@@ -104,3 +104,11 @@ sub create_logo {
 
    $img->delete unless $example;
 }
+
+=head1 LICENSE
+
+Copyright Marc Lehman.
+Distrubuted under the same terms as Gimp-Perl.
+
+=cut
+

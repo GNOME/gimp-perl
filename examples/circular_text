@@ -82,3 +82,11 @@ register "circular_shape",
          \&circular_text;
 
 exit main;
+
+=head1 LICENSE
+
+Copyright Michele Gherlone.
+Unknown license status.
+
+=cut
+

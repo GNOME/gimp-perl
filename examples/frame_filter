@@ -113,5 +113,9 @@ maybe C<$f->set_opacity(50)> for your animation.
  $f->set_mode(DARKEN_ONLY_MODE);
  $f->anchor;
 
+=head1 LICENSE
+
+Copyright Marc Lehman
+Distrubuted under the same terms as Gimp-Perl.
 
 =cut

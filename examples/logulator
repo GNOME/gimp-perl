@@ -1011,3 +1011,13 @@ register "perl_fu_title_header",
    \&script_fu_title_header;
 
 exit main;
+
+=head1 LICENSE
+
+Original Scheme code copyright various authors; distrubuted with GIMP.
+
+Perl code copyright Marc Lehman.
+Distrubuted under the same terms as Gimp-Perl.
+
+=cut
+

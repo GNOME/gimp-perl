@@ -63,3 +63,11 @@ register	"mirror_split",
 		return $img;
 	};
 exit main;
+
+=head1 LICENSE
+
+Copyright Claes G. Lindbad.
+Distributed under terms of the GNU Public License.
+
+=cut
+

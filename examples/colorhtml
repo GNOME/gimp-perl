@@ -127,6 +127,11 @@ To save even more space you can leave out the closing tag (C</font>),
 but this will potentially leave thousands of font elements open in the browser,
 and will disturb the current font colour.
 
+=head1 LICENSE
+
+Copyright Marc Lehman.
+Distrubuted under the same terms as Gimp-Perl.
+
 =cut
 
 __END__

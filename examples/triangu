@@ -101,3 +101,10 @@ Triangulation Landscape is a Gimp plugin.
 =head1 AUTHOR
 
 Written by Fabian Frederick <fabian.frederick@gmx.fr>, (c) 2001
+
+=head1 LICENSE
+
+Copyright Fabian Frederick.
+Distrubuted under the same terms as The Gimp.
+
+=cut

@@ -134,3 +134,11 @@ of the original picture (which is an taken as an apical view).
 =head1 AUTHOR
 
 Written by Fabian Frederick <fabian.frederick@gmx.fr>, (c) 2001
+
+=head1 LICENSE
+
+Copyright Fabian Frederick.
+This plugin may be distributed under the same terms as The Gimp itself.
+
+=cut
+

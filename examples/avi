@@ -282,3 +282,9 @@ Gimp::on_query {
 
 exit main;
 
+=head1 LICENSE
+
+Copyright Marc Lehman.
+
+Distributed under the same terms as Gimp-Perl.
+

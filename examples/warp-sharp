@@ -94,3 +94,10 @@ register
 
 
 exit main;
+
+=head1 LICENSE
+
+Copyright Simon Budig, Peter Daum. (original scheme by Simon Budig).
+Distrubuted under the terms of the GNU Publice License, v2 or higher.
+
+=cut

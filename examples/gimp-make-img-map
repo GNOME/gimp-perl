@@ -43,6 +43,14 @@
 #  Version: 0.14
 ######################################################################
 
+=head1 LICENSE
+
+(c) Dov Grobgeld
+
+Released under the Artistic license.
+
+=cut
+
 BEGIN {
 $HELP=<<__;
 make-img-map - Make an image map from a list of images
@@ -477,3 +485,5 @@ while($_ = $ARGV[0], /^-/) {
 
 # Translate background into a color according to the X11 color dbase.
 exit Gimp::main();
+
+

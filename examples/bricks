@@ -154,3 +154,10 @@ register
 
 exit main();
 
+=head1 LICENSE
+
+Copyright Tels.  
+
+Licenced under the GNU Public License.
+
+=cut

@@ -287,7 +287,14 @@ This is in pixels, and is intended to allow ease of viewing and printing.
 
 Written in 1998 (c) by Aaron Sherman E<lt>ajs@ajs.comE<gt>
 
+=head1 LICENSE
+
+Copyright Aaron Sherman.
+Unknown license status.
+
 =head1 BUGS
+
+Needs to be completely rewritten for 2.0.
 
 This plug-in relies on running xlsfonts. If your platform does not have
 xlsfonts, or it's not in your path, or its output looks different from

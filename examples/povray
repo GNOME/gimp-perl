@@ -186,3 +186,9 @@ Thanks to Aaron Sherman who inspired me, to John Pitney who wrote some
 other, similar plug-in and to Adrian Likins who knew that. Not that this
 plug-in is cool enough to warrant a long list of thanks ;)
 
+=head1 LICENSE
+
+Copyright Marc Lehman.
+Distrubuted under the same terms as Gimp-Perl.
+
+=cut

@@ -550,3 +550,11 @@ register "extension_pdb_explorer",
 
 exit main;
 
+=head1 LICENSE
+
+Copyright Marc Lehman.
+
+Distributed under the same terms as Gimp-Perl.
+
+=cut
+

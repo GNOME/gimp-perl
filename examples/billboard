@@ -184,3 +184,11 @@ register "billboard",
 
 exit main;
 
+=head1 LICENSE
+
+Copyright Seth Burgess.  
+
+Distrubted under the same terms as Gimp-Perl.
+
+=cut
+

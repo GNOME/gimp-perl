@@ -1,25 +1,48 @@
-#!/opt/bin/perl
+#!/usr/bin/perl
 
-# this extension shows some oo-like calls
-
-# it's really easy
+# this extension shows some syntax tricks you can use to make oo-like calls.
+# I find these make the logic easier to follow.  Its good to understand this
+# if for no other reason than lots of scripts use it.
 
 use Gimp;
 
 # the extension that's called.
 sub plug_in_example_oo {
+
+# we use syntax tricks to make it seem like we're generating a new 
+# object by calling 'new'.  This is fairly standard PERL OO magic.
+
+# instead of my $img=gimp_image_new(300,200,RGB)
   my $img=new Image(300,200,RGB);
 
+# instead of my $bg=gimp_layer_new($img, ...)
   my $bg=new Layer($img,300,200,RGB_IMAGE,"Background",100,NORMAL_MODE);
 
+# instead of gimp_display_new($img);
+  new Display($img);
+
+# For any of Image, Drawable, Layer, Palette, Edit, Gradients, Patterns, 
+# Progress, Channel, Selection, Display, Plugin, you can use a syntax
+# like Objtype->function, and it will be translated into 
+# gimp_objtype_function
+
+# instead of gimp_palette_set_background() you can use
   Palette->set_background([200,200,100]);
 
-  $bg->fill(BACKGROUND_FILL);
-#  Palette->set_background([200,100,200]);
-#  gimp_drawable_fill ($bg,BACKGROUND_FILL);
-  $img->add_layer($bg,1);
+# Next, we have 2 examples of using the drawable or image as an object when
+# its the first parameter to the PDB call.  
 
-  new Display($img);
+# image_add_layer($img,$bg,1);
+  $img->add_layer($bg,1);
+#  gimp_drawable_fill ($bg,BACKGROUND_FILL);
+  $bg->fill(BACKGROUND_FILL);
+
+# Finally, we have a plugin example.  Note that though the PDB defintion 
+# specifies a run mode, image and drawable, we only specify a drawable.
+
+  $bg->blur();
+  plug_in_blur(1,$img,$bg);
+
 }
 
 Gimp::on_run {
@@ -34,4 +57,11 @@ Gimp::on_query {
 };
 
 exit main;
+
+=head1 LICENSE
+
+Copyright Marc Lehman.
+Distrubuted under the same terms as Gimp-Perl.
+
+=cut
 

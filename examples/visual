@@ -325,3 +325,9 @@ package main;
 
 exit main;
 
+=head1 LICENSE
+
+Copyright Marc Lehman.
+Distrubuted under the same terms as Gimp-Perl.
+
+=cut
