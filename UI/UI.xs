@@ -362,6 +362,12 @@ void gimp_size_entry_set_unit (GimpSizeEntry *gse, GimpUnit unit)
 
 void gimp_size_entry_grab_focus (GimpSizeEntry *gse)
 
+MODULE = Gimp::UI	PACKAGE = Gimp::UI::Stock 	PREFIX = gimp_stock_
+
+BOOT:
+	gimp_stock_init();
+	CARGS:
+
 MODULE = Gimp::UI	PACKAGE = Gimp::UI::UnitMenu	PREFIX = gimp_unit_menu_
 
 BOOT:

@@ -1,3 +1,8 @@
+2003-12-28 Seth burgess <sjburges@gimp.org>
+	* UI/UI.xs: add a call to gimp_stock_init() to UI startup, so we 
+	get the gimp-* stock icons.  I'm not sure this is the proper way to
+	do this, but it works... still not familiar enough with xs.
+
 2003-12-26 Seth Burgess <sjburges@gimp.org>
 	* examples/glowing_steel: changed color specifiers to be 0-1.0
 
