@@ -1,3 +1,11 @@
+2004-04-17  Seth Burgess <sjburges@gimp.org>
+	* updated TODO for suggestion in bug 117349
+
+2004-04-17  Seth Burgess <sjburges@gimp.org>
+	* added patch from Carol Spears, bug #100356.  Technically, this is
+	  breaking the API after the release, but I really doubt many people
+	  are calling colorhtml all that much.
+
 2004-05-15  Seth Burgess <sjburges@gimp.org>
 	* Made 2.0 release.
 

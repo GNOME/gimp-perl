@@ -1,6 +1,8 @@
 <Seth's random notes>
 Convince someone that knows auto* to redo the compilation/installation.  Or move to ExtUtils::PkgConfig for this purpose.
 
+Add POD documentation for gimpdoc.
+
 Make a 'utils' directory for gimpdoc, scm2perl, embedxpm, xcf2pnm and move out of the root directory.
 
 Install 1.2 C libs/dev headers, and see if it interferes; it did for one user at least, so is likely a bug in my auto* or MakeMaker stuff.
