@@ -1,3 +1,14 @@
+2004-04-24  Seth Burgess <sjburges@gimp.org>
+	* t/run.t: uncommented tests.  Recommented one that is still broken.
+	Numbered the tests for easier reference, with brief description.
+	Changed GIMP_DIRECTORY environment variable to GIMP2_DIRECTORY.
+	'make test' should work now, along with other changes below.
+	* Perl-Server: register as a PLUGIN rather than EXTENSION.  This
+	is not only the right thing to do since it doesn't register temporary
+	procedures, but also works around a bug in Gimp on loading extensions
+	from the commandline with more than 0 arguments.
+	* configure: changed search to gimp-2.0, require gimp-2.0
+
 2004-04-04  Seth Burgess <sjburges@gimp.org>
 	* Net/Net.pm: removed some obsolete params being passed to gimp
 	* t/run.t: commented out most of the tests.  Re-did a regex so it
