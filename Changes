@@ -3,6 +3,10 @@ Revision history for Gimp-Perl extension.
 Please add detailed ChangeLog entries to the ChangeLog file, keeping this
 file to document revision changes (similar to a GNU-style NEWS file).
 
+2.0pre2  Sun Mar 28, 2004
+	- change in UI/Makefile.PL to work with latest ExtUtils::Depends.
+	- enum updates, script updates.
+
 2.0pre1  Mon Mar 22, 2004 
         - prerelease to have something available when The GIMP 2.0 ships.  
 	  Its quite usable now, but requires a good bit of testing and polish
