@@ -4,6 +4,8 @@ use Gimp ('__');
 use Gimp::Fu;
 use base 'DynaLoader';
 
+no warnings "all";
+
 BEGIN {
    $VERSION = 1.3;
    require XSLoader;
@@ -21,8 +23,8 @@ Gimp::UI - "simulation of libgimpui", and more!
 =head1 DESCRIPTION
 
 Due to the braindamaged (read: "unusable") libgimpui API, I had to
-reimplement all of it in perl. Note to self: We ar at 1.3 now, better
-check and finally use libgimpui.
+reimplement all of it in perl. Note to self: We are at 1.3 now, better
+check and finally use libgimpui since it is now based on gobject.
 
 =over 4
 
@@ -97,11 +99,11 @@ sub Gimp::UI::DrawableMenu::_items {
 }
 
 sub new($$$$) {
-   my($class,$constraint,$active,$var)=@_;
-   my(@items)=$class->_items;
+   my ($class,$constraint,$active,$var)=@_;
+   my (@items)=$class->_items;
    my $menu = new Gtk2::Menu;
    for(@items) {
-      my($constraints,$result,$name)=@$_;
+      my ($constraints,$result,$name)=@$_;
       next unless $constraint->(@{$constraints});
       my $item = new Gtk2::MenuItem $name;
       $item->signal_connect(activate => sub { $$var=$result });
@@ -128,7 +130,7 @@ sub GTK_CLASS_INIT {
 }
 
 sub GTK_OBJECT_SET_ARG {
-   my($self,$arg,$id,$value) = @_;
+   my ($self,$arg,$id,$value) = @_;
    if ($arg eq "active") {
       my $count;
       
@@ -146,7 +148,7 @@ sub GTK_OBJECT_SET_ARG {
 }
 
 sub GTK_OBJECT_GET_ARG {
-   my($self,$arg,$id) = @_;
+   my ($self,$arg,$id) = @_;
    $self->{label}->get;
 }
 
@@ -197,7 +199,7 @@ sub GTK_OBJECT_INIT {
    my $button = new Gtk2::Button __"OK";
    signal_connect $button "clicked", sub {
       hide $w;
-      if($l->selection) {
+      if ($l->selection) {
          my $p = $l->selection->children->get;
          $label->set($p);
       }
@@ -347,7 +349,7 @@ use Gimp::basewidget Gtk2::Button;
 my @class_def_color = (255,175,0);
 
 sub GTK_CLASS_INIT {
-	my($class) = shift;
+	my ($class) = shift;
 	add_arg_type $class "color", "GtkString", 3; #R/W
 }
 
@@ -355,7 +357,7 @@ sub GTK_OBJECT_INIT {
     my (@color) = @class_def_color;
     
     shift unless ref $_[0];
-    my($color_button) = @_;
+    my ($color_button) = @_;
     
     $color_button->{_color} ||= [@color];
 
@@ -369,8 +371,8 @@ sub GTK_OBJECT_INIT {
     $color_button->add($preview);
         
     signal_connect $color_button "size_allocate" => sub {
-    	my($self,$allocation) = @_;
-    	my($x,$y,$w,$h) = @$allocation;
+    	my ($self,$allocation) = @_;
+    	my ($x,$y,$w,$h) = @$allocation;
     	$w -= 6;
     	$h -= 6;
     	$self->{_preview_width} = $w;
@@ -383,25 +385,25 @@ sub GTK_OBJECT_INIT {
 }
 
 sub GTK_OBJECT_SET_ARG {
-   my($self,$arg,$id, $value) = @_;
+   my ($self,$arg,$id, $value) = @_;
    $self->{_color} = [split(' ',$value)];
    $self->update_color;
 }
 
 sub GTK_OBJECT_GET_ARG {
-   my($self,$arg,$id) = @_;
+   my ($self,$arg,$id) = @_;
    return join(' ',@{$self->{_color}});
 }
 
 sub update_color($) {
-    my($this) = shift;
+    my ($this) = shift;
     
     return unless defined $this->{_preview} and defined $this->{_preview_width};
     
-    my($preview, $color) = ($this->{_preview}, $this->{_color});
-    my($width, $height) = ($this->{_preview_width}, $this->{_preview_height});
+    my ($preview, $color) = ($this->{_preview}, $this->{_color});
+    my ($width, $height) = ($this->{_preview_width}, $this->{_preview_height});
     
-    my($buf) = pack("C3", @$color) x $width;
+    my ($buf) = pack("C3", @$color) x $width;
 
     for(0..$height-1) {
        $preview->draw_row($buf, 0, $_, $width);
@@ -410,9 +412,9 @@ sub update_color($) {
 }
 
 sub color_selection_ok {
-    my($widget, $dialog, $color_button) = @_;
+    my ($widget, $dialog, $color_button) = @_;
 	
-    my(@color) = $dialog->colorsel->get_color;
+    my (@color) = $dialog->colorsel->get_color;
     @{$color_button->{_color}} = map(int(255.99*$_),@color);
 
     $color_button->update_color();
@@ -421,7 +423,7 @@ sub color_selection_ok {
 }
 
 sub cb_color_button {
-    my($color_button) = @_;
+    my ($color_button) = @_;
     
     if (defined $color_button->{_cs_window}) {
     	if (!$color_button->{_cs_window}->mapped) {
@@ -451,7 +453,7 @@ sub logo {
 }
 
 sub logo_xpm {
-   my $window=shift;
+   my $window = shift;
    new_from_pixmap Gtk2::Image(Gtk2::Gdk::Pixmap->create_from_xpm_d($window->window,undef,
       #%XPM:logo%
       '108 33 18 1', '  c #030305', '. c #181818', 'X c #222221', 'o c Gray19',
@@ -498,27 +500,27 @@ sub logo_xpm {
 sub _new_adjustment {
    my @adj = eval { @{$_[1]} };
 
-   $adj[2]||=($adj[1]-$adj[0])*0.01;
-   $adj[3]||=($adj[1]-$adj[0])*0.01;
-   $adj[4]||=0;
+   $adj[2] ||= ($adj[1] - $adj[0]) * 0.01;
+   $adj[3] ||= ($adj[1] - $adj[0]) * 0.01;
+   $adj[4] ||= 0;
    
-   new Gtk2::Adjustment $_[0],@adj;
+   new Gtk2::Adjustment $_[0], @adj;
 }
 
 # find a suitable value for the "digits" value
 sub _find_digits {
    my $adj = shift;
    my $digits = log ($adj->step_increment || 1) / log(0.1);
-   $digits>0 ? int $digits + 0.9 : 0;
+   $digits > 0 ? int $digits + 0.9 : 0;
 }
 
 sub help_window(\$$$) {
-   my($helpwin,$blurb,$help)=@_;
+   my ($helpwin,$blurb,$help)=@_;
    unless ($$helpwin) {
       $$helpwin = new Gtk2::Dialog;
       $$helpwin->set_title(__("Help for ").$Gimp::function);
       $$helpwin->action_area->set_border_width(2);
-      my($font,$b);
+      my ($font,$b);
 
       $b = new Gtk2::TextView; #d# buffer
       $b->set_editable (0);
@@ -554,27 +556,24 @@ sub help_window(\$$$) {
    $$helpwin->show_all();
 }
 sub interact($$$$@) {
-   local $^W=0;
-   my($function)=shift;
-   my($blurb)=shift;
-   my($help)=shift;
-   my(@types)=@{shift()};
-   my(@getvals,@setvals,@lastvals,@defaults);
-   my($button,$box,$bot,$g);
-   my($helpwin);
-   my $res=0;
+   my $function = shift;
+   my $blurb = shift;
+   my $help = shift;
+   my @types = @{+shift};
+   my (@getvals, @setvals, @lastvals, @defaults);
+   my ($button, $box, $bot, $g);
+   my $helpwin;
+   my $res = 0;
    my @res;
 
    Gimp::gtk_init;
 
-   my $gimp_10 = Gimp->major_version==1 && Gimp->minor_version==0;
-   
    my $t = new Gtk2::Tooltips;
    my $w = new Gtk2::Dialog;
    my $accel = new Gtk2::AccelGroup;
 
    for(;;) {
-     #d#$accel->attach($w);
+     #$accel->attach($w);#d#
 
      set_title $w $Gimp::function;
      $w->action_area->set_border_width(2);
@@ -592,9 +591,9 @@ sub interact($$$$@) {
      $w->vbox->pack_start($g,1,1,0);
 
      for(@types) {
-        my($label,$a);
-        my($type,$name,$desc,$default,$extra)=@$_;
-        my($value)=shift;
+        my ($label,$a);
+        my ($type,$name,$desc,$default,$extra)=@$_;
+        my ($value)=shift;
         
         local *new_PF_STRING = sub {
            my $e = new Gtk2::Entry;
@@ -604,8 +603,8 @@ sub interact($$$$@) {
            $a=$e;
         };
 
-        if($type == PF_ADJUSTMENT) { # support for scm2perl
-           my(@x)=@$default;
+        if ($type == PF_ADJUSTMENT) { # support for scm2perl
+           my (@x)=@$default;
            $default=shift @x;
            $type = pop(@x) ? PF_SPINNER : PF_SLIDER;
            $extra=[@x];
@@ -616,14 +615,14 @@ sub interact($$$$@) {
         $label="$name: ";
         $label =~ y/_/ /; $label =~ s/^(\w)/\U$1/g;
         
-        if($type == PF_INT8		# perl just maps
+        if ($type == PF_INT8		# perl just maps
         || $type == PF_INT16		# all this crap
         || $type == PF_INT32		# into the scalar
         || $type == PF_FLOAT		# domain.
         || $type == PF_STRING) {	# I love it
            &new_PF_STRING;
            
-        } elsif($type == PF_FONT) {
+        } elsif ($type == PF_FONT) {
            my $fs=new Gtk2::FontSelectionDialog __"Font Selection Dialog ($desc)";
            my $def = __"-*-helvetica-medium-r-normal-*-34-*-*-*-p-*-iso8859-1";
            my $val;
@@ -637,7 +636,7 @@ sub interact($$$$@) {
                  $fs->set_font_name ($val);
               }
               
-              my($n,$t)=Gimp::xlfd_size($val);
+              my ($n,$t)=Gimp::xlfd_size($val);
               $l->set((split(/-/,$val))[2]."\@$n".($t ? "p" : ""));
            };
            
@@ -651,21 +650,21 @@ sub interact($$$$@) {
            $a->add($l);
            $a->signal_connect("clicked", sub { show $fs });
            
-        } elsif($type == PF_SPINNER) {
+        } elsif ($type == PF_SPINNER) {
            my $adj = _new_adjustment ($value,$extra);
            $a=new Gtk2::SpinButton $adj,1,0;
            $a->set_digits (_find_digits $adj);
            push(@setvals,sub{$adj->set_value($_[0])});
            push(@getvals,sub{$adj->get_value});
            
-        } elsif($type == PF_SLIDER) {
+        } elsif ($type == PF_SLIDER) {
            my $adj = _new_adjustment ($value,$extra);
            $a=new Gtk2::HScale $adj;
            $a->set_digits (_find_digits $adj);
            push(@setvals,sub{$adj->set_value($_[0])});
            push(@getvals,sub{$adj->get_value});
            
-        } elsif($type == PF_COLOR) {
+        } elsif ($type == PF_COLOR) {
            $a=new Gtk2::HBox (0,5);
            my $b=new Gimp::UI::ColorSelectButton -width => 90, -height => 18;
            $a->pack_start ($b,1,1,0);
@@ -688,15 +687,15 @@ sub interact($$$$@) {
            set_tip $t $d,__"get current background colour from the gimp";
            $a->pack_start ($d,1,1,0);
            
-        } elsif($type == PF_TOGGLE) {
+        } elsif ($type == PF_TOGGLE) {
            $a = new Gtk2::CheckButton $desc;
 
            push @setvals, sub{ $a->set (active => $_[0] ? 1 : 0)};
            push @getvals, sub{ $a->get("active") };
            
-        } elsif($type == PF_RADIO) {
+        } elsif ($type == PF_RADIO) {
            my $b = new Gtk2::HBox 0,5;
-           my($r,$prev);
+           my ($r,$prev);
            my $prev_sub = sub { $r = $_[0] };
            while (@$extra) {
               my $label = shift @$extra;
@@ -714,7 +713,7 @@ sub interact($$$$@) {
            push(@setvals,$prev_sub);
            push(@getvals,sub{$r});
            
-        } elsif($type == PF_IMAGE) {
+        } elsif ($type == PF_IMAGE) {
            my $res;
            $a=new Gtk2::HBox (0,5);
            my $b=new Gtk2::OptionMenu;
@@ -730,61 +729,49 @@ sub interact($$$$@) {
 #           $a->pack_start ($c,1,1,0);
 #           set_tip $t $c,"Load an image into the Gimp";
            
-        } elsif($type == PF_LAYER) {
+        } elsif ($type == PF_LAYER) {
            my $res;
            $a=new Gtk2::OptionMenu;
            $a->set_menu(new Gimp::UI::LayerMenu(sub {1},-1,\$res));
            push(@setvals,sub{});
            push(@getvals,sub{$res});
            
-        } elsif($type == PF_CHANNEL) {
+        } elsif ($type == PF_CHANNEL) {
            my $res;
            $a=new Gtk2::OptionMenu;
            $a->set_menu(new Gimp::UI::ChannelMenu(sub {1},-1,\$res));
            push(@setvals,sub{});
            push(@getvals,sub{$res});
            
-        } elsif($type == PF_DRAWABLE) {
+        } elsif ($type == PF_DRAWABLE) {
            my $res=13;
            $a=new Gtk2::OptionMenu;
            $a->set_menu(new Gimp::UI::DrawableMenu(sub {1},-1,\$res));
            push(@setvals,sub{});
            push(@getvals,sub{$res});
            
-        } elsif($type == PF_PATTERN) {
-           if ($gimp_10) {
-              &new_PF_STRING;
-           } else {
-              $a=new Gimp::UI::PatternSelect -active => defined $value ? $value : (Gimp->patterns_get_pattern)[0];
-              push(@setvals,sub{$a->set('active',$_[0])});
-              push(@getvals,sub{$a->get('active')});
-           }
+        } elsif ($type == PF_PATTERN) {
+           $a=new Gimp::UI::PatternSelect -active => defined $value ? $value : (Gimp->patterns_get_pattern)[0];
+           push(@setvals,sub{$a->set('active',$_[0])});
+           push(@getvals,sub{$a->get('active')});
            
-        } elsif($type == PF_BRUSH) {
-           if ($gimp_10) {
-              &new_PF_STRING;
-           } else {
-              $a=new Gimp::UI::BrushSelect -active =>  defined $value ? $value : (Gimp->brushes_get_brush)[0];
-              push(@setvals,sub{$a->set('active',$_[0])});
-              push(@getvals,sub{$a->get('active')});
-           }
+        } elsif ($type == PF_BRUSH) {
+           $a=new Gimp::UI::BrushSelect -active =>  defined $value ? $value : (Gimp->brushes_get_brush)[0];
+           push(@setvals,sub{$a->set('active',$_[0])});
+           push(@getvals,sub{$a->get('active')});
            
-        } elsif($type == PF_GRADIENT) {
-           if ($gimp_10) {
-              &new_PF_STRING;
-           } else {
-              $a=new Gimp::UI::GradientSelect -active => defined $value ? $value : (Gimp->gimp_gradients_get_active)[0];
-              push(@setvals,sub{$a->set('active',$_[0])});
-              push(@getvals,sub{$a->get('active')});
-           }
+        } elsif ($type == PF_GRADIENT) {
+           $a=new Gimp::UI::GradientSelect -active => defined $value ? $value : (Gimp->gimp_gradients_get_active)[0];
+           push(@setvals,sub{$a->set('active',$_[0])});
+           push(@getvals,sub{$a->get('active')});
            
-        } elsif($type == PF_CUSTOM) {
+        } elsif ($type == PF_CUSTOM) {
            my (@widget)=&$extra;
            $a=&{$widget[0]};
            push(@setvals,$widget[1]);
            push(@getvals,$widget[2]);
            
-        } elsif($type == PF_FILE) {
+        } elsif ($type == PF_FILE) {
            &new_PF_STRING;
            my $s = $a;
            $a = new Gtk2::HBox 0,5;
@@ -796,21 +783,21 @@ sub interact($$$$@) {
            $f->ok_button    ->signal_connect (clicked => sub { $f->hide; $s->set_text ($f->get_filename) });
            $f->cancel_button->signal_connect (clicked => sub { $f->hide });
            
-        } elsif($type == PF_TEXT) {
+        } elsif ($type == PF_TEXT) {
            $a = new Gtk2::Frame;
            my $h = new Gtk2::VBox 0,5;
            $a->add($h);
-           my $e = new Gtk2::TextView; #d# buffer
+           my $b = new Gtk2::TextBuffer;
+           my $e = new Gtk2::TextView $b;
            my %e;
            %e = $$extra if ref $extra eq "HASH";
 
            my $sv = sub { 
               my $t = shift,
-              $e->delete_text(0,-1);
-              $e->insert_text($t,0);
+              $b->set_text ($t);
            };
            my $gv = sub {
-              $e->get_chars(0,-1);
+              $b->get_text ($b->get_start_iter, $b->get_end_iter);
            };
 
            $h->add ($e);
@@ -846,7 +833,7 @@ sub interact($$$$@) {
            my $lf =sub {
               $f->hide;
               my $fn = $f->get_filename;
-              if(open TMP,"<$fn") {
+              if (open TMP,"<$fn") {
                  local $/; &$sv(scalar<TMP>);
                  close TMP;
               } else {
@@ -856,7 +843,7 @@ sub interact($$$$@) {
            my $sf =sub {
               $f->hide;
               my $fn = $f->get_filename;
-              if(open TMP,">$fn") {
+              if (open TMP,">$fn") {
                  print TMP &$gv;
                  close TMP;
               } else {
