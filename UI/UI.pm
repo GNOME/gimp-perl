@@ -54,7 +54,7 @@ if (eval { require Gtk2; import Gtk2 (); 1 }) {
 
 # All Gtk-dependent functions are put below
 __DATA__
-#line 55 "..../Gimp/UI.pm"
+#line 57 "..../Gimp/UI.pm"
 
 # shows the properties of a glib object
 #d# just to debug
@@ -515,45 +515,41 @@ sub _find_digits {
 }
 
 sub help_window(\$$$) {
-   my ($helpwin,$blurb,$help)=@_;
+   my ($helpwin, $blurb, $help) = @_;
    unless ($$helpwin) {
       $$helpwin = new Gtk2::Dialog;
-      $$helpwin->set_title(__("Help for ").$Gimp::function);
-      $$helpwin->action_area->set_border_width(2);
-      my ($font,$b);
+      $$helpwin->set_title(sprintf __"Help for %s", $Gimp::function);
+      $$helpwin->action_area->set_border_width (2);
 
-      $b = new Gtk2::TextView; #d# buffer
-      $b->set_editable (0);
-      $b->set_word_wrap (1);
+      my $b = new Gtk2::TextBuffer;
+      my $e = new_with_buffer Gtk2::TextView $b;
+      $e->set_editable (0);
+      #$b->set_word_wrap (1);
 
-      $font = load Gtk2::Gdk::Font __"9x15bold";
-      $font = fontset_load Gtk2::Gdk::Font __"-*-courier-medium-r-normal--*-120-*-*-*-*-*" unless $font;
-      $font = $b->style->font unless $font;
       my $cs = new Gtk2::ScrolledWindow undef,undef;
-      $cs->set_policy(-automatic,-automatic);
-      $cs->add($b);
-      $$helpwin->vbox->add($cs);
-      $b->insert($font,$b->style->fg(-normal),undef,__"BLURB:\n\n$blurb\n\nHELP:\n\n$help");
+      $cs->set_policy (-automatic, -automatic);
+      $cs->add ($e);
+      $$helpwin->vbox->add ($cs);
+      #$b->set_text ($font, $b->style->fg(-normal),undef,__"BLURB:\n\n$blurb\n\nHELP:\n\n$help");
+      $b->set_text (sprintf __"BLURB:\n\n%s\n\nHELP:\n\n%s", $blurb, $help);
       #d#$b->set_usize($font->string_width('M')*80,($font->ascent+$font->descent)*26);
 
       my $button = Gtk2::Button->new(__"OK");
-      signal_connect $button "clicked",sub { hide $$helpwin };
-      $$helpwin->action_area->add($button);
+      signal_connect $button "clicked", sub { hide $$helpwin };
+      $$helpwin->action_area->add ($button);
       
-      $$helpwin->signal_connect("destroy",sub { undef $$helpwin });
+      $$helpwin->signal_connect (destroy => sub { undef $$helpwin });
 
-      Gtk2->idle_add(sub {
-         require Gimp::Pod;
-         my $pod = new Gimp::Pod;
-         my $text = $pod->format;
-         if ($text) {
-            $b->insert($font,$b->style->fg(-normal),undef,__"\n\nEMBEDDED POD DOCUMENTATION:\n\n");
-            $b->insert($font,$b->style->fg(-normal),undef,$text);
-         }
-      });
+      require Gimp::Pod;
+      my $pod = new Gimp::Pod;
+      my $text = $pod->format;
+      if ($text) {
+         $b->insert ($b->get_end_iter, "\n\nEMBEDDED POD DOCUMENTATION:\n\n");
+         $b->insert ($b->get_end_iter, $text);
+      }
    }
 
-   $$helpwin->show_all();
+   $$helpwin->show_all;
 }
 sub interact($$$$@) {
    my $function = shift;
