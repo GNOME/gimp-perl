@@ -7,6 +7,8 @@
 
 #include <glib-object.h>
 
+#include <gtk2perl-autogen.h>
+
 /* need to factor these out, otherwise we always need gtk :( */
 #include <libgimp/gimp.h>
 #include <libgimpwidgets/gimpchainbutton.h>
@@ -39,8 +41,8 @@ sv_color3 (SV *sv, gdouble *e, gdouble *f, gdouble *g, gdouble *a)
 }
 
 #define ENUM(name)			\
-  static GType t_ ## name;			\
-  static GType name (void)		\
+  static GType t_ ## name;		\
+  static GType name ## _type (void)	\
   {					\
     if (!t_ ## name)			\
       t_ ## name = g_enum_register_static (# name, _ ## name ## _values);	\
@@ -49,6 +51,9 @@ sv_color3 (SV *sv, gdouble *e, gdouble *f, gdouble *g, gdouble *a)
 
 ENUM(gimp_unit)
 ENUM(gimp_color_selector_channel)
+ENUM(gimp_color_area_type)
+ENUM(gimp_chain_position)
+ENUM(gimp_size_entry_update_policy)
 
 #define SvGimpRGB(sv, color) sv_color3 ((sv), &(color).r, &(color).g, &(color).b, &(color).a)
 #define SvGimpHSV(sv, color) sv_color3 ((sv), &(color).h, &(color).s, &(color).v, &(color).a)

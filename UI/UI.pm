@@ -583,11 +583,6 @@ sub interact($$$$@) {
      my $l = logo($w);
      $h->add($l);
 
-     #d#
-     my $demo = new Gimp::UI::ColorButton "some button", 30, 30, [0.5, 0.2, 0.1], 'small-checks';#d#
-     $h->add ($demo);#d#
-     #d#
-     
      $g = new Gtk2::Table scalar@types,2,0;
      $g->set(border_width => 4);
      $w->vbox->pack_start($g,1,1,0);
@@ -669,23 +664,27 @@ sub interact($$$$@) {
            
         } elsif ($type == PF_COLOR) {
            $a = new Gtk2::HBox 0,5;
-           my $b = new Gimp::UI::ColorSelectButton -width => 90, -height => 18;
-           $a->pack_start ($b,1,1,0);
-           $default = [216, 152, 32] unless defined $default;
-           push @setvals, sub { $b->set('color', "@{defined $_[0] ? Gimp::canonicalize_color $_[0] : [216,152,32]}") };
-           push @getvals, sub { [split ' ',$b->get('color')] };
+
+           $default = [0.8,0.6,0.1] unless defined $default;
+
+           my $b = new Gimp::UI::ColorButton $name, 90, 18, $default, 'small-checks';
+     
+           $a->pack_start ($b, 1, 1, 0);
+
+           push @setvals, sub { $b->set_color (defined $_[0] ? Gimp::canonicalize_color $_[0] : [0.8,0.6,0.1]) };
+           push @getvals, sub { $b->get_color };
            set_tip $t $b,$desc;
            
            my $c = new Gtk2::Button __"FG";
            signal_connect $c clicked => sub {
-             $b->set('color', "@{Gimp::Palette->get_foreground}");
+             $b->set_color (Gimp::Palette->get_foreground);
            };
            set_tip $t $c,__"get current foreground colour from the gimp";
            $a->pack_start ($c,1,1,0);
            
            my $d = new Gtk2::Button __"BG";
            signal_connect $d clicked => sub {
-             $b->set('color', "@{Gimp::Palette->get_background}");
+             $b->set_color (Gimp::Palette->get_background);
            };
            set_tip $t $d,__"get current background colour from the gimp";
            $a->pack_start ($d,1,1,0);

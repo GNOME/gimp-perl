@@ -78,3 +78,9 @@ T_GIMP_ENUM
           \lc substr $t, 1;
         }_type (), ($var));
 
+T_GIMP_RGB
+	0;
+
+T_GIMP_HSV
+	0;
+

@@ -46,17 +46,17 @@ MODULE = Gimp::UI	PACKAGE = Gimp::UI
 PROTOTYPES: ENABLE
 
 gint32
-export_image(image_ID,drawable_ID,format_name,capabilities)
+export_image(image_ID, drawable_ID, format_name, capabilities)
 	SV *	image_ID
         SV *	drawable_ID
         gchar *	format_name
         gint	capabilities
         CODE:
-        gint32 image = SvIV(SvRV(image_ID));
-        gint32 drawable = SvIV(SvRV(drawable_ID));
+        gint32 image = SvIV (SvRV (image_ID));
+        gint32 drawable = SvIV (SvRV (drawable_ID));
         RETVAL = gimp_export_image (&image, &drawable, format_name, capabilities);
-        sv_setiv (SvRV(image_ID), image);
-        sv_setiv (SvRV(drawable_ID), drawable);
+        sv_setiv (SvRV (image_ID), image);
+        sv_setiv (SvRV (drawable_ID), drawable);
 	OUTPUT:
         image_ID
         drawable_ID
@@ -82,11 +82,7 @@ BOOT:
 GimpButton_own * gimp_button_new (SV *unused_class)
 	C_ARGS:
 
-#void        gimp_button_extended_clicked (GimpButton      *button,
-#                                          GdkModifierType  state);
-
-
-
+void gimp_button_extended_clicked (GimpButton *button, GdkModifierType state);
 
 MODULE = Gimp::UI	PACKAGE = Gimp::UI::ChainButton	PREFIX = gimp_chain_button_
 
@@ -96,9 +92,9 @@ BOOT:
 GimpChainButton_own * gimp_chain_button_new (SV *unused_class, GimpChainPosition position)
 	C_ARGS: position
 
-#void        gimp_chain_button_set_active (GimpChainButton   *button,
-#					  gboolean           active);
-#gboolean    gimp_chain_button_get_active (GimpChainButton   *button);
+void gimp_chain_button_set_active (GimpChainButton *button, gboolean active);
+
+gboolean gimp_chain_button_get_active (GimpChainButton *button);
 
 MODULE = Gimp::UI	PACKAGE = Gimp::UI::ColorArea	PREFIX = gimp_color_area_
 
@@ -108,15 +104,17 @@ BOOT:
 GimpColorArea_own * gimp_color_area_new (SV *unused_class, GimpRGB color, GimpColorAreaType type, GdkModifierType drag_mask)
 	C_ARGS: &color, type, drag_mask
 
-#void        gimp_color_area_set_color       (GimpColorArea     *area,
-#                                             const GimpRGB     *color);
-#void        gimp_color_area_get_color       (GimpColorArea     *area,
-#                                             GimpRGB           *color);
-#gboolean    gimp_color_area_has_alpha       (GimpColorArea     *area);
-#void        gimp_color_area_set_type        (GimpColorArea     *area,
-#                                             GimpColorAreaType  type);
-#void        gimp_color_area_set_draw_border (GimpColorArea     *area,
-#                                             gboolean           draw_border);
+void gimp_color_area_set_color (GimpColorArea *area, GimpRGB color)
+	C_ARGS: area, &color
+
+void gimp_color_area_get_color (GimpColorArea *area, GimpRGB color)
+	C_ARGS: area, &color
+
+gboolean gimp_color_area_has_alpha (GimpColorArea *area)
+
+void gimp_color_area_set_type (GimpColorArea *area, GimpColorAreaType type)
+
+void gimp_color_area_set_draw_border (GimpColorArea *area, gboolean draw_border)
 
 MODULE = Gimp::UI	PACKAGE = Gimp::UI::ColorButton	PREFIX = gimp_color_button_
 
@@ -127,48 +125,50 @@ GimpColorButton_own * gimp_color_button_new (SV *unused_class, utf8_str title, g
                                              GimpRGB color, GimpColorAreaType type)
 	C_ARGS: title, width, height, &color, type
 
-#void        gimp_color_button_set_color  (GimpColorButton   *button,
-#					  const GimpRGB     *color);
-#void        gimp_color_button_get_color  (GimpColorButton   *button,
-#					  GimpRGB           *color);
-#gboolean    gimp_color_button_has_alpha  (GimpColorButton   *button);
-#void        gimp_color_button_set_type   (GimpColorButton   *button,
-#					  GimpColorAreaType  type);
+void gimp_color_button_set_color (GimpColorButton *button, GimpRGB color)
+	C_ARGS: button, &color
+
+void gimp_color_button_get_color (GimpColorButton *button, GimpRGB color)
+	C_ARGS: button, &color
+
+gboolean gimp_color_button_has_alpha (GimpColorButton *button)
+
+void gimp_color_button_set_type (GimpColorButton *button, GimpColorAreaType type);
 
 MODULE = Gimp::UI	PACKAGE = Gimp::UI::ColorDisplay	PREFIX = gimp_color_display_
 
 BOOT:
 	gperl_register_object (GIMP_TYPE_COLOR_DISPLAY, "Gimp::UI::ColorDisplay");
-
-# TODO: what the heck...?
-#GimpColorDisplay_own * gimp_color_display_new (SV *unused_class, GType display_type)
-#	C_ARGS: type
-
-#GimpColorDisplay * gimp_color_display_new         (GType             display_type);
-
-#GimpColorDisplay * gimp_color_display_clone       (GimpColorDisplay *display);
-
-#void           gimp_color_display_convert         (GimpColorDisplay *display,
-#                                                   guchar           *buf,
-#                                                   gint              width,
-#                                                   gint              height,
-#                                                   gint              bpp,
-#                                                   gint              bpl);
-#void           gimp_color_display_load_state      (GimpColorDisplay *display,
-#                                                   GimpParasite     *state);
-#GimpParasite * gimp_color_display_save_state      (GimpColorDisplay *display);
-#GtkWidget    * gimp_color_display_configure       (GimpColorDisplay *display);
-#void           gimp_color_display_configure_reset (GimpColorDisplay *display);
-
-#void           gimp_color_display_changed         (GimpColorDisplay *display);
+#
+#GimpColorDisplay_own * gimp_color_display_new (SV *unused_class)
+#	C_ARGS: gimp_color_display_type ()
+#
+#GimpColorDisplay_own * gimp_color_display_clone (GimpColorDisplay *display)
+#
+#void gimp_color_display_convert (GimpColorDisplay *display, guchar *buf, gint width, gint height, gint bpp, gint bpl)
+#
+#void gimp_color_display_load_state (GimpColorDisplay *display, GimpParasite *state)
+#
+#GimpParasite * gimp_color_display_save_state (GimpColorDisplay *display)
+#
+#GtkWidget * gimp_color_display_configure (GimpColorDisplay *display)
+#
+#void gimp_color_display_configure_reset (GimpColorDisplay *display)
+#
+#void gimp_color_display_changed (GimpColorDisplay *display)
 
 MODULE = Gimp::UI	PACKAGE = Gimp::UI::ColorNotebook	PREFIX = gimp_color_notebook_
 
 BOOT:
 	gperl_register_object (GIMP_TYPE_COLOR_NOTEBOOK, "Gimp::UI::ColorNotebook");
 
-# TODO: no constructor, use the glib one?
+GimpColorNotebook_own *new (SV *unused_class)
+	CODE:
+        RETVAL = (GimpColorNotebook_own *)g_object_new (GIMP_TYPE_COLOR_NOTEBOOK, (gchar *)0);
+        OUTPUT:
+        RETVAL
 
+# not the slightest idea...
 #GtkWidget * gimp_color_notebook_set_has_page (GimpColorNotebook *notebook,
 #                                              GType              page_type,
 #                                              gboolean           has_page);
@@ -181,18 +181,21 @@ BOOT:
 GimpColorScale_own * gimp_color_scale_new (SV *unused_class, GtkOrientation orientation, GimpColorSelectorChannel channel)
 	C_ARGS: orientation, channel
 
-#void        gimp_color_scale_set_channel (GimpColorScale           *scale,
-#                                          GimpColorSelectorChannel  channel);
-#void        gimp_color_scale_set_color   (GimpColorScale           *scale,
-#                                          const GimpRGB            *rgb,
-#                                          const GimpHSV            *hsv);
+void gimp_color_scale_set_channel (GimpColorScale *scale, GimpColorSelectorChannel channel)
+  
+void gimp_color_scale_set_color (GimpColorScale *scale, GimpRGB rgb, GimpHSV hsv)
+	C_ARGS: scale, &rgb, &hsv
 
 MODULE = Gimp::UI	PACKAGE = Gimp::UI::ColorSelect	PREFIX = gimp_color_select_
 
 BOOT:
 	gperl_register_object (GIMP_TYPE_COLOR_SELECT, "Gimp::UI::ColorSelect");
 
-# TODO: no constructor, use the glib one?
+GimpColorSelect_own *new(SV *unused_class)
+	CODE:
+        RETVAL = (GimpColorSelect_own *)g_object_new (GIMP_TYPE_COLOR_SELECT, (gchar *)0);
+        OUTPUT:
+        RETVAL
 
 MODULE = Gimp::UI	PACKAGE = Gimp::UI::ColorSelector	PREFIX = gimp_color_selector_
 
@@ -203,20 +206,20 @@ GimpColorSelector_own * gimp_color_selector_new (SV *unused_class, GimpRGB rgb, 
                                                  GimpColorSelectorChannel channel)
 	C_ARGS: GIMP_TYPE_COLOR_SELECTOR, &rgb, &hsv, channel
 
-#void   gimp_color_selector_set_toggles_visible   (GimpColorSelector *selector,
-#                                                  gboolean           visible);
-#void   gimp_color_selector_set_toggles_sensitive (GimpColorSelector *selector,
-#                                                  gboolean           sensitive);
-#void   gimp_color_selector_set_show_alpha        (GimpColorSelector *selector,
-#                                                  gboolean           show_alpha);
-#void   gimp_color_selector_set_color             (GimpColorSelector *selector,
-#                                                  const GimpRGB     *rgb,
-#                                                  const GimpHSV     *hsv);
-#void   gimp_color_selector_set_channel           (GimpColorSelector *selector,
-#                                                  GimpColorSelectorChannel  channel);
+void gimp_color_selector_set_toggles_visible (GimpColorSelector *selector, gboolean visible)
 
-#void   gimp_color_selector_color_changed         (GimpColorSelector *selector);
-#void   gimp_color_selector_channel_changed       (GimpColorSelector *selector);
+void gimp_color_selector_set_toggles_sensitive (GimpColorSelector *selector, gboolean sensitive)
+
+void gimp_color_selector_set_show_alpha (GimpColorSelector *selector, gboolean show_alpha)
+
+void gimp_color_selector_set_color (GimpColorSelector *selector, GimpRGB rgb, GimpHSV hsv)
+	C_ARGS: selector, &rgb, &hsv
+
+void gimp_color_selector_set_channel (GimpColorSelector *selector, GimpColorSelectorChannel channel)
+
+void gimp_color_selector_color_changed (GimpColorSelector *selector)
+
+void gimp_color_selector_channel_changed (GimpColorSelector *selector)
 
 MODULE = Gimp::UI	PACKAGE = Gimp::UI::Dialog	PREFIX = gimp_dialog_
 
@@ -278,10 +281,9 @@ GimpFileSelection_own * gimp_file_selection_new (SV *unused_class, utf8_str titl
                                                  gboolean dir_only = 0, gboolean check_valid = 0)
 	C_ARGS: title, filename, dir_only, check_valid
 
-#gchar     * gimp_file_selection_get_filename (GimpFileSelection *selection);
+utf8_str gimp_file_selection_get_filename (GimpFileSelection *selection)
 
-#void        gimp_file_selection_set_filename (GimpFileSelection *selection,
-#					      const gchar       *filename);
+void gimp_file_selection_set_filename (GimpFileSelection *selection, utf8_str filename)
 
 MODULE = Gimp::UI	PACKAGE = Gimp::UI::OffsetArea	PREFIX = gimp_offset_area_
 
@@ -291,12 +293,9 @@ BOOT:
 GimpOffsetArea_own * gimp_offset_area_new (SV *unused_class, gint orig_width, gint orig_height)
 	C_ARGS: orig_width, orig_width
 
-#void        gimp_offset_area_set_size    (GimpOffsetArea *offset_area,
-#                                          gint            width,
-#                                          gint            height);
-#void        gimp_offset_area_set_offsets (GimpOffsetArea *offset_area,
-#                                          gint            offset_x,
-#                                          gint            offset_y);
+void gimp_offset_area_set_size (GimpOffsetArea *offset_area, gint width, gint height)
+
+void gimp_offset_area_set_offsets (GimpOffsetArea *offset_area, gint offset_x, gint offset_y)
 
 MODULE = Gimp::UI	PACKAGE = Gimp::UI::PathEditor	PREFIX = gimp_path_editor_
 
@@ -306,9 +305,9 @@ BOOT:
 GimpPathEditor_own * gimp_path_editor_new (SV *unused_class, utf8_str filesel_title, utf8_str path)
 	C_ARGS: filesel_title, path
 
-#gchar     * gimp_path_editor_get_path (GimpPathEditor *gpe);
-#void        gimp_path_editor_set_path (GimpPathEditor *gpe,
-#                                       const gchar    *path);
+utf8_str gimp_path_editor_get_path (GimpPathEditor *gpe)
+
+void gimp_path_editor_set_path (GimpPathEditor *gpe, utf8_str path)
 
 MODULE = Gimp::UI	PACKAGE = Gimp::UI::PickButton	PREFIX = gimp_pick_button_
 
@@ -341,56 +340,33 @@ GimpSizeEntry_own * gimp_size_entry_new (SV *unused_class, gint number_of_fields
                                          gint spinbutton_width, GimpSizeEntryUpdatePolicy update_policy)
 	C_ARGS: number_of_fields, unit, unit_format, menu_show_pixels, menu_show_percent, show_refval, spinbutton_width, update_policy
 
-#void        gimp_size_entry_add_field  (GimpSizeEntry   *gse,
-#					GtkSpinButton   *value_spinbutton,
-#					GtkSpinButton   *refval_spinbutton);
+#void gimp_size_entry_add_field (GimpSizeEntry *gse, GtkSpinButton *value_spinbutton, GtkSpinButton *refval_spinbutton)
 
-#void        gimp_size_entry_attach_label          (GimpSizeEntry *gse,
-#						   const gchar   *text,
-#						   gint           row,
-#						   gint           column,
-#						   gfloat         alignment);
+void gimp_size_entry_attach_label (GimpSizeEntry *gse, utf8_str text, gint row, gint column, gfloat alignment)
 
-#void        gimp_size_entry_set_resolution        (GimpSizeEntry *gse,
-#					           gint           field,
-#					           gdouble        resolution,
-#						   gboolean       keep_size);
+void gimp_size_entry_set_resolution (GimpSizeEntry *gse, gint field, gdouble resolution, gboolean keep_size)
 
-#void        gimp_size_entry_set_size              (GimpSizeEntry *gse,
-#					           gint           field,
-#					           gdouble        lower,
-#						   gdouble        upper);
+void gimp_size_entry_set_size (GimpSizeEntry *gse, gint field, gdouble lower, gdouble upper)
 
-#void        gimp_size_entry_set_value_boundaries  (GimpSizeEntry *gse,
-#						   gint           field,
-#						   gdouble        lower,
-#						   gdouble        upper);
+void gimp_size_entry_set_value_boundaries (GimpSizeEntry *gse, gint field, gdouble lower, gdouble upper)
 
-#gdouble     gimp_size_entry_get_value             (GimpSizeEntry *gse,
-#					           gint           field);
-#void        gimp_size_entry_set_value             (GimpSizeEntry *gse,
-#					           gint           field,
-#					           gdouble        value);
+gdouble gimp_size_entry_get_value (GimpSizeEntry *gse, gint field)
 
-#void        gimp_size_entry_set_refval_boundaries (GimpSizeEntry *gse,
-#						   gint           field,
-#						   gdouble        lower,
-#						   gdouble        upper);
-#void        gimp_size_entry_set_refval_digits     (GimpSizeEntry *gse,
-#					           gint           field,
-#					           gint           digits);
+void gimp_size_entry_set_value (GimpSizeEntry *gse, gint field, gdouble value)
 
-#gdouble     gimp_size_entry_get_refval            (GimpSizeEntry *gse,
-#					           gint           field);
-#void        gimp_size_entry_set_refval            (GimpSizeEntry *gse,
-#					           gint           field,
-#					           gdouble        refval);
+void gimp_size_entry_set_refval_boundaries (GimpSizeEntry *gse, gint field, gdouble lower, gdouble upper)
 
-#GimpUnit    gimp_size_entry_get_unit              (GimpSizeEntry *gse);
-#void        gimp_size_entry_set_unit              (GimpSizeEntry *gse, 
-#					           GimpUnit       unit);
+void gimp_size_entry_set_refval_digits (GimpSizeEntry *gse, gint field, gint digits)
 
-#void        gimp_size_entry_grab_focus            (GimpSizeEntry *gse);
+gdouble gimp_size_entry_get_refval (GimpSizeEntry *gse, gint field)
+
+void gimp_size_entry_set_refval (GimpSizeEntry *gse, gint field, gdouble refval)
+
+GimpUnit gimp_size_entry_get_unit (GimpSizeEntry *gse)
+
+void gimp_size_entry_set_unit (GimpSizeEntry *gse, GimpUnit unit)
+
+void gimp_size_entry_grab_focus (GimpSizeEntry *gse)
 
 MODULE = Gimp::UI	PACKAGE = Gimp::UI::UnitMenu	PREFIX = gimp_unit_menu_
 
@@ -401,8 +377,7 @@ GimpUnitMenu_own * gimp_unit_menu_new (SV *unused_class, char *format, GimpUnit 
                                        gboolean show_pixels, gboolean show_percent, gboolean show_custom)
 	C_ARGS: format, unit, show_pixels, show_percent, show_custom
 
-#void        gimp_unit_menu_set_unit (GimpUnitMenu *menu, 
-#				     GimpUnit      unit);
+void gimp_unit_menu_set_unit (GimpUnitMenu *menu, GimpUnit unit)
 
-#GimpUnit    gimp_unit_menu_get_unit (GimpUnitMenu *menu);
+GimpUnit gimp_unit_menu_get_unit (GimpUnitMenu *menu)
 
