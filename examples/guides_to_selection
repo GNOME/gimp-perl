@@ -2,7 +2,11 @@
 
 eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
     if 0; # not running under some shell
- 
+
+# 7/15/03 <sjburges@gimp.org>
+# Changed spot that its registered from <Image>/Guides to <Image>/Image/Guides
+# to reduce horizontal clutter on menubar
+
 use Gimp;
 use Gimp::Fu;
 use Gimp::Util;
@@ -13,7 +17,7 @@ register "guide_to_selection",
          "Marc Lehmann",
          "Marc Lehmann <pcg\@goof.com>",
          "1999-08-01",
-         N_"<Image>/Guides/To Selection...",
+         N_"<Image>/Image/Guides/To Selection...",
          "*",
          [
           [PF_RADIO,	"operation",	"The selection operation",		CHANNEL_OP_REPLACE,

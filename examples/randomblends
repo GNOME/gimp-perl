@@ -1,4 +1,4 @@
-#!/opt/bin/perl
+#!/usr/bin/perl
 
 eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
     if 0; # not running under some shell
@@ -33,12 +33,13 @@ register "random_blends",
          sub {
     my($img,$layer,$numgradients) =@_;
     eval { $img->undo_push_group_start };  # undo is broked for this one.
-# add this to the get_state (after its working?)
-	$oldgradient = gimp_gradients_get_gradient();
+    $oldgradient = gimp_gradients_get_gradient();
     ($sel,$x1,$y1,$x2,$y2) = $img->gimp_selection_bounds;
     srand();
 
     @gradientlist = gimp_gradients_get_list();  
+   
+    Gimp->progress_init("Random blends...");
     for ($i=0; $i<=$numgradients; $i++) {
         gimp_gradients_set_gradient(@gradientlist[randint($#gradientlist)]);
         $layer->gimp_blend(CUSTOM_MODE,  
@@ -49,15 +50,20 @@ register "random_blends",
                            randint(100),     # opacity
                            0,                # offset
                            randint(2),       # repeat
-                           0,3,0.2,          # disabled supersampling
+			   0,                # reverse
+                           0,                # disable supersampling..
+			   1,
+			   0.1,              
+			   0,                # no dithering
                            randint($x2-$x1)+$x1, # x1
                            randint($y2-$y1)+$y1, # y1
                            randint($x2-$x1)+$x1, # x2
                            randint($y2-$y1)+$y1, # y2
                            );
+        Gimp->progress_update($i/(1.0*$numgradients));		   
         }
     eval { $img->undo_push_group_end };
-	gimp_gradients_set_gradient($oldgradient);
+    gimp_gradients_set_gradient($oldgradient);
     return();
 };
 exit main;

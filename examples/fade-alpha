@@ -810,8 +810,8 @@ sub do_fade
     
   $prevBack = Palette->get_background;
   $prevFore = Palette->get_foreground;
-  Palette->set_background([0,0,0]);
-  Palette->set_foreground([255,255,255]);
+  Palette->set_background([0.0,0.0,0.0,1.0]);
+  Palette->set_foreground([1.0,1.0,1.0,1.0]);
 
   # Direction Map
   # 0 3 6
@@ -824,15 +824,24 @@ sub do_fade
   
   if ($direction==0)
     {
-      $mask->blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
-                   REPEAT_NONE, 0, 1, 0.1, 
+      $mask->blend(FG_BG_RGB_MODE, 
+                   NORMAL_MODE, 
+		   LINEAR, 
+		   100.0,             # opacity
+		   0.0,               # offset
+                   REPEAT_NONE, 
+		   0,                 # reverse 
+		   0,                 # supersample
+		   1,                 # recursion levels
+		   0.1,               # supersample threshold
+	           0,		      # dither
 		   $bounds[3], $bounds[4],
 		   $bounds[1], $bounds[2]);
     }
   elsif ($direction==1)
     {
       $mask->blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
-                   REPEAT_NONE, 0, 1, 0.1, 
+                   REPEAT_NONE, 0, 0, 0, 1, 0,
 		   $bounds[3], ($bounds[2]+$bounds[4])/2,
 		   $bounds[1], ($bounds[2]+$bounds[4])/2);
     
@@ -840,7 +849,7 @@ sub do_fade
   elsif ($direction==2)
     {
       $mask->blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
-                   REPEAT_NONE, 0, 1, 0.1, 
+                   REPEAT_NONE, 0, 0, 0, 1, 0, 
 		   $bounds[3], $bounds[2],
 		   $bounds[1], $bounds[4]);
 
@@ -848,14 +857,14 @@ sub do_fade
   elsif ($direction==3)
     {
       $mask->blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
-                   REPEAT_NONE, 0, 1, 0.1,
+                   REPEAT_NONE, 0, 0, 0, 1, 0,
 		   ($bounds[3]+$bounds[1])/2, $bounds[4],
 		   ($bounds[3]+$bounds[1])/2, $bounds[2]);
     }
   elsif ($direction==4)
     {
       $mask->blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, RADIAL, 100.0, 0.0, 
-                   REPEAT_NONE, 0, 1, 0.1, 
+                   REPEAT_NONE, 0, 0, 0, 1, 0, 
 		   ($bounds[1]+$bounds[3])/2, 
 		   ($bounds[2]+$bounds[4])/2, 
 		   ($bounds[3]+$bounds[1])/2, $bounds[4]);
@@ -864,28 +873,28 @@ sub do_fade
   elsif ($direction==5)
     {
       $mask->blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
-                   REPEAT_NONE, 0, 1, 0.1, 
+                   REPEAT_NONE, 0, 0, 0, 1, 0, 
 		   ($bounds[3]+$bounds[1])/2, $bounds[2],
 		   ($bounds[3]+$bounds[1])/2, $bounds[4]);
     }
   elsif ($direction==6)
     {
       $mask->blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
-                   REPEAT_NONE, 0, 1, 0.1, 
+                   REPEAT_NONE, 0, 0, 0, 1, 0, 
 		   $bounds[1], $bounds[4],
 		   $bounds[3], $bounds[2]);
     }
   elsif ($direction==7)
     {
       $mask->blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
-                   REPEAT_NONE, 0, 1, 0.1, 
+                   REPEAT_NONE, 0, 0, 0, 1, 0, 
 		   $bounds[1], ($bounds[2]+$bounds[4])/2,
 		   $bounds[3], ($bounds[2]+$bounds[4])/2);
     }
   elsif ($direction==8)
     {
       $mask->blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
-                   REPEAT_NONE, 0, 1, 0.1, 
+                   REPEAT_NONE, 0, 0, 0, 1, 0, 
 		   $bounds[1], $bounds[2],
 		   $bounds[3], $bounds[4]);
     }
@@ -913,7 +922,7 @@ sub add_pixmap
                         $but->get_colormap,
                         $but->style->bg('normal'), 
 			@{$arr[$num]});
-  my ($pixmapId) = new Gtk2::Pixmap $pixmap, $mask;
+  my ($pixmapId) = new_from_pixmap Gtk2::Image($pixmap, $mask);
   
   $pixmapId->show;
   $but->add($pixmapId);
@@ -950,12 +959,13 @@ sub create_window
   $frm->add($btnTable);
   
   $btn = new Gtk2::RadioButton;
+
   for ($i=0;$i<3;$i++)
     {
       for ($j=0;$j<3;$j++)
         {
 	   $btn = Gtk2::RadioButton->new_from_widget($btn);
-	   $btn->set_mode(0);
+           $btn->set_mode(0);
 	   $btn->signal_connect("clicked", \&btn_pressed, $i*3+$j);
 	   $btn->show;
 	   $btnTable->attach_defaults($btn, $i, $i+1, $j, $j+1); 

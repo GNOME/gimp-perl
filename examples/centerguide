@@ -3,6 +3,10 @@
 eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 
+# 7/15/03 <sjburges@gimp.org>
+# Changed spot that its registered from <Image>/Guides to <Image>/Image/Guides
+# to reduce horizontal clutter on menubar
+
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 
@@ -12,7 +16,7 @@ register	"center_guide",
 		"Claes G Lindblad <claesg\@algonet.se>",
 		"Claes G Lindblad",
 		"990323",
-		N_"<Image>/Guides/Center Guide...",
+		N_"<Image>/Image/Guides/Center Guide...",
 		"*",
 		[
 		[PF_RADIO,

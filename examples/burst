@@ -35,7 +35,11 @@ use Gimp::Util;
 #  and I suspect most users will never notice.
 #
 
-
+####-----
+# Revision 08/10/2003
+#  Changed PF_SLIDER to PF_SPINNER, since they're a whole lot nicer to work with
+#  for this type of operation - getting it "close" is pretty annoying with 
+#  sliders.
 
 # Gimp::set_trace(TRACE_ALL);
 
@@ -71,8 +75,8 @@ fades from if you have Fade set\n",
    [PF_VALUE, 'spokes', "How many spokes", 16],
    [PF_VALUE, 'inside_pixels', "Inside Pixels", 10],
    [PF_VALUE, 'outside_pixels', "Outside Pixels", 10], 
-   [PF_SLIDER, 'start_angle', "Angle to start at, with 0 being left, and sweeping counter-clockwise.", 0, [-360, 360, 1]],
-   [PF_SLIDER, 'arc_angle', "How many degrees to arc through.", 360, [-360, 360, 1]]
+   [PF_SPINNER, 'start_angle', "Angle to start at, with 0 being left, and sweeping counter-clockwise.", 0, [-360, 360, 1]],
+   [PF_SPINNER, 'arc_angle', "How many degrees to arc through.", 360, [-360, 360, 1]]
   ],
   [],
   [],
