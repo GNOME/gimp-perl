@@ -273,7 +273,7 @@ WriteMakefile(
 	            SUFFIX	=> '.gz',
 	           },
     'PREREQ_PM'	=> {
-    		    Gtk			=> 0.5,
+    		    Gtk2		=> 0.90,
                     PDL			=> 1.99,
     		    Data::Dumper	=> 2.0,
                     Parse::RecDescent	=> 1.6,
