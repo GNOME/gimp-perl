@@ -2,10 +2,10 @@
 
 #BEGIN {$^W=1};
 
+use Gtk2;
 use Gimp::Feature qw(perl-5.005 gtk-1.2);
 use Gimp ('__','N_');
 use Gimp::Fu;
-use Gtk2;
 
 $VERSION=0.91;
 
@@ -109,6 +109,7 @@ sub refresh_names {
    $name->set_text ("");
    $flags->set_text ("");
    $data->set_text ("");
+   return;#d#
    $clist->freeze;
    $clist->clear;
    my @list = sort &$list_func($current);
@@ -142,9 +143,6 @@ sub create_main {
    $t = new Gtk2::Tooltips;
    my $w = new Gtk2::Dialog;
 
-   $ex = $w->style->font->string_width ('Mn')*0.5;
-   $eX = $w->style->font->ascent + $w->style->font->descent + 10;
-
    $window = $w;
 
    $w->set_title("Parasite Editor - version $VERSION");
@@ -164,9 +162,7 @@ sub create_main {
    my $cmd = new Gtk2::HBox (0,5);
    $v->pack_start($cmd,0,1,5);
 
-   $top->set_usize (-1, $eX+5);
-
-   $clist = new Gtk2::CList (1);
+   $clist = new Gtk2::List ();
    $clist->set_selection_mode (-single);
    $clist->signal_connect ("select_row" => sub {
       $parasite = $_[0]->get_text($_[1],$_[2]);
@@ -182,7 +178,6 @@ sub create_main {
    $bot->add ($cs);
 
    my $parbox = new Gtk2::VBox (0,5);
-   $bot->set_usize ($ex*80,$eX*4);
    $bot->add ($parbox);
 
    $name  = new_Entry $parbox,"Name: ",new Gtk2::Entry;
