@@ -133,6 +133,7 @@ examples/clear_alpha
 examples/warp-sharp
 examples/fade-alpha
 examples/circular_text
+examples/redeye
 pxgettext
 po/ChangeLog
 po/Makefile.PL
