@@ -8,6 +8,11 @@ WARNING
        This version of the module is highly experimental and only works
        for gimp-1.3 or higher.
 
+       Current limitations:
+
+       - init callback has been disabled
+       - most things using gtk don't work
+
 SYNOPSIS
 
        my $img = new Image (600, 300, RGB);
@@ -39,18 +44,6 @@ PREREQUISITES
           While this extension might run with perl 5.6, I do not support
           nor encourage it in any way.
 
-       GTK+, the X11 toolkit:
-       http://www.gtk.org/
-       ftp://ftp.gimp.org/pub/gtk/
-
-          gtk+-2.0 or higher is required.
-
-       Gtk, the perl extension for the above:
-       http://gtk2-perl.sourceforge.net
-
-          The special "gtk2-perl-xs" variant is required, the inline version
-          is *NOT* supported.
-
        The GNU Image Manipulation Program, i.e. The GIMP:
        http://www.gimp.org/
        ftp://ftp.gimp.org/pub/gimp/
@@ -58,6 +51,12 @@ PREREQUISITES
           gimp-1.3 (or newer, e.g. CVS or CVS snapshots) is required.  For
           older versions of The Gimp, use version 1.2* of the Gimp-Pelr
           module.
+
+       Gtk, the perl extension for gtk+2
+       http://gtk2-perl.sourceforge.net
+
+          The special "gtk2-perl-xs" variant is required, the inline
+          version is *NOT* supported. Releases (as on CPAN) *might* work.
 
        PDL, the Perl Data Language
        http://www.cpan.org/

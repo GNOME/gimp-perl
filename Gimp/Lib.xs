@@ -380,9 +380,9 @@ is_array (GimpPDBArgType typ)
 }
 
 static int
-perl_param_count (GimpParam *arg, int count)
+perl_param_count (const GimpParam *arg, int count)
 {
-  GimpParam *end = arg + count;
+  const GimpParam *end = arg + count;
   
   while (arg < end)
     if (is_array (arg++->type))
@@ -819,7 +819,7 @@ static int check_int (char *croak_str, SV *sv)
 }
 
 static void
-push_gimp_sv (GimpParam *arg, int array_as_ref)
+push_gimp_sv (const GimpParam *arg, int array_as_ref)
 {
   dSP;
   SV *sv = 0;
@@ -1099,7 +1099,11 @@ static void pii_init (void) { try_call ("-init" ); }
 static void pii_query(void) { try_call ("-query"); }
 static void pii_quit (void) { try_call ("-quit" ); }
 
-static void pii_run(char *name, int nparams, GimpParam *param, int *xnreturn_vals, GimpParam **xreturn_vals)
+static void pii_run(const gchar *name,
+                    gint nparams,
+                    const GimpParam *param,
+                    gint *xnreturn_vals,
+                    GimpParam **xreturn_vals)
 {
   static GimpParam *return_vals;
   static int nreturn_vals;
@@ -1234,6 +1238,7 @@ static void pii_run(char *name, int nparams, GimpParam *param, int *xnreturn_val
     }
 }
 
+#define pii_init 0 /* init gets called on every startup, so disable it for the time being. */
 GimpPlugInInfo PLUG_IN_INFO = { pii_init, pii_quit, pii_query, pii_run };
 
 MODULE = Gimp::Lib	PACKAGE = Gimp::Lib

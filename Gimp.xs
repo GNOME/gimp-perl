@@ -64,25 +64,26 @@ BOOT:
 
 char *
 bindtextdomain(d,dir)
-	char *	d
-	char *	dir
+	char * d
+	char * dir
 
 char *
 textdomain(d)
 	char *	d
 
-char *
+utf8_str
 gettext(s)
-	char *	s
+	utf8_str s
+        PROTOTYPE: $
 
-char *
+utf8_str
 dgettext(d,s)
 	char *	d
-	char *	s
+	utf8_str s
 
-char *
+utf8_str
 __(s)
-	char *	s
+	utf8_str s
         PROTOTYPE: $
 
 void

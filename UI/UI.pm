@@ -544,7 +544,7 @@ sub help_window(\$$$) {
       my $pod = new Gimp::Pod;
       my $text = $pod->format;
       if ($text) {
-         $b->insert ($b->get_end_iter, "\n\nEMBEDDED POD DOCUMENTATION:\n\n");
+         $b->insert ($b->get_end_iter, __"\n\nEMBEDDED POD DOCUMENTATION:\n\n");
          $b->insert ($b->get_end_iter, $text);
       }
    }
