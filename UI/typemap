@@ -37,14 +37,13 @@ GimpSizeEntry_own *	GOBJECT_OWN
 GimpUnitMenu *		GOBJECT
 GimpUnitMenu_own *	GOBJECT_OWN
 
-GimpUnit		T_GIMP_UNIT
-GimpRGB			T_GIMP_RGB
-GimpHSV			T_GIMP_HSV
-# TODO:
-GimpColorAreaType	T_IV
-GimpChainPosition	T_IV
-GimpColorSelectorChannel	T_IV
-GimpSizeEntryUpdatePolicy	T_IV
+GimpRGB				T_GIMP_RGB
+GimpHSV				T_GIMP_HSV
+GimpUnit			T_GIMP_ENUM
+GimpColorAreaType		T_GIMP_ENUM
+GimpChainPosition		T_GIMP_ENUM
+GimpColorSelectorChannel	T_GIMP_ENUM
+GimpSizeEntryUpdatePolicy	T_GIMP_ENUM
 
 INPUT
 
@@ -57,8 +56,12 @@ T_GIMP_RGB
 T_GIMP_HSV
 	SvGimpHSV ($arg, $var);
 
-T_GIMP_UNIT
-	$var = (GimpUnit)gperl_convert_enum (gimp_unit_type (), ($arg));
+T_GIMP_ENUM
+	$var = gperl_convert_enum (${
+          my $t = $ntype;
+          $t =~ s/(?=[A-Z])/_/g;
+          \lc substr $t, 1;
+        }_type (), ($arg));
 
 OUTPUT
 
@@ -67,4 +70,11 @@ GOBJECT
 
 GOBJECT_OWN
 	$arg = newSVGObject_noinc (G_OBJECT ($var));
+
+T_GIMP_ENUM
+	$arg = gperl_convert_back_enum (${
+          my $t = $ntype;
+          $t =~ s/(?=[A-Z])/_/g;
+          \lc substr $t, 1;
+        }_type (), ($var));
 

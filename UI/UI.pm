@@ -22,9 +22,10 @@ Gimp::UI - "simulation of libgimpui", and more!
 
 =head1 DESCRIPTION
 
-Due to the braindamaged (read: "unusable") libgimpui API, I had to
-reimplement all of it in perl. Note to self: We are at 1.3 now, better
-check and finally use libgimpui since it is now based on gobject.
+The libgimpwidgets api has improved considerably in 1.4 (mostly due to
+it being based in gobjects), but the resulting widgets still are not
+full-featured gobjects, so a lot of manual workaround is neccessary. Most
+of the API has been converted.
 
 =over 4
 
@@ -583,8 +584,7 @@ sub interact($$$$@) {
      $h->add($l);
 
      #d#
-     my $demo = new Gimp::UI::MemsizeEntry 32*1e7, 16*1e7, 64*1e7;#d#
-        warn $demo->get_value ();
+     my $demo = new Gimp::UI::ColorButton "some button", 30, 30, [0.5, 0.2, 0.1], 'small-checks';#d#
      $h->add ($demo);#d#
      #d#
      
