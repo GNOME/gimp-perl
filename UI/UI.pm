@@ -513,7 +513,7 @@ sub interact($$$$@) {
            
         } elsif ($type == PF_FONT) {
            my $fs = new Gtk2::FontSelectionDialog sprintf __"Font Selection Dialog (%s)", $desc;
-           my $def = __"-*-helvetica-medium-r-normal-*-34-*-*-*-p-*-iso8859-1";
+           my $def = __"Helvetica 34";
            my $val;
            
            my $l = new Gtk2::Label "!error!";
@@ -526,8 +526,7 @@ sub interact($$$$@) {
                  $fs->set_font_name ($val);
               }
               
-              my ($n, $t) = Gimp::xlfd_size $val;
-              $l->set ((split /-/, $val)[2] . "\@$n" . ($t ? "p" : ""));
+              $l->set (label => $val);
            };
            
            $fs->ok_button->signal_connect (clicked => sub {$setval->($fs->get_font_name); $fs->hide});
