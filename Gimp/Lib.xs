@@ -739,10 +739,6 @@ static void check_for_typoe (char *croak_str, char *p)
   g_snprintf (b, sizeof b, "%s_MASK", p);	if (perl_get_cv (b, 0)) goto gotit;
   g_snprintf (b, sizeof b, "SELECTION_%s", p);	if (perl_get_cv (b, 0)) goto gotit;
   g_snprintf (b, sizeof b, "%s_IMAGE", p);	if (perl_get_cv (b, 0)) goto gotit;
-
-  strcpy (b, "1"); if (strEQ (p, "TRUE" )) goto gotit;
-  strcpy (b, "0"); if (strEQ (p, "FALSE")) goto gotit;
-  
   return;
 
 gotit:
@@ -1461,14 +1457,18 @@ gimp_call_procedure (proc_name, ...)
                       {
                         args[i].type = params[i].type;
                         if (i == 0 && runmode)
-                           {
-                             if (sv_isa (ST(j), "Gimp::run_mode"))
+                           { /* If its a valid value for the run mode, and # of parameters are correct
+                              * we assume the user explicitly included the run mode parameter
+                              */
+                             if (nparams==(items-1) && SvIV(ST(j))==GIMP_RUN_INTERACTIVE || SvIV(ST(j))==GIMP_RUN_NONINTERACTIVE)
                                {
-                                 args->data.d_int32 = SvIV(SvRV(ST(j)));
+                                 args->data.d_int32 = SvIV(ST(j));
                                  j++;
                                }
                              else
-                               args->data.d_int32 = GIMP_RUN_NONINTERACTIVE;
+                               {
+                                 args->data.d_int32 = GIMP_RUN_NONINTERACTIVE;
+                               }
                            }
                         else if ((!SvROK(ST(j)) || i >= nparams-1 || !is_array (params[i+1].type))
                                  && convert_sv2gimp (croak_str, &args[i], ST(j)))

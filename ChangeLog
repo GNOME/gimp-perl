@@ -1,3 +1,8 @@
+2004-07-30  Seth Burgess <sjburges@gimp.org>
+	* Gimp/Lib.xs: fixup longstanding bug of not being able to 
+	               use RUN_NONINTERACTIVE
+	* t/run.t: reenabled the test that uses this
+
 2004-07-21  Seth Burgess <sjburges@gimp.org>
 	* TODO: added some items
 	* Gimp.pm: pod cleanup and reorg

@@ -58,7 +58,7 @@ skip($n,1,sub {-d $plugins});
 skip($n,1,sub {-x "$plugins/script-fu"});
 
 # Test 5 (Check that environment is setup and can use the Gimp module)
-use Gimp;
+use Gimp qw(:auto);
 ok(1);
 
 # Test 6 (check that constants are brought in)
@@ -87,10 +87,9 @@ sub tests {
  # Test 22 (some more to test without default value)
    skip($n,1,sub{$l->paintbrush(30,4,[5,5,8,1],PAINT_CONSTANT,0) || 1});
   
- # Test 23 (call external plugin through Plugin->)
-#   skip($n,1,sub{Plugin->sharpen(RUN_NONINTERACTIVE,$i,$l,10) || 1});
-# BROKEN: skip for now
-   ok(1);
+ # Test 23 (call external plugin through Plugin->, use explicit RUN_NONINTERACTIVE)
+   skip($n,1,sub{Plugin->sharpen(RUN_NONINTERACTIVE,$i,$l,10) || 1});
+ #  ok(1);
  # Test 24 (call with maximum fu magic)
    skip($n,1,sub{$l->sharpen(10) || 1});
  # Test 25 (call with little Fu magic, using default RUN_NONINTERACTIVE)
