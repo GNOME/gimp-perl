@@ -1,0 +1,24 @@
+very sketchy, how I got it running:
+
+download tml's win32 builds of all (gtk+2 etc.) www.gimp.org/win32
+download cygwin, including perl5.8
+
+using Glib and Gtk2 from cvs (> 0.9)
+
+tml's libs, pkg-config etc are all unpacked under /gnuwin32
+
+    PATH=/gnuwin32/bin:$PATH
+
+    cd Glib
+    perl Makefile.PL
+    make LDLOADLIBS="$(pkg-config gthread-2.0 gmodule-2.0 gobject-2.0 --libs) -lintl"
+    make test
+    make install
+
+    cd Gtk2
+    perl Makefile.PL
+    make LDLOADLIBS="$(pkg-config gtk+-2.0 --libs) -lintl -L/usr/lib/perl5/site_perl/5.8.0/cygwin-multi-64int/auto/Glib/ -lGlib"
+    make install
+
+
+
