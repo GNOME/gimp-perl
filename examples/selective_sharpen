@@ -43,17 +43,10 @@ sub my_code {
     $edge_layer->gauss_iir2(3.0, 3.0);
 
     # 5) boost contrast (I can give you a specific curve or such)
-#TODO: adjust this curve - I have no idea what you're looking for.  You can
-# have up to 17 pairs describing coordinates on the curve.
     $edge_layer->curves_spline(HISTOGRAM_VALUE, 
                               [0,0,
-                               10,5,
-                               20,11,
-                               30,20,
-                               50,50,
-                               80,100,
-                               130,150,
-                               200,210,
+                               45,20,
+                               160,225,
                                255,255]
                               );
 
