@@ -1,22 +1,28 @@
 Remove or fix:
 
 alpha2color: oh-my-god ugly.  Color specifiers not 1.3 compatibile.  In a lousy menu spot.  Just remove this one, since its simple to do by hand anyway. 
+avi: I can't read back one that I've saved in gimp.  And the image is shifted ~50 pixels when viewed in xanim.  This needs some help.
 border: broken; probably color speicifiers, but hard to tell without learning PDL a lot better.  May be my color conversion routine in Fu.pm is broken too.
 circular_text: polar coordinates does a better job, more flexibly, and with preview.  
+clear_alpha: I don't understand what this is supposed to do.  It crashes on an image with alpha.  It doesn't seem to have any effect on an image without.  
 colourtoalpha: this algorithm isn't right.  There's a C plugin that does it right.  Get rid of this.
 Create_Images (leaning towards removal, along with the file "image_list", since it doesn't do much)
-example-oo: for some reason I can't acertain, the gimp_install_procedure doesn't pass.
 fire: xlfd problems
 fit-text: doesn't work due to differences in fonts; xlfd_szie no longer works, because we don't have an xlfd any longer.  Can the font widget do better in returning values?
+gap-vcr: <sjburges@gimp.org> needs gtk2 update - looks easy on surface, if anyone is intrested.
 gimpmagick: <sjburges@gimp.org> gtk2 rework - needs preview->gdk::pixbuf conversion.  Crashes in imagemagick now (using version 5.5.7.9) with : Exception 410: No images defined (AddNoise) at /home/seth/.gimp-1.3/plug-ins/gimpmagick line 257.  Or unable to open temporary file, if you instead click "apply".  Also one of the uglier guis ever to grace gimp.
-
-PDB: <sjburges@gimp.org> working on this; major gtk2 rework, probably change quite a bit to make the gui a bit more accessible
+miff: <sjburges@gimp.org> can't load a convert'ed 24bit image from ImageMagick 5.5.7.
+PDB: <sjburges@gimp.org> major gtk2 rework required.  May just let this one go.
+perlcc: <sjburges@gimp.org> would need some major Gtk2 rework, also not useful to make it an EXTENSION since it spawns no temporary procedures.
 logulator: the name is awful, and its not working very well; pdb errors all over.  This useful enough to keep?
+parasite-editor: ugly dialog.  Some Gtk1.2 clist stuff still blocking from working in 2.0.  Can probably be brought back with a little work if anyone is intrested enough.
+povray: I can't get it to find my .inc files.  Perhaps an install issue on my system?  I don't use povray, so hard to tell.
 roundrectsel: redundant, remove this
 terral_text: xlfd problems
 triangu: It produces something, but gives some Gimp-Core-CRITICAL's in the process as well as some perl error (prototype mismatch on main::qsort).  I can't tell if the result is close to correct or not.
 visual: I don't know if this ever worked, but its a nice idea.  It has all sorts of Gtk->Gtk2 conversion that would need to take place.
 homepage-logo: paths are hard-coded; unless your system looks like Marc's, this isn't gonna work.  
+
 
 =============
 
@@ -25,46 +31,36 @@ Untested:
 image_tile: I don't have a suffient gallery to test this with; anyone have a 
 few thousand pics to throw at this and let me know if it works?
 
-
-scratches
-repdup
-povray
-perlcc (rename to control_center)
-parasite-editor
-miff
-iland
-guides_to_selection
-gouge
-goldenmean
-gap-vcr
-frame_reshuffle
-font_table
-example-net
-example-fu
-ditherize
-dataurl
-colorhtml
-clear_alpha
-billboard
-avi
-animate_cells
-
 =============
 
 Tested:
+animate_cells: 4/24/04 <sjburges@gimp.org> fixed - s/channel_ops_duplicate/image_duplicate/
+billboard: 4/24/04 <sjburges@gimp.org> fixed - s/push_undo/undo/g
 blended2: 3/26/04 <sjburges@gimp.org> fixed - blend takes different params now. Moved to Render, since I'm killing Logulator.
 blowinout: 4/11/04 <sjburges@gimp.org> worked.  Updated email, license.
 bricks: 2/25/04 <sjburges@gimp.org> lots of changes (see plugin).  This seems to work now.
 burst: 12/6/03 <sjburges@gimp.org>  basic functionality works
+colorhtml: 4/24/04 <sjburges@gimp.org> works.
+dataurl: 4/24/04 <sjburges@gimp.org> fixed. Changed png to pass right # of parameters, changed some deprecated functions, fixed some sub's in Gimp.pm for the export functionality.
+ditherize: 4/24/04 <sjburges@gimp.org> fixed.  
 fade-alpha: 12/12/03 <sjburges@gimp.org> removed deprecated Gtk stuff, so works again.  2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
 centerguide: 12/12/03 <sjburges@gimp.org> works. (Gimp-Fu is ugly for radio buttons)
 dots: 12/12/03 <sjburges@gimp.org> works.  (Gimp-Fu is ugly for spinbuttons)  Needs to be added to the install list.
 dust: 2/25/04 <sjburges@gimp.org> its more worm-like than dust-like, but it works (I think it does what its supposed to?).  I removed deprecated stuff, including fixing Util.pm.
+example-fu: 4/24/04 <sjburges@gimp.org> works like its supposed to, which is mostly as a demo script.  Commented a bit more.
+example-net: 4/24/04 <sjburges@gimp.org> works.  Commented.
+example-oo: 4/24/04 <sjburges@gimp.org> fixed.  use Gimp qw(:auto) is important.Its well commented now, so its really an example.
 feedback: 12/12/03 <sjburges@gimp.org> works; don't know how useful it is still.
+font_table: 4/24/04 <sjburges@gimp.org> works, but doesn't show whats available through Gtk/Pango/Gimp.  Instead renders all of xlsfonts.
 frame_filter: 3/21/04 <sjburges@gimp.org> s/undo_push/undo/.  Moved to Generic.
+frame_reshuffle: 4/24/04 <sjburges@gimp.org> smoke test passes.
 glowing_steel: 12/13/03 <sjburges@gimp.org> fixed. 12/26/03 fixed again (color specifiers 0-1.0) 2/07/04  fixed again (s/bucket_fill/edit_bucket_fill/g)
+goldenmean: 4/24/04 <sjburges@gimp.org> works.  I don't like it under Render; should be under File->New with Golden Mean?
+gouge: 4/24/04 <sjburges@gimp.org> uncommented register spots.
 guide_remove: 12/12/03 <sjburges@gimp.org> works.
 guidegrid: 12/12/03 <sjburges@gimp.org> works
+guides_to_selection: 4/24/03 <sjburges@gimp.org> Works.  Improved description a bit.
+iland: 4/24/03 <sjburges@gimp.org> fixed.  I think. Not sure what the eventual output is supposed to be, but it does something now.  Slowly.
 innerbevel: 12/13/03 <sjburges@gimp.org> fixed. 2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
 layerfuncs: 12/12/03 <sjburges@gimp.org> Center Layer works.  Probably could use repositioning in menus.  Could use a namechange since I removed the layer_to_image_size functionality, which is ported to C.
 map_to_gradient: 2/25/04 <sjburges@gimp.org> added param to gradients_get data.  Works, but its identical to Filters/Color/Map/Map Gradient in C.  Its a good example because it shows off the Gradient selector and PDL, but its bad in that it reimplements something already shipped with gimp.  I'm thinking of not installing this by default...
@@ -75,7 +71,9 @@ pixelmap: 3/18/04 <sjburges@gimp.org> worked out of the box.  Hacked PF_TEXT to 
 randomart1: 12/13/03 <sjburges@gimp.org> fixed; could use spinners instead of sliders.  2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
 randomblends: 12/13/03 <sjburges@gimp.org> fixed. 2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
 redeye: 4/3/04 <sjburges@gimp.org> works.  Moved to Filter/Colors/Redeye*
+repdup: 4/24/04 <sjburges@gimp.org> works.  Not sure how generally useful it is, but could be fun for scripting.
 roundsel: 12/12/03 <sjburges@gimp.org> works.
+scratches : 4/24/03 <sjburges@gimp.org> fixed.
 sethspin: 12/13/03 <sjburges@gimp.org> fixed.
 tex-to-float: 3/24/04 <sjburges@gimp.org> works if you have TeX installed; breaks in a rather non-obvious way if you don't.  Lots of console output that should probably be redirected.  Moved to Render (rather than being alone in Text).
 translogo: 3/24/04 <sjburges@gimp.org> you need to have an image with some portion that is not 100% opaque.  Moved under Web, since I'm getting rid of Logulator. Modified description.

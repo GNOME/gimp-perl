@@ -1,17 +1,23 @@
 <Seth's random notes>
 Convince someone that knows auto* to redo the compilation/installation.  Or move to ExtUtils::PkgConfig for this purpose.
 
-Generate a new web presence for Gimp-Perl, with a friendlier face to it.
+Fix broken behavior when NONINTERACTIVE is used explicitly (I disable the check in the run.t currently so make test can pass).
+
+Remove known broken examples from being installed immediately; remove from distribution eventually.  Remove unknown status examples from being installed eventually.
+
+Generate a new web presence for Gimp-Perl, with a friendlier face to it.  Redo my scripts page, possibly expanding to cover all working scripts?
 
 Remove scm2scm and Rec::Decent dependencies.
 
 Add optional podviewer for help.  Add POD docs to all example scripts/documentation, to encourage good style.
 
-Finish looking at all the examples and verify they work as expected or fix so they do.
+New mailing list; netcentral doesn't archive, rarely used.
 
-Remove known broken examples from being installed immediately; remove from distribution eventually.  Remove unknown status examples from being installed eventually.
+Figure out i18n some day.
 
-Add license status to all examples.
+Fix the code so I don't get "
+Gtk-CRITICAL **: file gtktooltips.c: line 314 (gtk_tooltips_set_tip): assertion `GTK_IS_TOOLTIPS (tooltips)' failed at ..../Gimp/UI.pm line 821.
+" repeated whenever I use a color picker.
 
 <Marc's previous stuff>
 this is mostly my personal worksheet and notepad, which may not be

@@ -12,8 +12,8 @@ use Gimp::Fu;
 use Gimp::Util;
  
 register "guide_to_selection",
-         "Selects the area under the selection",
-         "Selects the area under the guides and a small area beneath",
+         "Puts a selection mask around the guides",
+         "Selects the area under the guides (1px wide)",
          "Marc Lehmann",
          "Marc Lehmann <pcg\@goof.com>",
          "1999-08-01",

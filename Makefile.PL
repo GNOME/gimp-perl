@@ -33,8 +33,12 @@ if ($ARGV[0] ne "--writemakefile") {
 ); # can't get imagemagick to work
 @gtk_pins =
    qw(
-     dataurl colorhtml avi parasite-editor fade-alpha
+     dataurl 
+     colorhtml 
+     fade-alpha
    );
+# can't get avi to save/load an animation properly
+# parasite-editor
 @pins =
    qw(
       animate_cells 
@@ -44,7 +48,7 @@ if ($ARGV[0] ne "--writemakefile") {
       font_table frame_filter frame_reshuffle 
       glowing_steel goldenmean guidegrid guide_remove guides_to_selection
       image_tile innerbevel  
-      layerfuncs miff mirrorsplit 
+      layerfuncs mirrorsplit 
       perlotine prep4gif 
       repdup roundsel 
       scratches sethspin stamps 
@@ -56,7 +60,11 @@ if ($ARGV[0] ne "--writemakefile") {
    );
 @pdl_pins =
    qw(
-      clear_alpha gouge map_to_gradient pixelmap view3d 
+      gouge 
+      map_to_gradient 
+      redeye
+      pixelmap 
+      view3d 
    );  
 
 eval "use Gtk2;"; $GTK = $@ eq "";

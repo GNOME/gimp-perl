@@ -85,8 +85,8 @@ my @_consts = (@_param,
         'WRAP',				'SMEAR',			'BLACK',
 
 	'EXPORT_CAN_HANDLE_RGB',	'EXPORT_CAN_HANDLE_GRAY',	'EXPORT_CAN_HANDLE_INDEXED',
-        'EXPORT_CAN_HANDLE_ALPHA',	'EXPORT_CAN_HANDLE_LAYERS',	'EXPORT_CAN_HANDLE_LAYERS_AS_ANIMATION',
-        'EXPORT_NEEDS_ALPHA',
+        'EXPORT_CAN_HANDLE_BITMAP',     'EXPORT_CAN_HANDLE_ALPHA',	'EXPORT_CAN_HANDLE_LAYERS',	
+	'EXPORT_CAN_HANDLE_LAYERS_AS_ANIMATION', 'EXPORT_CAN_HANDLE_LAYER_MASKS', 'EXPORT_NEEDS_ALPHA',
 	'EXPORT_CANCEL',		'EXPORT_IGNORE',		'EXPORT_EXPORT', 
 	'ROTATE_90', 			'ROTATE_270',			'ROTATE_180',
 	'TRUE', 			'FALSE'
@@ -111,8 +111,8 @@ sub PDB_INT32             (){ 0} sub PDB_SELECTION         (){17} sub PDB_STATUS
 sub PDB_STRINGARRAY       (){ 9} sub PDB_CHANNEL           (){15} sub PDB_FLOATARRAY        (){ 8}
 sub PDB_INT32ARRAY        (){ 5} sub PDB_DRAWABLE          (){16} sub PDB_BOUNDARY          (){18}
 sub PDB_REGION            (){11} sub PDB_PARASITE          (){20} sub PDB_INT8              (){ 2}
-sub BLUE_LUT              (){ 3} sub VALUE_LUT             (){ 0} sub GREEN_LUT             (){ 2}
-sub ALPHA_LUT             (){ 4} sub RED_LUT               (){ 1} sub SHADOWS               (){ 0}
+sub HISTOGRAM_BLUE        (){ 3} sub HISTOGRAM_VALUE       (){ 0} sub HISTOGRAM_GREEN       (){ 2}
+sub HISTOGRAM_ALPHA       (){ 4} sub HISTOGRAM_RED         (){ 1} sub SHADOWS               (){ 0}
 sub HIGHLIGHTS            (){ 2} sub MIDTONES              (){ 1} sub POINTS                (){ 1}
 sub PIXELS                (){ 0} sub STACK_TRACE_ALWAYS    (){ 2} sub STACK_TRACE_NEVER     (){ 0}
 sub STACK_TRACE_QUERY     (){ 1} sub GRAIN_EXTRACT_MODE    (){20} sub COLOR_ERASE_MODE      (){22}
@@ -158,6 +158,17 @@ sub WRAP		(){ 0 }
 sub SMEAR		(){ 1 }
 sub BLACK		(){ 2 }
 
+# defined in Gimp.xs for some reason
+#sub EXPORT_CAN_HANDLE_RGB                   (){1}
+#sub EXPORT_CAN_HANDLE_GRAY                  (){2}
+#sub EXPORT_CAN_HANDLE_INDEXED               (){4}
+#sub EXPORT_CAN_HANDLE_BITMAP                (){8}
+#sub EXPORT_CAN_HANDLE_ALPHA	            (){16}
+#sub EXPORT_CAN_HANDLE_LAYERS	            (){32}
+#sub EXPORT_CAN_HANDLE_LAYERS_AS_ANIMATION   (){64}
+#sub EXPORT_CAN_HANDLE_LAYER_MASKS           (){128}
+#sub EXPORT_NEEDS_ALPHA                      (){256}
+	
 # file_tiff_*
 sub COMPRESSION_NONE		(){ 0 }
 sub COMPRESSION_LZW		(){ 1 }
@@ -353,6 +364,7 @@ $in_top=$in_quit=$in_run=$in_net=$in_init=0;	# perl -w is braindamaged
 ($function)=$0=~/([^\/\\]+)$/;
 
 $verbose=0;
+# $verbose=1;
 
 $interface_type = "net";
 if (@ARGV) {

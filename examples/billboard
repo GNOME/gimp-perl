@@ -1,4 +1,8 @@
-#!/opt/bin/perl -w
+#!/usr/bin/perl 
+
+#TODO: figure out why adding a -w gives a bunch of "
+# Use of uninitialized value in subroutine entry at /usr/lib/perl/5.8/Gimp.pm 
+# line 627." messages and fix it.
 
 # This one's all mine.  Well, its GPL/Artisitic but I"m the author and creator. # I think you need gimp 1.1 or better for this - if  you don't, please let 
 # me know

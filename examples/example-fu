@@ -3,6 +3,8 @@
 use Gimp;
 use Gimp::Fu;
 
+# expand your terminal to 121 across to read easily...
+
 register "gimp_fu_example_script",			# fill in a function name
          "A non-working example of Gimp::Fu usage",	# and a short description,
          "Just a starting point to derive new ".        # a (possibly multiline) help text
@@ -11,9 +13,9 @@ register "gimp_fu_example_script",			# fill in a function name
          "Marc Lehmann <pcg\@goof.com>",		# don't forget your name (author)
          "(c)1998,1999,2000 Marc Lehmann",		# and your copyright!
          "20000321",					# the date this script was written (YYYYMMDD)
-         N_"<Toolbox>/Xtns/Gimp::Fu Example...",	# the menu path
+         N_"<Toolbox>/Xtns/Gimp::Fu Example...",	# the menu path - the 'N_' is for internationalization
          "RGB*, GRAYA",					# image types to accept (RGB, RGAB amnd GRAYA)
-         [
+         [ # one of each type of parameter here 
          # argument type, switch name	, a short description		, default value, extra arguments
           [PF_SLIDER	, "width"	, "The image width"		, 360, [300, 500]],
           [PF_SPINNER	, "height"	, "The image height"		, 100, [100, 200]],
@@ -27,9 +29,9 @@ register "gimp_fu_example_script",			# fill in a function name
           [PF_IMAGE	, "extra_image"	, "An additonal picture to ignore"],
           [PF_DRAWABLE	, "extra_draw"	, "Somehting to ignroe as well"	],
           [PF_RADIO	, "type"	, "The effect type"		, 0, [small => 0, large => 1]],
-#          [PF_BRUSH	, "a_brush"	, "An unused brush"		],
-#          [PF_PATTERN	, "a_pattern"	, "An unused pattern"		],
-#          [PF_GRADIENT	, "a_gradients"	, "An unused gradients"		],
+          [PF_BRUSH	, "a_brush"	, "An unused brush"		],
+          [PF_PATTERN	, "a_pattern"	, "An unused pattern"		],
+          [PF_GRADIENT	, "a_gradients"	, "An unused gradients"		],
          ],
          sub {
 

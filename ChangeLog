@@ -1,4 +1,35 @@
 2004-04-24  Seth Burgess <sjburges@gimp.org>
+	* examples/animate_cells:  s/channel_ops_duplicate/image_duplicate/
+	* examples/billboard:  s/push_undo/undo/g
+	* examples/clear_alpha: s/push_undo/undo/g (broken still)
+	* examples/dataurl: Changed png to pass right # of parameters, changed 
+	some deprecated functions, fixed some sub's in Gimp.xs for the 
+	export functionality.
+        * examples/ditherize: s/push_undo/undo/g
+	* examples/example-fu: uncommented the now functional widgets for 
+	gradient, brush, texture.  Added a couple other comments.
+	* examples/example-net: commented
+	* examples/example-oo:  use Gimp qw(:auto) important! Also, 
+	register as a PLUGIN not an EXTENSION.  Works now!
+	* exmaples/fade-alpha: put in the <Image>/Layer/Transparency menu 
+	* examples/gouge: uncommented 2 registration strings.
+	* examples/guides_to_selection: reworded description, so it will 
+	hopefully be a bit more obvious what it does.
+	* examples/iland: changed plug_in_rotate calls to work-around bug
+	of not being able to call with RUN_NONINTERACTIVE
+	* examples/parasite_editor: register as parasite viewer, since it
+	can't edit yet.  Also fixed a Gtk2 problem (add_with_viewport).  I
+	can't get this to do anything useful.
+	* examples/scratches: s/VALUE_LUT/HISTOGRAM_VALUE/
+	
+	* Gimp.pm: previously neglected to rename VALUE_LUT in the subs; fixed.
+	Added some more EXPORT_CAN_HANDLE*.
+	* Gimp.xs: corresponding EXPORT_CAN_HANDLE* additions. 
+	
+ 	* examples/examples.TODO: updated accordingly + failures.  Now have 
+	everything sorted into working and not working.
+
+2004-04-24  Seth Burgess <sjburges@gimp.org>
 	* examples/alpha2color
 	* examples/avi
 	* examples/billboard

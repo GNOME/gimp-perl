@@ -28,7 +28,7 @@ sub perl_fu_animate_cells {
   my $image = shift;
   my $drawable = shift; # Unused
   my $makecopy = shift;
-  $image = gimp_channel_ops_duplicate($image) if $makecopy;
+  $image = gimp_image_duplicate($image) if $makecopy;
   gimp_image_undo_disable($image);
   gimp_progress_init("Animating cell layers...",MESSAGE_BOX);
 
