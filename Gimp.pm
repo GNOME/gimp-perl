@@ -16,7 +16,7 @@ BEGIN {
       XSLoader::load Gimp $VERSION;
    } or do {
       require DynaLoader;
-      @ISA=qw(DynaLoader);
+      @ISA = qw(DynaLoader);
       bootstrap Gimp $VERSION;
    }
 }
@@ -86,7 +86,7 @@ my @_consts = (@_param,
         'WRAP',				'SMEAR',			'BLACK',
 
 	'EXPORT_CAN_HANDLE_RGB',	'EXPORT_CAN_HANDLE_GRAY',	'EXPORT_CAN_HANDLE_INDEXED',
-        'EXPORT_CAN_HANDLE_ALPHA ',	'EXPORT_CAN_HANDLE_LAYERS',	'EXPORT_CAN_HANDLE_LAYERS_AS_ANIMATION',
+        'EXPORT_CAN_HANDLE_ALPHA',	'EXPORT_CAN_HANDLE_LAYERS',	'EXPORT_CAN_HANDLE_LAYERS_AS_ANIMATION',
         'EXPORT_NEEDS_ALPHA',
 	'EXPORT_CANCEL',		'EXPORT_IGNORE',		'EXPORT_EXPORT',
 );

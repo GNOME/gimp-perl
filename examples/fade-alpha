@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/opt/bin/perl -w
 
 use Gtk2;
 use Gimp qw(:auto);
@@ -804,7 +804,7 @@ sub do_fade
     }
   else
     {
-      $mask = $drawable->create_mask(ALPHA_MASK);
+      $mask = $drawable->create_mask(ADD_ALPHA_MASK);
       $image->add_layer_mask($drawable, $mask);
     }
     
@@ -824,14 +824,14 @@ sub do_fade
   
   if ($direction==0)
     {
-      $mask->blend(FG_BG_RGB, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
+      $mask->blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
                    REPEAT_NONE, 0, 1, 0.1, 
 		   $bounds[3], $bounds[4],
 		   $bounds[1], $bounds[2]);
     }
   elsif ($direction==1)
     {
-      $mask->blend(FG_BG_RGB, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
+      $mask->blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
                    REPEAT_NONE, 0, 1, 0.1, 
 		   $bounds[3], ($bounds[2]+$bounds[4])/2,
 		   $bounds[1], ($bounds[2]+$bounds[4])/2);
@@ -839,7 +839,7 @@ sub do_fade
     }
   elsif ($direction==2)
     {
-      $mask->blend(FG_BG_RGB, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
+      $mask->blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
                    REPEAT_NONE, 0, 1, 0.1, 
 		   $bounds[3], $bounds[2],
 		   $bounds[1], $bounds[4]);
@@ -847,14 +847,14 @@ sub do_fade
     }
   elsif ($direction==3)
     {
-      $mask->blend(FG_BG_RGB, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
+      $mask->blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
                    REPEAT_NONE, 0, 1, 0.1,
 		   ($bounds[3]+$bounds[1])/2, $bounds[4],
 		   ($bounds[3]+$bounds[1])/2, $bounds[2]);
     }
   elsif ($direction==4)
     {
-      $mask->blend(FG_BG_RGB, DARKEN_ONLY_MODE, RADIAL, 100.0, 0.0, 
+      $mask->blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, RADIAL, 100.0, 0.0, 
                    REPEAT_NONE, 0, 1, 0.1, 
 		   ($bounds[1]+$bounds[3])/2, 
 		   ($bounds[2]+$bounds[4])/2, 
@@ -863,35 +863,35 @@ sub do_fade
     }
   elsif ($direction==5)
     {
-      $mask->blend(FG_BG_RGB, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
+      $mask->blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
                    REPEAT_NONE, 0, 1, 0.1, 
 		   ($bounds[3]+$bounds[1])/2, $bounds[2],
 		   ($bounds[3]+$bounds[1])/2, $bounds[4]);
     }
   elsif ($direction==6)
     {
-      $mask->blend(FG_BG_RGB, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
+      $mask->blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
                    REPEAT_NONE, 0, 1, 0.1, 
 		   $bounds[1], $bounds[4],
 		   $bounds[3], $bounds[2]);
     }
   elsif ($direction==7)
     {
-      $mask->blend(FG_BG_RGB, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
+      $mask->blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
                    REPEAT_NONE, 0, 1, 0.1, 
 		   $bounds[1], ($bounds[2]+$bounds[4])/2,
 		   $bounds[3], ($bounds[2]+$bounds[4])/2);
     }
   elsif ($direction==8)
     {
-      $mask->blend(FG_BG_RGB, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
+      $mask->blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, LINEAR, 100.0, 0.0, 
                    REPEAT_NONE, 0, 1, 0.1, 
 		   $bounds[1], $bounds[2],
 		   $bounds[3], $bounds[4]);
     }
   if ($direction >=0 && $direction <9)
     {
-      $image->remove_layer_mask($drawable, APPLY);
+      $image->remove_layer_mask($drawable, MASK_APPLY);
     }
   
   Palette->set_background($prevBack);

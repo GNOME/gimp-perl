@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/opt/bin/perl
 
 # this is just a very basic hack...
 
@@ -177,7 +177,7 @@ sub new_from_name {
 # a connection tab
 package Tab;
 
-use Gimp::basewidget Gtk::Button;
+use Gimp::basewidget Gtk2::Button;
 
 sub OPEN (){1}
 sub CONN (){2}

@@ -642,10 +642,10 @@ sub register($$$$$$$$$;@) {
          unshift @$params, @save_params;
          $defargs = @save_params;
       } elsif (/^<Toolbox>\//) {
-         $type = &Gimp::EXTENSION;
+         $type = &Gimp::PLUGIN;
          $defargs = 0;
       } elsif (/^<None>/) {
-         $type = &Gimp::EXTENSION;
+         $type = &Gimp::PLUGIN;
          $defargs = 0;
       } else {
          die __"menupath _must_ start with <Image>, <Toolbox>, <Load>, <Save> or <None>!";

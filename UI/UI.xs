@@ -62,7 +62,6 @@ export_image(image_ID,drawable_ID,format_name,capabilities)
 
 #if 0
 #if UI
-#if GIMP11
 
 GtkWidget *
 _new_pattern_select(dname, ipattern, nameref)
@@ -83,6 +82,5 @@ _new_pattern_select(dname, ipattern, nameref)
 	OUTPUT:
 	RETVAL
 
-#endif
 #endif
 #endif

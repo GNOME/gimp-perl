@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/opt/bin/perl -w
 
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
@@ -22,7 +22,7 @@ sub circular_text {
         gimp_selection_none ($image);
         my $layer;
         $layer=$img->layer_new($drawable->width,$drawable->height,$image->layertype(1), __"Text", 100, NORMAL_MODE);
-        $layer->drawable_fill(TRANS_IMAGE_FILL);
+        $layer->drawable_fill(TRANSPARENT_FILL);
         $img->add_layer($layer,0);
         $layer->edit_paste(0)->floating_sel_anchor;
         $img->resize($drawable->width, $drawable->height, 0, 0);

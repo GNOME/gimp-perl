@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/opt/bin/perl
 # gallery.pl
 #
 # Copyright (c) Fabian Frederick 2001
@@ -88,7 +88,7 @@ sub galleryMaker {
 
    my ($rf,$gf, $bf)=@$foregroundcolor;
    my ($r,$g,$b)=@$color;
-   printHeader($rf,$gf,$bf,$r,$g,$b,htmlFile,$gallerytitle);
+   printHeader($rf,$gf,$bf,$r,$g,$b,*htmlFile,$gallerytitle);
    print htmlFile "<table><tr>\n";
    my $totalentries=0;
    my $entries=1;
@@ -161,9 +161,9 @@ sub galleryMaker {
 		   $htmlDetail=~s/.jpg/.html/g;	
 		   $htmlDetail=~s/.JPG/.html/g;	
 		   open (fhtmlDetail, "> $dpath$htmlDetail") or die ("Unable to process HTML File.");
-   		   printHeader($rf,$gf,$bf,$r,$g,$b,fhtmlDetail,$gallerytitle);
+   		   printHeader($rf,$gf,$bf,$r,$g,$b,*fhtmlDetail,$gallerytitle);
 		   print fhtmlDetail "<img src=\"$cfile\"></img>";	
-		   printFooter($rf,$gf,$bf,"$galleryfile.html", fhtmlDetail);
+		   printFooter($rf,$gf,$bf,"$galleryfile.html", *fhtmlDetail);
 		   close fhtmlDetail;
 		   file_jpeg_save(RUN_NONINTERACTIVE,$img, ($img->get_layers)[0],"$tbfname", "$tbfname",0.7,0,1,0,"",0,1,0,0);
 		   print htmlFile "		<td><a href='$htmlDetail'><img src='m$cfile' border='0'></a></td>\n";
@@ -180,7 +180,7 @@ sub galleryMaker {
     }
     Gimp->progress_update(1);	
     print htmlFile "</table>\n";
-    printFooter($rf,$gf,$bf,$parentURL, htmlFile);
+    printFooter($rf,$gf,$bf,$parentURL, *htmlFile);
     close htmlFile;
     Gimp->message(__"Your gallery ($galleryfile) has been generated through Gallery plug-in with $totalentries entries");
     gimp_palette_set_foreground($oldforeground);

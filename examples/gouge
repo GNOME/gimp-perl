@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/opt/bin/perl
 
 # implements some algorithms described in (the otherwise very bad)
 # http://www.biocomputer.com/Thesis.html

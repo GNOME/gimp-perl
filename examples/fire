@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/opt/bin/perl
 
 use Gimp;
 use Gimp::Fu;
@@ -86,7 +86,7 @@ register "firetext",
    $image->undo_disable;
    
    my $layer = new Layer $image, $w+40, $h+40, RGBA_IMAGE, "text layer", 100, NORMAL_MODE;
-   $layer->fill(BG_IMAGE_FILL);
+   $layer->fill(BACKGROUND_FILL);
    $layer->add_layer(0);
    $layer->text_fontname(20,20, $text,0, 1, xlfd_size $font, $font)->anchor;
 

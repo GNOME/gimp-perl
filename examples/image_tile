@@ -1,6 +1,6 @@
-#!/usr/app/bin/perl
+#!/opt/bin/perl
 
-eval 'exec /usr/app/bin/perl  -S $0 ${1+"$@"}'
+eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 #
 # A photo-tiling pluggin. Take an image, and tile it (much like the
@@ -376,7 +376,7 @@ sub overlay_image {
     gimp_image_scale($img,$width,$height);
     gimp_edit_copy(gimp_image_active_drawable($img)); #gimp 1.1 -deleted $img
     my $baseimg = gimp_drawable_image($draw);
-    gimp_rect_select($baseimg,$x,$y,$width,$height,REPLACE,0,0);
+    gimp_rect_select($baseimg,$x,$y,$width,$height,CHANNEL_OP_REPLACE,0,0);
     my $sel = gimp_edit_paste($draw,0); # gimp 1.1 -deleted $baseimg
     gimp_floating_sel_anchor($sel);
     gimp_image_delete($img);

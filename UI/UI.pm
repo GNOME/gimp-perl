@@ -197,7 +197,7 @@ sub GTK_OBJECT_INIT {
    show $hbbox;
 
    my $button = new Gtk2::Button __"OK";
-   signal_connect $button "clicked", sub {
+   signal_connect $button clicked => sub {
       hide $w;
       if ($l->selection) {
          my $p = $l->selection->children->get;
@@ -210,12 +210,12 @@ sub GTK_OBJECT_INIT {
    show $button;
    
    $button = new Gtk2::Button __"Cancel";
-   signal_connect $button "clicked", sub {hide $w};
+   signal_connect $button clicked => sub {hide $w};
    $hbbox->pack_start($button,0,0,0);
    can_default $button 1;
    show $button;
    
-   $self->signal_connect("clicked",sub {show $w});
+   $self->signal_connect(clicked => sub {show $w});
 }
 
 package Gimp::UI::PatternSelect;
@@ -381,7 +381,7 @@ sub GTK_OBJECT_INIT {
     	$self->update_color;
     };
     
-    signal_connect $color_button "clicked" => \&cb_color_button;
+    signal_connect $color_button clicked => \&cb_color_button;
 }
 
 sub GTK_OBJECT_SET_ARG {
@@ -437,11 +437,11 @@ sub cb_color_button {
     my $cs_window=new Gtk2::ColorSelectionDialog(__"Color");
     $cs_window->colorsel->set_color(map($_*1/255,@{$color_button->{_color}}));
     $cs_window->show();
-    $cs_window->ok_button->signal_connect("clicked",
+    $cs_window->ok_button->signal_connect(clicked =>
 					  \&color_selection_ok,
 					  $cs_window,
 					  $color_button);
-    $cs_window->cancel_button->signal_connect("clicked",
+    $cs_window->cancel_button->signal_connect(clicked =>
 					      sub { $cs_window->destroy; delete $color_button->{_cs_window} });
     $color_button->{_cs_window} = $cs_window;
 }
@@ -535,7 +535,7 @@ sub help_window(\$$$) {
       #d#$b->set_usize($font->string_width('M')*80,($font->ascent+$font->descent)*26);
 
       my $button = Gtk2::Button->new(__"OK");
-      signal_connect $button "clicked", sub { hide $$helpwin };
+      signal_connect $button clicked => sub { hide $$helpwin };
       $$helpwin->action_area->add ($button);
       
       $$helpwin->signal_connect (destroy => sub { undef $$helpwin });
@@ -627,7 +627,8 @@ sub interact($$$$@) {
            my $setval = sub {
               $val = $_[0];
               unless (defined $val && $fs->set_font_name ($val)) {
-                 warn __"Illegal default font description for $function: $val\n" if defined $val;
+                 warn sprintf __"Illegal default font description for $function: %s\n", $val
+                    if defined $val;
                  $val = $def;
                  $fs->set_font_name ($val);
               }
@@ -670,14 +671,14 @@ sub interact($$$$@) {
            set_tip $t $b,$desc;
            
            my $c = new Gtk2::Button __"FG";
-           signal_connect $c "clicked", sub {
+           signal_connect $c clicked => sub {
              $b->set('color', "@{Gimp::Palette->get_foreground}");
            };
            set_tip $t $c,__"get current foreground colour from the gimp";
            $a->pack_start ($c,1,1,0);
            
            my $d = new Gtk2::Button __"BG";
-           signal_connect $d "clicked", sub {
+           signal_connect $d clicked => sub {
              $b->set('color', "@{Gimp::Palette->get_background}");
            };
            set_tip $t $d,__"get current background colour from the gimp";
@@ -784,16 +785,15 @@ sub interact($$$$@) {
            my $h = new Gtk2::VBox 0,5;
            $a->add($h);
            my $b = new Gtk2::TextBuffer;
-           my $e = new Gtk2::TextView $b;
+           my $e = new_with_buffer Gtk2::TextView $b;
            my %e;
            %e = $$extra if ref $extra eq "HASH";
 
            my $sv = sub { 
-              my $t = shift,
-              $b->set_text ($t);
+              $b->set_text ($_[0]);
            };
            my $gv = sub {
-              $b->get_text ($b->get_start_iter, $b->get_end_iter);
+              $b->get_text ($b->get_start_iter, $b->get_end_iter, 0);
            };
 
            $h->add ($e);
@@ -902,7 +902,7 @@ sub interact($$$$@) {
      set_tip $t $button,__"Reset all values to their default";
      
      $button = new Gtk2::Button __"Previous";
-     signal_connect $button clickeds => sub {
+     signal_connect $button clicked => sub {
        for my $i (0..$#lastvals) {
          $setvals[$i]->($lastvals[$i]);
        }

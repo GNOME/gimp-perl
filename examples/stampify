@@ -1,6 +1,6 @@
-#!/usr/app/bin/perl
+#!/opt/bin/perl
 
-eval 'exec /usr/app/bin/perl  -S $0 ${1+"$@"}'
+eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 
 use Gimp qw(:auto __ N_);
@@ -41,7 +41,7 @@ register	"stampify",
 			gimp_ellipse_select($img2,
 				$pos, 0,
 				$diameter, $diameter,
-				ADD, 1, 0, 0);
+				CHANNEL_OP_ADD, 1, 0, 0);
 			$pos = $pos + $diameter + $gap;
 		}
 # create vertical holes
@@ -51,11 +51,11 @@ register	"stampify",
 			gimp_ellipse_select($img2,
 				0, $pos,
 				$diameter, $diameter,
-				ADD, 1, 0, 0);
+				CHANNEL_OP_ADD, 1, 0, 0);
 			$pos = $pos + $diameter + $gap;
 		}
 		gimp_palette_set_background($hole);
-		gimp_edit_fill($layer1, BG_IMAGE_FILL);
+		gimp_edit_fill($layer1, BACKGROUND_FILL);
 		gimp_selection_none($img2);
 # here comes the clever part! :-)
 # offset horis and vert holes by half the diameter

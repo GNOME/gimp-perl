@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/opt/bin/perl
 
 use Gimp::Feature qw(gtk perl-5.005);
 use Gimp 1.06 (':auto','__','N_');

@@ -1,6 +1,6 @@
-#!/usr/app/bin/perl
+#!/opt/bin/perl
 
-eval 'exec /usr/app/bin/perl  -S $0 ${1+"$@"}'
+eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 
 # Terral Text
@@ -71,7 +71,7 @@ sub {
 		"TextLayer", 100, 0);
 	$img->add_layer($textlayer,1);
 	palette_set_background([255,255,255]);
-	$textlayer->edit_fill(BG_IMAGE_FILL);
+	$textlayer->edit_fill(BACKGROUND_FILL);
 	palette_set_foreground([0,0,0]);
 
 	# Place centered Text - what a PITA!

@@ -1,6 +1,6 @@
-#!/usr/app/bin/perl
+#!/opt/bin/perl
 
-eval 'exec /usr/app/bin/perl  -S $0 ${1+"$@"}'
+eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 
 use Gimp qw(:auto __ N_);
@@ -24,7 +24,7 @@ sub goldenmean {
 
 	gimp_image_add_layer($layer, -1);
 	gimp_palette_set_background([255, 255, 255]);
-	$layer->gimp_edit_fill(BG_IMAGE_FILL);
+	$layer->gimp_edit_fill(BACKGROUND_FILL);
 
 	return $img;
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/opt/bin/perl
 
 # this extension shows some oo-like calls
 
@@ -14,9 +14,9 @@ sub plug_in_example_oo {
 
   Palette->set_background([200,200,100]);
 
-  $bg->fill(BG_IMAGE_FILL);
+  $bg->fill(BACKGROUND_FILL);
 #  Palette->set_background([200,100,200]);
-#  gimp_drawable_fill ($bg,BG_IMAGE_FILL);
+#  gimp_drawable_fill ($bg,BACKGROUND_FILL);
   $img->add_layer($bg,1);
 
   new Display($img);

@@ -1,6 +1,6 @@
-#!/usr/app/bin/perl
+#!/opt/bin/perl
 
-eval 'exec /usr/app/bin/perl  -S $0 ${1+"$@"}'
+eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 
 # [10/27/1999] v0.0.1 First version. 
@@ -98,7 +98,7 @@ sub do_bricks {
       }
     gimp_undo_push_group_end($image);
     gimp_palette_set_background ($clr);
-    $layerb = gimp_image_add_new_layer($image,1,BG_IMAGE_FILL,0);
+    $layerb = gimp_image_add_new_layer($image,1,BACKGROUND_FILL,0);
     gimp_selection_all($image);
     if ($bp ne "") 
       {

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/opt/bin/perl
 
 use Gimp;
 use Gimp::Fu;
@@ -54,7 +54,7 @@ register "gimp_fu_example_script",			# fill in a function name
    Palette->set_foreground($fg) unless $ignore;
    Palette->set_background($bg) unless $ignore;
 
-   fill $l BG_IMAGE_FILL;
+   fill $l BACKGROUND_FILL;
    $text_layer = $img->text_fontname(-1, 10, 10, $text, 5, 1, xlfd_size($font), $font);
 
    Palette->set_foreground("green");

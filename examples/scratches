@@ -1,4 +1,4 @@
-#!/usr/app/bin/perl
+#!/opt/bin/perl
 
 use Gimp;
 use Gimp::Fu;
@@ -14,7 +14,7 @@ sub new_scratchlayer {
     my $layer = $image->layer_new ($image->width, $image->height, $image->layertype(0),
                                   "displace layer ($angle)", 100, NORMAL_MODE);
     $layer->add_layer(-1);
-    $layer->fill (WHITE_IMAGE_FILL);
+    $layer->fill (WHITE_FILL);
     $layer->noisify (0, 1, 1, 1, 0);
     $layer->mblur (0, $length, $angle);
     $layer->levels (VALUE_LUT, 120, 255, 0.3, 0, 255);

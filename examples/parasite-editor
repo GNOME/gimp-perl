@@ -1,4 +1,4 @@
-#!/usr/app/bin/perl
+#!/opt/bin/perl
 
 #BEGIN {$^W=1};
 

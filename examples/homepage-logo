@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/opt/bin/perl
 
 use Gimp;
 use Storable;
@@ -71,7 +71,7 @@ sub create_logo {
    my $b = new Layer($img,$w+$w1*$h,$h,RGB_IMAGE,'Background',100,NORMAL_MODE);
    Palette->set_background($bg);
    Palette->set_foreground($on ? $fg2 : $fg);
-   $b->fill(BG_IMAGE_FILL);
+   $b->fill(BACKGROUND_FILL);
    $b->add_layer(0);
 
    $img->display_new if $example;

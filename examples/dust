@@ -1,6 +1,6 @@
-#!/usr/app/bin/perl
+#!/opt/bin/perl
 
-eval 'exec /usr/app/bin/perl  -S $0 ${1+"$@"}'
+eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 
 use Gimp;
@@ -87,8 +87,8 @@ register "dust",
    Brushes->set_paint_mode(NORMAL_MODE);
 
    if (1) {
-      $layer = $image->add_new_layer (0, TRANS_IMAGE_FILL, 1);
-      $layer->set_mode(DIFFERENCE_MODE);
+      $layer = $image->add_new_layer (0, TRANSPARENT_FILL, 1);
+      $layer->set_mode (DIFFERENCE_MODE);
    }
    
    for (1..($w*$h*$density)) {

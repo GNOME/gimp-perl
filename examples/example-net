@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/opt/bin/perl
 
 # example for the gimp-perl-server (also called Net-Server)
 
@@ -22,7 +22,7 @@ Gimp::on_net {
 
   for $i (0..255) {
      Palette->set_background([$i,255-$i,$i]);
-     $bg->edit_fill(BG_IMAGE_FILL);
+     $bg->edit_fill(BACKGROUND_FILL);
      Display->displays_flush();
   }
 #  Gimp::Net::server_quit;  # kill the gimp-perl-server-extension (ugly name)
