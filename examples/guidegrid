@@ -8,11 +8,14 @@ eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
 # 11/7/99 <brendy@swipnet.se>
 # Added an option to remove existing guides
 # Added progress bar.
-# ** How can we force the display to update after adding guides? **
 #
 # 12/7/99 <sjburges@gimp.org>
 # Changed the display code in C and got rid of ugly hack in perl.
 #
+# 7/15/03 <sjburges@gimp.org>
+# Changed spot that its registered from <Image>/Guides to <Image>/Image/Guides
+# to reduce horizontal clutter on menubar
+
 use Gimp;
 use Gimp::Fu;
 use Gimp::Util;
@@ -25,7 +28,7 @@ register "guide_grid",
   "Seth Burgess",
   "Seth Burgess <sjburges\@gimp.org>",
   "1999-03-20",
-  N_"<Image>/Guides/Guide Grid...",
+  N_"<Image>/Image/Guides/Guide Grid...",
   "*",
   [
    [PF_SPINNER, "x_spacing", "How far to space grid horizontally", 24, [1,1000,1]],
