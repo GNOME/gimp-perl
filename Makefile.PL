@@ -37,21 +37,27 @@ if ($ARGV[0] ne "--writemakefile") {
    );
 @pins =
    qw(
-      windify prep4gif webify tex-to-float ditherize
-      xachlego xachshadow roundsel blended2 warp-sharp
-      scratches blowinout terral_text xachvision perlcc translogo
-      animate_cells image_tile yinyang stamps font_table sethspin
-      perlotine randomblends innerbevel fit-text guidegrid
-      repdup centerguide stampify goldenmean mirrorsplit
-      layerfuncs randomart1 glowing_steel frame_reshuffle frame_filter
-      logulator guide_remove guides_to_selection burst
-      layerfuncs bricks miff dust circular_text
+      animate_cells 
+      blended2 blowinout bricks burst  
+      centerguide circular_text 
+      ditherize dots dust 
+      fit-text font_table frame_filter frame_reshuffle 
+      glowing_steel goldenmean guidegrid guide_remove guides_to_selection
+      image_tile innerbevel  
+      layerfuncs logulator miff mirrorsplit 
+      perlcc perlotine prep4gif 
+      repdup roundsel 
+      scratches sethspin stamps 
+      terral_text tex-to-float translogo 
+      randomart1 randomblends 
+      stampify
+      warp-sharp webify windify 
+      xachlego xachshadow xachvision
+      yinyang 
    );
 @pdl_pins =
    qw(
-      border gouge pixelmap view3d clear_alpha
-
-      fire map_to_gradient
+      border clear_alpha fire gouge map_to_gradient pixelmap view3d 
    ); # fire should use normal gradient map!
 
 eval "use Gtk2;"; $GTK = $@ eq "";
@@ -59,12 +65,12 @@ eval "use Parse::RecDescent;"; $PRD = $@ eq "";
 
 $GTK or print <<EOF;
 
-NOTICE:  unable to use the Perl-Gtk interface. Many features (like
+NOTICE:  unable to use the Perl-Gtk2 interface. Many features (like
          Gimp::Fu) rely on this extension. You can build without it (and
          many scripts will be disabled or run with reduced functionality
-         only), but it's better to install it (version 0.6123 or higher is
-         required, you can get it from ftp://ftp.gimp.org/pub/gtk/perl/ or
-         any CPAN mirror.
+         only), but it's better to install it.  If you do install it, 
+	 version 1.0 or higher is required; you can get it from 
+	 http://gtk2-perl.sourceforge.net/ or any CPAN mirror.
 
 EOF
 

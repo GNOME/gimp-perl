@@ -137,6 +137,7 @@ examples/warp-sharp
 examples/fade-alpha
 examples/circular_text
 examples/redeye
+examples/dots
 pxgettext
 po/ChangeLog
 po/Makefile.PL

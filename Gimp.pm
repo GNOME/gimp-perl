@@ -274,13 +274,44 @@ sub set_rgb_db($) {
    undef %rgb_db;
 }
 
+=head1 NAME
+
+canonicalize_colour - utility function for color conversion
+
+=head1 SYNOPSIS
+  
+  $color = canonicalize_colour ("#ff00bb");
+  $color = canonicalize_colour ([255,255,34]);
+  $color = canonicalize_colour ([255,255,34,255]);
+  $color = canonicalize_colour ([1.0,1.0,0.32]);
+  $color = canonicalize_colour ('red');
+
+=head1 DESCRIPTION
+
+Take in a color specifier in a variety of different formats, and return 
+a valid gimp color specifier, consisting of 3 or 4 numbers in the range 
+between 0 and 1.0.
+
+=head1 BUGS
+ 
+  * bounds checking is excessively lax; assumes relatively good input
+  * should emit more warnings
+  * has an extra 'u' in 'color' :)
+
+=cut 
+
 sub canonicalize_colour {
-   if (@_ == 3) {
-      [@_];
-   } elsif (ref $_[0]) {
-      $_[0];
-   } elsif ($_[0] =~ /^#([0-9a-fA-F]{2,2})([0-9a-fA-F]{2,2})([0-9a-fA-F]{2,2})$/) {
-      [map {eval "0x$_"} ($1,$2,$3)];
+   if ((scalar(@_) == 3) or (scalar(@_) == 4)) { # if 3 or 4 entries already
+      if (($_[0] > 1.0) or ($_[1] > 1.0) or ($_[2] > 1.0)) {
+        @_ = @_ / 255.0;
+      }
+      return [@_];
+   } elsif (ref $_[0]) { 
+      return $_[0];
+   } elsif  
+   ($_[0] =~ /^#([0-9a-fA-F]{2,2})([0-9a-fA-F]{2,2})([0-9a-fA-F]{2,2})$/) {
+    # convert hex specfier of #xxyyzz  
+     [map {eval "0x$_"} ($1/255.0,$2/255.0,$3/255.0)];
    } else {
       unless (%rgb_db) {
          if ($rgb_db_path) {
@@ -290,7 +321,7 @@ sub canonicalize_colour {
          }
          while(<RGB_TEXT>) {
             next unless /^\s*(\d+)\s+(\d+)\s+(\d+)\s+(.+?)\s*$/;
-            $rgb_db{lc($4)} = [$1 / 255, $2 / 255, $3 / 255];
+            $rgb_db{lc($4)} = [$1 / 255.0, $2 / 255.0, $3 / 255.0];
          }
          close RGB_TEXT;
       }

@@ -1,4 +1,4 @@
-#!/opt/bin/perl
+#!/usr/bin/perl
 
 # Gimp yin/yang symbol plugin for The Gimp. Extract documentation by running
 # "perldoc" on this plugin, or by using the pod utilities (pod2man, pod2html,
@@ -32,7 +32,7 @@ sub yinyang {
     my $oldcolor = gimp_palette_get_foreground();
     gimp_palette_set_foreground([0,0,0]);
     gimp_selection_all($img);
-    gimp_bucket_fill($draw,0,0,100,0,0,0,0);
+    gimp_edit_bucket_fill($draw,0,0,100,0,0,0,0);
 
     # Create the yin-yang shape
     #gimp_selection_invert($img);
@@ -43,7 +43,7 @@ sub yinyang {
     gimp_ellipse_select($img,$width/2-$width/4,$height/2,
 			$width/2, $height/2, 1, $aa, 0, 0);
     gimp_palette_set_foreground([255,255,255]);
-    gimp_bucket_fill($draw,0,0,100,0,0,0,0);
+    gimp_edit_bucket_fill($draw,0,0,100,0,0,0,0);
 
     # Cut away all but the central circle
     gimp_ellipse_select($img,0,0,$width,$height,2,$aa,0,0);
@@ -99,16 +99,20 @@ sub insert_eye {
 	gimp_floating_sel_anchor($float);
 	gimp_image_delete($eye);
     } else {
-	gimp_bucket_fill($draw,0,0,100,0,0,0,0);
+	gimp_edit_bucket_fill($draw,0,0,100,0,0,0,0);
     }
 }
 
 # Register with The Gimp
-register("yinyang", "Render a stand-alone Yin/Yang image",
+register("yinyang", 
+         "Render a stand-alone Yin/Yang image",
 	"Renders a black-and-white Yin/Yang symbol optionally
 	with \"eyes\" that may optionally be images.",
-	"Aaron Sherman", "(c) 1998, Aaron Sherman",
-	"1999b", N_"<Toolbox>/Xtns/Render/Yin-Yang...", undef,
+	"Aaron Sherman", 
+	"(c) 1998, Aaron Sherman",
+	"1999b", 
+	N_"<Toolbox>/Xtns/Yin-Yang...", 
+	undef,
 	[
 		[PF_INT32, "width", "Width", 256],
 		[PF_INT32, "height", "Height", 256],

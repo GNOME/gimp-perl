@@ -1,4 +1,27 @@
-Wed Jan 28 21:45:36 CET 2004 <pcg@goof.com>
+2004-2-21 Seth Burgess <sjburges@gimp.org>
+	* examples/yinyang: s/gimp_bucket_fill/gimp_edit_bucket_fill/
+	* examples/examples.TODO: updated appropriately
+
+	* README: cleaned up a bit, relected personal biases of myself more
+        * MANIFEST: added examples/dots
+	* AUTHORS: gave myself some credit
+
+	* Makefile.PL: reorganized examples into alphabetical order for eaiser
+	maintenance, added dots.  Updated a potential error message or two.
+
+2004-2-21 Seth Burgess <sjburges@gimp.org>
+	* UI/UI.pm: Used Gtk2 to make PatternSelection work.  Stripped out the
+	basewidget stuff.  Found that you cannot use the "Subclass" of Gtk2
+	for implementing this, because of the dynamic loading (thanks muppet!).
+	Selection dialog is still pretty ugly at this point, but it should 
+	at least work.
+
+	* UI/basewidget.pm: removed contents of file
+
+2004-1-28 Marc Lehman <pcg@goof.com>
+	* Gimp.pm, Fu.pm, Lib.pm, others: Upped version # to 2.0
+
+2004-1-28 21:45:36 CET Marc Lehman <pcg@goof.com>
         * Changes, ChangeLog: Renamed Changes to ChangeLog, kept Changes
         to document revision history (because users likely will look at
         Changes to find which revision has which features).

@@ -55,7 +55,7 @@ if (eval { require Gtk2; import Gtk2 (); 1 }) {
 
 # All Gtk-dependent functions are put below
 __DATA__
-#line 56 "..../Gimp/UI.pm"
+#line 58 "..../Gimp/UI.pm"
 
 # shows the properties of a glib object
 #d# just to debug
@@ -123,148 +123,157 @@ sub new($$$$) {
 
 package Gimp::UI::PreviewSelect;
 
+# Parent widget that handles a generic preview selection.
+# 
+# virtual methods (must be implemented by child): 
+#                  ->get_list 
+#                  ->get_title
+#                  ->get_pixbuf
+
 use Gimp '__';
 
-sub GTK_CLASS_INIT {
-   my $class = shift;
-   add_arg_type $class "active", "GtkString", 3;
+use Gtk2::SimpleList;
+
+*new = \&Glib::Object::new;
+
+Glib::Type->register (
+   'Gtk2::Button', __PACKAGE__,
+   signals => {},
+   properties => [
+     Glib::ParamSpec->string  ('active',
+                               'Active',
+                               'The active child',
+                               '',
+                               [qw/readable writable/]),
+        ],
+);
+
+sub SET_PROPERTY {
+        my ($self, $pspec, $newval) = @_;
+        if ($pspec->get_name eq 'active') {
+          $self->{active} = $newval;
+	  $self->set_label($newval);
+        }
 }
 
-sub GTK_OBJECT_SET_ARG {
-   my ($self,$arg,$id,$value) = @_;
-   if ($arg eq "active") {
-      my $count;
-      
-      if (!defined $self->{value} || $value ne $self->{value}) {
-         $self->{value}=$value=$self->set_preview($value);
-         $self->{label}->set($value);
-         $self->{list}->foreach(sub {
-            if ($_[0]->children->get eq $value) {
-               $self->{list}->select_item($count);
-            };
-            $count++;
-         });
-      }
-   }
+sub GET_PROPERTY {
+        my ($self, $pspec) = @_;
+        if ($pspec->get_name eq 'active') {
+                return $self->{active};
+        }
 }
 
-sub GTK_OBJECT_GET_ARG {
-   my ($self,$arg,$id) = @_;
-   $self->{label}->get;
+sub INIT_INSTANCE {
+       my ($self) = @_;
+       $self->signal_connect("clicked", \&preview_dialog);
 }
 
-sub GTK_OBJECT_INIT {
-   my $self = shift;
-   (my $label = new Gtk2::Label "")->show;
-   $self->add($label);
-   $self->{label}=$label;
-   
+sub preview_dialog {
+   my ($self) = @_;
+
    my $w = new Gtk2::Dialog;
    $w->set_title($self->get_title);
-   $w->set_usize(400,300);
+   $w->set_default_size(400,300);
    $w->action_area->set_border_width(2);
    $w->action_area->set_homogeneous(0);
-   
+
    (my $h=new Gtk2::HBox 0,0)->show;
    $w->vbox->pack_start($h,1,1,0);
-   
-   (my $preview = $self->new_preview)->show;
-   
-   (my $s=new Gtk2::ScrolledWindow undef,undef)->show;
+
+   (my $s=new Gtk2::ScrolledWindow undef,undef)->show; 
    $s->set_policy(-automatic, -automatic);
-   $s->set_usize(200,300);
+   $s->set_size_request(200,300);
    $h->pack_start($s,1,1,0);
-   $h->pack_start($preview,1,1,0);
-   
-   my $l=new Gtk2::List;
-   $l->set_selection_mode(-single);
-   $l->set_selection_mode(-browse);
-   $self->{list}=$l;
-   
+
+   $datalist = new Gtk2::SimpleList (
+       'Name' => 'text',
+       'Preview' => 'pixbuf',
+       );
+
    for(sort $self->get_list) {
-      $l->add(new Gtk2::ListItem $_);
+     my $listname = $_;
+     my $pixbuf = $self->new_pixbuf($listname);
+     push @{$datalist->{data}}, [ $listname, $pixbuf ];
    }
-   
-   $l->show_all;
-   $l->signal_connect("selection_changed",sub {
-      $l->selection and
-         $self->set_preview($l->selection->children->get);
-   });
-   $s->add_with_viewport ($l);
+
+   $datalist->get_selection->set_mode('single');
+   $datalist->get_selection->unselect_all;
+
+   $s->add($datalist);
+   $datalist->show;
 
    my $hbbox = new Gtk2::HButtonBox;
-   $hbbox->set_spacing(4);
+   $hbbox->set_spacing(2);
    $w->action_area->pack_end($hbbox,0,0,0);
    show $hbbox;
-
-   my $button = new Gtk2::Button __"OK";
-   signal_connect $button clicked => sub {
-      hide $w;
-      if ($l->selection) {
-         my $p = $l->selection->children->get;
-         $label->set($p);
-      }
-   };
-   $hbbox->pack_start($button,0,0,0);
-   can_default $button 1;
-   grab_default $button;
-   show $button;
-   
-   $button = new Gtk2::Button __"Cancel";
+ 
+   $button = new Gtk2::Button->new_from_stock('gtk-cancel');
    signal_connect $button clicked => sub {hide $w};
    $hbbox->pack_start($button,0,0,0);
    can_default $button 1;
    show $button;
-   
-   $self->signal_connect(clicked => sub {show $w});
+
+   my $button = new Gtk2::Button->new_from_stock('gtk-ok');
+   signal_connect $button clicked => sub {
+     @sel = $datalist->get_selected_indices;
+     @row =  @{$datalist->{data}}[$sel[0]];
+
+     $self->set( active => $row[0][0] );   
+     hide $w;
+     };
+   $hbbox->pack_start($button,0,0,0);
+   can_default $button 1;
+   grab_default $button;
+   show $button;
+
+   show $w;
 }
 
 package Gimp::UI::PatternSelect;
 
 use Gimp '__';
-use Gimp::basewidget Gtk2::Button;
 
-sub GTK_CLASS_INIT	{ goto &Gimp::UI::PreviewSelect::GTK_CLASS_INIT     }
-sub GTK_OBJECT_SET_ARG	{ goto &Gimp::UI::PreviewSelect::GTK_OBJECT_SET_ARG }
-sub GTK_OBJECT_GET_ARG	{ goto &Gimp::UI::PreviewSelect::GTK_OBJECT_GET_ARG }
-sub GTK_OBJECT_INIT	{ goto &Gimp::UI::PreviewSelect::GTK_OBJECT_INIT    }
+*new = \&Glib::Object::new;
 
-sub get_title { __"Pattern Selection Dialog" }
-sub get_list { Gimp->patterns_list("") }
+Glib::Type->register (
+   'Gimp::UI::PreviewSelect', __PACKAGE__,
+   signals => {},
+   properties => [],
+);
 
-sub new_preview {
-   my $self = shift;
-   my $cp = $self->{"color_preview"}=new Gtk2::Preview "color";
-   my $gp = $self->{"gray_preview"} =new Gtk2::Preview "grayscale";
-   my $preview = new Gtk2::HBox 0,0;
-   $preview->add($cp);
-   $preview->add($gp);
-   $preview;
+sub INIT_INSTANCE {
+       my ($self) = @_;
+       my $lbl = new Gtk2::Label $self->get("active");
+       $self->add($lbl);
 }
 
-sub set_preview {
-   my $self = shift;
-   my $value = shift;
-   
-   my $cp = $self->{"color_preview"};
-   my $gp = $self->{"gray_preview"};
-   
-   my ($name,$w,$h,$bpp,$mask)=Gimp->patterns_get_pattern_data ($value);
-   unless (defined $name) {
-      $name=Gimp->patterns_get_pattern;
-      ($name,$w,$h,$bpp,$mask)=Gimp->patterns_get_pattern_data ($name);
-   }
-   hide $cp;
-   hide $gp;
-   my $p = $bpp == 1 ? $gp : $cp;
-   $p->size ($w, $h);
-   for(0..$h-1) {
-      $p->draw_row (substr ($mask, $w*$bpp*$_), 0, $_, $w);
-   }
-   $p->draw(undef);
-   show $p;
-   
-   $name;
+sub get_title { __"Pattern Selection Dialog" }
+sub get_list { Gimp->patterns_get_list("") }
+
+sub new_pixbuf {
+   my ($name,$w,$h,$bpp,$mask)=Gimp->patterns_get_pattern_data ($_);
+   my $has_alpha = ($bpp==2 || $bpp==4);
+     
+   if ($bpp==1)
+     {
+        my @graydat = unpack "C*", $mask;
+        my @rgbdat;
+        
+        foreach (@graydat)
+          {
+             push @rgbdat, $_; push @rgbdat, $_; push @rgbdat, $_;
+          }
+
+        $mask = pack "C*", @rgbdat;
+     }
+   # TODO: Add code/test for handling GRAYA; don't have any GRAYA to test 
+   # with currently though.
+        
+   $pb = Gtk2::Gdk::Pixbuf->new_from_data($mask,'rgb',
+                                          $has_alpha?1:0,
+                                          8,$w,$h,
+                                          $has_alpha?$w*4:$w*3);
+   $pb;
 }
 
 package Gimp::UI::BrushSelect;
@@ -343,8 +352,8 @@ sub new {
 
 package Gimp::UI;
 
-# Seth Burgess <sjburges@gimp.org> Removed the camel logo from all scripts; doesn't add anything
-# to the interface, and isn't that attractive.
+# Seth Burgess <sjburges@gimp.org> Removed the camel logo from all 
+# scripts; doesn't add anything to the interface, and isn't that attractive.
 
 sub _new_adjustment {
    my @adj = eval { @{$_[1]} };
@@ -383,7 +392,7 @@ sub help_window(\$$$) {
       $b->set_text (sprintf __"BLURB:\n\n%s\n\nHELP:\n\n%s", $blurb, $help);
       #d#$b->set_usize($font->string_width('M')*80,($font->ascent+$font->descent)*26);
 
-      my $button = Gtk2::Button->new(__"OK");
+      my $button = Gtk2::Button->new_from_stock('gtk-ok');
       signal_connect $button clicked => sub { hide $$helpwin };
       $$helpwin->action_area->add ($button);
       
@@ -598,8 +607,9 @@ sub interact($$$$@) {
            push @getvals, sub { $res };
            
         } elsif ($type == PF_PATTERN) {
-           $a=new Gimp::UI::PatternSelect -active => defined $value ? $value : (Gimp->patterns_get_pattern)[0];
-           push @setvals, sub { $a->set('active', $_[0]) };
+           $a=new Gimp::UI::PatternSelect;
+           push @setvals, sub { $a->set('active', 
+	       defined $value ? $value : (Gimp->patterns_get_pattern)[0]) };
            push @getvals, sub { $a->get('active') };
            
         } elsif ($type == PF_BRUSH) {
@@ -742,7 +752,7 @@ sub interact($$$$@) {
      $hbbox->set_spacing (4);
      $v->pack_end ($hbbox, 0, 0, 2);
      
-     $button = new Gtk2::Button __"Defaults";
+     $button = new Gtk2::Button->new_from_stock('gimp-reset');
      signal_connect $button clicked => sub {
        for my $i (0..$#defaults) {
          $setvals[$i]->($defaults[$i]);
@@ -763,33 +773,32 @@ sub interact($$$$@) {
      signal_connect $w destroy => sub { main_quit Gtk2 };
 
      $hbbox = new Gtk2::HButtonBox;
-     $hbbox->set_spacing (4);
+     $hbbox->set_spacing (2);
      $w->action_area->pack_start ($hbbox, 0, 0, 0);
      show $hbbox;
 
-     $button = new Gtk2::Button __"Help";
+     $button = new Gtk2::Button->new_from_stock('gtk-help');
      $hbbox->pack_start ($button, 0, 0, 0);
      signal_connect $button clicked => sub { help_window ($helpwin, $blurb, $help) };
      can_default $button 1;
      
      $hbbox = new Gtk2::HButtonBox;
-     $hbbox->set_spacing (4);
+     $hbbox->set_spacing (2);
      $w->action_area->pack_end ($hbbox, 0, 0, 0);
      show $hbbox;
 
-     $button = new Gtk2::Button __"OK";
+     
+     $button = new Gtk2::Button->new_from_stock('gtk-cancel');
+     signal_connect $button clicked => sub { hide $w; main_quit Gtk2 };
+     $hbbox->pack_start ($button, 0, 0, 0);
+     can_default $button 1;
+     
+     $button = new Gtk2::Button->new_from_stock('gtk-ok');
      signal_connect $button clicked => sub { $res = 1; hide $w; main_quit Gtk2 };
      $hbbox->pack_start ($button, 0, 0, 0);
      can_default $button 1;
      grab_default $button;
-     #d#add $accel 0xFF0D, [], [], $button, "clicked";
-     
-     $button = new Gtk2::Button __"Cancel";
-     signal_connect $button clicked => sub { hide $w; main_quit Gtk2 };
-     $hbbox->pack_start ($button, 0, 0, 0);
-     can_default $button 1;
-     #d#add $accel 0xFF1B, [], [], $button, "clicked";
-     
+
      $res=0;
      
      show_all $w;

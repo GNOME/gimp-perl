@@ -88,4 +88,4 @@ windify: 12/12/03 <sjburges@gimp.org> works.
 xachlego: 12/14/03 <sjburges@gimp.org> removed deprecated; works.
 xachshadow: 12/14/03 <sjburges@gimp.org> removed deprecated, added a selection->none.  works.
 xachvision: 12/14/03 <sjburges@gimp.org> fixed.  Changed orientation to be horizontal.
-yinyang: 12/12/03 <sjburges@gimp.org> basic functionality works
+yinyang: 12/12/03 <sjburges@gimp.org> basic functionality works <2/20/04> s/gimp_bucket_fill/gimp_edit_bucket_fill/g
