@@ -5,13 +5,11 @@ NAME
 
 WARNING
 
-       This version of the module only works for Gimp-2.0 or higher.
+       This version of the module only works for Gimp-2.0; you may experience
+       installation problems with Gimp-2.2, but it has worked before.
 
        Current limitations:
        
-       When calling a plug-in, cannot currently specify RUN_NONINTERACTIVE or
-       RUN_INTERACTIVE; omit this when calling.
-
        There may be problems installing on a system with a Gimp 1.2 development
        still installed (reported once).  I've not yet looked into this.
 
