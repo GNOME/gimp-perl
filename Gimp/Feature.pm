@@ -9,7 +9,7 @@ my $gtk;
 
 sub _check_gtk {
    unless (defined $gtk) {
-      eval { require Gtk }; $gtk = $@ eq "" && $Gtk::VERSION>=0.5;
+      eval { require Gtk2}; $gtk = $@ eq "" && $Gtk2::VERSION>=0.5;
    }
    $gtk;
 

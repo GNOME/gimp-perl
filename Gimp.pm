@@ -356,7 +356,7 @@ sub _initialized_callback {
    # load the compatibility module on older versions
    if ($interface_pkg eq "Gimp::Lib") {
       # this must match @max_gimp_version in Gimp::Compat
-      my @compat_gimp_version = (1,1);
+      my @compat_gimp_version = (1,3);
       if ((Gimp->major_version < $compat_gimp_version[0])
           || (Gimp->major_version == $compat_gimp_version[0]
               && Gimp->minor_version < $compat_gimp_version[1])) {

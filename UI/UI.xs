@@ -33,7 +33,7 @@ typedef GtkWidget GimpColorScale_own;
 typedef GtkWidget GimpColorSelect_own;
 typedef GtkWidget GimpColorSelector_own;
 typedef GtkWidget GimpDialog_own;
-typedef GtkWidget GimpFileSelection_own;
+typedef GtkWidget GimpFileEntry_own;
 typedef GtkWidget GimpOffsetArea_own;
 typedef GtkWidget GimpPathEditor_own;
 typedef GtkWidget GimpPickButton_own;
@@ -266,18 +266,18 @@ BOOT:
 #void        gimp_dialog_create_action_areav (GimpDialog         *dialog,
 #					     va_list             args);
 
-MODULE = Gimp::UI	PACKAGE = Gimp::UI::FileSelection	PREFIX = gimp_file_selection_
+MODULE = Gimp::UI	PACKAGE = Gimp::UI::FileEntry	PREFIX = gimp_file_entry_
 
 BOOT:
-	gperl_register_object (GIMP_TYPE_FILE_SELECTION, "Gimp::UI::FileSelection");
+	gperl_register_object (GIMP_TYPE_FILE_ENTRY, "Gimp::UI::FileEntry");
 
-GimpFileSelection_own * gimp_file_selection_new (SV *unused_class, utf8_str title, utf8_str filename, \
+GimpFileEntry_own * gimp_file_entry_new (SV *unused_class, utf8_str title, utf8_str filename, \
                                                  gboolean dir_only = 0, gboolean check_valid = 0)
 	C_ARGS: title, filename, dir_only, check_valid
 
-utf8_str gimp_file_selection_get_filename (GimpFileSelection *selection)
+utf8_str gimp_file_entry_get_filename (GimpFileEntry *entry)
 
-void gimp_file_selection_set_filename (GimpFileSelection *selection, utf8_str filename)
+void gimp_file_entry_set_filename (GimpFileEntry *entry, utf8_str filename)
 
 MODULE = Gimp::UI	PACKAGE = Gimp::UI::OffsetArea	PREFIX = gimp_offset_area_
 

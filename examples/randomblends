@@ -37,7 +37,7 @@ register "random_blends",
     ($sel,$x1,$y1,$x2,$y2) = $img->gimp_selection_bounds;
     srand();
 
-    @gradientlist = gimp_gradients_get_list();  
+    @gradientlist = gimp_gradients_get_list("");  
    
     Gimp->progress_init("Random blends...");
     for ($i=0; $i<=$numgradients; $i++) {
