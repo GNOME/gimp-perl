@@ -214,18 +214,18 @@ sub this_script {
 my $latest_image;
 
 sub string2pf($$) {
-   my($s,$type,$name,$desc)=($_[0],@{$_[1]});
-   if($type==PF_STRING
-      || $type==PF_FONT
-      || $type==PF_PATTERN
-      || $type==PF_BRUSH
-      || $type==PF_CUSTOM
-      || $type==PF_FILE
-      || $type==PF_TEXT
-      || $type==PF_RADIO	# for now! #d#
-      || $type==PF_GRADIENT) {
+   my ($s, $type, $name, $desc) = ($_[0], @{$_[1]});
+   if($type == PF_STRING
+      || $type == PF_FONT
+      || $type == PF_PATTERN
+      || $type == PF_BRUSH
+      || $type == PF_CUSTOM
+      || $type == PF_FILE
+      || $type == PF_TEXT
+      || $type == PF_RADIO	# for now! #d#
+      || $type == PF_GRADIENT) {
       $s;
-   } elsif($type==PF_INT8
+   } elsif($type == PF_INT8
            || $type==PF_INT16
            || $type==PF_INT32
            || $type==PF_SLIDER
@@ -233,13 +233,13 @@ sub string2pf($$) {
            || $type==PF_ADJUSTMENT) {
       die __"$s: not an integer\n" unless $s==int($s);
       $s*1;
-   } elsif($type==PF_FLOAT) {
+   } elsif($type == PF_FLOAT) {
       $s*1;
-   } elsif($type==PF_COLOUR) {
+   } elsif($type == PF_COLOUR) {
       $s=Gimp::canonicalize_colour($s);
-   } elsif($type==PF_TOGGLE) {
+   } elsif($type == PF_TOGGLE) {
       $s?1:0;
-   #} elsif($type==PF_IMAGE) {
+   #} elsif($type == PF_IMAGE) {
    } else {
       die __"conversion from string to type $pf_type2string{$type} is not yet implemented\n";
    }
@@ -619,9 +619,9 @@ readable.
 
 sub register($$$$$$$$$;@) {
    no strict 'refs';
-   my($function,$blurb,$help,$author,$copyright,$date,
-      $menupath,$imagetypes,$params)=splice(@_,0,9);
-   my($results,$features,$code,$type,$defargs);
+   my ($function, $blurb, $help, $author, $copyright, $date,
+       $menupath, $imagetypes, $params) = splice @_, 0, 9;
+   my ($results, $features, $code, $type, $defargs);
 
    $results  = (ref $_[0] eq "ARRAY") ? shift : [];
    $features = (ref $_[0] eq "ARRAY") ? shift : [];

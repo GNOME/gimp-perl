@@ -53,7 +53,7 @@ if (eval { require Gtk2; import Gtk2 (); 1 }) {
 
 # All Gtk-dependent functions are put below
 __DATA__
-#line 57 "..../Gimp/UI.pm"
+#line 56 "..../Gimp/UI.pm"
 
 # shows the properties of a glib object
 #d# just to debug

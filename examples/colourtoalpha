@@ -18,7 +18,9 @@ register "colour_to_alpha",
            [PF_COLOR,		"colour",	"The colour to replace"],
          ],
          sub {					# es folgt das eigentliche Skript...
-   my($image,$drawable,$colour)=@_;
+   my ($image, $drawable, $colour) = @_;
+
+   $colour = byte [$colour->[0] * 255, $colour->[1] * 255, $colour->[2] * 255];
 
    $drawable->is_layer or die "colour_to_alpha only works with layers\n";
    $drawable->add_alpha unless $drawable->has_alpha;
@@ -29,8 +31,8 @@ register "colour_to_alpha",
    {
       # $src and $dst must either be scoped or explicitly undef'ed
       # before merge_shadow.
-      my $src = new PixelRgn $drawable,@bounds,0,0;
-      my $dst = new PixelRgn $drawable,@bounds,1,1;
+      my $src = new PixelRgn $drawable, @bounds, 0, 0;
+      my $dst = new PixelRgn $drawable, @bounds, 1, 1;
 
       $iter = Gimp->pixel_rgns_register ($src, $dst);
 
@@ -42,15 +44,15 @@ register "colour_to_alpha",
          $rgb = $pixels->slice("0:2");
 
          # calculate difference to destination colour
-         $diff = 255 + minimum $rgb - pdl $colour;
+         $diff = 255 + minimum $rgb - $colour;
 
          # adjust alpha part
          my $alpha = $pixels->slice("(3)");
-         $alpha .= 255-$diff;
+         $alpha .= 255 - $diff;
 
          # adjust the colour
-         my $a = ($diff/(255**2))->slice("*3") * pdl $colour;
-         $rgb .= 255-(255-$rgb) / (1-$a);
+         my $a = ($diff / (255**2))->slice("*3") * $colour->float;
+         $rgb .= 255 - (255-$rgb) / (1 - $a);
 
          # write the pixels into dst
          $dst->data($pixels);
