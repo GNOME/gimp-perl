@@ -5,7 +5,7 @@ border: broken; probably color speicifiers, but hard to tell without learning PD
 circular_text: polar coordinates does a better job, more flexibly, and with preview.  
 colourtoalpha: this algorithm isn't right.  There's a C plugin that does it right.  Get rid of this.
 Create_Images (leaning towards removal, along with the file "image_list", since it doesn't do much)
-fire: gradient selector broken
+fire: xlfd problems
 fit-text: doesn't work due to differences in fonts; xlfd_szie no longer works, because we don't have an xlfd any longer.  Can the font widget do better in returning values?
 gimpmagick: <sjburges@gimp.org> gtk2 rework - needs preview->gdk::pixbuf conversion.  Crashes in imagemagick now (using version 5.5.7.9) with : Exception 410: No images defined (AddNoise) at /home/seth/.gimp-1.3/plug-ins/gimpmagick line 257.  Or unable to open temporary file, if you instead click "apply".  Also one of the uglier guis ever to grace gimp.
 
@@ -13,6 +13,7 @@ PDB: <sjburges@gimp.org> working on this; major gtk2 rework, probably change qui
 logulator: the name is awful, and its not working very well; pdb errors all over.  This useful enough to keep?
 roundrectsel: redundant, remove this
 terral_text: xlfd problems
+example-oo: for some reason I can't acertain, the gimp_install_procedure doesn't pass.
 =============
 
 Untested:
@@ -42,9 +43,7 @@ gimp-make-img-map
 gap-vcr
 gallery
 frame_reshuffle
-frame_filter
 font_table
-example-oo
 example-net
 example-fu
 ditherize
@@ -60,13 +59,14 @@ animate_cells
 =============
 
 Tested:
-bricks: 2/25/04 <sjburges@gimp.org> lots of changes (see plugin).  This seems to work now, with a bit of work that could be done by anyone with an intrest.
+bricks: 2/25/04 <sjburges@gimp.org> lots of changes (see plugin).  This seems to work now.
 burst: 12/6/03 <sjburges@gimp.org>  basic functionality works
-fade-alpha: 12/12/03 <sjburges@gimp.org> removed deprecated stuff, so works again.  2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
+fade-alpha: 12/12/03 <sjburges@gimp.org> removed deprecated Gtk stuff, so works again.  2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
 centerguide: 12/12/03 <sjburges@gimp.org> works. (Gimp-Fu is ugly for radio buttons)
-dots: 12/12/03 <sjburges@gimp.org> works.  (Gimp-Fu is ugly for color selectors, and for spinbuttons)  Needs to be added to the install list.
+dots: 12/12/03 <sjburges@gimp.org> works.  (Gimp-Fu is ugly for spinbuttons)  Needs to be added to the install list.
 dust: 2/25/04 <sjburges@gimp.org> its more worm-like than dust-like, but it works (I think it does what its supposed to?).  I removed deprecated stuff, including fixing Util.pm.
 feedback: 12/12/03 <sjburges@gimp.org> works; don't know how useful it is still.
+frame_filter: 3/21/04 <sjburges@gimp.org> s/undo_push/undo/.  Moved to Generic.
 glowing_steel: 12/13/03 <sjburges@gimp.org> fixed. 12/26/03 fixed again (color specifiers 0-1.0) 2/07/04  fixed again (s/bucket_fill/edit_bucket_fill/g)
 guide_remove: 12/12/03 <sjburges@gimp.org> works.
 guidegrid: 12/12/03 <sjburges@gimp.org> works
@@ -76,7 +76,7 @@ map_to_gradient: 2/25/04 <sjburges@gimp.org> added param to gradients_get data. 
 mirrorsplit: 2/25/04 <sjburges@gimp.org> s/undo_push/undo/, have to add a layer to flip/select it in current gimp; removed when done w/ it.  Changed enums to be &Gimp::*.  fixed.
 prep4gif: 2/25/04 <sjburges@gimp.org> s/layer_set_visible/drawable_set_visible/.  fixed.
 perlotine: 12/13/03 <sjburges@gimp.org> fixed; tested on gif only.
-pixelmap: 3/18/04 <sjburges@gimp.org> worked out of the box.  Hacked PF_TEXT to look good.
+pixelmap: 3/18/04 <sjburges@gimp.org> worked out of the box.  Hacked PF_TEXT to look good.  Moved to Generic.
 randomart1: 12/13/03 <sjburges@gimp.org> fixed; could use spinners instead of sliders.  2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
 randomblends: 12/13/03 <sjburges@gimp.org> fixed. 2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
 roundsel: 12/12/03 <sjburges@gimp.org> works.
@@ -84,7 +84,7 @@ sethspin: 12/13/03 <sjburges@gimp.org> fixed.
 triangle: 2/25/04 <sjburges@gimp.org> works.  Not installed by default.
 warp-sharp: 3/06/04 <sjburges@gimp.org> fixed.  plug_in_edge changed, s/undo_push/undo/.
 windify: 12/12/03 <sjburges@gimp.org> works.
-xachlego: 12/14/03 <sjburges@gimp.org> removed deprecated; works.
+xachlego: 12/14/03 <sjburges@gimp.org> removed deprecated; works.  Larger block sizes are broken - need to look into this.
 xachshadow: 12/14/03 <sjburges@gimp.org> removed deprecated, added a selection->none.  works.
 xachvision: 12/14/03 <sjburges@gimp.org> fixed.  Changed orientation to be horizontal.
 yinyang: 12/12/03 <sjburges@gimp.org> basic functionality works <2/20/04> s/gimp_bucket_fill/gimp_edit_bucket_fill/g

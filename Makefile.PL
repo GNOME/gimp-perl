@@ -29,36 +29,35 @@ if ($ARGV[0] ne "--writemakefile") {
 }
 
 @otherdeps = qw(
-      povray imagemagick
-);
+      povray 
+); # can't get imagemagick to work
 @gtk_pins =
    qw(
-     dataurl colorhtml avi PDB parasite-editor fade-alpha
+     dataurl colorhtml avi parasite-editor fade-alpha
    );
 @pins =
    qw(
       animate_cells 
       blended2 blowinout bricks burst  
-      centerguide circular_text 
+      centerguide  
       ditherize dots dust 
-      fit-text font_table frame_filter frame_reshuffle 
+      font_table frame_filter frame_reshuffle 
       glowing_steel goldenmean guidegrid guide_remove guides_to_selection
       image_tile innerbevel  
-      layerfuncs logulator miff mirrorsplit 
-      perlcc perlotine prep4gif 
+      layerfuncs miff mirrorsplit 
+      perlotine prep4gif 
       repdup roundsel 
       scratches sethspin stamps 
-      terral_text tex-to-float translogo 
+      tex-to-float translogo 
       randomart1 randomblends 
-      stampify
       warp-sharp webify windify 
       xachlego xachshadow xachvision
       yinyang 
    );
 @pdl_pins =
    qw(
-      border clear_alpha fire gouge map_to_gradient pixelmap view3d 
-   ); # fire should use normal gradient map!
+      clear_alpha gouge map_to_gradient pixelmap view3d 
+   );  
 
 eval "use Gtk2;"; $GTK = $@ eq "";
 eval "use Parse::RecDescent;"; $PRD = $@ eq "";

@@ -9,12 +9,14 @@ use strict 'vars';
 
 # 12/5/03: <sjburges@gimp.org>
 #  s/->mask/->get_mask
+# 3/21/04: <sjburges@gimp.org>
+#  s/AlphaFade/alpha_fade/ to be compatible with PDB naming conventions
 
 ###
 # Globals
 ###
 my ($direction, $cancelFlag);
-my ($plugin) = "plug_in_AlphaFade";
+my ($plugin) = "plug_in_alpha_fade";
 
 # XPM's that I removed the $ and the @'s from (they get intrepreted in 
 # strings, which makes for nasty problems).
@@ -1055,7 +1057,7 @@ Gimp::on_query {
 gimp_install_procedure(
 $plugin, 
 "Fade the alpha channel of a layer from one side to another", 
-"This was written as a slightly useful exercise to test 
+"This was written as a slightly useful exercise,  
 mostly to learn Gtk's excellent perl interface.  It was  
 inspired by a mailing list question that asked how to do 
 exactly what this does, which is fade the alpha from one 
@@ -1072,7 +1074,7 @@ PLUGIN,
  [PDB_DRAWABLE, "drawable", "Input drawable"],
  [PDB_INT32, "direction", "Direction to fade(0-8)"]
 ],
-[])
+[]);
 };
 
 exit main;

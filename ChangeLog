@@ -1,3 +1,17 @@
+2004-3-22 Seth Burgess <sjburges@gimp.org>
+	* Makefile.PL: don't install known broken plugins
+	* TODO: split between Marc and Seth lists 
+	* Gimp.pm: updated POD a bit to reflect a bit more reality
+	
+	* examples/fade-alpha: renamed registering to fade_alpha, fixed typos
+        * examples/frame_filter: moved to Filters/Generic/ 
+	* examples/pixelmap: moved to Filters/Generic/
+	* examples/examples.TODO: updated accordingly + can't use example-oo
+
+2004-3-21 Manish Singh <yosh@gimp.org>
+	* configure: Quick fix to make it build with current gimp. Real fix 
+	  is a lot more work, so punt for later.
+
 2004-3-20 Seth Burgess <sjburges@gimp.org>
 	* AUTHORS: added myself, didn't even attempt to list script authors
 	* COPYING: changed Marc Lehman's address for modifications to mine

@@ -5,11 +5,11 @@ use Gimp::Fu;
 
 register	"layer_apply",
 		"Apply a perl expression to every layer of the image",
-		"=pod",
+		"See POD documentation for detailed help.",
 		"Marc Lehmann <pcg\@goof.com>",
 		"Marc Lehmann <pcg\@goof.com>",
 		"19990708",
-		N_"<Image>/Filters/Apply Perl Expression...",
+		N_"<Image>/Filters/Generic/Apply Perl Expression...",
 		"*",
 		[
                  [PF_TEXT,	"expr",	"the perl expression to run for each layer",
@@ -31,7 +31,7 @@ register	"layer_apply",
                 die "syntax error in expression '$function': $@\n" if $@;
 
                 # now apply the function
-                eval { $image->undo_push_group_start };
+                eval { $image->undo_group_start };
 	        # 5.004 has problems with overlaying functions
                 Gimp->progress_init("Applying Expression...",-1);
                 for my $index (0..$n-1) {
@@ -47,7 +47,7 @@ register	"layer_apply",
                    Gimp->progress_update(($i+1)/$n);
                 }
                 Gimp->displays_flush;
-                eval { $image->undo_push_group_end };
+                eval { $image->undo_group_end };
 	};
 
 exit main;

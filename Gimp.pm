@@ -694,10 +694,7 @@ package Gimp; # for __DATA__
 
 Gimp - Perl extension for writing Gimp Extensions/Plug-ins/Load & Save-Handlers
 
-WARNING: This is a pre-release of gimp-perl for gimp-1.3 I might not have
-much time to work on this this, so stay tuned and send patches. If you are
-interested in a version for gimp-1.3, use version 1.2* of the Gimp-Perl
-module.
+WARNING: This is a pre-release of gimp-perl for gimp-2.0. If you are interested in a version for gimp-1.2, use version 1.2* of the Gimp-Perl module.
 
 This is mostly a reference manual. For a quick intro, look at
 L<Gimp::Fu>. For more information, including tutorials, look at the
@@ -824,43 +821,11 @@ callback (which is not yet available if you use Gimp::Fu).
 
 =head1 CALLBACKS
 
-THIS SECTION IS OUTDATED AND WILL BE REWORKED SOON. USE Gimp::Fu or READ
-THE SOURCE :(
+This section needs writing.
 
-If you use the plain Gimp module (as opposed to Gimp::Fu), your program
-should only call one function: C<main>. Everything else is going to be
-B<called> from The Gimp at a later stage. For this to work, you should
-define certain call-backs in the same module you called C<Gimp::main>:
-
-=over 4
-
-=item init (), query (), quit ()
-
-the standard libgimp callback functions. C<run>() is missing, because this
-module will directly call the function you registered with
-C<gimp_install_procedure>. Some only make sense for extensions, some
-only for normal plug-ins.
-
-=item <installed_procedure>()
-
-The callback for a registered function (C<gimp_install_procedure> and
-friends). The arguments from The Gimp are passed as normal arguments
-(with the exception of arrays being passed without a preceding count).
-
-The return values from <installed_procedure>() are checked against the
-specification, with the exception that a single C<undef> is treated like no
-arguments. you can return less, but not more results than specified.
-
-If you C<die> within the callback, the error will be reported to The Gimp
-(as soon as The Gimp implements such a functionality) as an execution error.
-
-=item net ()
-
-this is called when the plug-in is not started directly from within the
-Gimp, but instead from the B<Net-Server> (the perl network server extension you
-hopefully have installed and started ;)
-
-=back
+Gimp::on_net
+Gimp::on_query
+Gimp::on_run
 
 =head1 CALLING GIMP FUNCTIONS
 
@@ -926,21 +891,18 @@ supported. Initializations can later be done in the init function.
 
 =item xlfd_size(fontname)
 
-This auxillary functions parses the XLFD (usually obtained from a C<PF_FONT>
-parameter) and returns its size and unit (e.g. C<(20,POINTS)>). This can
-conviniently used in the gimp_text_..._fontname functions, which ignore the
-size (no joke ;). Example:
-
- $drawable->text_fontname (50, 50, "The quick", 5, 1, xlfd_size $font, $font);
+This is no longer legitimate in Gimp2; X Logical Font Descriptors are no longer used.  Stripping font size from end must be done manually now.  Will be ripping out the relevant code soon.
 
 =item Gimp::gtk_init()
 
+<No idea if valid any longer for Gtk2>
 Initialize Gtk in a similar way the Gimp itself did it. This automatically
 parses gimp's gtkrc and sets a variety of default settings (visual,
 colormap, gamma, shared memory...).
 
 =item Gimp::gtk_init_add { init statements ... };
 
+<No idea if valid any longer for Gtk2>
 Add a callback function that should be called when gtk is being
 initialized (i.e. when Gimp::gtk_init is called, which should therefore be
 done even in Gnome applications).
@@ -982,10 +944,10 @@ similar, but not identical to the X11 default rgb.txt)
 
 =item Gimp::initialized()
 
-this function returns true whenever it is safe to clal gimp functions. This is
+this function returns true whenever it is safe to call gimp functions. This is
 usually only the case after gimp_main or gimp_init have been called.
 
-=item Gimp::register_callback(gimp_function_name,perl_function)
+=item Gimp::register_callback(gimp_function_name, perl_function)
 
 Using this function you can overwrite the standard Gimp behaviour of
 calling a perl subroutine of the same name as the gimp function.
@@ -1072,18 +1034,18 @@ details.
 
 =head1 DEBUGGING AIDS
 
-No, I can't tell you how to cure immune deficiencies (which might well be
-uncurable, as AIDS virii might be able to survive in brain cells, among
-other unreachable (for medication) parts of your body), but I I<can> tell
-you how Gimp can help you debugging your scripts:
+How to debug your scripts:
 
 =over 4
 
 =item Gimp::set_trace (tracemask)
 
-Tracking down bugs in gimp scripts is difficult: no sensible error messages.
-If anything goes wrong, you only get an execution failure. Switch on
-tracing to see which parameters are used to call pdb functions.
+Tracking down bugs in gimp scripts is difficult, due to a lack of 
+reasonable error messages.  Often, if anything goes wrong, you only get 
+an execution failure. 
+
+You can switch on tracing to see which parameters are used to call pdb 
+functions, so you can at least see what was called to cause the error.
 
 This function is never exported, so you have to qualify it when calling.
 
@@ -1153,8 +1115,7 @@ of elements.
 
 =item COLOR
 
-on input, either an array ref with 3 elements (i.e. [233,40,40]), a X11-like
-string ("#rrggbb") or a colour name ("papayawhip") (see set_rgb_db).
+on input, either an array ref with 3 elements (i.e. [0.1,0.4,0.9] or [233,40,40]), a X11-like string ("#rrggbb") or a colour name ("papayawhip") (see set_rgb_db).
 
 =item DISPLAY, IMAGE, LAYER, CHANNEL, DRAWABLE, SELECTION
 
@@ -1168,7 +1129,7 @@ and flags is the numerical flag value.
 
 =item REGION, BOUNDARY, PATH, STATUS
 
-Not yet supported (and might never be).
+Not yet supported.
 
 =back
 

@@ -1,14 +1,19 @@
+<Seth>
+Convince someone that knows auto* to redo the compilation/installation.
+
+Easy commandline running of the server.
+
+Get 'make test' working.
+
+Add optional podviewer for help.  Add POD docs to all example scripts/documentation, to encourage good style.
+
+Remove known broken examples from being installed immediately; remove from distribution eventually.
+
+<Marc's previous stuff>
 this is mostly my personal worksheet and notepad, which may not be
 up-to-date and may not even be readable ;)
 
-shortcuts (don't ask)
-
-gimp -b "(extension-perl-server 0 0 0)"
-gimp ~/pix/ka001.jpg -b "(extension-perl-server 0 0 0)"
-file:///usr/app/lib/perl5/PDL/HtmlDocs/PDL/
-make test TEST_VERBOSE=1
-
-put under LGPL:
+Put module under LGPL? 
 
 /usr/app/lib/perl5/Gtk.pm:107 (method call -> goto)
 

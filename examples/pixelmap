@@ -57,7 +57,7 @@ register "pixelmap",
          "Marc Lehmann",
          "Marc Lehmann <pcg\@goof.com>",
          "19991115",
-         N_"<Image>/Filters/Map/Pixelmap...",
+         N_"<Image>/Filters/Generic/Pixelmap...",
          "*",	
          [
            [PF_TEXT,		"expression"	, "The perl expression to use",	"(\$x*\$y*0.01)\n->slice(\"*\$bpp\")"]
@@ -99,7 +99,7 @@ exit main;
 
 =head1 DESCRIPTION
 
-Not yet written yet, sorry...
+A PDL user-defined mapping plug-in
 
 =over 4
 
