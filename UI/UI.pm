@@ -30,7 +30,7 @@ of the API has been converted.
  
  $button = new Gimp::UI::PatternSelect;
  $button = new Gimp::UI::BrushSelect;
- $button = new Gimp::UI::GradientSelec;
+ $button = new Gimp::UI::GradientSelect;
 
 =back
 
