@@ -70,7 +70,7 @@ sub get_state() {
    [
     Palette->get_foreground,
     Palette->get_background,
-    Gradients->get_active,
+    Gradients->get_gradient,
     scalar Patterns->get_pattern,
     scalar Brushes->get_brush,
    ]
@@ -80,7 +80,7 @@ sub set_state($) {
    my $s = shift;
    Palette->set_foreground($s->[0]);
    Palette->set_background($s->[1]);
-   Gradients->set_active($s->[2]);
+   Gradients->set_gradient($s->[2]);
    Patterns->set_pattern($s->[3]);
    Brushes->set_brush($s->[4]);
 }

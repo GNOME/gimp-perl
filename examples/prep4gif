@@ -20,8 +20,10 @@ use Gimp::Fu;
 #
 # 12/5/03: <sjburges@gimp.org>
 #  s/gimp_convert/gimp_image_convert
-
-
+#
+# 2/25/04: <sjburges@gimp.org>
+#  s/gimp_layer_set_visible/gimp_drawable_set_visible/
+#
 # Gimp::set_trace(TRACE_ALL);
 
 sub prep {
@@ -47,7 +49,7 @@ sub prep {
 # Hide the bottom layer, so it doesn't get into the merge visible later.
 
 	my $bottomlayer = $layers[$#layers];
-	gimp_layer_set_visible($bottomlayer, 0);
+	gimp_drawable_set_visible($bottomlayer, 0);
 	gimp_layer_add_alpha($bottomlayer);
 
 # NOTE TO PERL NEWBIES - 'my' variables should be declared in their outermost

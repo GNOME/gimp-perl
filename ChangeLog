@@ -1,6 +1,18 @@
 2004-2-25 Seth Burgess <sjburges@gimp.org>
-	* examples/bricks: brought up to date now that we have a pattern selector.  Still
-	    has some work that could be done, but functionality is restored.
+	* Gimp/Util.pm: s/Gradient->get_active/Gradient->get_gradient/
+
+        * examples/dust: removed deprecated stuff
+	* examples/map_to_gradient: added param to get non-reversed gradient
+	* examples/mirrorsplit: changed algorithm to add a layer; can't flip 
+	  without it being added now.  Changed deprecated stuff.
+	* examples/prep4gif: s/layer_set_visible/drawable_set_visible/
+
+	* examples/examples.TODO: changed accordingly.
+
+2004-2-25 Seth Burgess <sjburges@gimp.org>
+	* examples/bricks: brought up to date now that we have a pattern 
+	selector.  Still has some work that could be done, but 
+	functionality is restored.
 	* examples/examples.TODO: changed accordingly.
 
 2004-2-22 Seth Burgess <sjburges@gimp.org>

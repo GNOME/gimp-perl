@@ -31,7 +31,7 @@ register "map_to_gradient",
    # 5.004 has problems with overlaying functions
    Gimp->progress_init ("Mapping to '$gradient'", -1);
 
-   my $grad = pdl byte, map $_*255, @{(Gimp->gradients_get_gradient_data($gradient,256))[1]};
+   my $grad = pdl byte, map $_*255, @{(Gimp->gradients_get_gradient_data($gradient,256,0))[1]};
    $grad->reshape(4,256);
 
    my $alpha = $drawable->has_alpha;

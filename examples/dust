@@ -77,7 +77,7 @@ register "dust",
 
    my ($w, $h) = ($image->width, $image->height);
 
-   $image->undo_push_group_start;
+   $image->undo_group_start;
 
    my $state = Gimp::Util::get_state();
    Palette->set_foreground("white");
@@ -106,7 +106,7 @@ register "dust",
 
    Gimp::Util::set_state($state);
 
-   $image->undo_push_group_end;
+   $image->undo_group_end;
 
    ();
 };
