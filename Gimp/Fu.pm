@@ -586,8 +586,8 @@ anything (directory, link). It might not even exist at all.
 
 =item PF_TEXT
 
-Similar to PF_STRING, but the entry widget is much larger and has Load and
-Save buttons.
+Similar to PF_STRING, but the entry widget is much larger and has Load, 
+Save, and Edit (in external editor) buttons.
 
 =back
 

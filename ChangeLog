@@ -1,3 +1,20 @@
+2004-3-20 Seth Burgess <sjburges@gimp.org>
+	* AUTHORS: added myself, didn't even attempt to list script authors
+	* COPYING: changed Marc Lehman's address for modifications to mine
+	* Changes: pre1 release, so something is available for Gimp2
+	* NEWS: reflected ChangeLog format addition.
+	* README: changed some typos; most things with gtk do work now; make
+	  test could be broken, probably needs some attention; removed linux
+	  plug (don't think its required any more).  Removed python reference.
+	
+	* Gimp/UI.pm: updated PF_TEXT for Gtk2 (stock buttons, sizing)
+	  Also re-enabled help.  Want to use Gtk2::Podviewer if available
+	  for the POD viewing portion, and fall back to Gimp::POD.
+	* Gimp/Fu.pm: corrected description of PF_TEXT
+	
+	* examples/examples.TODO: tested pixelmap.  It needs more docs, but
+	  works pretty well (uses PF_TEXT).
+
 2004-3-08 Seth Burgess <sjburges@gimp.org>
 	* Gimp.pm: removed debug code
 	

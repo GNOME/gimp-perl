@@ -29,7 +29,6 @@ scratches
 repdup
 redeye
 povray
-pixelmap
 perlcc (rename to control_center)
 parasite-editor
 miff
@@ -77,6 +76,7 @@ map_to_gradient: 2/25/04 <sjburges@gimp.org> added param to gradients_get data. 
 mirrorsplit: 2/25/04 <sjburges@gimp.org> s/undo_push/undo/, have to add a layer to flip/select it in current gimp; removed when done w/ it.  Changed enums to be &Gimp::*.  fixed.
 prep4gif: 2/25/04 <sjburges@gimp.org> s/layer_set_visible/drawable_set_visible/.  fixed.
 perlotine: 12/13/03 <sjburges@gimp.org> fixed; tested on gif only.
+pixelmap: 3/18/04 <sjburges@gimp.org> worked out of the box.  Hacked PF_TEXT to look good.
 randomart1: 12/13/03 <sjburges@gimp.org> fixed; could use spinners instead of sliders.  2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
 randomblends: 12/13/03 <sjburges@gimp.org> fixed. 2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
 roundsel: 12/12/03 <sjburges@gimp.org> works.

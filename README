@@ -5,13 +5,12 @@ NAME
 
 WARNING
 
-       This version of the module is highly experimental and only works
-       for gimp-1.3 CVS (as of 12/12/03) or higher.
+       This version of the module only works for gimp-1.3 CVS (as of 12/12/03) 
+       or higher (including 2.0).
 
        Current limitations:
 
        - init callback has been disabled
-       - most things using gtk don't work
 
 SYNOPSIS
 
@@ -49,7 +48,7 @@ PREREQUISITES
        ftp://ftp.gimp.org/pub/gimp/
 
           gimp-1.3 (or newer, e.g. CVS or CVS snapshots) is required.  For
-          older versions of The Gimp, use version 1.2* of the Gimp-Pelr
+          older versions of The Gimp, use version 1.2* of the Gimp-Perl
           module.
 
        Gtk, the perl extension for gtk+2
@@ -76,9 +75,9 @@ INSTALLATION
 
        perl ./Makefile.PL --help
        
-       a straight "perl Makefile.PL" should do the job on most systems,
+       A straight "perl Makefile.PL" should do the job on most systems,
        but watch out for warnings. If everything went fine, enter "make",
-       "make test", "make install".
+       "make install".  "make test" may be broken at the current time.
 
        After installation, these perl plug-ins should be visible from
        within the Gimp (and many, many more):
@@ -89,9 +88,6 @@ INSTALLATION
        <Image>/Filters/Misc/Prepare for GIF
        <Image>/Filters/Misc/Webify
        
-       If you don't have unix, you can install linux instead
-       (http://www.linux.org/)
-
 OVERWRITING INSTALL LOCATIONS (PREFIX)
 
        In the rare case that you want to install the Gimp-Perl modules
@@ -104,16 +100,6 @@ OVERWRITING INSTALL LOCATIONS (PREFIX)
 
        These options are described in the "perldoc ExtUtils::MakeMaker"
        manpage.
-
-       If you are configuring the gimp-pelr module that comes with the
-       Gimp sourcetree this won't work. In that case you can set the
-       environment variable:
-
-       PERL_MM_OPT='whatever options you want to pass to MakeMaker'
-
-       before running configure. The arguments that you put into that
-       variable will be passed to the Makefile.PL as if given on the
-       commandline.
 
        If you are building a slp/deb/rpm/whatever package you usually want
        to use the normal prefix, while overwriting the prefix at "make
@@ -164,11 +150,8 @@ BLURB
        GIMP's interface to scheme it makes script development an exercise 
        in pain, having written a few myself.  Reasonable error reporting,
        ability to glue outside programs in, and an (overly) full featured
-       set of language operators are all things that make the Gimp module
-       preferable to me.  
-
-       There is also a python module included with Gimp now.  If you like
-       python, knock yourself out; I'm sticking with perl for awhile.
+       set of language operators are all things that make the perl Gimp 
+       module preferable to me.  
 
 LICENSE
 

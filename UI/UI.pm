@@ -364,6 +364,7 @@ sub _find_digits {
    $digits > 0 ? int $digits + 0.9 : 0;
 }
 
+# TODO: add optional Gtk2::Podviewer interface
 sub help_window(\$$$) {
    my ($helpwin, $blurb, $help) = @_;
    unless ($$helpwin) {
@@ -374,15 +375,14 @@ sub help_window(\$$$) {
       my $b = new Gtk2::TextBuffer;
       my $e = new_with_buffer Gtk2::TextView $b;
       $e->set_editable (0);
-      #$b->set_word_wrap (1);
+      $e->set_wrap_mode('GTK_WRAP_WORD');
 
       my $cs = new Gtk2::ScrolledWindow undef,undef;
       $cs->set_policy (-automatic, -automatic);
+      $cs->set_size_request(500,600);
       $cs->add ($e);
       $$helpwin->vbox->add ($cs);
-      #$b->set_text ($font, $b->style->fg(-normal),undef,__"BLURB:\n\n$blurb\n\nHELP:\n\n$help");
       $b->set_text (sprintf __"BLURB:\n\n%s\n\nHELP:\n\n%s", $blurb, $help);
-      #d#$b->set_usize($font->string_width('M')*80,($font->ascent+$font->descent)*26);
 
       my $button = Gtk2::Button->new_from_stock('gtk-ok');
       signal_connect $button clicked => sub { hide $$helpwin };
@@ -396,7 +396,8 @@ sub help_window(\$$$) {
       if ($text) {
          $b->insert ($b->get_end_iter, __"\n\nEMBEDDED POD DOCUMENTATION:\n\n");
          $b->insert ($b->get_end_iter, $text);
-      }
+	}
+      
    }
 
    $$helpwin->show_all;
@@ -424,11 +425,20 @@ sub interact($$$$@) {
      $w->action_area->set_spacing(2);
      $w->action_area->set_homogeneous(0);
 
+     my $helpaboutbox = new Gtk2::HBox 0,0;
+
      my $topblurb = new Gtk2::Label $blurb;
      $topblurb->set_alignment(0.0,0.5);
-     $w->vbox->pack_start($topblurb,1,1,0);
-     realize $w;
+     #realize $w;
      signal_connect $w destroy => sub { main_quit Gtk2 };
+     $helpaboutbox->pack_start($topblurb,1,1,0);
+
+     $aboutbutton = new Gtk2::Button->new_from_stock('gtk-help');
+     signal_connect $aboutbutton clicked => sub { help_window ($helpwin, $blurb, $help) };
+     can_default $aboutbutton 1;
+     $helpaboutbox->pack_start($aboutbutton,1,1,5);
+ 
+     $w->vbox->pack_start($helpaboutbox,1,1,0);
 
      $g = new Gtk2::Table scalar@types,2,0;
      $g->set(border_width => 4);
@@ -461,7 +471,7 @@ sub interact($$$$@) {
        
 #TODO: While mapping all to one is nifty programming, it makes for a lousy
 # interface.  Sure would be nice to have dialog elements that reflected 
-# the type a bit better (spinbuttons for integral for instance).
+# the type a bit better (spinbuttons/range checking for integral for instance).
 
         if ($type == PF_INT8		# perl just maps
         || $type == PF_INT16		# all this crap
@@ -648,6 +658,11 @@ sub interact($$$$@) {
            $a->add($h);
            my $b = new Gtk2::TextBuffer;
            my $e = new_with_buffer Gtk2::TextView $b;
+
+	   $e->set_size_request(300,200);
+	   $e->set_wrap_mode('GTK_WRAP_WORD');
+           $e->set_editable (1);
+
            my %e;
            %e = $$extra if ref $extra eq "HASH";
 
@@ -659,14 +674,17 @@ sub interact($$$$@) {
            };
 
            $h->add ($e);
-           $e->set_editable (1);
 
            my $buttons = new Gtk2::HBox 1,5;
            $h->add ($buttons);
 
-           my $load = new Gtk2::Button __"Load"; $buttons->add ($load);
-           my $save = new Gtk2::Button __"Save"; $buttons->add ($save);
-           my $edit = new Gtk2::Button __"Edit"; $buttons->add ($edit);
+           my $load = Gtk2::Button->new_from_stock('gtk-open'); 
+           my $save = Gtk2::Button->new_from_stock('gtk-save');
+           my $edit = Gtk2::Button->new_from_stock('gimp-edit');
+
+	   $buttons->add ($load);
+	   $buttons->add ($save);
+	   $buttons->add ($edit);
 
            $edit->signal_connect (clicked => sub {
               my $editor = $ENV{EDITOR} || "vi";
@@ -773,11 +791,7 @@ sub interact($$$$@) {
 #     $w->action_area->pack_start ($helpbox, 0, 0, 0);
 #     show $helpbox;
 #
-#     $button = new Gtk2::Button->new_from_stock('gtk-help');
-#     $helpbox->pack_start ($button, 0, 0, 0);
-#     signal_connect $button clicked => sub { help_window ($helpwin, $blurb, $help) };
-#     can_default $button 1;
-     
+    
      $hbbox = new Gtk2::HButtonBox;
      $w->action_area->pack_end ($hbbox, 0, 0, 0);
 
@@ -828,7 +842,7 @@ sub interact($$$$@) {
 
 =head1 AUTHOR
 
-Marc Lehmann <pcg@goof.com>.
+Marc Lehmann <pcg@goof.com>, Seth Burgess <sjburges@gimp.org>
 
 =head1 SEE ALSO
 

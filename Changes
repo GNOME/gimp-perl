@@ -3,11 +3,14 @@ Revision history for Gimp-Perl extension.
 Please add detailed ChangeLog entries to the ChangeLog file, keeping this
 file to document revision changes (similar to a GNU-style NEWS file).
 
-2.0 <to be released>
+2.0pre1  Sun Mar 14, 2004 
+        - prerelease to have something available when The GIMP 2.0 ships.  
+	  Its quite usable now, but requires a good bit of testing and polish
+	  yet.
 	- bumped version number to 2.0 purely to be similar to the Gimp version
           it requires.
         - main maintainer is now Seth Burgess <sjburges@gimp.org>, who
-          posted almost all scripts to 2.0, plus lots of bugfixing and
+          ported almost all scripts to 2.0, plus lots of bugfixing and
           other porting.
 
 1.3  not released
