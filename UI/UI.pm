@@ -129,6 +129,7 @@ package Gimp::UI::PreviewSelect;
 #                  ->get_list 
 #                  ->get_title
 #                  ->get_pixbuf
+#TODO: Add preview (or portion of preview) directly to button
 
 use Gimp '__';
 
@@ -418,16 +419,16 @@ sub interact($$$$@) {
    my $accel = new Gtk2::AccelGroup;
 
    for(;;) {
-     #$accel->attach($w);#d#
-
-     set_title $w $Gimp::function;
-     $w->action_area->set_border_width(2);
+     set_title $w "Perl-Fu: $Gimp::function";
+     $w->set_border_width(3); # sets border on inside because its a window
+     $w->action_area->set_spacing(2);
      $w->action_area->set_homogeneous(0);
 
-     my $h = new Gtk2::HBox 0,2;
-     $h->add(new Gtk2::Label Gimp::wrap_text($blurb,40));
-     $w->vbox->pack_start($h,1,1,0);
+     my $topblurb = new Gtk2::Label $blurb;
+     $topblurb->set_alignment(0.0,0.5);
+     $w->vbox->pack_start($topblurb,1,1,0);
      realize $w;
+     signal_connect $w destroy => sub { main_quit Gtk2 };
 
      $g = new Gtk2::Table scalar@types,2,0;
      $g->set(border_width => 4);
@@ -457,7 +458,11 @@ sub interact($$$$@) {
         # massage label text a small bit (works only for english)
         $label="$name: ";
         $label =~ y/_/ /; $label =~ s/^(\w)/\U$1/g;
-        
+       
+#TODO: While mapping all to one is nifty programming, it makes for a lousy
+# interface.  Sure would be nice to have dialog elements that reflected 
+# the type a bit better (spinbuttons for integral for instance).
+
         if ($type == PF_INT8		# perl just maps
         || $type == PF_INT16		# all this crap
         || $type == PF_INT32		# into the scalar
@@ -480,7 +485,7 @@ sub interact($$$$@) {
                  $fs->set_font_name ($val);
               }
               
-              $l->set (label => $val);
+              $l->set (label => " $val ");
            };
            
            $fs->ok_button->signal_connect (clicked => sub {$setval->($fs->get_font_name); $fs->hide});
@@ -501,9 +506,11 @@ sub interact($$$$@) {
            push @getvals, sub { $adj->get_value };
            
         } elsif ($type == PF_SLIDER) {
+#TODO: add a gimp_scale_entry or reimplemented equivalent
            my $adj = _new_adjustment ($value, $extra);
            $a = new Gtk2::HScale $adj;
            $a->set_digits (_find_digits $adj);
+	   $a->set_size_request(120,-1);
            push @setvals, sub { $adj->set_value($_[0]) };
            push @getvals, sub { $adj->get_value };
            
@@ -512,7 +519,9 @@ sub interact($$$$@) {
 
            $default = [0.8,0.6,0.1] unless defined $default;
 
-           my $b = new Gimp::UI::ColorButton $name, 90, 18, $default, 'small-checks';
+           $default = &Gimp::canonicalize_color($default);
+
+           my $b = new Gimp::UI::ColorButton $name, 90, 14, $default, 'small-checks';
      
            $a->pack_start ($b, 1, 1, 0);
 
@@ -520,19 +529,19 @@ sub interact($$$$@) {
            push @getvals, sub { $b->get_color };
            set_tip $t $b,$desc;
            
-           my $c = new Gtk2::Button __"FG";
-           signal_connect $c clicked => sub {
-             $b->set_color (Gimp::Palette->get_foreground);
-           };
-           set_tip $t $c,__"get current foreground colour from the gimp";
-           $a->pack_start ($c,1,1,0);
-           
-           my $d = new Gtk2::Button __"BG";
-           signal_connect $d clicked => sub {
-             $b->set_color (Gimp::Palette->get_background);
-           };
-           set_tip $t $d,__"get current background colour from the gimp";
-           $a->pack_start ($d,1,1,0);
+#           my $c = new Gtk2::Button __"FG";
+#           signal_connect $c clicked => sub {
+#             $b->set_color (Gimp::Palette->get_foreground);
+#           };
+#           set_tip $t $c,__"get current foreground colour from the gimp";
+#           $a->pack_start ($c,1,1,0);
+#           
+#           my $d = new Gtk2::Button __"BG";
+#           signal_connect $d clicked => sub {
+#             $b->set_color (Gimp::Palette->get_background);
+#           };
+#           set_tip $t $d,__"get current background colour from the gimp";
+#           $a->pack_start ($d,1,1,0);
            
         } elsif ($type == PF_TOGGLE) {
            $a = new Gtk2::CheckButton $desc;
@@ -723,17 +732,20 @@ sub interact($$$$@) {
            push @setvals, sub {};
            push @getvals, sub { $value };
         }
-        
+#end of arguments, add to the table
         push @lastvals, $value;
         push @defaults, $default;
         $setvals[-1]->($value);
         
         $label = new Gtk2::Label $label;
-        $label->set_alignment (0,0.5);
-        $g->attach ($label, 0, 1, $res, $res+1, [], [], 4, 2);
+        $label->set_alignment (1.0,0.5);
+        $g->attach ($label, 0, 1, $res, $res+1, ["expand","fill"], ["expand","fill"], 4, 2);
+
         $a && do {
            set_tip $t $a,$desc;
-           $g->attach ($a, 1, 2, $res, $res+1, ["expand","fill"], ["expand","fill"], 4, 2);
+	   my $halign = new Gtk2::HBox 0,0;
+	   $halign->pack_start($a,0,0,0);
+           $g->attach ($halign, 1, 2, $res, $res+1, ["expand","fill"], ["expand","fill"], 4, 2);
         };
         $res++;
      }
@@ -745,41 +757,39 @@ sub interact($$$$@) {
      $hbbox->set_spacing (4);
      $v->pack_end ($hbbox, 0, 0, 2);
      
+    
+#     $button = new Gtk2::Button __"Previous";
+#     signal_connect $button clicked => sub {
+#       for my $i (0..$#lastvals) {
+#         $setvals[$i]->($lastvals[$i]);
+#       }
+#     };
+#     $hbbox->pack_start($button,0,0,0);
+#     set_tip $t $button,__"Restore values to the previous ones";
+     
+
+#     $helpbox = new Gtk2::HButtonBox;
+#     $helpbox->set_spacing (2);
+#     $w->action_area->pack_start ($helpbox, 0, 0, 0);
+#     show $helpbox;
+#
+#     $button = new Gtk2::Button->new_from_stock('gtk-help');
+#     $helpbox->pack_start ($button, 0, 0, 0);
+#     signal_connect $button clicked => sub { help_window ($helpwin, $blurb, $help) };
+#     can_default $button 1;
+     
+     $hbbox = new Gtk2::HButtonBox;
+     $w->action_area->pack_end ($hbbox, 0, 0, 0);
+
      $button = new Gtk2::Button->new_from_stock('gimp-reset');
      signal_connect $button clicked => sub {
        for my $i (0..$#defaults) {
          $setvals[$i]->($defaults[$i]);
        }
      };
+
      $hbbox->pack_start ($button, 0, 0, 0);
      set_tip $t $button,__"Reset all values to their default";
-     
-     $button = new Gtk2::Button __"Previous";
-     signal_connect $button clicked => sub {
-       for my $i (0..$#lastvals) {
-         $setvals[$i]->($lastvals[$i]);
-       }
-     };
-     $hbbox->pack_start($button,0,0,0);
-     set_tip $t $button,__"Restore values to the previous ones";
-     
-     signal_connect $w destroy => sub { main_quit Gtk2 };
-
-     $hbbox = new Gtk2::HButtonBox;
-     $hbbox->set_spacing (2);
-     $w->action_area->pack_start ($hbbox, 0, 0, 0);
-     show $hbbox;
-
-     $button = new Gtk2::Button->new_from_stock('gtk-help');
-     $hbbox->pack_start ($button, 0, 0, 0);
-     signal_connect $button clicked => sub { help_window ($helpwin, $blurb, $help) };
-     can_default $button 1;
-     
-     $hbbox = new Gtk2::HButtonBox;
-     $hbbox->set_spacing (2);
-     $w->action_area->pack_end ($hbbox, 0, 0, 0);
-     show $hbbox;
-
      
      $button = new Gtk2::Button->new_from_stock('gtk-cancel');
      signal_connect $button clicked => sub { hide $w; main_quit Gtk2 };

@@ -301,7 +301,6 @@ between 0 and 1.0.
 =cut 
 
 sub canonicalize_colour {
-   print "Canonicalizing!!\n";
    if ((scalar(@_) == 3) or (scalar(@_) == 4)) { # if 3 or 4 entries already
       if (($_[0] > 1.0) or ($_[1] > 1.0) or ($_[2] > 1.0)) {
         @_ = @_ / 255.0;

@@ -29,7 +29,7 @@ $regname = "inner_bevel";
 $author =~ m/^(.*) </;
 $authorname = $1;
 
-sub gimp13_text_wh{
+sub gimp20_text_wh{
    ($text, $fn) = ($_[0], $_[1]);
    Gimp->text_get_extents_fontname($text,(split(/ /,$fn))[-1],PIXELS,$fn)
    }
@@ -37,13 +37,13 @@ sub gimp13_text_wh{
 
 register $regname, $shortdesc, $longdesc, $authorname, $author, $date, $path, $imgtypes,
   [ 
-   [PF_FONT, "font", "Font Name"],
+   [PF_FONT, "font", "Font Name","URW Bookman L, Bold 80"],
    [PF_STRING, "text", "Enter your text to be beveled", "INNERBEVEL"],
    [PF_COLOR, "top_color", "Blend to this color", $defaultcolor2],
-   [PF_COLOR, "bot_color", "Blend from this color", $defaultcolor1],
+   [PF_COLOR, "bottom_color", "Blend from this color", $defaultcolor1],
    [PF_SLIDER, "azimuth", "Direction of the shine", 132, [0,255,5]],
    [PF_SLIDER, "shinyness", "How shiny the final image will be",30, [0,90,5]],
-   [PF_SLIDER, "depth_shape", "Determines the final shape", 34 , [0,64,32]], 
+   [PF_SLIDER, "depth_shape", "Determines the final shape", 7 , [0,64,32]], 
    [PF_RADIO, "map", "The type of Map to use", 2, [Linear => 0, Spherical => 1, Sinusoidal => 2] ], 
   ],[],
   [
@@ -56,10 +56,9 @@ my ($font, $text, $color1, $color2, $azimuth, $elevation, $depth, $maptype) = @_
 gimp_palette_set_background($color1);
 gimp_palette_set_foreground($color2);
 
-@dims = gimp13_text_wh($text, $font);
+@dims = gimp20_text_wh($text, $font);
 
-print $dims[0], " x ", $dims[1], "\n";
-$img = gimp_image_new($dims[0]+10, $dims[1]+10, RGB);
+$img = gimp_image_new($dims[0]+30, $dims[1]+10, RGB);
 
 # none of the macro's did quite what I was looking for here.  
 # i.e. create a text layer on transparent only...

@@ -7,6 +7,8 @@ colourtoalpha: this algorithm isn't right.  There's a C plugin that does it righ
 Create_Images (leaning towards removal, along with the file "image_list", since it doesn't do much)
 fire: gradient selector broken
 fit-text: doesn't work due to differences in fonts; xlfd_szie no longer works, because we don't have an xlfd any longer.  Can the font widget do better in returning values?
+gimpmagick: <sjburges@gimp.org> gtk2 rework - needs preview->gdk::pixbuf conversion.  Crashes in imagemagick now (using version 5.5.7.9) with : Exception 410: No images defined (AddNoise) at /home/seth/.gimp-1.3/plug-ins/gimpmagick line 257.  Or unable to open temporary file, if you instead click "apply".  Also one of the uglier guis ever to grace gimp.
+
 PDB: <sjburges@gimp.org> working on this; major gtk2 rework, probably change quite a bit to make the gui a bit more accessible
 logulator: the name is awful, and its not working very well; pdb errors all over.  This useful enough to keep?
 roundrectsel: redundant, remove this
@@ -16,7 +18,6 @@ terral_text: xlfd problems
 Untested:
 
 webify
-warp-sharp
 visual
 view3d
 triangu
@@ -38,7 +39,6 @@ homepage-logo
 guides_to_selection
 gouge
 goldenmean
-gimpmagick
 gimp-make-img-map
 gap-vcr
 gallery
@@ -68,8 +68,7 @@ centerguide: 12/12/03 <sjburges@gimp.org> works. (Gimp-Fu is ugly for radio butt
 dots: 12/12/03 <sjburges@gimp.org> works.  (Gimp-Fu is ugly for color selectors, and for spinbuttons)  Needs to be added to the install list.
 dust: 2/25/04 <sjburges@gimp.org> its more worm-like than dust-like, but it works (I think it does what its supposed to?).  I removed deprecated stuff, including fixing Util.pm.
 feedback: 12/12/03 <sjburges@gimp.org> works; don't know how useful it is still.
-glowing_steel: 12/13/03 <sjburges@gimp.org> fixed. 12/26/03 fixed again (color
-               specifiers 0-1.0)
+glowing_steel: 12/13/03 <sjburges@gimp.org> fixed. 12/26/03 fixed again (color specifiers 0-1.0) 2/07/04  fixed again (s/bucket_fill/edit_bucket_fill/g)
 guide_remove: 12/12/03 <sjburges@gimp.org> works.
 guidegrid: 12/12/03 <sjburges@gimp.org> works
 innerbevel: 12/13/03 <sjburges@gimp.org> fixed. 2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
@@ -82,7 +81,8 @@ randomart1: 12/13/03 <sjburges@gimp.org> fixed; could use spinners instead of sl
 randomblends: 12/13/03 <sjburges@gimp.org> fixed. 2/29/04 <sjburges@gimp.org> s/blend/edit_blend/
 roundsel: 12/12/03 <sjburges@gimp.org> works.
 sethspin: 12/13/03 <sjburges@gimp.org> fixed.
-triangle: 2/25/03 <sjburges@gimp.org> works.  Not installed by default.
+triangle: 2/25/04 <sjburges@gimp.org> works.  Not installed by default.
+warp-sharp: 3/06/04 <sjburges@gimp.org> fixed.  plug_in_edge changed, s/undo_push/undo/.
 windify: 12/12/03 <sjburges@gimp.org> works.
 xachlego: 12/14/03 <sjburges@gimp.org> removed deprecated; works.
 xachshadow: 12/14/03 <sjburges@gimp.org> removed deprecated, added a selection->none.  works.
