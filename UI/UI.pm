@@ -166,6 +166,8 @@ sub GET_PROPERTY {
 sub INIT_INSTANCE {
        my ($self) = @_;
        $self->signal_connect("clicked", \&preview_dialog);
+       my $lbl = new Gtk2::Label $self->get("active");
+       $self->add($lbl);
 }
 
 sub preview_dialog {
@@ -241,12 +243,6 @@ Glib::Type->register (
    properties => [],
 );
 
-sub INIT_INSTANCE {
-       my ($self) = @_;
-       my $lbl = new Gtk2::Label $self->get("active");
-       $self->add($lbl);
-}
-
 sub get_title { __"Pattern Selection Dialog" }
 sub get_list { Gimp->patterns_get_list("") }
 
@@ -288,15 +284,28 @@ Glib::Type->register (
    properties => [],
 );
 
-sub INIT_INSTANCE {
-       my ($self) = @_;
-       my $lbl = new Gtk2::Label $self->get("active");
-       $self->add($lbl);
-}
-
-
 sub get_title { __"Brush Selection Dialog" }
-sub get_list { Gimp->brushes_list }
+sub get_list { Gimp->brushes_get_list("") }
+
+sub new_pixbuf { 
+   # ick, grayscale-only previews.  But we'll live with it, since we don't
+   # have any option.
+
+   my ($name,$opacity,$spacing,$paint_mode,$w,$h,$mask) = Gimp->brushes_get_brush_data($_);
+
+   my @graydat = @{$mask};
+   my @rgbdat;
+        
+   foreach (@graydat)
+     {
+        $_ = 255 - $_;
+        push @rgbdat, $_; push @rgbdat, $_; push @rgbdat, $_;
+     }
+
+   $mask = pack "C*", @rgbdat;
+   $pb = Gtk2::Gdk::Pixbuf->new_from_data($mask,'rgb',0,8,$w,$h,$w*3);
+   $pb;
+}
 
 package Gimp::UI::GradientSelect;
 
@@ -310,12 +319,6 @@ Glib::Type->register (
    properties => [],
 );
 
-sub INIT_INSTANCE {
-       my ($self) = @_;
-       my $lbl = new Gtk2::Label $self->get("active");
-       $self->add($lbl);
-}
-
 sub get_title { __"Gradient Selection Dialog" }
 sub get_list { Gimp->gradients_get_list("") }
 
@@ -325,11 +328,11 @@ sub new_pixbuf {
    my (@grad_row) = @{$grad_data}; 
    @grad_row = map { $_ = abs(ceil($_*255 - 0.5)) } @grad_row;
 
-# make it 16 tall; somewhat ugly...
-   push @grad_row, @grad_row;
-   push @grad_row, @grad_row;
-   push @grad_row, @grad_row;
-   push @grad_row, @grad_row;
+# make it 16 tall; there's bound to be a better way to do this? (its slow)
+   push @grad_row, @grad_row, @grad_row, @grad_row, 
+        @grad_row, @grad_row, @grad_row, @grad_row, 
+        @grad_row, @grad_row, @grad_row, @grad_row, 
+        @grad_row, @grad_row, @grad_row, @grad_row;
 
    $mask = pack "C*", @grad_row;
 
@@ -601,8 +604,9 @@ sub interact($$$$@) {
            push @getvals, sub { $a->get('active') };
            
         } elsif ($type == PF_BRUSH) {
-           $a=new Gimp::UI::BrushSelect -active =>  defined $value ? $value : (Gimp->brushes_get_brush)[0];
-           push @setvals, sub{ $a->set('active',$_[0]) };
+           $a=new Gimp::UI::BrushSelect;
+           push @setvals, sub{ $a->set('active',
+	      defined $value ? $value : (Gimp->brushes_get_brush)[0]) };
            push @getvals, sub{ $a->get('active') };
            
         } elsif ($type == PF_GRADIENT) {
