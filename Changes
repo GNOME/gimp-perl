@@ -5,7 +5,8 @@ Revision history for Gimp-Perl extension.
 	* removed old workaround for even older PDL versions.
 	* Seth Burgess <sjburges@gimp.org>:
            Minor fixes to some scripts for Gimp 1.3.x comformance:
-           examples/innerbevel: changed font handling, blend arguments
+           examples/innerbevel: changed font handling, blend arguments, 
+	                        color spec. to be 0.0-1.0.
 	   examples/guide_remove 
 	   examples/centerguide
            examples/guidegrid

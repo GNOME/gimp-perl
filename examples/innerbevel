@@ -80,7 +80,7 @@ $img->add_layer($layer2, 0);
 # -- step 5 -- 
 $layer2->set_preserve_trans(1);
 $img->selection_all;
-gimp_palette_set_background([255,255,255]);
+gimp_palette_set_background([1.0,1.0,1.0]);
 $layer2->edit_fill(BACKGROUND_FILL);
 # -- step 6 -- 
 $layer2->set_preserve_trans(0);
