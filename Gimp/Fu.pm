@@ -24,9 +24,8 @@ fully suffices to provide a professional interface and the
 ability to run this script from within the Gimp and standalone
 from the commandline.
 
-Dov Grobgeld has written an excellent tutorial for Gimp-Perl. While not
-finished, it's definitely worth a look! You can find it at
-C<http://imagic.weizmann.ac.il/~dov/gimp/perl-tut.html>.
+Dov Grobgeld has written an excellent tutorial for Gimp-Perl. 
+You can find it at C<http://imagic.weizmann.ac.il/~dov/gimp/perl-tut-2.0/>.
 
 =head1 INTRODUCTION
 

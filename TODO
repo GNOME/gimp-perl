@@ -1,5 +1,19 @@
 <Seth's random notes>
-Convince someone that knows auto* to redo the compilation/installation.  Or move to ExtUtils::PkgConfig for this purpose.
+Fix problem with calling RUN_NONINTERACTIVE parameter; this should work, despite it being broken forever.
+
+Use ExtUtils::pkgconfig instead of calling gimptool for configuration
+
+Win32 port?
+
+Add a gtk2 gimp console.
+
+Reorganize Menues.
+
+Impprove documentation quality - feedback desired!
+
+HIGify dialogs as possible.
+
+A Compat12.pm for GIMP 1.2 compatibility (no way to convert xlfd stuff though).
 
 Add POD documentation for gimpdoc.
 
@@ -22,8 +36,6 @@ Gtk-CRITICAL **: file gtktooltips.c: line 314 (gtk_tooltips_set_tip): assertion 
 Determine what if anything is needed in the enums* in the root.  I expect I can remove all of this.
 
 Remove unused(?) extra.[ch]
-
-Remove ugly logo.xpm
 
 <Marc's previous stuff>
 this is mostly my personal worksheet and notepad, which may not be

@@ -190,7 +190,7 @@ sub croak {
    goto &Carp::croak;
 }
 
-my @_procs = ('main', 'xlfd_size', '__', 'N_');
+my @_procs = ('main', '__', 'N_');
 #my @_default = (@_procs, ':consts' ,':_auto2');
 my @_default = (@_procs, ':consts');
    
@@ -242,13 +242,6 @@ sub import($;@) {
    for(@export) {
       *{"$up\::$_"} = \&$_;
    }
-}
-
-sub xlfd_size($) {
-  local $^W=0;
-  my ($px,$pt)=(split(/-/,$_[0]))[7,8];
-  $px>0 ? ($px,&Gimp::PIXELS)
-        : ($pt,&Gimp::POINTS);
 }
 
 # the monadic identity function
@@ -684,9 +677,9 @@ package Gimp; # for __DATA__
 
 =head1 NAME
 
-Gimp - Perl extension for writing Gimp Extensions/Plug-ins/Load & Save-Handlers
+Gimp: a Perl extension for writing Gimp Extensions/Plug-ins/Load & Save-Handlers
 
-This is a release of gimp-perl for gimp-2.0. If you are interested in a version for gimp-1.2, use version 1.2.x of the Gimp-Perl module instead.
+This is a release of gimp-perl for gimp-2.0.  It is not compatible with version 1.2.x or below of The Gimp.
 
 This is mostly a reference manual. For a quick intro, look at
 L<Gimp::Fu>. 
@@ -694,29 +687,19 @@ L<Gimp::Fu>.
 =head1 SYNOPSIS
 
   use Gimp;
-  
-  Other modules of interest:
-  
   use Gimp::Fu;		# easy scripting environment
-  
-  these have their own manpage.
 
 =head2 IMPORT TAGS
 
-If you don't specify any import tags, Gimp assumes C<qw/:consts main xlfd_size/>
-which may not be what you want. You may want to add :auto as in the following
-example:
+Place these in your C<use Gimp qw(...)> command to have added features available to your plug-in.
 
-    use Gimp qw(:consts main xlfd_size :auto);
-
-
-=over 4
+=over 2
 
 =item :auto
 
 Import useful constants, like RGB, RUN_NONINTERACTIVE... as well as all
-libgimp and pdb functions automagically into the caller's namespace. BEWARE!
-This will overwrite your AUTOLOAD function, if you have one!
+libgimp and pdb functions automagically into the caller's namespace. 
+This will overwrite your AUTOLOAD function, if you have one.
 
 =item :param
 
@@ -736,86 +719,87 @@ The default set (see below).
 
 =back
 
-The default (unless '' is specified) is C<'main', 'xlfd_size', ':consts', '__'>.
+The default (unless '' is specified) is C<'main', ':consts', '__'>.
 (C<'__'> is used for i18n purposes).
 
 =head1 GETTING STARTED
 
-You should first read the Gimp::Fu manpage and then come back. This manpage is mainly intended for reference purposes.
+L<Gimp::Fu> is recommended for scripts not requiring custom interfaces or speciailized execution.  Lots of examples are in the C<examples/> directory of your gimp-perl source tree, or installed in your plug-ins directory if you are running from a package.  
 
-Also, Dov Grobgeld has written an excellent tutorial for Gimp-Perl. You can
-find it at http://imagic.weizmann.ac.il/~dov/gimp/perl-tut-2.0/
+Using the C<Xtns-E<gt>DB Browser> is a good way to learn The GIMP's Procedural Database(pdb).  For referencing functions you already know of, the included script gimpdoc is useful.
 
 =head1 DESCRIPTION
 
-I think you already know what this is about: writing Gimp
-plug-ins/extensions/scripts/file-handlers/standalone-scripts, just about
-everything you can imagine in perl. If you are missing functionality (look
-into TODO first), please feel free contact the author...
+Gimp-Perl is a module for writing plug-ins, extensions, standalone scripts, and file-handlers for The GNU Image Manipulation Program (The GIMP).  It can be used to automate repetitive tasks, acheive a precision hard to get through manual use of The GIMP, interface to a web server, or other tasks that involve Gimp.
+
+It is developed on Linux, and should work with similar OSes.
 
 Some hilights:
 
 =over 2
 
 =item *
-Networked plug-ins and plug-ins using the libgimp interfaces (i.e. to be
-started from within The Gimp) look almost the same (if you use the Gimp::Fu
-interface, there will be no visible differences at all), you can easily
-create hybrid (networked & libgimp) scripts as well.
+Access to The GIMP's Procedural Database (pdb) for manipulation of most objects.
 
 =item *
-Use either a plain pdb (scheme-like) interface or nice object-oriented
-syntax, i.e. "gimp_image_new(600,300,RGB)" is the same as "new Image(600,300,RGB)"
+Use either a plain pdb (scheme-like) interface or an object-oriented syntax, i.e. C<gimp_image_new(600,300,RGB)> is the same as C<new Image(600,300,RGB)>
 
 =item *
-Gimp::Fu will start The Gimp for you, if it cannot connect to an existing
-gimp process.
+Networked plug-ins look/behave the same as those running from within gimp.  
 
 =item *
-You can optionally overwrite the pixel-data functions by versions using piddles
-(see L<Gimp::PDL>)
-
-=back
-
-noteworthy limitations (subject to be changed):
-
-=over 2
+Gimp::Fu will start The GIMP for you, if it cannot connect to an existing GIMP process.
 
 =item *
-callback procedures do not pass return values to The Gimp.
+You can access the pixel-data functions using piddles (see L<Gimp::PDL>) giving the same level of control as a C plug-in, with a data language wrapper.
+
+=item *
+Over 50 example scripts to give you a good starting point, or use as is.
 
 =back
 
 =head1 OUTLINE OF A GIMP PLUG-IN
 
-All plug-ins (and extensions etc.) _must_ contain a call to C<Gimp::main>.
+All plug-ins (with the exception of those using C<Gimp::init>) I<must> contain a call to C<Gimp::main>.
+
 The return code should be immediately handed out to exit:
 
  exit main;		# Gimp::main is exported by default.
 
 Before the call to C<Gimp::main>, I<no> other PDB function must be called.
 
-In a C<Gimp::Fu>-script, you should call C<Gimp::Fu::main> instead:
+In a C<Gimp::Fu>-script, it will actually call C<Gimp::Fu::main> instead of C<Gimp::main>:
 
- exit main;		# Gimp::Fu::main is exported by default as well.
+ exit main;		# Gimp::Fu::main is exported by default when using Gimp::Fu
 
 This is similar to Gtk, Tk or similar modules, where you have to call the
-main eventloop. Attention: although you call C<exit> with the result of
-C<main>, the main function might not actually return. This depends on both
-the version of Gimp and the version of the Gimp-Perl module that is in
-use.  Do not depend on C<main> to return at all, but still call C<exit>
-immediately.
+main eventloop. 
 
-If you need to do cleanups before exiting you should use the C<quit>
-callback (which is not yet available if you use Gimp::Fu).
+Although you call C<exit> with the result of C<main>, the main function might not actually return. This depends on both the version of Gimp and the version of the Gimp-Perl module that is in use.  Do not depend on C<main> to return at all, but still call C<exit> immediately.
 
-=head1 CALLBACKS
+=head2 CALLBACKS
 
-This section needs writing.
+The Gimp module provides routines to be optionally filled in by a plug-in writer.  This does not apply if using C<Gimp::Fu>, as these are done automatically.
 
-Gimp::on_net
-Gimp::on_query
-Gimp::on_run
+=over 2
+
+=item Gimp::on_query
+
+Do any activities that must be performed at Gimp startup, when the procedure is queried.  Should typically have at least one call to gimp_install_procedure.
+
+=item Gimp::on_net
+
+Run when called from a network interface (from the Perl-Server or from running it standalone).
+
+=item Gimp::on_lib
+
+Run only when called itneractively from within Gimp.
+
+=item Gimp::on_run
+
+Run when anything calls it (network or lib).
+
+=back
 
 =head1 CALLING GIMP FUNCTIONS
 
@@ -824,11 +808,8 @@ B<PDB> (the Procedural DataBase), and functions from B<libgimp> (the
 C-language interface library).
 
 You can get a listing and description of every PDB function by starting
-the B<DB Browser> extension in the Gimp-B<Xtns> menu (but remember that
-B<DB Browser> is buggy and displays "_" (underscores) as "-" (dashes), so
-you can't see the difference between gimp_quit and gimp-quit. As a rule
-of thumb, B<Script-Fu> in gimp versions before 1.2 registers scripts with
-dashes, and everything else uses underscores).
+the B<DB Browser> extension in the GIMP B<Xtns> menu (but remember to change 
+ "-" (dashes) to  "_" (underscores)).
 
 B<libgimp> functions can't be traced (and won't be traceable in the
 foreseeable future).
@@ -848,57 +829,35 @@ using OO-Syntax:
  Palette->set_foreground('#1230f0');
 
 As you can see, you can also drop part of the name prefixes with this
-syntax, so its actually shorter to write.
-
-"But how do I call functions containing dashes?". Well, get your favourite
-perl book and learn perl! Anyway, newer perls understand a nice syntax (see
-also the description for C<gimp_call_procedure>):
-
- "Gimp::plug-in-the-egg"->(RUN_INTERACTIVE,$image,$drawable);
-
-You can drop the C<Gimp::> when using the C<:auto>-import-tag. Very
-(very!) old perls may need:
-
- &{"Gimp::plug-in-the-egg"}("Gimp",RUN_INTERACTIVE,$image,$drawable);
-
-(unfortunately. the plug-in in this example is actually called
-"plug_in_the_egg" *sigh*)
+syntax, so its actually shorter to write and hopefully clearer to read.
 
 =head1 SPECIAL FUNCTIONS
 
-In this section, you can find descriptions of special functions, functions
-having different calling conventions/semantics than I would expect (I
-cannot speak for you), or just plain interesting functions. All of these
-functions must either be imported explicitly or called using a namespace
-override (C<Gimp::>), not as Methods (C<Gimp-E<gt>>).
+In this section, you can find descriptions of special functions, functions having different calling conventions/semantics than might be expected or otherwise interesting functions. All of these functions must either be imported explicitly or called using a namespace override (C<Gimp::>), not as Methods (C<Gimp-E<gt>>).
 
 =over 4
 
 =item main(), Gimp::main()
 
-Should be called immediately when perl is initialized. Arguments are not yet
+Should be called immediately when perl is initialized. Arguments are not 
 supported. Initializations can later be done in the init function.
-
-=item xlfd_size(fontname)
-
-This is no longer legitimate in Gimp2; X Logical Font Descriptors are no longer used.  Stripping font size from end must be done manually now.  Will be ripping out the relevant code soon.
 
 =item Gimp::gtk_init()
 
-<No idea if valid any longer for Gtk2>
 Initialize Gtk in a similar way the Gimp itself did it. This automatically
 parses gimp's gtkrc and sets a variety of default settings (visual,
 colormap, gamma, shared memory...).
 
 =item Gimp::gtk_init_add { init statements ... };
 
-<No idea if valid any longer for Gtk2>
 Add a callback function that should be called when gtk is being
 initialized (i.e. when Gimp::gtk_init is called, which should therefore be
 done even in Gnome applications).
 
 This is different to Gtk->init_add, which only gets called in Gtk->main,
 which is too late for registering types.
+
+This function has not been well tested.
 
 =item Gimp::init([connection-argument]), Gimp::end()
 
@@ -912,7 +871,8 @@ and the net callback. At the moment it only works for the Net interface
  <do something with the gimp>
 
 The optional argument to init has the same format as the GIMP_HOST variable
-described in L<Gimp::Net>. Calling C<Gimp::end> is optional.
+described in L<Gimp::Net>. Calling C<Gimp::end> is optional.  This is used
+in the process of testing the module ('make test').
 
 =item Gimp::lock(), Gimp::unlock()
 
@@ -921,7 +881,7 @@ calling lock, all accesses by other clients will be blocked and executed
 after the call to unlock. Calls to lock and unlock can be nested.
 
 Currently, these functions only lock the current Perl-Server instance
-against exclusive access, they are nops when used via the Gimp::Lib
+against exclusive access, they do nothing when used via the Gimp::Lib
 interface.
 
 =item Gimp::set_rgb_db(filespec)
@@ -947,6 +907,23 @@ to overwrite ('perl_fu_make_something'), and the second argument can be
 either a name of the corresponding perl sub ('Elsewhere::make_something')
 or a code reference (\&my_make).
 
+=item Gimp::canonicalize_colour/Gimp::canonicalize_color
+
+Take in a color specifier in a variety of different formats, and return 
+a valid gimp color specifier, consisting of 3 or 4 numbers in the range 
+between 0 and 1.0.
+
+For example: 
+
+
+ $color = canonicalize_colour ("#ff00bb");
+ $color = canonicalize_colour ([255,255,34]);
+ $color = canonicalize_colour ([255,255,34,255]);
+ $color = canonicalize_colour ([1.0,1.0,0.32]);
+ $color = canonicalize_colour ('red');
+
+Note that bounds checking is excessively lax; this assumes relatively good input
+
 =back
 
 =head1 SPECIAL METHODS
@@ -960,10 +937,8 @@ or C<$object-E<gt>>).
 
 =item gimp_install_procedure(name, blurb, help, author, copyright, date, menu_path, image_types, type, [params], [return_vals])
 
-Mostly same as gimp_install_procedure. The parameters and return values for
-the functions are specified as an array ref containing either integers or
-array-refs with three elements, [PARAM_TYPE, \"NAME\", \"DESCRIPTION\"].
-
+Mostly same as gimp_install_procedure from the C library. The parameters and return values for the functions are specified as an array ref containing either integers or array-refs with three elements, [PARAM_TYPE, \"NAME\", \"DESCRIPTION\"]. 
+ 
 =item gimp_progress_init(message,[])
 
 Initializes a progress bar. In networked modules this is a no-op.
@@ -1017,10 +992,16 @@ reported as runtime errors (i.e. throwing an exception).
 =head1 OBJECT ORIENTED SYNTAX
 
 In this manual, only the plain syntax (that lesser languages like C use) is
-described. Actually, the recommended way to write gimp scripts is to use the
-fancy OO-like syntax you are used to in perl (version 5 at least ;). As a
-fact, OO-syntax saves soooo much typing as well. See L<Gimp::OO> for
-details.
+described. See L<Gimp::OO> for details on using the object oritented syntax.  The 'gimpdoc' script will also return OO varients when functions are described.  For example:
+
+gimpdoc image_new 
+
+has a section:
+
+SOME SYNTAX ALTERNATIVES
+       image = Gimp->image_new (width,height,type)
+       image = new Image (width,height,type)
+       image = image_new Display (width,height,type)
 
 =head1 DEBUGGING AIDS
 
@@ -1045,7 +1026,7 @@ tracemask is any number of the following flags or'ed together.
 
 =item TRACE_NONE
 
-nothing is printed.
+nothing is printed (default).
 
 =item TRACE_CALL
 
@@ -1105,7 +1086,7 @@ of elements.
 
 =item COLOR
 
-on input, either an array ref with 3 elements (i.e. [0.1,0.4,0.9] or [233,40,40]), a X11-like string ("#rrggbb") or a colour name ("papayawhip") (see set_rgb_db).
+on input, either an array ref with 3 or 4 elements (i.e. [0.1,0.4,0.9] or [233,40,40]), a X11-like string ("#rrggbb") or a colour name ("papayawhip") (see set_rgb_db).
 
 =item DISPLAY, IMAGE, LAYER, CHANNEL, DRAWABLE, SELECTION
 
@@ -1114,8 +1095,7 @@ output you will see small integers (the image/layer/etc..-ID)
 
 =item PARASITE
 
-represented as an array ref [name, flags, data], where name and data should be perl strings
-and flags is the numerical flag value.
+represented as an array ref [name, flags, data], where name and data should be perl strings and flags is the numerical flag value.
 
 =item REGION, BOUNDARY, PATH, STATUS
 
@@ -1125,12 +1105,14 @@ Not yet supported.
 
 =head1 AUTHOR
 
-Marc Lehmann <pcg@goof.com>
+Marc Lehmann <pcg@goof.com> (pre-2.0)
+
+Seth Burgess <sjburge@gimp.org> (2.0+)
 
 =head1 SEE ALSO
 
 perl(1), gimp(1), L<Gimp::OO>, L<Gimp::Data>, L<Gimp::Pixel>, L<Gimp::PDL>, L<Gimp::Util>, L<Gimp::UI>, L<Gimp::Feature>, L<Gimp::Net>,
-L<Gimp::Compat>, L<Gimp::Config>, L<Gimp::Lib>, L<Gimp::Module>, L<scm2perl> and L<scm2scm>.
+L<Gimp::Compat>, L<Gimp::Config>, L<Gimp::Lib>, and  L<Gimp::Module> .
 
 =cut
 
@@ -1926,30 +1908,4 @@ __DATA__
 255 255	  0		yellow1
 238 238	  0		yellow2
 205 205	  0		yellow3
-=head1 NAME
-
-canonicalize_colour - utility function for color conversion
-
-=head1 SYNOPSIS
-  
-  $color = canonicalize_colour ("#ff00bb");
-  $color = canonicalize_colour ([255,255,34]);
-  $color = canonicalize_colour ([255,255,34,255]);
-  $color = canonicalize_colour ([1.0,1.0,0.32]);
-  $color = canonicalize_colour ('red');
-
-=head1 DESCRIPTION
-
-Take in a color specifier in a variety of different formats, and return 
-a valid gimp color specifier, consisting of 3 or 4 numbers in the range 
-between 0 and 1.0.
-
-=head1 BUGS
- 
-  * bounds checking is excessively lax; assumes relatively good input
-  * should emit more warnings
-  * has an extra 'u' in 'color' :)
-
-=cut 
-
 s139 139	  0		yellow4

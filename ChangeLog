@@ -1,3 +1,8 @@
+2004-07-21  Seth Burgess <sjburges@gimp.org>
+	* TODO: added some items
+	* Gimp.pm: pod cleanup and reorg
+	* Gimp/Fu.pm: bit of pod cleanup
+
 2004-06-28  Seth Burgess <sjburges@gimp.org>
 	* UI/UI.xs: fixed an XS error that shows up for GCC 2.95; 
           shouldn't create a temp variable in CODE: - put it in PREINIT:
