@@ -48,7 +48,7 @@ $n=!$EXTENSIVE_TESTS;
 skip($n,1,sub {$plugins = `$GIMPTOOL --gimpplugindir`;
                chomp $plugins;
 	       $plugins = $plugins . '/plug-ins'; 
-	       return ($#plugins);}
+	       1;}
 	);
 
 # Test 3 (Make sure plug-in directory exists)
