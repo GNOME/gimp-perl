@@ -84,9 +84,29 @@ sub dosel {
     ($img, $savepath, $imgpath, $imgbasename, $extension, $l,$r,$t,$b, $i,$j) = @_;
     $filename =~ m/^(.*)\.[^\.]*$/ ;
     $imgname = "$imgbasename-$i-$j.$extension";
-    $tmpimg = $img->channel_ops_duplicate;
+    $tmpimg = $img->duplicate;
     # print "Cropping from $l to $r, $t to $b\n";
     $tmpimg->crop($r-$l, $b-$t, $l, $t);
+    # Make sure that gif and jpg are of proper type before proceeding.
+    # I could move this outside the dosel for performance improvment, 
+    # but then it would end up changing the user's image, which may 
+    # not be desired/expected.
+    if ($extension eq "gif")
+      {
+        if (!(($tmpimg->get_layers())[0]->is_indexed()))
+	{
+          $tmpimg->convert_indexed(0,0,255,0,0,"NULL");
+	}
+      }
+    if ($extension eq "jpg")
+      {
+        if (!(($tmpimg->get_layers())[0]->is_rgb()))
+	{
+          $tmpimg->convert_rgb();
+	}
+      }
+
+
     $tmpimg->Gimp::Fu::save_image("$savepath$imgpath$imgname","$savepath$imgpath$imgname");
     $tmpimg->delete;
     return "$imgpath$imgname"; # what I want printed in html

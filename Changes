@@ -6,8 +6,10 @@ June 24 2003  Seth Burgess <sjburges@gimp.org>
 	examples/prep4gif: channel_op PDB changed to $img->*
 	examples/randomblends: s/set_active/set_gradient/,
 	                       s/get_active/get_gradient/
-	exmamples/xachshadow: s/gimp_chanel_ops_offset/$draw->offset/
-
+	examples/xachshadow: s/gimp_channel_ops_offset/$draw->offset/
+        examples/perlotine: s/channel_ops//, added conversion to right
+	                    image type since it seems to be picky about it.
+			    (the image type selection GUI is broken)
 
 1.3  not released
 	- started Gtk2 port... very rough.
