@@ -5,13 +5,28 @@ Revision history for Gimp-Perl extension.
 	* removed old workaround for even older PDL versions.
 	* Seth Burgess <sjburges@gimp.org>:
            Minor fixes to some scripts for Gimp 1.3.x comformance:
-           examples/prep4gif: channel_op PDB changed to $img->*
+           examples/guide_remove 
+	   examples/centerguide
+           examples/guidegrid
+           examples/guides_to_selection: changed to <Image>/Image/Guides/
+
+	   examples/fade-alpha: updated GTK to be 2.x confromant, 
+	                        changed blend parameters, 
+				changed color specifiers to be 0.0-1.0  
+
+	   examples/burst: changed to PF_SPINNERs
+
            examples/randomblends: s/set_active/set_gradient/,
-                                  s/get_active/get_gradient/
+                                  s/get_active/get_gradient/,
+				  changed to PF_SPINNERs, 
+				  changed number of blend arguments
+
+	   examples/prep4gif: channel_op PDB changed to $img->*
+
            examples/xachshadow: s/gimp_channel_ops_offset/$draw->offset/
+
            examples/perlotine: s/channel_ops//, added conversion to right
                                image type since it seems to be picky about it.
-                               (the image type selection GUI is broken)
 	- support alpha channel for colour values [Seth Burgess]
 	- started Gtk2 port... very rough.
 	- update configuration to gimp 1.3.
