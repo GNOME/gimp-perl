@@ -39,8 +39,19 @@ ok(1);
 
 $n=!$EXTENSIVE_TESTS;
 
-skip($n,1,sub {($plugins = `$GIMPTOOL -n --install-admin-bin /bin/sh`) =~ s{^.*\s(.*?)(?:/+bin/sh)\r?\n?$}{$1}});
+open T, ">TempDebug.txt" or die "unable to open TempDebug.txt";
+
+# Find the installation path that gimptool would choose
+# should look like:
+#  /usr/bin/install -c /bin/sh /usr/local/lib/gimp/2.0/plug-ins/sh
+
+# skip($n,1,sub {($plugins = `$GIMPTOOL -n --install-admin-bin /bin/sh`) =~ s{^.*\s(.*?)(?:/+bin/sh)\r?\n?$}{$1}});
+skip($n,1,sub {($plugins = `$GIMPTOOL -n --install-admin-bin /bin/sh`) =~ 
+                            s|^.*/bin/sh\s+(.+)/sh\r?\n?$|$1|});
+print T "PLUGINS = $plugins\n";
+
 skip($n,1,sub {-d $plugins});
+
 skip($n,1,sub {-x "$plugins/script-fu"});
 
 use Gimp;
@@ -51,25 +62,27 @@ ok(RGB_IMAGE ? 1 : 1); #  check for correct prototype
 
 sub tests {
    my($i,$l);
-   skip($n,1,sub{0 != ($i=new Image(10,10,RGB))});
-   skip($n,1,sub {!!ref $i});
-   skip($n,1,sub{0 != ($l=$i->layer_new(10,10,RGBA_IMAGE,"new layer",100,VALUE_MODE))});
-   skip($n,1,sub {!!ref $l});
+  
+#   skip($n,1,sub{0 != ($i=new Image(10,10,RGB))});
+#   skip($n,1,sub {!!ref $i});
+#   skip($n,1,sub{0 != ($l=$i->layer_new(10,10,RGBA_IMAGE,"new layer",100,VALUE_MODE))});
+#   skip($n,1,sub {!!ref $l});
    
-   skip($n,1,sub{Gimp->image_add_layer($l,0) || 1});
-   skip($n,"new layer",sub{$l->get_name()});
+#   skip($n,1,sub{Gimp->image_add_layer($l,0) || 1});
+#   skip($n,"new layer",sub{$l->get_name()});
    
-   skip($n,1,sub{$l->paintbrush(50,[1,1,2,2,5,3,7,4,2,8],CONTINUOUS,0) || 1});
-   skip($n,1,sub{$l->paintbrush(30,4,[5,5,8,1],CONTINUOUS,0) || 1});
+#   skip($n,1,sub{$l->paintbrush(50,[1,1,2,2,5,3,7,4,2,8],CONTINUOUS,0) || 1});
+#   skip($n,1,sub{$l->paintbrush(30,4,[5,5,8,1],CONTINUOUS,0) || 1});
    
-   skip($n,1,sub{Plugin->sharpen(RUN_NONINTERACTIVE,$i,$l,10) || 1});
-   skip($n,1,sub{$l->sharpen(10) || 1});
-   skip($n,1,sub{Gimp->plug_in_sharpen($i,$l,10) || 1});
+#   skip($n,1,sub{Plugin->sharpen(RUN_NONINTERACTIVE,$i,$l,10) || 1});
+#   skip($n,1,sub{$l->sharpen(10) || 1});
+#   skip($n,1,sub{Gimp->plug_in_sharpen($i,$l,10) || 1});
    
-   skip($n,1,sub{$i->delete || 1});
+#   skip($n,1,sub{$i->delete || 1});
 }
 
 system("rm","-rf",$dir); #d#FIXME
+print T "mkdir...\n";
 ok(1,sub {mkdir $dir,0700});
 
 # copy the Perl-Server
@@ -81,11 +94,14 @@ ok(1,sub {mkdir $dir,0700});
    print Y $Config{startperl},"\n",$s,<X>;
    ok(1);
 }
+print T "chmod...\n";
 ok(1,sub { chmod 0700,"$dir/Perl-Server.pl" });
 
+print T "symlink..\n";
 skip($n,1,sub {symlink "$plugins/script-fu","$dir/script-fu"});
 skip($n,1,sub {symlink "$plugins/sharpen","$dir/sharpen"});
 
+print T "rc...\n";
 ok (
   open RC,">$dir/gimprc" and
   print RC "(show-tips no)\n" and
@@ -100,10 +116,13 @@ $ENV{PERL5LIB}=cwd."/blib/lib:".cwd."/blib/arch";
 
 if(!$n) {
    skip($n,1);
+   print T "Gimp::init\n";
    Gimp::init;
+   print T "tests1...\n";
    tests;
 } else {
    skip($n,0);
+   print T "tests2...\n";
    tests;
 }
 

@@ -146,6 +146,7 @@ sub start_server {
    my $opt = shift;
    $opt = $Gimp::spawn_opts unless $opt;
    print __"trying to start gimp with options \"$opt\"\n" if $Gimp::verbose;
+   print $opt if $Gimp::verbose;
    $server_fh=local *SERVER_FH;
    my $gimp_fh=local *CLIENT_FH;
    socketpair $server_fh,$gimp_fh,AF_UNIX,SOCK_STREAM,PF_UNSPEC
@@ -177,8 +178,7 @@ sub start_server {
       { # block to suppress warning with broken perls (e.g. 5.004)
          exec $Gimp::Config{GIMP},
               "--no-splash",
-              "--no-splash-image",
-              "--enable-stack-trace", "never",
+              #"never",
               "--console-messages",
               @args,
               "-b",

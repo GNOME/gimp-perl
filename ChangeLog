@@ -1,3 +1,8 @@
+2004-04-04  Seth Burgess <sjburges@gimp.org>
+	* Net/Net.pm: removed some obsolete params being passed to gimp
+	* t/run.t: commented out most of the tests.  Re-did a regex so it
+	  actually will return a reasonable path for symlinking.
+
 2004-03-29  Seth Burgess <sjburges@gimp.org>
 	* examples/yinyang: moved to Render at TomR's suggestion.
 
