@@ -51,6 +51,7 @@ if ($ARGV[0] ne "--writemakefile") {
       scratches sethspin stamps 
       tex-to-float translogo 
       randomart1 randomblends 
+      selective_sharpen
       warp-sharp webify windify 
       xachlego xachshadow xachvision
       yinyang 

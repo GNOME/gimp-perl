@@ -1,6 +1,7 @@
 2004-05-15  Seth Burgess <sjburges@gimp.org>
 	* examples/selective_sharpen: added new script based on tigert's 
 	method.
+        * Makefile.PL: install it 
 	* MANIFEST: updated accordingly
 
 2004-05-15  Seth Burgess <sjburges@gimp.org>
