@@ -1,5 +1,7 @@
-<Seth>
+<Seth's random notes>
 Convince someone that knows auto* to redo the compilation/installation.
+
+Generate a new web presence for Gimp-Perl, with a friendlier face to it.
 
 Easy commandline running of the server.
 
@@ -7,7 +9,9 @@ Get 'make test' working.
 
 Add optional podviewer for help.  Add POD docs to all example scripts/documentation, to encourage good style.
 
-Remove known broken examples from being installed immediately; remove from distribution eventually.
+Finish looking at all the examples and verify they work as expected or fix so they do.
+
+Remove known broken examples from being installed immediately; remove from distribution eventually.  Remove unknown status examples from being installed eventually.
 
 <Marc's previous stuff>
 this is mostly my personal worksheet and notepad, which may not be
