@@ -1,4 +1,7 @@
-2004-2-22 Seth Burgess <sjburges@gimp.org>
+2004-2-23 Seth Burgess <sjburges@gimp.org>
+	* UI/UI.pm: Gradients are back in!
+
+2004-2-23 Seth Burgess <sjburges@gimp.org>
 	* UI/basewidget.pm: still needs to compile and return a value (for now) 
  	so stuff should work again.
 

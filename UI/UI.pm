@@ -30,7 +30,7 @@ of the API has been converted.
  
  $button = new Gimp::UI::PatternSelect;
  $button = new Gimp::UI::BrushSelect;
- $button = new Gimp::UI::GradientSelect;
+ $button = new Gimp::UI::GradientSelec;
 
 =back
 
@@ -279,76 +279,64 @@ sub new_pixbuf {
 package Gimp::UI::BrushSelect;
 
 use Gimp '__';
-use Gimp::basewidget Gtk2::Button;
 
-sub GTK_CLASS_INIT	{ goto &Gimp::UI::PreviewSelect::GTK_CLASS_INIT     }
-sub GTK_OBJECT_SET_ARG	{ goto &Gimp::UI::PreviewSelect::GTK_OBJECT_SET_ARG }
-sub GTK_OBJECT_GET_ARG	{ goto &Gimp::UI::PreviewSelect::GTK_OBJECT_GET_ARG }
-sub GTK_OBJECT_INIT	{ goto &Gimp::UI::PreviewSelect::GTK_OBJECT_INIT    }
+*new = \&Glib::Object::new;
+
+Glib::Type->register (
+   'Gimp::UI::PreviewSelect', __PACKAGE__,
+   signals => {},
+   properties => [],
+);
+
+sub INIT_INSTANCE {
+       my ($self) = @_;
+       my $lbl = new Gtk2::Label $self->get("active");
+       $self->add($lbl);
+}
+
 
 sub get_title { __"Brush Selection Dialog" }
 sub get_list { Gimp->brushes_list }
 
-sub new_preview {
-   my $self=shift;
-   $self->{"preview"}=new Gtk2::Preview "grayscale";
-}
-
-sub set_preview {
-   my $self = shift;
-   my $value = shift;
-   
-   my $p = $self->{"preview"};
-   
-   my ($name,$opacity,$spacing,$mode,$w,$h,$mask)=eval { Gimp->brushes_get_brush_data ($value) };
-   if ($@) {
-      $name=Gimp->brushes_get_brush;
-      ($name,$opacity,$spacing,$mode,$w,$h,$mask)=Gimp->brushes_get_brush_data ($name);
-   }
-   $mask=pack("C*",@$mask);
-   $xor="\xff" x $w;
-   hide $p;
-   my $l=length($mask);
-   $p->size ($w, $h);
-   for(0..$h-1) {
-     $p->draw_row (substr ($mask, $w*$_) ^ $xor, 0, $_, $w);
-   }
-   $p->draw(undef);
-   show $p;
-   
-   $name;
-}
-
 package Gimp::UI::GradientSelect;
 
 use Gimp '__';
-use Gimp::basewidget Gtk2::Button;
 
-sub GTK_CLASS_INIT	{ goto &Gimp::UI::PreviewSelect::GTK_CLASS_INIT     }
-sub GTK_OBJECT_SET_ARG	{ goto &Gimp::UI::PreviewSelect::GTK_OBJECT_SET_ARG }
-sub GTK_OBJECT_GET_ARG	{ goto &Gimp::UI::PreviewSelect::GTK_OBJECT_GET_ARG }
-sub GTK_OBJECT_INIT	{ goto &Gimp::UI::PreviewSelect::GTK_OBJECT_INIT    }
+*new = \&Glib::Object::new;
+
+Glib::Type->register (
+   'Gimp::UI::PreviewSelect', __PACKAGE__,
+   signals => {},
+   properties => [],
+);
+
+sub INIT_INSTANCE {
+       my ($self) = @_;
+       my $lbl = new Gtk2::Label $self->get("active");
+       $self->add($lbl);
+}
 
 sub get_title { __"Gradient Selection Dialog" }
-sub get_list { keys %gradients }
+sub get_list { Gimp->gradients_get_list("") }
 
-sub new_preview {
-   my $self = shift;
-   new Gtk2::Frame;
+sub new_pixbuf {
+   use POSIX;
+   my ($name,$grad_data)=Gimp->gradients_get_gradient_data ($_,100,0);
+   my (@grad_row) = @{$grad_data}; 
+   @grad_row = map { $_ = abs(ceil($_*255 - 0.5)) } @grad_row;
+
+# make it 16 tall; somewhat ugly...
+   push @grad_row, @grad_row;
+   push @grad_row, @grad_row;
+   push @grad_row, @grad_row;
+   push @grad_row, @grad_row;
+
+   $mask = pack "C*", @grad_row;
+
+   $pb = Gtk2::Gdk::Pixbuf->new_from_data($mask,'rgb',1,8,100,8,100*4);
+   $pb;
 }
 
-sub set_preview {
-   my $self = shift;
-   my $value = shift;
-   exists $gradients{$value} ? $value : Gimp->gradients_get_active;
-}
-
-sub new {
-   unless (defined %gradients) {
-      undef @gradients{Gimp->gradients_get_list("")};
-   }
-   Gtk2::Object::new @_;
-}
 
 package Gimp::UI;
 
@@ -618,8 +606,9 @@ sub interact($$$$@) {
            push @getvals, sub{ $a->get('active') };
            
         } elsif ($type == PF_GRADIENT) {
-           $a=new Gimp::UI::GradientSelect -active => defined $value ? $value : (Gimp->gimp_gradients_get_active)[0];
-           push @setvals, sub { $a->set('active',$_[0]) };
+           $a=new Gimp::UI::GradientSelect;
+           push @setvals, sub { $a->set('active',
+	       defined $value ? $value : (Gimp->gradients_get_list(""))[0]) };
            push @getvals, sub { $a->get('active') };
            
         } elsif ($type == PF_CUSTOM) {
