@@ -1,3 +1,8 @@
+2004-2-25 Seth Burgess <sjburges@gimp.org>
+	* examples/bricks: brought up to date now that we have a pattern selector.  Still
+	    has some work that could be done, but functionality is restored.
+	* examples/examples.TODO: changed accordingly.
+
 2004-2-22 Seth Burgess <sjburges@gimp.org>
 	* UI/UI.pm: Brushes are here too (grayscale only due to PDB limitation)
 

@@ -5,12 +5,19 @@
 # (c) Copyright by Tels www.bloodgate.com 1999.
 
 # generate a brick texture for using in 3d games
-
+#
 # params: brick width/height, brick pattern, random light skew, border color
 #
 # 12/5/03: <sjburges@gimp.org> updated to use gimp_image_get_floating_sel, 
 # rather than gimp_image_floating_sel, gimp_undo_push/gimp_image_undo_push
-# TODO: set color specifiers correctly for gimp1.3+
+#
+# 25/2/04: <sjbkurges@gimp.org> changed color specifiers.  Reordered so that 
+# pasting happens after layer mask is attached to image.  Removed harmful 
+# gimp_layer_delete() calls. s/gimp_channel_ops_offset/gimp_drawable_offset/.  
+#
+# The plug-in is certainly incomplete, with unused parameters, artficial limiation 
+# on max/min size (which silently moves it to 256?). Doesn't save/restore current 
+# gimp pattern/colors before setting them.  Otherwise, it seems to work OK now :)
 
 use Gimp qw(:auto N_);
 use Gimp::Fu;
@@ -28,39 +35,39 @@ sub do_bricks {
     gimp_patterns_set_pattern($pattern);
     $layerpat = gimp_image_add_new_layer($image,0,0,0);
     gimp_selection_all($image);
-    gimp_bucket_fill($layerpat,2,0,100,0,0,1,1);
+    gimp_edit_bucket_fill($layerpat,2,0,100,0,0,1,1);
     
     # make border lines
-    gimp_palette_set_foreground ("#ffffff"); 
+    gimp_palette_set_foreground ([1,1,1]); 
     $layer = gimp_image_add_new_layer($image,0,0,0);
     gimp_drawable_fill($layer,3);
     my $w = 1; my $h = 1; my $j = 0; my $wo = 0;
     my $brickw = ($imgw / $brickx); my $brickh = ($imgh / $bricky);
-    gimp_image_undo_push_group_start($image);
+    gimp_image_undo_group_start($image);
     while ($h < $imgh)
       {
       gimp_rect_select($image,0,$h,$imgw,$bw,2,0,0);
-      gimp_bucket_fill($layer,0,0,100,0,0,0,0);
+      gimp_edit_bucket_fill($layer,0,0,100,0,0,0,0);
       $w = 1;
       $wo = 0; $wo = ($brickw / 2) if ($j == 1);
       while ($w < $imgw)
         {
         gimp_rect_select($image,$w+$wo,$h,$bw,$brickh+1,2,0,0);
-        gimp_bucket_fill($layer,0,0,100,0,0,1,1);
+        gimp_edit_bucket_fill($layer,0,0,100,0,0,1,1);
 #        print "$h $w\n";
         $w += $brickw;
         }
       $j = 1 - $j;
       $h += $brickh;
       }
-    gimp_image_undo_push_group_end($image);
+    gimp_image_undo_group_end($image);
     # make a copy of it for bump mapping
     gimp_selection_all($image);
     $layer->edit_copy(); 
     $border = gimp_image_add_new_layer($image,0,0,0);
     #print "$border\n";
     $border->edit_paste(0);
-    gimp_floating_sel_anchor(gimp_image_get_floating_selection($image));
+    gimp_floating_sel_anchor(gimp_image_get_floating_sel($image));
     gimp_selection_none($image);
     # somebody seems to have changed the parameter for the following 3 lines
     # omy office machine use the old variant, at home I need the new :(
@@ -72,7 +79,7 @@ sub do_bricks {
     plug_in_gauss_iir (1,$layer,2,1,1);
     plug_in_bump_map (1,$layerpat,$layer,280,40,2,0,0,0,0,1,0,1);
     # overlay border lines and random skew bricks
-    gimp_image_undo_push_group_start($image);
+    gimp_image_undo_group_start($image);
     $h = 0; $j = 0; $wo = 0;
     while ($h < $imgh)
       {
@@ -85,12 +92,12 @@ sub do_bricks {
           gimp_palette_set_foreground ("#ffffff") if ($r > 0); 
           gimp_palette_set_foreground ("#000000") if ($r < 0); 
           gimp_rect_select($image,$w+$wo+$bp,$h+$bp,$brickw,$brickh,2,0,0);
-          gimp_bucket_fill($layerpat,0,0,4*abs($r),0,0,1,1);
+          gimp_edit_bucket_fill($layerpat,0,0,4*abs($r),0,0,1,1);
           # halves
           if (($j == 1) && ($w+$wo+$brickw > $imgw))
             {
             gimp_rect_select($image,0,$h+$bp,$brickw/2,$brickh,2,0,0);
-            gimp_bucket_fill($layerpat,0,0,4*abs($r),0,0,1,1);
+            gimp_edit_bucket_fill($layerpat,0,0,4*abs($r),0,0,1,1);
             }
           }
         $w += $brickw;
@@ -98,27 +105,27 @@ sub do_bricks {
       $j = 1 - $j;
       $h += $brickh;
       }
-    gimp_image_undo_push_group_end($image);
+    gimp_image_undo_group_end($image);
     gimp_palette_set_background ($clr);
     $layerb = gimp_image_add_new_layer($image,1,BACKGROUND_FILL,0);
     gimp_selection_all($image);
     if ($bp ne "") 
       {
       gimp_patterns_set_pattern($bp);
-      gimp_bucket_fill($layerb,2,0,100,0,0,1,1); 
+      gimp_edit_bucket_fill($layerb,2,0,100,0,0,1,1); 
       }
     $border->edit_copy();
     gimp_layer_add_alpha($layerb);
     $mask = gimp_layer_create_mask($layerb,0);
-    $mask->edit_paste(0);
-    gimp_floating_sel_anchor(gimp_image_get_floating_selection($image));
     gimp_image_add_layer_mask($image,$layerb,$mask);
+    $mask->edit_paste(0);
+    gimp_floating_sel_anchor(gimp_image_get_floating_sel($image));
     gimp_selection_none($image);
-    gimp_image_remove_layer ($border); gimp_layer_delete ($border);
-    gimp_image_remove_layer ($layer); gimp_layer_delete ($layer);
+    gimp_image_remove_layer ($border); 
+    gimp_image_remove_layer ($layer); 
     gimp_image_remove_layer_mask ($image,$layerb,0);
-    gimp_channel_ops_offset ($layerpat,1,0,-1,-1);
-    gimp_channel_ops_offset ($layerb,1,0,-1,-1);
+    gimp_drawable_offset ($layerpat,1,0,-1,-1);
+    gimp_drawable_offset ($layerb,1,0,-1,-1);
     $image;
 }
 
@@ -135,7 +142,7 @@ register
          [PF_PATTERN,  "background", "Brick pattern", "Leather"],
          [PF_STRING,  "highlight", "Second brick pattern for some highlightin (unused)", "unused yet"],
          [PF_STRING,  "borderpattern", "Border pattern (empty for none)", ""],
-         [PF_COLOR,   "color", "Border color", "#dfdfdf"],
+         [PF_COLOR,   "color", "Border color", [0.80,0.80,0.80]],
          [PF_SPINNER,  "borderwidth", "Border width", 1, [0,1000,1]],
          [PF_STRING,  "brickx", "Bricks in X", 8],
          [PF_STRING,  "bricky", "Bricks in Y", 16],

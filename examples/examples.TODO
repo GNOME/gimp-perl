@@ -1,7 +1,6 @@
 Remove or fix:
 
 alpha2color: oh-my-god ugly.  Color specifiers not 1.3 compatibile.  In a lousy menu spot.  Just remove this one, since its simple to do by hand anyway. 
-bricks: pattern select is broken in UI, so this script doesn't work.
 circular_text: polar coordinates does a better job, more flexibly, and with preview.  
 colourtoalpha: this algorithm isn't right.  There's a C plugin that does it right.  Get rid of this.
 Create_Images (leaning towards removal, along with the file "image_list", since it doesn't do much)
@@ -68,6 +67,7 @@ animate_cells
 =============
 
 Tested:
+bricks: 2/25/04 <sjburges@gimp.org> lots of changes (see plugin).  This seems to work now, with a bit of work that could be done by anyone with an intrest.
 burst: 12/6/03 <sjburges@gimp.org>  basic functionality works
 fade-alpha: 12/12/03 <sjburges@gimp.org> removed deprecated stuff, so works again.
 centerguide: 12/12/03 <sjburges@gimp.org> works. (Gimp-Fu is ugly for radio buttons)
