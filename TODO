@@ -1,6 +1,4 @@
 <Seth's random notes>
-Fix problem with calling RUN_NONINTERACTIVE parameter; this should work, despite it being broken forever.
-
 Use ExtUtils::pkgconfig instead of calling gimptool for configuration
 
 Win32 port?
