@@ -7,6 +7,7 @@
 # Written by Aaron Sherman, (c) 1998
 #   04-22-2001, peter@kirchgessner.net: fix problems with functions
 #               that changed number of arguments
+#   2004-03-29, dov@imagic.weizmann.ac.il: fixed for Gimp-2.0
 
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
@@ -90,10 +91,10 @@ sub insert_eye {
     gimp_ellipse_select($img,$x,$y,$width,$height,2,$aa,0,0);
     gimp_palette_set_foreground($color);
     if ($do_image) {
-	my $eye = gimp_file_load(RUN_NONINTERACTIVE,$file,$file);
+	my $eye = gimp_file_load($file,$file);
 	gimp_image_scale($eye,$width,$height);
 	gimp_selection_all($eye);
-	my $eyedraw = gimp_image_active_drawable($eye);
+	my $eyedraw = gimp_image_get_active_drawable($eye);
 	gimp_edit_copy($eyedraw);
 	my $float = gimp_edit_paste($draw,1);
 	gimp_floating_sel_anchor($float);

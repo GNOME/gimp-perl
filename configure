@@ -2381,13 +2381,18 @@ int main ()
      exit(1);
    }
 
+#if 0
     if (($gimptool_major_version > major) ||
         (($gimptool_major_version == major) && ($gimptool_minor_version > minor)) ||
         (($gimptool_major_version == major) && ($gimptool_minor_version == minor) && ($gimptool_micro_version >= micro)))
+#endif
+        if (1) 
     {
       return 0;
     }
+#if 0
   else
+
     {
       printf("\n*** 'gimptool-2.0 --version' returned %d.%d.%d, but the minimum version\n", $gimptool_major_version, $gimptool_minor_version, $gimptool_micro_version);
       printf("*** of GIMP required is %d.%d.%d. If gimptool-2.0 is correct, then it is\n", major, minor, micro);
@@ -2397,6 +2402,7 @@ int main ()
       printf("*** config.cache before re-running configure\n");
       return 1;
     }
+#endif
 }
 
 

@@ -4,7 +4,7 @@
 #  A Perl::Fu plugin for converting TeX strings to floating layers.
 #
 #  Author: Dov Grobgeld
-#  Version: 0.12
+#  Version: 0.13 for Gimp-2.0
 ######################################################################
 
 use Gimp qw(:auto N_);
@@ -27,7 +27,7 @@ sub cleanup {
 
 sub xec {
     my $cmd = shift;
-    print STDERR "$cmd\n";
+#    print STDERR "$cmd\n";
     return `$cmd`;
 }
 
@@ -73,7 +73,6 @@ sub tex_string_to_pgm {
 
     # Shift postscript file to origin
     my @bbox = $psoutput=~ /^%%BoundingBox:\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/m;
-    print STDERR "bbox = @bbox\n";
     my $w = $bbox[2]-$bbox[0];
     my $h = $bbox[3]-$bbox[1];
     $psoutput=~ s/^%%BoundingBox:.*$/%%BoundingBox: 0 0 $w $h/m;
@@ -102,7 +101,7 @@ sub grey_file_to_float {
     gimp_image_undo_group_start($img1);
 
     # Load the new img
-    my $grey_img = gimp_file_load(RUN_NONINTERACTIVE,$fn, $fn);
+    my $grey_img = gimp_file_load($fn, $fn);
 
     # Get name of new layer
     my $grey_layer = gimp_image_get_active_layer($grey_img);
@@ -125,7 +124,6 @@ sub grey_file_to_float {
     $floating_layer = gimp_edit_paste($drw1, 0);
     gimp_edit_fill($floating_layer, BACKGROUND_FILL);
 
-    print STDERR "Yohoo!\n";
     cleanup();
 
     # Get rid of $grey_img

@@ -59,7 +59,7 @@ register	"stampify",
 		gimp_selection_none($img2);
 # here comes the clever part! :-)
 # offset horis and vert holes by half the diameter
-		gimp_channel_ops_offset($layer1, 1, 0, -($diameter / 2), -($diameter / 2));
+		gimp_drawable_offset($layer1, 1, 0, -($diameter / 2), -($diameter / 2));
 # insert $img into a new layer in $img2
 #		gimp_selection_all($img);
 		gimp_edit_copy($drawable);

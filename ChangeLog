@@ -1,3 +1,14 @@
+2004-03-28  Dov Grobgeld  <dov@imagic.weizmann.ac.il>
+
+	* examples/examples.TODO: Removed gimp-make-img-map, gallery,
+	and stampify and gallery from untested section
+	* examples/stamps: fixed
+	* examples/stampify: fixed
+	* examples/gallery: fixed
+	* examples/yinyang: fixed
+	* examples/gimp-make-img-map: fixed
+	* examples/tex-to-float: fixed, erased various debug output
+
 2004-3-28 Seth Burgess <sjburges@gimp.org>
 	* UI/Makefile.PL: removed pkg->add_define call, since its no longer in 
 	Extutils::Depends 0.20x.  Need to generate another release for this, 

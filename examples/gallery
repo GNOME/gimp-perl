@@ -3,6 +3,9 @@
 #
 # Copyright (c) Fabian Frederick 2001
 #
+# 2004-03-28 (Dov)
+#       - Fixed for Gimp-2.0
+# 
 # 17/07/2001 (Fab)
 # V2.0
 #	-Adding Html instance per picture + Header
@@ -101,7 +104,7 @@ sub galleryMaker {
    Gimp->progress_init("Releasing the gallery");
    while (defined($cfile=readdir(cpath))) { 	
 	   if (( $cfile =~ /.jpg/ ) || ($cfile =~ /.JPG/)) {
-		   my $img=gimp_file_load(RUN_NONINTERACTIVE,"$path$cfile", "$path$cfile");
+		   my $img=gimp_file_load("$path$cfile", "$path$cfile");
 		   my $clayer=gimp_image_get_active_layer($img);
 		   if ($rotate != 0){
 			#plug_in_rotate manages both global 90-180-270 - reshape $img
@@ -152,7 +155,7 @@ sub galleryMaker {
 		   $tbfname=~s/ /m/g;	
 		   system("cp $cvname $tbfname");
 		   gimp_image_delete($img);	
-		   my $img=gimp_file_load(RUN_NONINTERACTIVE,"$tbfname", "$tbfname");
+		   my $img=gimp_file_load("$tbfname", "$tbfname");
 		   my $clayer=gimp_image_get_active_layer($img);
 		   gimp_image_scale($img, $tbwidth, $tbheight);
 
@@ -165,7 +168,7 @@ sub galleryMaker {
 		   print fhtmlDetail "<img src=\"$cfile\"></img>";	
 		   printFooter($rf,$gf,$bf,"$galleryfile.html", *fhtmlDetail);
 		   close fhtmlDetail;
-		   file_jpeg_save(RUN_NONINTERACTIVE,$img, ($img->get_layers)[0],"$tbfname", "$tbfname",0.7,0,1,0,"",0,1,0,0);
+		   file_jpeg_save(($img->get_layers)[0],"$tbfname", "$tbfname",0.7,0,1,0,"",0,1,0,0);
 		   print htmlFile "		<td><a href='$htmlDetail'><img src='m$cfile' border='0'></a></td>\n";
 		   if ($entries >= $columns){
 			 	print htmlFile "</tr><tr>";
