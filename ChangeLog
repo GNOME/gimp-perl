@@ -1,3 +1,19 @@
+2004-3-08 Seth Burgess <sjburges@gimp.org>
+	* Gimp.pm: removed debug code
+	
+	* UI/UI.pm: made Gimp::Fu dialogs much more similar to 
+	  script-fu in appearance.  Did away with "Previous" button, 
+	  at least temporarily.  Help button is currently commented 
+	  out, need to place it to right of blurb.  Removed FG/BG 
+	  buttons (dragging works, so shouldn't be needed.  Made 
+	  width adjustable, changed text/widget alignment.
+
+	* examples/glowing_steel: s/bucket_fill/edit_bucket_fill 
+	* examples/innerbevel: better defaults, better naming, removed debug
+	  code, more fudging.
+        * examples/warp-sharp: s/undo_push/undo/, added edge detect param
+	* examples/examples.TODO: updated accordingly
+
 2004-2-29 Seth Burgess <sjburges@gimp.org>
 	* Gimp.pm: change canonicalize_color to detect and fix 0-255=>0-1.0 
 	  problems for a reference passed in.  Still has lousy error detection.
