@@ -101,14 +101,12 @@ MODULE = Gimp::UI	PACKAGE = Gimp::UI::ColorArea	PREFIX = gimp_color_area_
 BOOT:
 	gperl_register_object (GIMP_TYPE_COLOR_AREA, "Gimp::UI::ColorArea");
 
-GimpColorArea_own * gimp_color_area_new (SV *unused_class, GimpRGB color, GimpColorAreaType type, GdkModifierType drag_mask)
-	C_ARGS: &color, type, drag_mask
+GimpColorArea_own * gimp_color_area_new (SV *unused_class, GimpRGB &color, GimpColorAreaType type, GdkModifierType drag_mask)
+	C_ARGS: color, type, drag_mask
 
-void gimp_color_area_set_color (GimpColorArea *area, GimpRGB color)
-	C_ARGS: area, &color
+void gimp_color_area_set_color (GimpColorArea *area, GimpRGB &color)
 
-void gimp_color_area_get_color (GimpColorArea *area, GimpRGB color)
-	C_ARGS: area, &color
+void gimp_color_area_get_color (GimpColorArea *area, OUTLIST GimpRGB color)
 
 gboolean gimp_color_area_has_alpha (GimpColorArea *area)
 
@@ -122,14 +120,12 @@ BOOT:
 	gperl_register_object (GIMP_TYPE_COLOR_BUTTON, "Gimp::UI::ColorButton");
 
 GimpColorButton_own * gimp_color_button_new (SV *unused_class, utf8_str title, gint width, gint height, \
-                                             GimpRGB color, GimpColorAreaType type)
-	C_ARGS: title, width, height, &color, type
+                                             GimpRGB &color, GimpColorAreaType type)
+	C_ARGS: title, width, height, color, type
 
-void gimp_color_button_set_color (GimpColorButton *button, GimpRGB color)
-	C_ARGS: button, &color
+void gimp_color_button_set_color (GimpColorButton *button, GimpRGB &color)
 
-void gimp_color_button_get_color (GimpColorButton *button, GimpRGB color)
-	C_ARGS: button, &color
+void gimp_color_button_get_color (GimpColorButton *button, OUTLIST GimpRGB color)
 
 gboolean gimp_color_button_has_alpha (GimpColorButton *button)
 
@@ -183,8 +179,7 @@ GimpColorScale_own * gimp_color_scale_new (SV *unused_class, GtkOrientation orie
 
 void gimp_color_scale_set_channel (GimpColorScale *scale, GimpColorSelectorChannel channel)
   
-void gimp_color_scale_set_color (GimpColorScale *scale, GimpRGB rgb, GimpHSV hsv)
-	C_ARGS: scale, &rgb, &hsv
+void gimp_color_scale_set_color (GimpColorScale *scale, GimpRGB &rgb, GimpHSV &hsv)
 
 MODULE = Gimp::UI	PACKAGE = Gimp::UI::ColorSelect	PREFIX = gimp_color_select_
 
@@ -202,9 +197,9 @@ MODULE = Gimp::UI	PACKAGE = Gimp::UI::ColorSelector	PREFIX = gimp_color_selector
 BOOT:
 	gperl_register_object (GIMP_TYPE_COLOR_SELECTOR, "Gimp::UI::ColorSelector");
 
-GimpColorSelector_own * gimp_color_selector_new (SV *unused_class, GimpRGB rgb, GimpHSV hsv, \
+GimpColorSelector_own * gimp_color_selector_new (SV *unused_class, GimpRGB &rgb, GimpHSV &hsv, \
                                                  GimpColorSelectorChannel channel)
-	C_ARGS: GIMP_TYPE_COLOR_SELECTOR, &rgb, &hsv, channel
+	C_ARGS: GIMP_TYPE_COLOR_SELECTOR, rgb, hsv, channel
 
 void gimp_color_selector_set_toggles_visible (GimpColorSelector *selector, gboolean visible)
 
@@ -212,8 +207,7 @@ void gimp_color_selector_set_toggles_sensitive (GimpColorSelector *selector, gbo
 
 void gimp_color_selector_set_show_alpha (GimpColorSelector *selector, gboolean show_alpha)
 
-void gimp_color_selector_set_color (GimpColorSelector *selector, GimpRGB rgb, GimpHSV hsv)
-	C_ARGS: selector, &rgb, &hsv
+void gimp_color_selector_set_color (GimpColorSelector *selector, GimpRGB &rgb, GimpHSV &hsv)
 
 void gimp_color_selector_set_channel (GimpColorSelector *selector, GimpColorSelectorChannel channel)
 
@@ -340,7 +334,7 @@ GimpSizeEntry_own * gimp_size_entry_new (SV *unused_class, gint number_of_fields
                                          gint spinbutton_width, GimpSizeEntryUpdatePolicy update_policy)
 	C_ARGS: number_of_fields, unit, unit_format, menu_show_pixels, menu_show_percent, show_refval, spinbutton_width, update_policy
 
-#void gimp_size_entry_add_field (GimpSizeEntry *gse, GtkSpinButton *value_spinbutton, GtkSpinButton *refval_spinbutton)
+void gimp_size_entry_add_field (GimpSizeEntry *gse, GtkSpinButton *value_spinbutton, GtkSpinButton *refval_spinbutton)
 
 void gimp_size_entry_attach_label (GimpSizeEntry *gse, utf8_str text, gint row, gint column, gfloat alignment)
 

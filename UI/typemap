@@ -79,8 +79,8 @@ T_GIMP_ENUM
         }_type (), ($var));
 
 T_GIMP_RGB
-	0;
+	$arg = newSVGimpRGB ($var);
 
 T_GIMP_HSV
-	0;
+	$arg = newSVGimpHSV ($var);
 

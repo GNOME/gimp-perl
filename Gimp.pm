@@ -284,20 +284,20 @@ sub canonicalize_colour {
    } else {
       unless (%rgb_db) {
          if ($rgb_db_path) {
-            open RGB_TEXT,"<$rgb_db_path" or croak __"unable to open $rgb_db_path";
+            open RGB_TEXT, "<", $rgb_db_path or croak "$rgb_db_path: $!";
          } else {
-            *RGB_TEXT=*DATA;
+            *RGB_TEXT = *DATA;
          }
          while(<RGB_TEXT>) {
             next unless /^\s*(\d+)\s+(\d+)\s+(\d+)\s+(.+?)\s*$/;
-            $rgb_db{lc($4)}=[$1,$2,$3];
+            $rgb_db{lc($4)} = [$1 / 255, $2 / 255, $3 / 255];
          }
          close RGB_TEXT;
       }
       if ($rgb_db{lc($_[0])}) {
          return $rgb_db{lc($_[0])};
       } else {
-         croak sprintf __"Unable to grok '%s' as colour specifier", join(",",@_);
+         croak sprintf __"Unable to grok '%s' as colour specifier", join (",", @_);
       }
    }
 }

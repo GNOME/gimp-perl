@@ -459,26 +459,27 @@ dump_params (int nparams, GimpParam *args, GimpParamDef *params)
 	  case GIMP_PDB_INT8:		trace_printf ("%d", (guint8) args[i].data.d_int8); break;
 	  case GIMP_PDB_FLOAT:		trace_printf ("%f", args[i].data.d_float); break;
           case GIMP_PDB_STRING:		trace_printf ("\"%s\"", args[i].data.d_string ? args[i].data.d_string : "[null]"); break;
-	  case GIMP_PDB_DISPLAY:		trace_printf ("%d", args[i].data.d_display); break;
+	  case GIMP_PDB_DISPLAY:	trace_printf ("%d", args[i].data.d_display); break;
 	  case GIMP_PDB_IMAGE:		trace_printf ("%d", args[i].data.d_image); break;
 	  case GIMP_PDB_LAYER:		trace_printf ("%d", args[i].data.d_layer); break;
-	  case GIMP_PDB_CHANNEL:		trace_printf ("%d", args[i].data.d_channel); break;
-	  case GIMP_PDB_DRAWABLE:		trace_printf ("%d", args[i].data.d_drawable); break;
-	  case GIMP_PDB_SELECTION:		trace_printf ("%d", args[i].data.d_selection); break;
-	  case GIMP_PDB_BOUNDARY:		trace_printf ("%d", args[i].data.d_boundary); break;
+	  case GIMP_PDB_CHANNEL:	trace_printf ("%d", args[i].data.d_channel); break;
+	  case GIMP_PDB_DRAWABLE:	trace_printf ("%d", args[i].data.d_drawable); break;
+	  case GIMP_PDB_SELECTION:	trace_printf ("%d", args[i].data.d_selection); break;
+	  case GIMP_PDB_BOUNDARY:	trace_printf ("%d", args[i].data.d_boundary); break;
 	  case GIMP_PDB_PATH:		trace_printf ("%d", args[i].data.d_path); break;
 	  case GIMP_PDB_STATUS:		trace_printf ("%d", args[i].data.d_status); break;
 	  case GIMP_PDB_INT32ARRAY:	dump_printarray (args, i, gint32, d_int32array, "%d"); break;
 	  case GIMP_PDB_INT16ARRAY:	dump_printarray (args, i, gint16, d_int16array, "%d"); break;
-	  case GIMP_PDB_INT8ARRAY:		dump_printarray (args, i, guint8, d_int8array , "%d"); break;
+	  case GIMP_PDB_INT8ARRAY:	dump_printarray (args, i, guint8, d_int8array , "%d"); break;
 	  case GIMP_PDB_FLOATARRAY:	dump_printarray (args, i, gfloat, d_floatarray, "%f"); break;
 	  case GIMP_PDB_STRINGARRAY:	dump_printarray (args, i, char* , d_stringarray, "'%s'"); break;
 	  
 	  case GIMP_PDB_COLOR:
-	    trace_printf ("[%d,%d,%d]",
+	    trace_printf ("[%f,%f,%f,%f]",
 	                  args[i].data.d_color.r,
 	                  args[i].data.d_color.g,
-	                  args[i].data.d_color.b);
+	                  args[i].data.d_color.b,
+                          args[i].data.d_color.a);
 	    break;
 
 	  case GIMP_PDB_PARASITE:
@@ -684,15 +685,7 @@ unbless_croak (SV *sv, char *type)
 }
 
 static void
-canonicalize_colour (
-    char *err,
-    SV *sv,
-#if GIMP_CHECK_VERSION(1,3,0)
-    GimpRGB *c
-#else
-    GimpParamColor *c
-#endif
-    )
+canonicalize_colour (char *err, SV *sv, GimpRGB *c)
 {
   dSP;
   
@@ -715,32 +708,14 @@ canonicalize_colour (
 	{
 	  AV *av = (AV *)SvRV(sv);
 
+          c->r = SvNV (*av_fetch (av, 0, 0));
+          c->g = SvNV (*av_fetch (av, 1, 0));
+          c->b = SvNV (*av_fetch (av, 2, 0));
+
           if (av_len(av) == 2)
-            {
-#if GIMP_CHECK_VERSION(1,3,0)
-              c->r = SvIV(*av_fetch(av, 0, 0));
-              c->g = SvIV(*av_fetch(av, 1, 0));
-              c->b = SvIV(*av_fetch(av, 2, 0));
-              c->a = 255;
-#else
-              c->red   = SvIV(*av_fetch(av, 0, 0));
-              c->green = SvIV(*av_fetch(av, 1, 0));
-              c->blue  = SvIV(*av_fetch(av, 2, 0));
-#endif
-            }
+            c->a = 1.0;
           else if (av_len(av) == 3)
-            {
-#if GIMP_CHECK_VERSION(1,3,0)
-              c->r = SvIV(*av_fetch(av, 0, 0));
-              c->g = SvIV(*av_fetch(av, 1, 0));
-              c->b = SvIV(*av_fetch(av, 2, 0));
-              c->a = SvIV(*av_fetch(av, 3, 0));
-#else
-              c->red   = SvIV(*av_fetch(av, 0, 0));
-              c->green = SvIV(*av_fetch(av, 1, 0));
-              c->blue  = SvIV(*av_fetch(av, 2, 0));
-#endif
-            }
+            c->a = SvNV (*av_fetch (av, 3, 0));
           else
             sprintf (err, __("a color must have three (RGB) or four (RGBA) components (array elements)"));
 	}
@@ -869,15 +844,12 @@ push_gimp_sv (const GimpParam *arg, int array_as_ref)
 	{
 	  /* difficult */
 	  AV *av = newAV ();
-#if GIMP_CHECK_VERSION(1,3,0)
-	  av_push (av, newSViv (arg->data.d_color.r));
-	  av_push (av, newSViv (arg->data.d_color.g));
-	  av_push (av, newSViv (arg->data.d_color.b));
-#else
-	  av_push (av, newSViv (arg->data.d_color.red  ));
-	  av_push (av, newSViv (arg->data.d_color.green));
-	  av_push (av, newSViv (arg->data.d_color.blue ));
-#endif
+
+	  av_push (av, newSVnv (arg->data.d_color.r));
+	  av_push (av, newSVnv (arg->data.d_color.g));
+	  av_push (av, newSVnv (arg->data.d_color.b));
+	  av_push (av, newSVnv (arg->data.d_color.a));
+
 	  sv = (SV *)av; /* no newRV_inc, since we're getting autoblessed! */
 	}
 	break;

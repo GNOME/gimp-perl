@@ -40,6 +40,19 @@ sv_color3 (SV *sv, gdouble *e, gdouble *f, gdouble *g, gdouble *a)
              : SvNV (*av_fetch ((AV *)SvRV (sv), 3, 1));
 }
 
+static SV *
+newSV_color3 (gdouble e, gdouble f, gdouble g, gdouble a)
+{
+  AV *av = newAV ();
+
+  av_push (av, newSVnv (e));
+  av_push (av, newSVnv (f));
+  av_push (av, newSVnv (g));
+  av_push (av, newSVnv (a));
+
+  return newRV_noinc ((SV *)av);
+}
+
 #define ENUM(name)			\
   static GType t_ ## name;		\
   static GType name ## _type (void)	\
@@ -57,6 +70,9 @@ ENUM(gimp_size_entry_update_policy)
 
 #define SvGimpRGB(sv, color) sv_color3 ((sv), &(color).r, &(color).g, &(color).b, &(color).a)
 #define SvGimpHSV(sv, color) sv_color3 ((sv), &(color).h, &(color).s, &(color).v, &(color).a)
+
+#define newSVGimpRGB(color) newSV_color3 ((color).r, (color).g, (color).b, (color).a)
+#define newSVGimpHSV(color) newSV_color3 ((color).h, (color).s, (color).v, (color).a)
 
 #endif
 
