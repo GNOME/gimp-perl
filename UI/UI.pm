@@ -593,7 +593,7 @@ sub interact($$$$@) {
            while (@$extra) {
               my $label = shift @$extra;
               my $value = shift @$extra;
-              my $radio = new Gtk2::RadioButton $label;
+              my $radio = new Gtk2::RadioButton undef, $label;
               $radio->set_group ($prev) if $prev;
               $b->pack_start ($radio, 1, 0, 5);
               $radio->signal_connect (clicked => sub { $r = $value });
