@@ -1,3 +1,9 @@
+2005-05-12  Carol Spears <carol@gimp.org>
+	* examples/glowing_steel: changed deprecated pdb calls. 
+	* examples/glowing_steel: even though Procedure Browser reports mblur needing only
+          optional center_x and center_y FLOAT, it complains and stops unless it gets them.
+          I fed 0,0 to the script. 
+
 2005-04-03  Carol Spears <carol@gimp.org>
 	* examples/burst: changed deprecated pdb calls. 
 	* examples/sethspin: changed deprecated pdb calls, including changing
