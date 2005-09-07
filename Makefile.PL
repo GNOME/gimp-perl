@@ -2,6 +2,7 @@ require 5.008;
 
 use Config;
 require ExtUtils::PkgConfig;
+require ExtUtils::Depends;
 
 $|=1;
 
