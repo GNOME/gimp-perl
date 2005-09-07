@@ -811,13 +811,13 @@ sub do_fade
   else
     {
       $mask = $drawable->create_mask(ADD_ALPHA_MASK);
-      $image->add_layer_mask($drawable, $mask);
+      $drawable->add_mask($mask);
     }
-    
-  $prevBack = Palette->get_background;
-  $prevFore = Palette->get_foreground;
-  Palette->set_background([0.0,0.0,0.0,1.0]);
-  Palette->set_foreground([1.0,1.0,1.0,1.0]);
+  
+  Context->push();
+  
+  Context->set_background([0.0,0.0,0.0,1.0]);
+  Context->set_foreground([1.0,1.0,1.0,1.0]);
 
   # Direction Map
   # 0 3 6
@@ -906,11 +906,10 @@ sub do_fade
     }
   if ($direction >=0 && $direction <9)
     {
-      $image->remove_layer_mask($drawable, MASK_APPLY);
+      $drawable->remove_mask(MASK_APPLY);
     }
-  
-  Palette->set_background($prevBack);
-  Palette->set_foreground($prevFore);
+ 
+  Context->pop(); 
   $image->undo_group_end;
 }
 
