@@ -28,6 +28,7 @@
 #            1.4:   Marc Lehman <pcg@goof.com>, changed function name
 #            1.5:   Seth Burgess <sjburges@gimp.org> added my email, put it
 #                   in a directory more suitable than the lame "Misc"
+#            1.6:   Seth Burgess <sjburges@gimp.org> use Context
 # Here's the boring start of every script...
 
 use Gimp qw(:auto __ N_);
@@ -57,7 +58,7 @@ register "xach_blocks",
 		$img->selection_all;
 		$selection_flag = 1;
 		}
-	$oldbackground = gimp_palette_get_background();
+        Context->push();
 # Now the fun begins :) 
 
 	$selection = $img->selection_save;
@@ -108,6 +109,7 @@ register "xach_blocks",
 	if ($selection_flag ==1) {
 		$img->selection_none;
 		}
+        Context->pop();
         eval { $img->undo_group_end };
 	return ();
 };

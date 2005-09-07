@@ -630,7 +630,7 @@ _pseudoclass qw(Tile		gimp_tile_);
 # Classes without GIMP-Object
 _pseudoclass qw(Palette		gimp_palette_);
 _pseudoclass qw(Context         gimp_context_);
-_pseudoclass qw(Brushes		gimp_brushes_);
+_pseudoclass qw(Brushes		gimp_brush_ gimp_brushes_);
 _pseudoclass qw(Edit		gimp_edit_);
 _pseudoclass qw(Gradients	gimp_gradients_);
 _pseudoclass qw(Patterns	gimp_patterns_);

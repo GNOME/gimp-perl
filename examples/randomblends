@@ -31,7 +31,7 @@ register "random_blends",
          sub {
     my($img,$layer,$numgradients) =@_;
     eval { $img->undo_group_start };  
-    $oldgradient = gimp_gradients_get_gradient();
+    Context->push();
     ($sel,$x1,$y1,$x2,$y2) = $img->gimp_selection_bounds;
     srand();
 
@@ -39,7 +39,7 @@ register "random_blends",
    
     Gimp->progress_init("Random blends...");
     for ($i=0; $i<$numgradients; $i++) {
-        gimp_gradients_set_gradient(@gradientlist[randint($#gradientlist)]);
+        Context->set_gradient(@gradientlist[randint($#gradientlist)]);
 	$layer->edit_blend(CUSTOM_MODE,  
                        DIFFERENCE_MODE,
                        randint(10),      # gradient type
@@ -59,7 +59,7 @@ register "random_blends",
         Gimp->progress_update($i/(1.0*$numgradients));		   
         }
     eval { $img->undo_group_end };
-    gimp_gradients_set_gradient($oldgradient);
+    Context->pop();
     return();
 };
 exit main;

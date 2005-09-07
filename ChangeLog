@@ -1,3 +1,15 @@
+2005-09-06  Seth Burgess <sjburges@gim.org>
+	* examples/dots
+	* examples/dust
+	* examples/randomblends
+	* examples/windify
+	* examples/xachlego
+	* examples/xachshadow
+	* examples/yinyang: undeprecated, added Context
+
+	* Gimp.pm: changed Brushes pseudo-class to default to use gimp_brush_
+	  instead of deprecated gimp_brushes_
+
 2005-09-06  Seth Burgess <sjburges@gimp.org>
 	* examples/fade-alpha 
 	* examples/dots: removed deprecated stuff, used Context        

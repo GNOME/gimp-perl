@@ -5,7 +5,6 @@ eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
 
 use Gimp;
 use Gimp::Fu;
-use Gimp::Util;
 
 # this is silly, sorry that I am too dumb to come up with niftier functions :(
 # btw, this should generate something between 1/f and 1/f² noise.
@@ -75,16 +74,21 @@ register "dust",
 
    set_seed $seed;
 
+   Gimp::set_trace(TRACE_ALL);
    my ($w, $h) = ($image->width, $image->height);
 
    $image->undo_group_start;
-
-   my $state = Gimp::Util::get_state();
-   Palette->set_foreground("white");
-   Brushes->set_brush("Circle (01)");
-   Brushes->set_opacity(50);
-   Brushes->set_spacing(100);
-   Brushes->set_paint_mode(NORMAL_MODE);
+   
+   Context->push();
+   Context->set_foreground("white");
+   Context->set_brush("Circle (01)");
+   Context->set_opacity(50);
+   # This will cause a PDB failure as of 9/7/05 CVS - can't set
+   # spacing on non-editable brush via PDB.  We should probably 
+   # let this happen, so we can do via script what we can via the UI.
+   # Brushes->set_spacing(Context->get_brush, 100);
+   warn "Unable to set spacing due to missing PDB functionailty\n";
+   Context->set_paint_mode(NORMAL_MODE);
 
    if (1) {
       $layer = $image->add_new_layer (0, TRANSPARENT_FILL, 1);
@@ -104,7 +108,7 @@ register "dust",
       $layer->paintbrush_default([map { $x+$c[$_], $y+$c[$_+$l] } 0..$l-1]);
    }
 
-   Gimp::Util::set_state($state);
+   Context->pop();
 
    $image->undo_group_end;
 
