@@ -1,6 +1,7 @@
 require 5.008;
 
 use Config;
+require ExtUtils::PkgConfig;
 
 $|=1;
 
@@ -238,7 +239,7 @@ WriteMakefile(
     'DEFINE'	=> "$DEFINE1 $DEFS",
     'EXE_FILES'	=> \@EXE_FILES,
     'macro'	=> \%cfg,
-    'realclean'	=> { FILES => "config.status config.cache config.pl config.log config.h Gimp/Config.pm Makefile" },
+    'realclean'	=> { FILES => "config.status config.cache config.log config.h Gimp/Config.pm Makefile" },
     'clean'	=> { FILES => "Makefile.old stamp-h" },
 );
 
@@ -261,7 +262,7 @@ all install check:
 clean mostlyclean objclean:
 
 distclean maintainer-clean realclean clobber: clean
-	\$(RM_F) Makefile config.cache config.pl config.log
+	\$(RM_F) Makefile config.cache config.log
         \$(RM_F) config.h config.status stamp-h Makefile.old Gimp/Config.pm
         \$(RM_RF) test-dir inst-temp
 
