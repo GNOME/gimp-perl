@@ -48,7 +48,7 @@ register "dots",
     $selchannel = $img->selection_save;
 
 # Generate selection mask of dots on entire image  
-    $img->selection_clear;
+    $img->selection_none;
     for ($x=$xoffset-$xspacing;
          $x<$img->width+$size+$xspacing;
 	 $x+=$xspacing)
@@ -63,10 +63,11 @@ register "dots",
       }
    
 # Set opacity of dots via selection mask 
-    $oldfg = Palette->get_foreground;
+    Context->push();
+
     $opc = gimp_channel_new($img,$img->width,$img->height,"OPC", 50, [0,0,0]);
     $img->add_channel($opc,0);
-    Palette->set_foreground([($opacity/100.0)x3]);
+    Context->set_foreground([($opacity/100.0)x3]);
     $opc->fill(FOREGROUND_FILL);
     $opc->selection_combine(CHANNEL_OP_INTERSECT);
 
@@ -74,7 +75,7 @@ register "dots",
     $selchannel->selection_combine(CHANNEL_OP_INTERSECT);
 
 # Make the dots
-    Palette->set_foreground($dotcolor);
+    Context->set_foreground($dotcolor);
     $layer->edit_fill(FOREGROUND_FILL);
    
 # Cleanup to state before plugin was called
@@ -90,7 +91,7 @@ register "dots",
     $img->remove_channel($selchannel);
     $img->remove_channel($opc);
 
-    Palette->set_foreground($oldfg);
+    Context->pop();
     
     $img->undo_group_end;
     $layer->set_active_layer;

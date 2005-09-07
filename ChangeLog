@@ -1,5 +1,6 @@
 2005-09-06  Seth Burgess <sjburges@gimp.org>
-	* examples/fade-alpha: removed deprecated stuff, used Context
+	* examples/fade-alpha 
+	* examples/dots: removed deprecated stuff, used Context        
 
 2005-09-06  Seth Burgess <sjburges@gimp.org>
 	* Makefile.PL: require ExtUtils::Depends too. 
