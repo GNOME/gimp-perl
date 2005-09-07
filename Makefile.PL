@@ -4,38 +4,40 @@ use Config;
 
 $|=1;
 
+
 if ($ARGV[0] ne "--writemakefile") {
+   # convert any prefix= to --prefix=
    for(@ARGV) {
       s/^prefix=/--prefix=/i;
    }
    
+   # run the config.pl to setup enviornment
    do './config.pl';
-   unless ($ENV{IN_GIMP}) { # for the release, take the medium conservative approach
-      $EXTENSIVE_TESTS = 1;
-      
-      $ENV{'EXTENSIVE_TESTS'} = $EXTENSIVE_TESTS;
-      $ENV{CC}=$Config{cc};
-      $ENV{LD}=$Config{ld};
-      $ENV{prefix}=$Config{prefix};
-      $ENV{PERL}=$Config{perlpath};
-      $ENV{MAKEFILE_PL}=$0;
-      $ENV{IN_GIMP}=0;
-   }
-   exit system("./configure",@ARGV)>>8;
-} else {
-   shift;
-   local $do_config_msg = 1;
-   do './config.pl'; die $@ if $@;
+   
+   # Set it up to do lots of tests
+   $EXTENSIVE_TESTS = 1;
+   $ENV{'EXTENSIVE_TESTS'} = $EXTENSIVE_TESTS;
+  
+   # get compile/link args
+   $ENV{CC}=$Config{cc};
+   $ENV{LD}=$Config{ld};
+   $ENV{prefix}=$Config{prefix};
+   $ENV{PERL}=$Config{perlpath};
+   $ENV{MAKEFILE_PL}=$0;
 }
 
 @otherdeps = qw(
 ); 
+
+# list of plugins using gtk directly (Gtk absolutely required)
 @gtk_pins =
    qw(
      dataurl 
      colorhtml 
      fade-alpha
    );
+
+# list of standard plugins
 @pins =
    qw(
       animate_cells 
@@ -56,6 +58,7 @@ if ($ARGV[0] ne "--writemakefile") {
       xachlego xachshadow xachvision
       yinyang 
    );
+# list of plugins using PDL
 @pdl_pins =
    qw(
       gouge 
@@ -64,6 +67,9 @@ if ($ARGV[0] ne "--writemakefile") {
       pixelmap 
       view3d 
    );  
+
+# GTK isn't absolutely required, but for most people it is highly 
+# desirable, so make a nice big notice saying so.
 
 eval "use Gtk2;"; $GTK = $@ eq "";
 $GTK or print <<EOF;
@@ -84,50 +90,6 @@ push @pins, @pdl_pins if $PDL;
 push @pins, @gtk_pins if $GTK;
 
 @INC = grep /^\//,@INC; # comment out as well?
-
-# FIXME: I don't know how this is broken, but its a bad thing to 
-# have broken functionality in your Makefile.PL.  <sjburges>
-
-if (0) {		# comment out because it breaks
-eval { $Gimp::no_SIG=1; require Gimp };
-unless($@) {
-   eval { require Gimp::Config };
-   $old_prefix = eval { $Gimp::Config{GIMP_PREFIX} };
-   $old_prefix = eval { Gimp::_gimp_prefix() } unless $old_prefix;
-   if ($@) {
-      print <<EOF;
-
-WARNING: I've detected an old version of Gimp-Perl installed
-	 already. Since I cannot detect the prefix used to install
-	 it I will just overwrite it.  If you happen to use two
-	 different and incompatible versions of the Gimp with differing
-	 prefixes you should call configure with the --disable-perl
-	 switch to disable the perl extension, or consider installing
-	 the perl module elsewhere, using the environment variables
-	 PERL5LIB=/my/module/dir and PERL_MM_OPTS="PREFIX=\$PERL5LIB" to
-	 overwrite the installation directory (PERL_MM_OPTS) and run the
-	 Gimp (PERL5LIB). See "perldoc ExtUtils::MakeMaker" for a full
-	 discussion of your options.
-
-EOF
-   } else {
-      if ($GIMP_PREFIX ne $old_prefix) {
-	 print <<EOF;
-
-WARNING: I've detected another installation of the Gimp-Perl extension.
-	    
-	 This version uses the prefix '$GIMP_PREFIX'.
-	 The already installed version uses the prefix '$old_prefix'.
-
-	 They don't match, which indicates that installing Gimp-Perl might
-	 overwrite an old but still used installation. The Gimp-Perl
-         installation _might_ therefore be broken.
-
-EOF
-      }
-   }
-}
-}
 
 sub MY::install {
    my $self=shift;
@@ -165,9 +127,9 @@ sub MY::postamble {
    my $self=shift;
    my $install_program = $cfg{INSTALL};
    $install_program =~ s{^\.\./}{../../};
-   my $GT = $IN_GIMP ? $install_program : "$GIMPTOOL --install-admin-bin";
-   my $UT = $IN_GIMP ? '$(RM_F)' : "$GIMPTOOL --uninstall-admin-bin";
-   my $GT2 = $IN_GIMP ? '$(gimpplugindir)/plug-ins/' : '';
+   my $GT = "$GIMPTOOL --install-admin-bin";
+   my $UT = "$GIMPTOOL --uninstall-admin-bin";
+   my $GT2 = '';
    my $postamble="
 
 objclean :: clean
@@ -211,23 +173,18 @@ force_uninstall_from_sitedirs ::
 tags: .
 	ctags --lang=c `find . -name '*.xs' -print`
 
-# run autoconf (&c)
-autoconf:
-	aclocal; autoheader; autoconf
-        
 # set \$VERSION in all modules
 setver:
 	\$(PERL) -pi -e 's/^(\\s*\\\$\$VERSION\\s*=\\s*).*\$\$/\$\${1}\$(VERSION);/' *.pm Gimp/*.pm UI/*.pm Net/*.pm
 
 gimpenums.c: makeenums.pl
-	perl makeenums.pl arrays /opt/gimp/include/gimp-1.3/libgimp*/*.h >gimpenums.c
+	perl makeenums.pl arrays ~/cvs/gimp/libgimp*/*.h >gimpenums.c
 
 ";
 
    $postamble;
 }
 
-$GIMP_INC_NOUI = "-I../../ $GIMP_INC_NOUI" if $IN_GIMP;
 @DIRS= qw/Gimp Net UI/;
 
 print "writing Gimp/Config.pm... ";
@@ -259,7 +216,7 @@ WriteMakefile(
 	           },
     'PREREQ_PM'	=> {
     		    Gtk2		=> 1.0,
-                    PDL			=> 1.99,
+                    PDL			=> 0,
     		    Data::Dumper	=> 2.0,
 		   },
     'DIR'	=> [@DIRS],
@@ -271,7 +228,6 @@ WriteMakefile(
     		    'Gimp/Data.pm'	=> '$(INST_LIBDIR)/Gimp/Data.pm',
     		    'Gimp/Fu.pm'	=> '$(INST_LIBDIR)/Gimp/Fu.pm',
     		    'Gimp/Lib.pm'	=> '$(INST_LIBDIR)/Gimp/Lib.pm',
-    		    'Gimp/PDL.pm'	=> '$(INST_LIBDIR)/Gimp/PDL.pm',
     		    'Gimp/Util.pm'	=> '$(INST_LIBDIR)/Gimp/Util.pm',
     		    'Gimp/Feature.pm'	=> '$(INST_LIBDIR)/Gimp/Feature.pm',
     		    'Gimp/Module.pm'	=> '$(INST_LIBDIR)/Gimp/Module.pm',
@@ -286,8 +242,7 @@ WriteMakefile(
     'clean'	=> { FILES => "Makefile.old stamp-h" },
 );
 
-$IN_GIMP or print <<EOF;
-
+print <<EOF;
 
 Hopefully, Gimp is now correctly configured. you can now enter "make",
 "make test" and "make install".

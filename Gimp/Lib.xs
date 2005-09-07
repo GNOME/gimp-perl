@@ -912,8 +912,10 @@ static int
 convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
 {
   switch (arg->type)
-    {
+    { 
+      /* Note that the sv2gimp_extract_noref includes a break;, so no fall throughs occur */
       case GIMP_PDB_INT32:	check_int (croak_str, sv);
+	                        arg->data.d_int32 = SvIV(sv); 
          			arg->data.d_int32	= sv2gimp_extract_noref (SvIV, "INT32");
       case GIMP_PDB_INT16:	arg->data.d_int16	= sv2gimp_extract_noref (SvIV, "INT16");
       case GIMP_PDB_INT8:	arg->data.d_int8	= sv2gimp_extract_noref (SvIV, "INT8");
@@ -937,9 +939,9 @@ convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
             case GIMP_PDB_CHANNEL:	arg->data.d_channel	= unbless(sv, PKG_ANYABLE  , croak_str); break;
             case GIMP_PDB_DRAWABLE:	arg->data.d_drawable	= unbless(sv, PKG_ANYABLE  , croak_str); break;
             case GIMP_PDB_SELECTION:	arg->data.d_selection	= unbless(sv, PKG_SELECTION, croak_str); break;
-            case GIMP_PDB_BOUNDARY:	arg->data.d_boundary	= sv2gimp_extract_noref (SvIV, "BOUNDARY"); break;
-            case GIMP_PDB_PATH:		arg->data.d_path	= sv2gimp_extract_noref (SvIV, "PATH"); break;
-            case GIMP_PDB_STATUS:	arg->data.d_status	= sv2gimp_extract_noref (SvIV, "STATUS"); break;
+            case GIMP_PDB_BOUNDARY:	arg->data.d_boundary	= sv2gimp_extract_noref (SvIV, "BOUNDARY"); 
+            case GIMP_PDB_PATH:		arg->data.d_path	= sv2gimp_extract_noref (SvIV, "PATH"); 
+            case GIMP_PDB_STATUS:	arg->data.d_status	= sv2gimp_extract_noref (SvIV, "STATUS");
             case GIMP_PDB_IMAGE:
               {
                 if (sv_derived_from (sv, PKG_DRAWABLE))
@@ -1443,7 +1445,7 @@ gimp_call_procedure (proc_name, ...)
 		  {
 		    int runmode = nparams
 		                  && params[0].type == GIMP_PDB_INT32
-		                  && !strcmp (params[0].name, "run_mode");
+		                  && (  !strcmp (params[0].name, "run_mode") || !strcmp (params[0].name, "run-mode"));
 		    g_free (proc_blurb);
 		    g_free (proc_help);
 		    g_free (proc_author);
@@ -1472,7 +1474,9 @@ gimp_call_procedure (proc_name, ...)
                            }
                         else if ((!SvROK(ST(j)) || i >= nparams-1 || !is_array (params[i+1].type))
                                  && convert_sv2gimp (croak_str, &args[i], ST(j)))
-                          j++;
+                          {
+                            j++; 
+                          }
                     
                         if (croak_str [0])
                           {

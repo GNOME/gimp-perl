@@ -1,3 +1,12 @@
+2005-09-06  Seth Burgess <sjburges@gimp.org>
+	* config.pl
+	* Makefile.PL: no longer use autoconf (configure) to determine things; use 
+	  ExtUtils::PkgConfig and gimptool instead.
+
+	* Gimp/Lib.xs: have first parameter name checked for either "run_mode" or
+	  "run-mode" when deciding to automagically set the GIMP_RUN_NONINTERACTIVE (if
+	  not set otherwise).  Lets all the tests pass now!
+
 2005-05-12  Carol Spears <carol@gimp.org>
 	* examples/glowing_steel: changed deprecated pdb calls. 
 	* examples/glowing_steel: even though Procedure Browser reports mblur needing only
