@@ -4,9 +4,6 @@
 # Use of uninitialized value in subroutine entry at /usr/lib/perl/5.8/Gimp.pm 
 # line 627." messages and fix it.
 
-# This one's all mine.  Well, its GPL/Artisitic but I"m the author and creator. # I think you need gimp 1.1 or better for this - if  you don't, please let 
-# me know
-
 # I'm hacking this on top of my sethspin script, so this is doing even more
 # stuff it wasn't really designed to do.  Hence if you thought sethspin was
 # a bit ugly, look at this one...       
@@ -58,11 +55,12 @@ sub spin_layer { # the function for actually spinning the layer
 			@x = $img->selection_bounds();
 			# x[1],x[2]                  x[3],x[2]
 	        # x[1],x[4]                  x[3],x[4]
-			$floater = $framelay->perspective(1,
+			$floater = $framelay->transform_perspective_default(
 		$x[1]+saw($i)*$prp*$framelay->width,$x[2]+$blindheight *sin($i)/2,  
 		$x[3]-saw($i)*$prp*$framelay->width,$x[2]+$blindheight *sin($i)/2,
 		$x[1]-saw($i)*$prp*$framelay->width,$x[4]-$blindheight *sin($i)/2,  
-		$x[3]+saw($i)*$prp*$framelay->width,$x[4]-$blindheight *sin($i)/2);  
+		$x[3]+saw($i)*$prp*$framelay->width,$x[4]-$blindheight *sin($i)/2,
+                1, 1);  
 
 # Gimp Perspective Functionality has changed.  It used to create a floating 
 # selection if there was a selection active already.  Now it only does that
@@ -93,7 +91,7 @@ sub spin_layer { # the function for actually spinning the layer
 
 register "billboard",
          "Billboard",
-         "Take one image.  Spin it about the multiple axes, and end up with another image.  I made it for easy web buttons, mostly because somebody suggested to me.",
+         "Take one image.  Spin it about the horizontal axis, and end up with another image.  I made it for easy web buttons, mostly because somebody suggested to me.",
          "Seth Burgess",
          "Seth Burgess <sjburges\@gimp.org>",
          "1.3",
@@ -121,8 +119,8 @@ register "billboard",
 	$tmpimglayer = $img->add_new_layer(0,3,1); 
 	$img->display_new;
         Gimp->progress_init("Billboard...",-1);
-	$oldbackground = gimp_palette_get_background();
-	Palette->set_background($color);
+        Context->push();
+	Context->set_background($color);
 	$src->edit_copy();
 	$spinlayer = $tmpimglayer->edit_paste(1);
 	$spinlayer->floating_sel_to_layer();
@@ -181,7 +179,7 @@ register "billboard",
                                  );
            } 
 
-	Palette->set_background($oldbackground);
+	Context->pop();
 	gimp_displays_flush();
 	return();
 };

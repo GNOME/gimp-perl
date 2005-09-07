@@ -609,7 +609,7 @@ sub _pseudoclass {
   push(@{"$class\::PREFIXES"}		, @prefixes); @prefixes=@{"$class\::PREFIXES"};
 }
 
-_pseudoclass qw(Layer		gimp_layer_ gimp_drawable_ gimp_floating_sel_ gimp_image_ gimp_ plug_in_ perl_fu_);
+_pseudoclass qw(Layer		gimp_drawable_ gimp_layer_ gimp_floating_sel_ gimp_image_ gimp_ plug_in_ perl_fu_);
 _pseudoclass qw(Image		gimp_image_ gimp_drawable_ gimp_ plug_in_ perl_fu_);
 _pseudoclass qw(Drawable	gimp_drawable_ gimp_layer_ gimp_channel_ gimp_image_ gimp_ plug_in_ perl_fu_);
 _pseudoclass qw(Selection 	gimp_selection_);
@@ -629,6 +629,7 @@ _pseudoclass qw(Tile		gimp_tile_);
 
 # Classes without GIMP-Object
 _pseudoclass qw(Palette		gimp_palette_);
+_pseudoclass qw(Context         gimp_context_);
 _pseudoclass qw(Brushes		gimp_brushes_);
 _pseudoclass qw(Edit		gimp_edit_);
 _pseudoclass qw(Gradients	gimp_gradients_);

@@ -1,4 +1,9 @@
 2005-09-06  Seth Burgess <sjburges@gimp.org>
+	* Gimp.pm: add a Context pseudoclass.  Change first match for Layer pseudoclass to be 
+	  gimp_drawable_ instead of gimp_layer_, because gimp_layer_* is largely deprecated now.
+	* examples/billboard: use new Context pseudoclass, and other fix above.
+
+2005-09-06  Seth Burgess <sjburges@gimp.org>
 	* config.pl
 	* Makefile.PL: no longer use autoconf (configure) to determine things; use 
 	  ExtUtils::PkgConfig and gimptool instead.
