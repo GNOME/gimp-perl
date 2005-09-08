@@ -1,10 +1,17 @@
-2005-09-07  Seth Burgess <sjburges@gim.org>
+2005-09-07  Carol Spears <carol@gimp.org>
+	* examples/goldenmean
+	* examples/stamps
+	* examples/goldenmean: undeprecated, added Context
+
+2005-09-07  Seth Burgess <sjburges@gimp.org>
 	* examples/translogo
 	* examples/blended2
 	* examples/innerbevel
 	* examples/prep4gif
 	* examples/randomart1
 	* examples/selective_sharpen
+
+2005-09-07  Seth Burgess <sjburges@gimp.org>
 	* examples/dots
 	* examples/dust
 	* examples/randomblends

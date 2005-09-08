@@ -11,11 +11,11 @@ N_"/Xtns/Render"; # dummy translation for i18n bugs
 sub stamps {
 	my ($size, $hole, $paper, $diameter, $gap) = @_;
 
-	gimp_palette_set_background($paper);
+	gimp_context_set_background($paper);
 	$img = gimp_image_new($size, $size, RGB);
 	$layer = gimp_layer_new($img, $size, $size, RGB_IMAGE, "Layer 1", 100, NORMAL_MODE);
 	gimp_image_add_layer($layer, -1);
-	gimp_palette_set_background($hole);
+	gimp_context_set_background($hole);
 	$layer->gimp_edit_fill(BACKGROUND_FILL);
 	gimp_selection_none($img);
 
@@ -32,7 +32,7 @@ sub stamps {
 					CHANNEL_OP_ADD, 1, 0, 0);
 			$x = $x + $diameter + $gap;
 	}
-	gimp_palette_set_background($paper);
+	gimp_context_set_background($paper);
 	gimp_edit_fill($layer, BACKGROUND_FILL);
 	gimp_selection_none($img);
 
