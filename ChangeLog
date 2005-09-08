@@ -4,17 +4,16 @@
 	* examples/goldenmean: undeprecated, added Context
 
 2005-09-07  Seth Burgess <sjburges@gimp.org>
-	* examples/translogo
 	* examples/blended2
+	* examples/bricks
+	* examples/dots
+	* examples/dust
 	* examples/innerbevel
 	* examples/prep4gif
 	* examples/randomart1
 	* examples/selective_sharpen
-
-2005-09-07  Seth Burgess <sjburges@gimp.org>
-	* examples/dots
-	* examples/dust
 	* examples/randomblends
+	* examples/translogo
 	* examples/windify
 	* examples/xachlego
 	* examples/xachshadow

@@ -26,19 +26,20 @@ use Gimp::Util;
 sub do_bricks {
     my ($pattern,$pattern2,$bp,$clr,$bw,$brickx,$bricky,$imgw,$imgh,$skew) = @_;
     my ($image, $layer, $state, $layerpat);
-  
+    gimp_context_push();
+
     $imgw = abs($imgw); $imgw = 256 if (($imgw < 32) || ($imgw > 4096));
     $imgh = abs($imgh); $imgh = 256 if (($imgh < 32) || ($imgh > 4096));
     #print "Creating texture $imgw"."x$imgh\n";
     $image = gimp_image_new($imgw,$imgh,RGB);
     # make background
-    gimp_patterns_set_pattern($pattern);
+    gimp_context_set_pattern($pattern);
     $layerpat = gimp_image_add_new_layer($image,0,0,0);
     gimp_selection_all($image);
     gimp_edit_bucket_fill($layerpat,2,0,100,0,0,1,1);
     
     # make border lines
-    gimp_palette_set_foreground ([1,1,1]); 
+    gimp_context_set_foreground ([1,1,1]); 
     $layer = gimp_image_add_new_layer($image,0,0,0);
     gimp_drawable_fill($layer,3);
     my $w = 1; my $h = 1; my $j = 0; my $wo = 0;
@@ -89,8 +90,8 @@ sub do_bricks {
         $r = int(rand ($skew) - ($skew / 1));
         if ($r != 0)
           {
-          gimp_palette_set_foreground ("#ffffff") if ($r > 0); 
-          gimp_palette_set_foreground ("#000000") if ($r < 0); 
+          gimp_context_set_foreground ("#ffffff") if ($r > 0); 
+          gimp_context_set_foreground ("#000000") if ($r < 0); 
           gimp_rect_select($image,$w+$wo+$bp,$h+$bp,$brickw,$brickh,2,0,0);
           gimp_edit_bucket_fill($layerpat,0,0,4*abs($r),0,0,1,1);
           # halves
@@ -106,7 +107,7 @@ sub do_bricks {
       $h += $brickh;
       }
     gimp_image_undo_group_end($image);
-    gimp_palette_set_background ($clr);
+    gimp_context_set_background ($clr);
     $layerb = gimp_image_add_new_layer($image,1,BACKGROUND_FILL,0);
     gimp_selection_all($image);
     if ($bp ne "") 
@@ -117,15 +118,17 @@ sub do_bricks {
     $border->edit_copy();
     gimp_layer_add_alpha($layerb);
     $mask = gimp_layer_create_mask($layerb,0);
-    gimp_image_add_layer_mask($image,$layerb,$mask);
+    gimp_layer_add_mask($layerb,$mask);
     $mask->edit_paste(0);
     gimp_floating_sel_anchor(gimp_image_get_floating_sel($image));
     gimp_selection_none($image);
     gimp_image_remove_layer ($border); 
     gimp_image_remove_layer ($layer); 
-    gimp_image_remove_layer_mask ($image,$layerb,0);
+    gimp_layer_remove_mask ($layerb,0);
     gimp_drawable_offset ($layerpat,1,0,-1,-1);
     gimp_drawable_offset ($layerb,1,0,-1,-1);
+    gimp_context_pop();
+
     $image;
 }
 
