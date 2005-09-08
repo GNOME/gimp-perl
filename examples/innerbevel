@@ -52,9 +52,10 @@ register $regname, $shortdesc, $longdesc, $authorname, $author, $date, $path, $i
 
 my ($font, $text, $color1, $color2, $azimuth, $elevation, $depth, $maptype) = @_;
 # -- step 1 -- 
+Context->push();
 
-gimp_palette_set_background($color1);
-gimp_palette_set_foreground($color2);
+Context->set_background($color1);
+Context->set_foreground($color2);
 
 @dims = gimp20_text_wh($text, $font);
 
@@ -71,18 +72,18 @@ $layer = $img->merge_visible_layers(EXPAND_AS_NECESSARY);
 @pt1 = ($layer->width * 0.5 -1, 0);
 @pt2 = ($layer->width * 0.5 +1, $layer->height);
 # -- step 3 --
-$layer->set_preserve_trans(1);
+$layer->set_lock_alpha(1);
 $layer->edit_blend(FG_BG_RGB_MODE, NORMAL_MODE, GRADIENT_LINEAR, 100, 0, REPEAT_NONE, 0, 0, 0, 3, 0.20, @pt1, @pt2); 
 # -- step 4 -- 
 $layer2 = $layer->copy(0);     # Can you override these to have a default? (would be nice)
 $img->add_layer($layer2, 0);
 # -- step 5 -- 
-$layer2->set_preserve_trans(1);
+$layer2->set_lock_alpha(1);
 $img->selection_all;
-gimp_palette_set_background([1.0,1.0,1.0]);
+Context->set_background([1.0,1.0,1.0]);
 $layer2->edit_fill(BACKGROUND_FILL);
 # -- step 6 -- 
-$layer2->set_preserve_trans(0);
+$layer2->set_lock_alpha(0);
 $layer2->gauss_rle(6,1,1);     
 # -- step 7 --
 $layer->plug_in_bump_map($layer2, $azimuth, $elevation, $depth, 0,0,0,0,1,0,$maptype);
@@ -96,6 +97,7 @@ $layer2->translate(2, 3);
 $img->add_new_layer(2);
 $img->gimp_selection_none();
 
+Context->pop();
 return();
 };
 
