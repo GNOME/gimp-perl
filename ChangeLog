@@ -1,4 +1,10 @@
 2005-09-07  Carol Spears <carol@gimp.org>
+	* examples/scratche: usundeprecated
+	* examples/repdup: uundeprecated
+	* examples/redeye: undeprecated, tried to match the new menu layout
+	* examples/map_to_gradient: undeprecated, tried to match the new menu layout
+
+2005-09-07  Carol Spears <carol@gimp.org>
 	* examples/goldenmean
 	* examples/stamps
 	* examples/xachvision: undeprecated, added Context

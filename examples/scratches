@@ -16,7 +16,7 @@ sub new_scratchlayer {
     $layer->add_layer(-1);
     $layer->fill (WHITE_FILL);
     $layer->noisify (0, 1, 1, 1, 0);
-    $layer->mblur (0, $length, $angle);
+    $layer->mblur (0, $length, $angle, $width/2, $height/2, 0);
     $layer->levels (HISTOGRAM_VALUE, 120, 255, 0.3, 0, 255);
 
     $layer;
@@ -42,7 +42,7 @@ register "scratches",
          sub {
    my ($image,$drawable,$anglex,$angley,$gamma,$length,$width) = @_;
 
-   $image->undo_push_group_start;
+   $image->undo_group_start;
 
    # Erzeuge zwei "scratchlayer", die die Verschiebung in X und Y
    # angeben.
@@ -56,7 +56,7 @@ register "scratches",
    $layer1->remove_layer;
    $layer2->remove_layer;
 
-   $image->undo_push_group_end;
+   $image->undo_group_end;
 
    $image;
 };
