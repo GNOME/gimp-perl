@@ -10,6 +10,7 @@ use Gimp::Util;
 
 sub my_code {
         my ($image, $drawable, $rad_tog, $pattern, $txt_col) = @_;
+        Context->push();
 	$drawable->has_alpha or die __"You can't run this script without an ALPHA CHANNEL!!";
 	my $test = 0;
 	$test = $drawable->type_with_alpha;
@@ -19,7 +20,7 @@ sub my_code {
 		gimp_image_convert_rgb ($image);
 	}
 	my $img = gimp_image_new (100, 100, RGB_IMAGE);
-	$drawable->image->selection_all;
+	$drawable->get_image->selection_all;
 	$drawable->edit_copy;
 	gimp_selection_none ($image);
 	my $layer;
@@ -30,7 +31,7 @@ sub my_code {
 	$img->resize($drawable->width,$drawable->height, 0, 0);
 	gimp_selection_layer_alpha ($layer);
 	gimp_selection_invert ($img);
-	gimp_palette_set_background ([255, 255, 255]);
+	Context->set_background ([255, 255, 255]);
 	gimp_edit_fill ($layer, BACKGROUND_FILL);
 	gimp_selection_none ($img);
 	gimp_invert ($layer);
@@ -40,25 +41,25 @@ sub my_code {
         $bump_lay->drawable_fill(BACKGROUND_FILL);
         $img->add_layer($bump_lay,0);
         if ($rad_tog == 1) {
-        	gimp_patterns_set_pattern ($pattern);
+        	Context->set_pattern ($pattern);
         	gimp_bucket_fill ($bump_lay, PATTERN_BUCKET_FILL, NORMAL_MODE, 100, 0, 0, 0, 0);
         } else {
-        	gimp_palette_set_background ($txt_col);
+        	Context->set_background ($txt_col);
         	gimp_edit_fill ($bump_lay, BACKGROUND_FILL);
         }
         plug_in_bump_map ($img, $bump_lay, $layer, 110.0, 45.0, 4, 0, 0, 0, 0, 1, 0, 0);
         $pattern_mask = gimp_layer_create_mask ($bump_lay, ADD_ALPHA_MASK);
-        $img->add_layer_mask($bump_lay,$pattern_mask);
+        $bump_lay->add_mask($pattern_mask);
         gimp_selection_all ($img);
         gimp_edit_copy ($layer);
         $float = gimp_edit_paste ($pattern_mask, 0);
         gimp_floating_sel_anchor ($float);
         gimp_levels ($pattern_mask, 0, 0, 77, 0.91, 0, 255);
-        gimp_image_remove_layer_mask ($img, $bump_lay, MASK_APPLY);
+        $bump_lay->remove_mask (MASK_APPLY);
         gimp_invert ($layer);
         gimp_image_flatten ($img);
         gimp_image_convert_indexed ($img, 0, MAKE_PALETTE, 256, 0, 0, "");
-        my $new = gimp_image_active_drawable ($img);
+        my $new = gimp_image_get_active_drawable ($img);
         gimp_layer_add_alpha ($new);
         gimp_by_color_select ($new, [255, 255, 255], 55, CHANNEL_OP_ADD, 0, 0, 0.0, 0);
         gimp_edit_clear ($new);
