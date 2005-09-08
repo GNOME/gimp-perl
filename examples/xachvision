@@ -22,7 +22,7 @@ register "xachvision",
    my($img,$drawable,$color,$amt) =@_;
 
   eval { $img->undo_group_start };
-	$oldbackground = gimp_context_get_background();
+        Context->push();
 
 	$midlayer = $drawable->gimp_layer_copy(1);
 	$img->add_layer($midlayer, 0);
@@ -46,7 +46,7 @@ register "xachvision",
 	                       0,0,0,[0,0,0],255 );
 	$midmask->plug_in_gauss_iir(1.01, 1, 1);
 
-	Context->set_background($oldbackground);
+	Context->pop();
   eval { $img->undo_group_end };
 	gimp_displays_flush();
 	return();

@@ -1,7 +1,7 @@
 2005-09-07  Carol Spears <carol@gimp.org>
 	* examples/goldenmean
 	* examples/stamps
-	* examples/goldenmean: undeprecated, added Context
+	* examples/xachvision: undeprecated, added Context
 
 2005-09-07  Seth Burgess <sjburges@gimp.org>
 	* examples/blended2
