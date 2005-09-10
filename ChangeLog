@@ -1,6 +1,9 @@
+2005-10-07  Seth Burgess <sjburges@gimp.org>
+	* examples/mirrorsplit: undeprecated
+
 2005-09-07  Carol Spears <carol@gimp.org>
-	* examples/scratche: usundeprecated
-	* examples/repdup: uundeprecated
+	* examples/scratche: undeprecated
+	* examples/repdup: undeprecated
 	* examples/redeye: undeprecated, tried to match the new menu layout
 	* examples/map_to_gradient: undeprecated, tried to match the new menu layout
 
