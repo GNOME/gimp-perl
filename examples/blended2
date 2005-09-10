@@ -1,4 +1,4 @@
-#!/opt/bin/perl
+#!/usr/bin/perl
 
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
@@ -11,6 +11,18 @@ sub my_innerbevel {
 	# if you specify RGBA as your type, this die is only there for 
 	# running it non-interactively
 	$drawable->has_alpha or die "You can't run this script without an ALPHA CHANNEL!!";
+
+        # get release of gimp, so we can be compatible between versions
+        my $gimpversion = Gimp->version;
+        $gimpversion =~ m/^(\d)\.(\d)\.\d/;
+        my $gimpmajor = $1;
+        my $gimpminor = $2;
+        my $api22 = 0; my $api23 = 0;
+  
+        if ($gimpmajor == 2 && $gimpminor == 2) { $api22 = 1; }
+        elsif ($gimpmajor == 2 && $gimpminor >= 3) { $api23 = 1; }
+        else {die "Don't know how to handle gimp version $gimpversion with this plugin!\n"};
+
         Context->push();
 
 	my $img = gimp_image_new (256, 100, RGB_IMAGE);
@@ -30,7 +42,12 @@ sub my_innerbevel {
 	$img->add_layer($text1_lay,-1);
 	gimp_edit_clear ($text1_lay);
 	$text1_lay->edit_paste(0)->floating_sel_anchor;
-	$text1_lay->set_lock_alpha(1);
+        if ($api22) {
+	  $text1_lay->set_preserve_trans(1);
+        }
+        elsif ($api23) {
+	  $text1_lay->set_lock_alpha(1);
+        }
 	Context->set_foreground ($bl1);
 	Context->set_background ($bl2);
 	@start = ($text1_lay->width / 2 - 5, 0);
@@ -54,8 +71,14 @@ sub my_innerbevel {
 	$img->add_layer($text2_lay, -1);
 	Context->set_background ([255, 255, 255]);
 	$text2_lay->edit_fill(BACKGROUND_FILL);
-	$text2_lay->set_lock_alpha(0);
-	$text1_lay->set_lock_alpha(0);
+        if ($api22) {
+	  $text1_lay->set_preserve_trans(0);
+	  $text2_lay->set_preserve_trans(0);
+        }
+        elsif ($api23) {
+	  $text1_lay->set_lock_alpha(0);
+	  $text2_lay->set_lock_alpha(0);
+        }
 	plug_in_gauss_rle ($text2_lay, 6, 1, 1);
 	plug_in_bump_map ($img, $text1_lay, $text2_lay, 110.0, $elev, $depth, 0, 0, 0, 0, 0, 0, 0);
 	$text2_lay->invert;

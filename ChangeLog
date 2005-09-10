@@ -1,5 +1,8 @@
 2005-10-07  Seth Burgess <sjburges@gimp.org>
 	* examples/mirrorsplit: undeprecated
+	* examples/blended2
+	* examples/innerbevel: check gimp version and use apporpriate API for 
+	  set_preserve_trans/set_lock_alpha
 
 2005-09-07  Carol Spears <carol@gimp.org>
 	* examples/scratche: undeprecated

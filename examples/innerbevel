@@ -51,6 +51,16 @@ register $regname, $shortdesc, $longdesc, $authorname, $author, $date, $path, $i
   ], sub {
 
 my ($font, $text, $color1, $color2, $azimuth, $elevation, $depth, $maptype) = @_;
+my $gimpversion = Gimp->version;
+$gimpversion =~ m/^(\d)\.(\d)\.\d/;
+my $gimpmajor = $1;
+my $gimpminor = $2;
+my $api22 = 0; my $api23 = 0;
+
+if ($gimpmajor == 2 && $gimpminor == 2) { $api22 = 1; }
+elsif ($gimpmajor == 2 && $gimpminor >= 3) { $api23 = 1; }
+else {die "Don't know how to handle gimp version $gimpversion with this plugin!\n"};
+
 # -- step 1 -- 
 Context->push();
 
@@ -72,18 +82,21 @@ $layer = $img->merge_visible_layers(EXPAND_AS_NECESSARY);
 @pt1 = ($layer->width * 0.5 -1, 0);
 @pt2 = ($layer->width * 0.5 +1, $layer->height);
 # -- step 3 --
-$layer->set_lock_alpha(1);
+if ($api22) { $layer->set_preserve_trans(1); }
+elsif ($api23) { $layer->set_lock_alpha(1); }
 $layer->edit_blend(FG_BG_RGB_MODE, NORMAL_MODE, GRADIENT_LINEAR, 100, 0, REPEAT_NONE, 0, 0, 0, 3, 0.20, @pt1, @pt2); 
 # -- step 4 -- 
 $layer2 = $layer->copy(0);     # Can you override these to have a default? (would be nice)
 $img->add_layer($layer2, 0);
 # -- step 5 -- 
-$layer2->set_lock_alpha(1);
+if ($api22) { $layer2->set_preserve_trans(1); }
+elsif ($api23) { $layer2->set_lock_alpha(1); }
 $img->selection_all;
 Context->set_background([1.0,1.0,1.0]);
 $layer2->edit_fill(BACKGROUND_FILL);
 # -- step 6 -- 
-$layer2->set_lock_alpha(0);
+if ($api22) { $layer2->set_preserve_trans(0); }
+elsif ($api23) { $layer2->set_lock_alpha(0); }
 $layer2->gauss_rle(6,1,1);     
 # -- step 7 --
 $layer->plug_in_bump_map($layer2, $azimuth, $elevation, $depth, 0,0,0,0,1,0,$maptype);
