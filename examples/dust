@@ -5,6 +5,7 @@ eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
 
 use Gimp;
 use Gimp::Fu;
+use Gimp::Util;
 
 # this is silly, sorry that I am too dumb to come up with niftier functions :(
 # btw, this should generate something between 1/f and 1/f² noise.

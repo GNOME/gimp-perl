@@ -20,19 +20,19 @@ sub blowinout {
 #    print "Starting\n";
     if( gimp_selection_is_empty($img) == 0) { return };
 #    if ($nsteps == 0) return;
-    eval { $img->undo_push_group_start };
+    eval { $img->undo_group_start };
     # save the background color for later restoration
-    my $oldbg = gimp_palette_get_background();
+    my $oldbg = gimp_context_get_background();
     #get the drawable dimensions
     my $xsize = gimp_drawable_width($drawable);
     my $ysize = gimp_drawable_height($drawable);
 
     # Set background color to 128, for clearing dm
-    gimp_palette_set_background([128,128,128]);
+    gimp_context_set_background([128,128,128]);
 
     # Create a grayscale workspace image for displacement map
     my $dm = gimp_image_new($xsize, $ysize, 1);
-    eval { $dm->undo_push_group_start };
+    eval { $dm->undo_group_start };
     # It needs to have 2 layers
     my $dmlayer = gimp_layer_new($dm, $xsize, $ysize, GRAY_IMAGE, "newlayer",
         100, NORMAL_MODE);
@@ -77,11 +77,11 @@ sub blowinout {
         };
     }
 
-    eval { $dm->undo_push_group_end };
+    eval { $dm->undo_group_end };
 #    gimp_image_remove_layer($dm, $dmlayer);
 #    gimp_image_delete ($dm);
-    gimp_palette_set_background($oldbg);
-    eval { $img->undo_push_group_end };
+    gimp_context_set_background($oldbg);
+    eval { $img->undo_group_end };
 #    gimp_displays_flush(); unneccessary (and dangerous ;)
 
     (); # I like smileys ;)

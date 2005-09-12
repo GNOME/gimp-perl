@@ -319,14 +319,14 @@ sub get_image_cells {
   # NOTE: We will re-open this image later if it is chosen.
   #       This scaling is just to get color samples.
   gimp_image_scale($img,$xcells,$ycells);
-  my $draw = gimp_image_active_drawable($img);
+  my $draw = gimp_image_get_active_drawable($img);
   for(my $x=0;$x<$xcells;$x++) {
     if (defined($start_complete)) {
       gimp_progress_update(($start_complete+
 			    ($end_complete-$start_complete)*$x/$xcells)/100);
     }
     for(my $y=0;$y<$ycells;$y++) {
-      my $color = gimp_color_picker($draw,$x,$y,0,1,1.0); # Gimp 1.1 -deleted $img
+      my $color = gimp_image_pick_color($draw,$x,$y,0,1,1.0); # Gimp 1.1 -deleted $img
       my @c;
       if ($DO_HSV) {
 	@c = rgb2hsv(@$color);
@@ -376,7 +376,7 @@ sub overlay_image {
     my $subheight = gimp_image_height($img);
     match_aspect($img,$width/$height,$subwidth,$subheight);
     gimp_image_scale($img,$width,$height);
-    gimp_edit_copy(gimp_image_active_drawable($img)); #gimp 1.1 -deleted $img
+    gimp_edit_copy(gimp_image_get_active_drawable($img)); #gimp 1.1 -deleted $img
     my $baseimg = gimp_drawable_get_image($draw);
     gimp_rect_select($baseimg,$x,$y,$width,$height,CHANNEL_OP_REPLACE,0,0);
     my $sel = gimp_edit_paste($draw,0); # gimp 1.1 -deleted $baseimg

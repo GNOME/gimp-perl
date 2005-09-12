@@ -1,11 +1,19 @@
-2005-10-07  Seth Burgess <sjburges@gimp.org>
+2005-09-12  Carol Spears <carol@gimp.org>
+	* examples/image_tile: undeprecated
+	* examples/frame_reshuffle: undeprecated
+	* examples/dust: undeprecated
+	* examples/blowinout: undeprecated
+	* examples/redeye: moved back to Filters menu for gimp-2.2
+	* examples/map_to_gradient: moved back to Filters menu for gimp-2.2
+
+2005-09-08  Seth Burgess <sjburges@gimp.org>
 	* examples/mirrorsplit: undeprecated
 	* examples/blended2
 	* examples/innerbevel: check gimp version and use apporpriate API for 
 	  set_preserve_trans/set_lock_alpha
 
 2005-09-07  Carol Spears <carol@gimp.org>
-	* examples/scratche: undeprecated
+	* examples/scratches: undeprecated
 	* examples/repdup: undeprecated
 	* examples/redeye: undeprecated, tried to match the new menu layout
 	* examples/map_to_gradient: undeprecated, tried to match the new menu layout
