@@ -1,5 +1,18 @@
 <Seth's random notes>
-Use ExtUtils::pkgconfig instead of calling gimptool for configuration
+Make a 2.2 release so I can tag it and start towards 2.4.  Critical items:
+* Fix gradient picker.
+* Cleanup unused stuff:
+  Remove Gimp/PDL.pm
+  Remove Module
+  Remove embed
+  Remove etc
+  Remove nolib
+  Remove examples/image_list
+  Remove or rewrite font_table - logic in it no longer applicable.
+* Fix the code so I don't get "
+Gtk-CRITICAL **: file gtktooltips.c: line 314 (gtk_tooltips_set_tip): assertion `GTK_IS_TOOLTIPS (tooltips)' failed at ..../Gimp/UI.pm line 821.
+" repeated when I use a color picker.
+
 
 Win32 port?
 
@@ -17,8 +30,6 @@ Add POD documentation for gimpdoc.
 
 Make a 'utils' directory for gimpdoc, scm2perl, embedxpm, xcf2pnm and move out of the root directory.
 
-Install 1.2 C libs/dev headers, and see if it interferes; it did for one user at least, so is likely a bug in my auto* or MakeMaker stuff.
-
 Generate a new web presence for Gimp-Perl, with a friendlier face to it.  Redo my scripts page, possibly expanding to cover all working scripts?  Regenerate documentation there.
 
 Add optional podviewer for help.  Add POD docs to all example scripts/documentation, to encourage good style.
@@ -26,10 +37,6 @@ Add optional podviewer for help.  Add POD docs to all example scripts/documentat
 New mailing list; netcentral doesn't archive, rarely used.
 
 Figure out i18n some day.
-
-Fix the code so I don't get "
-Gtk-CRITICAL **: file gtktooltips.c: line 314 (gtk_tooltips_set_tip): assertion `GTK_IS_TOOLTIPS (tooltips)' failed at ..../Gimp/UI.pm line 821.
-" repeated sometimes when I use a color picker.
 
 Determine what if anything is needed in the enums* in the root.  I expect I can remove all of this.
 

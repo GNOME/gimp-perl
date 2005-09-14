@@ -619,13 +619,13 @@ sub interact($$$$@) {
         } elsif ($type == PF_PATTERN) {
            $a=new Gimp::UI::PatternSelect;
            push @setvals, sub { $a->set('active', 
-	       defined $value ? $value : (Gimp->patterns_get_pattern)[0]) };
+	       defined $value ? $value : (Context->get_pattern)[0]) };
            push @getvals, sub { $a->get('active') };
            
         } elsif ($type == PF_BRUSH) {
            $a=new Gimp::UI::BrushSelect;
            push @setvals, sub{ $a->set('active',
-	      defined $value ? $value : (Gimp->brushes_get_brush)[0]) };
+	      defined $value ? $value : (Context->get_brush)[0]) };
            push @getvals, sub{ $a->get('active') };
            
         } elsif ($type == PF_GRADIENT) {
@@ -803,7 +803,7 @@ sub interact($$$$@) {
      };
 
      $hbbox->pack_start ($button, 0, 0, 0);
-     set_tip $t $button,__"Reset all values to their default";
+     #  set_tip $t $button,__"Reset all values to their default";
      
      $button = new Gtk2::Button->new_from_stock('gtk-cancel');
      signal_connect $button clicked => sub { hide $w; main_quit Gtk2 };

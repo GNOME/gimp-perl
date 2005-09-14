@@ -6,7 +6,7 @@ use Gimp::Fu;
 # expand your terminal to 121 across to read easily...
 
 register "gimp_fu_example_script",			# fill in a function name
-         "A non-working example of Gimp::Fu usage",	# and a short description,
+         "An example of Gimp::Fu usage, mostly non-functional",	# and a short description,
          "Just a starting point to derive new ".        # a (possibly multiline) help text
             "scripts. Always remember to put a long".
             "help message here!",
@@ -40,6 +40,9 @@ register "gimp_fu_example_script",			# fill in a function name
 
    # set tracing, disable this to get rid of the debugging output
    Gimp::set_trace(TRACE_CALL);
+   
+   # store current context, so that present settings aren't affected
+   Context->push();
 
    my $img = new Image ($width, $height, RGB);
 
@@ -53,16 +56,19 @@ register "gimp_fu_example_script",			# fill in a function name
 
    # now a few syntax examples
 
-   Palette->set_foreground($fg) unless $ignore;
-   Palette->set_background($bg) unless $ignore;
+   Context->set_foreground($fg) unless $ignore;
+   Context->set_background($bg) unless $ignore;
 
    fill $l BACKGROUND_FILL;
    $text_layer = $img->text_fontname(-1, 10, 10, $text, 5, 1, 10, PIXELS, $font);
 
-   Palette->set_foreground("green");
+   Context->set_foreground("green");
 
    # close the undo push group
    $img->undo_group_end;
+   
+   # restore original context
+   Context->pop();
 
    $img;	# return the image, or an empty list, i.e. ()
 };

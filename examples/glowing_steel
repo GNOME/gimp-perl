@@ -65,7 +65,11 @@ sub perl_fu_glowing_steel {
   my $backlayer = gimp_layer_new($image, $width, $height, RGBA_IMAGE,
 				 "Background", 100, NORMAL_MODE);
   gimp_image_add_layer($image, $backlayer, 1);
-  gimp_layer_set_preserve_trans($textlayer,1);
+
+  if (gimp_version() gt "2.3")  # make work for 2.2 or 2.3
+    { gimp_layer_set_lock_alpha($textlayer, 1); } 
+  else 
+    { gimp_layer_set_preserve_trans($textlayer,1); }
 
   perl_fu_brushed_metal($image, $textlayer, 25, 135);
 
@@ -196,7 +200,7 @@ sub perl_fu_brushed_metal {
 
   gimp_brightness_contrast($templ, 50, 0);
   plug_in_noisify($image, $templ, 0, 0.3, 0.3, 0.3, 0);
-  plug_in_mblur($image, $templ, 0, $length, $angle, 0, 0);
+  plug_in_mblur($image, $templ, 0, $length, $angle, 0.0, 0.0, 1);
 
   # Now put it into the target layer
   gimp_selection_load($target_select);
