@@ -1,4 +1,4 @@
-#!/opt/bin/perl
+#!/usr/bin/perl
 
 use Gimp::Feature 'pdl';
 use Gimp 1.1;
@@ -31,7 +31,7 @@ register "map_to_gradient",
    # 5.004 has problems with overlaying functions
    Gimp->progress_init ("Mapping to '$gradient'", -1);
 
-   my $grad = pdl byte, map $_*255, @{(Gimp->gradient_get_uniform_samples($gradient,256,0))[1]};
+   my $grad = pdl byte, map $_*255, Gimp->gradient_get_uniform_samples($gradient,256,0);
    $grad->reshape(4,256);
 
    my $alpha = $drawable->has_alpha;

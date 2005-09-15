@@ -1,6 +1,5 @@
 <Seth's random notes>
 Make a 2.2 release so I can tag it and start towards 2.4.  Critical items:
-* Fix gradient picker.
 * Cleanup unused stuff:
   Remove Gimp/PDL.pm
   Remove Module

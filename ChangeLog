@@ -1,3 +1,12 @@
+2005-09-14  Seth Burgess <sjburges@gimp.org>
+	* UI/UI.pm: Fixed up the various selection diaglogs; still has some 
+	  brokeness I suspect is on the gimp side, and is VERY slow on the 
+	  patterns.
+	* Gimp.pm: Some more pseudoclasses
+	* TODO: changed accordingly
+	* examples/map_to_gradient: fixed broken logic on gradient data 
+	  getting; works again :)
+
 2005-09-13  Seth Burgess <sjburges@gimp.org>
 	* UI/UI.pm: changed the lookup functions from Gimp->get_* to
 	  Context->get_* to avoid warnings on dialog startup.

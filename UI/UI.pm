@@ -125,7 +125,7 @@ package Gimp::UI::PreviewSelect;
 
 # Parent widget that handles a generic preview selection.
 # 
-# virtual methods (must be implemented by child): 
+# pure virtual methods (must be implemented by child): 
 #                  ->get_list 
 #                  ->get_title
 #                  ->get_pixbuf
@@ -151,6 +151,7 @@ Glib::Type->register (
 
 sub SET_PROPERTY {
         my ($self, $pspec, $newval) = @_;
+
         if ($pspec->get_name eq 'active') {
           $self->{active} = $newval;
 	  $self->set_label($newval);
@@ -219,9 +220,12 @@ sub preview_dialog {
    my $button = new Gtk2::Button->new_from_stock('gtk-ok');
    signal_connect $button clicked => sub {
      @sel = $datalist->get_selected_indices;
-     @row =  @{$datalist->{data}}[$sel[0]];
+     @row =  $datalist->{data}[$sel[0]];
+     
+     # this no longer works, so use a scalar instead (muppet's suggestion)
+     # $self->set( 'active', $row[0][0] );   
 
-     $self->set( active => $row[0][0] );   
+     $self->set( active => scalar($row[0][0]) );   
      hide $w;
      };
    $hbbox->pack_start($button,0,0,0);
@@ -248,9 +252,9 @@ sub get_title { __"Pattern Selection Dialog" }
 sub get_list { Gimp->patterns_get_list("") }
 
 sub new_pixbuf {
-   my ($name,$w,$h,$bpp,$mask)=Gimp->patterns_get_pattern_data ($_);
+   my ($w,$h,$bpp,$mask)=Pattern->get_pixels ($_);
    my $has_alpha = ($bpp==2 || $bpp==4);
-     
+    
    if ($bpp==1)
      {
         my @graydat = unpack "C*", $mask;
@@ -263,6 +267,18 @@ sub new_pixbuf {
 
         $mask = pack "C*", @rgbdat;
      }
+   elsif($bpp == 3)
+     {
+       $mask = pack "C*", @{$mask};
+     }
+   elsif($bpp == 4) 
+    {
+       $mask = pack "C*", @{$mask}[0..2];
+      print "BPP = $bpp; not supported! \n"
+    }
+
+   print "...\n";
+
    # TODO: Add code/test for handling GRAYA; don't have any GRAYA to test 
    # with currently though.
         
@@ -289,22 +305,28 @@ sub get_title { __"Brush Selection Dialog" }
 sub get_list { Gimp->brushes_get_list("") }
 
 sub new_pixbuf { 
-   # ick, grayscale-only previews.  But we'll live with it, since we don't
-   # have any option.
+   my ($w,$h,$mask_bpp,$mask,$color_bpp,$color_data) = Brush->get_pixels($_);
 
-   my ($name,$opacity,$spacing,$paint_mode,$w,$h,$mask) = Gimp->brushes_get_brush_data($_);
-
-   my @graydat = @{$mask};
    my @rgbdat;
-        
-   foreach (@graydat)
+
+   # color bitmaps seem broken from gimp's side, but I'm leaving it in here.
+   # if you notice this and care, let me know and I may fix the gimp side.
+   if ($color_bpp == 3)
+   {
+      @rgbdat = @{$color_data} ;
+   }
+   elsif ($color_bpp == 0)
+   {
+     my @graydat = @{$mask};
+     foreach (@graydat)
      {
         $_ = 255 - $_;
         push @rgbdat, $_; push @rgbdat, $_; push @rgbdat, $_;
      }
+   }
 
-   $mask = pack "C*", @rgbdat;
-   $pb = Gtk2::Gdk::Pixbuf->new_from_data($mask,'rgb',0,8,$w,$h,$w*3);
+   my $display = pack "C*", @rgbdat;
+   $pb = Gtk2::Gdk::Pixbuf->new_from_data($display,'rgb',0,8,$w,$h,$w*3);
    $pb;
 }
 
@@ -325,9 +347,8 @@ sub get_list { Gimp->gradients_get_list("") }
 
 sub new_pixbuf {
    use POSIX;
-   my ($name,$grad_data)=Gimp->gradients_get_gradient_data ($_,100,0);
-   my (@grad_row) = @{$grad_data}; 
-   @grad_row = map { $_ = abs(ceil($_*255 - 0.5)) } @grad_row;
+   my @grad_row = map { $_ = abs(ceil($_*255 - 0.5)) } 
+                   Gradient->get_uniform_samples ($_,100,0);
 
 # make it 16 tall; there's bound to be a better way to do this? (its slow)
    push @grad_row, @grad_row, @grad_row, @grad_row, 
@@ -337,15 +358,12 @@ sub new_pixbuf {
 
    $mask = pack "C*", @grad_row;
 
-   $pb = Gtk2::Gdk::Pixbuf->new_from_data($mask,'rgb',1,8,100,8,100*4);
+   my $pb = Gtk2::Gdk::Pixbuf->new_from_data($mask,'rgb',1,8,100,8,100*4);
    $pb;
 }
 
 
 package Gimp::UI;
-
-# Seth Burgess <sjburges@gimp.org> Removed the camel logo from all 
-# scripts; doesn't add anything to the interface, and isn't that attractive.
 
 sub _new_adjustment {
    my @adj = eval { @{$_[1]} };

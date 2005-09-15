@@ -616,6 +616,7 @@ _pseudoclass qw(Selection 	gimp_selection_);
 _pseudoclass qw(Channel		gimp_channel_ gimp_drawable_ gimp_selection_ gimp_image_ gimp_ plug_in_ perl_fu_);
 _pseudoclass qw(Display		gimp_display_ gimp_);
 _pseudoclass qw(Plugin		plug_in_);
+_pseudoclass qw(Gradient	gimp_gradient_);
 _pseudoclass qw(Gradients	gimp_gradients_);
 _pseudoclass qw(Edit		gimp_edit_);
 _pseudoclass qw(Progress	gimp_progress_);
@@ -631,9 +632,11 @@ _pseudoclass qw(Tile		gimp_tile_);
 _pseudoclass qw(Palette		gimp_palette_);
 _pseudoclass qw(Context         gimp_context_);
 _pseudoclass qw(Brushes		gimp_brush_ gimp_brushes_);
+_pseudoclass qw(Brush		gimp_brush_);
 _pseudoclass qw(Edit		gimp_edit_);
 _pseudoclass qw(Gradients	gimp_gradients_);
 _pseudoclass qw(Patterns	gimp_patterns_);
+_pseudoclass qw(Pattern	        gimp_pattern_);
 
 package Gimp::Tile;
 
