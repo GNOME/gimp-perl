@@ -71,7 +71,7 @@ register "xach_blocks",
 	$img->add_layer($gridlayer,0);
 	$img->selection_all;
 	gimp_edit_clear($gridlayer);
-	gimp_palette_set_background([255,255,255]);
+	gimp_context_set_background([255,255,255]);
 	gimp_edit_fill($gridlayer, BACKGROUND_FILL);
 	$gridlayer->plug_in_grid(1, $blocksize, 0, [0,0,0], 255, 1, $blocksize, 0, [0,0,0], 255, 0, 0, 0, [0,0,0], 0);
 	$gridlayer->plug_in_gauss_iir(0.7*$blocksize, 1, 1);
@@ -105,7 +105,6 @@ register "xach_blocks",
 	$img->remove_layer($cleangrid);
 	$img->remove_layer($gridlayer);
 	gimp_selection_load($selection);
-	gimp_palette_set_background($oldbackground);
 	if ($selection_flag ==1) {
 		$img->selection_none;
 		}

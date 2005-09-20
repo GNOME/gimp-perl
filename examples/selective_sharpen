@@ -13,7 +13,7 @@ sub PREWITT()      {1}
 sub GRADIENT()     {2} 
 sub ROBERTS()      {3}
 sub DIFFERENTIAL() {4}
-sub LAPLACE        {5}
+sub LAPLACE()      {5}
 
 # Gimp::set_trace(TRACE_ALL); 
 

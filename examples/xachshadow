@@ -45,7 +45,9 @@ register "xach_shadows",
  #	$selection_flag = 0;
 	if (!$drawable->has_alpha) {
 		$drawable->add_alpha;
-		}; 
+		};
+        Context->set_foreground('white');
+        Context->set_background('black'); 
 # This only can be applied to an entire image right now..	
 #	$selection = $img->selection_save;
     $img->selection_all;

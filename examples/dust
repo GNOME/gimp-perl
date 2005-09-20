@@ -75,7 +75,7 @@ register "dust",
 
    set_seed $seed;
 
-   Gimp::set_trace(TRACE_ALL);
+   # Gimp::set_trace(TRACE_ALL);
    my ($w, $h) = ($image->width, $image->height);
 
    $image->undo_group_start;

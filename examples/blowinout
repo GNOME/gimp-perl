@@ -100,8 +100,6 @@ register
 	 [PF_INT32, "angle", "Wind Angle, 0 is left", 120],
          [PF_INT32, "steps", "Number of Steps/Layers", 5],
 	 [PF_VALUE, "distance", "How far to blow",30],
-# What I really need here are radio buttons!  Maybe they even exist...
-# You wanted them...
 	 [PF_RADIO, "direction", "Blow direction", 0, [In => 1, Out => 0]],
          [PF_RADIO, "series", "Kind of series", 1, [Arithmetic => 1, Geometric => 0]]
 	],

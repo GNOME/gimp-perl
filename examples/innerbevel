@@ -44,7 +44,7 @@ register $regname, $shortdesc, $longdesc, $authorname, $author, $date, $path, $i
    [PF_SLIDER, "azimuth", "Direction of the shine", 132, [0,255,5]],
    [PF_SLIDER, "shinyness", "How shiny the final image will be",30, [0,90,5]],
    [PF_SLIDER, "depth_shape", "Determines the final shape", 7 , [0,64,32]], 
-   [PF_RADIO, "map", "The type of Map to use", 2, [Linear => 0, Spherical => 1, Sinusoidal => 2] ], 
+   [PF_RADIO, "map", "The type of Map to use(0=Linear,1=Spherical,2=Sinusoidal)", 2, [Linear => 0, Spherical => 1, Sinusoidal => 2] ], 
   ],[],
   [
    'gimp-1.1',

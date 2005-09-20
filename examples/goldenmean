@@ -39,7 +39,7 @@ register	"golden_mean",
 		undef,
 	[
 	[PF_INT32, "short", "Shortest side", 233],
-	[PF_RADIO, "type", "Orientation", 0, [Portrait => 0, Landscape => 1]]
+	[PF_RADIO, "type", "Orientation(0=Portrait,1=Landscape)", 0, [Portrait => 0, Landscape => 1]]
 	],
 	\&goldenmean;
 

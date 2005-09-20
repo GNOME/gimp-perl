@@ -20,7 +20,7 @@ register	"mirror_split",
 		N_"<Image>/Filters/Distorts/MirrorSplit...",
 		"*",
 		[
-		[PF_RADIO, "mirror", "Which half to mirror?", 0,
+		[PF_RADIO, "mirror", "Which half to mirror (0=U,1=D,2=L,3=R)", 0,
 			[Upper => 0, Lower => 1, Left => 2, Right => 3]
 		]
 		],

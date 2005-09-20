@@ -64,7 +64,7 @@ sub tex_string_to_pgm {
             . "\\bye";
     close(TEX);
 
-    my $res = xec("tex $fn_base.tex < /dev/null");
+    my $res = xec("tex $fn_base.tex");
     # Deal with errors...
 
     # Make dvips output bounding box
@@ -90,6 +90,7 @@ sub tex_string_to_pgm {
     $cmd .= "pnmscale $scale |" if $scale != 1;
     chop($cmd);
     $cmd .= "> $output_file";
+    print "$cmd\n";
     xec("$cmd");
 }
 
@@ -97,8 +98,8 @@ sub grey_file_to_float {
     my($img1, $drw1, $fn) = @_;
 
     # Setup
-    my $save_bg = gimp_palette_get_background();
     gimp_image_undo_group_start($img1);
+    gimp_context_push();
 
     # Load the new img
     my $grey_img = gimp_file_load($fn, $fn);
@@ -111,17 +112,21 @@ sub grey_file_to_float {
     $grey_img->selection_all();
     gimp_edit_copy($grey_layer);
     $mask = gimp_layer_create_mask($grey_layer, 0);
-    gimp_image_add_layer_mask($grey_img, $grey_layer, $mask);
+    gimp_layer_add_mask($grey_layer, $mask);
     my $floating_layer = gimp_edit_paste($mask, 0);
     gimp_floating_sel_anchor($floating_layer);
     gimp_invert($mask);
-    gimp_palette_set_background(gimp_palette_get_foreground());
+    gimp_context_set_background(gimp_context_get_foreground());
     gimp_edit_fill($grey_layer, BACKGROUND_FILL);
-    gimp_image_remove_layer_mask($grey_img, $grey_layer, 0);
+    gimp_layer_remove_mask($grey_layer, 0);
 
     # Now copy this layer to $img 1
     gimp_edit_copy($grey_layer);
     $floating_layer = gimp_edit_paste($drw1, 0);
+    if (gimp_version() gt "2.3")  # make work for 2.2 or 2.3
+      { gimp_layer_set_lock_alpha($floating_layer, 1); }
+    else
+      { gimp_layer_set_preserve_trans($floating_layer,1); }
     gimp_edit_fill($floating_layer, BACKGROUND_FILL);
 
     cleanup();
@@ -129,9 +134,8 @@ sub grey_file_to_float {
     # Get rid of $grey_img
     gimp_image_delete($grey_img);
 
-
     # Restore
-    gimp_palette_set_background($save_bg);
+    gimp_context_pop();
     gimp_image_undo_group_end($img1);
 
     # Update the display
@@ -166,7 +170,7 @@ register "tex_string_to_float", "Turn a TeX-string into floating layer", "Takes 
     "*",
     [
      [PF_STRING,  "input_file",     "TeX macro file to input"],
-     [PF_STRING,  "tex_string",     "Enter TeX String"],
+     [PF_STRING,  "tex_string",     "Enter TeX String", "Your \\TeX string here"],
      [PF_VALUE,   "dpi",     "Resolution to render the text in",   "72"],
      [PF_VALUE,   "magstep",     "TeX magstep",   "2"],
      [PF_VALUE,   "anti_aliasing",     "Anti-aliasing factor",   "4"],

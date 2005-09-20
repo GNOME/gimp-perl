@@ -27,7 +27,7 @@ register	"repdup",
 	sub {
 		my ($img, $layer, $repeats, $xoffset, $yoffset) = @_;
 
-		eval { $img->undo_push_group_start };
+		eval { $img->undo_group_start };
 		@b  = gimp_selection_bounds($img);
 		my $w = $b[3] - $b[1];
 		my $h = $b[4] - $b[2];
@@ -41,7 +41,7 @@ register	"repdup",
 			gimp_floating_sel_anchor($bit_bucket);
 			gimp_selection_none($img);
 		}
-		eval { $img->undo_push_group_end };
+		eval { $img->undo_group_end };
 		return $img;
 	};
 exit main;

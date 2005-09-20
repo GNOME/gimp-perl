@@ -257,12 +257,12 @@ sub perl_fu_highlight_edges {
   }
   gimp_image_add_layer($image, $black, $lnum);
   gimp_image_add_layer($image, $white, $lnum);
-  my $old = gimp_context_get_foreground();
+  gimp_context_push();
   gimp_context_set_foreground([255,255,255]);
   gimp_edit_bucket_fill($white,FG_BUCKET_FILL,NORMAL_MODE,100,255,0,0,0);
   gimp_context_set_foreground([0,0,0]);
   gimp_edit_bucket_fill($black,FG_BUCKET_FILL,NORMAL_MODE,100,255,0,0,0);
-  gimp_context_set_foreground($old);
+  gimp_context_pop();
   gimp_layer_translate($white, $gimp_white_fudge, -1);
   gimp_layer_translate($black, 1, 1);
   $white = gimp_image_merge_down($image, $white, EXPAND_AS_NECESSARY);
@@ -278,6 +278,8 @@ sub perl_fu_highlight_edges {
 }
 
 # Register the plug-ins:
+
+#FIXME: make the pixels parameter mean something
 register
   "highlight_edges",
   "Frame an alpha layer with black and white edges",
@@ -288,7 +290,7 @@ register
   N_"<Image>/Filters/Render/Highlight Edges...",
   "*",
   [
-   [PF_INT32, "edging", "Pixels", 1]
+   [PF_INT32, "edging", "Pixels (non-functional)", 1]
   ],
   \&perl_fu_highlight_edges;
 
@@ -340,7 +342,7 @@ register
    [PF_COLOR, "glow_color", "Color", [1.0, 0.8157, 0]],
    [PF_COLOR, "background", "Color", [0x00, 0x00, 0x00]],
    [PF_INT32, "glow_radius", "radius", 4],
-   [PF_TOGGLE, "highlight_edges", "", 1],
+   [PF_TOGGLE, "highlight_edges", "", 0], #FIXME: this is broke if 1!
    [PF_TOGGLE, "antialias", "", 1]
   ],
   [PF_IMAGE],

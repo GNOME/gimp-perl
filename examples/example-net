@@ -23,7 +23,7 @@ Gimp::on_net {
 # Show it (this slows things down)
   new Gimp::Display($img);
 
-# do a bunch of operations just as a spped test, flushing in between
+# do a bunch of operations just as a speed test, flushing in between
   Context->push();
   for $i (0..255) {
      Context->set_background([$i,255-$i,$i]);
