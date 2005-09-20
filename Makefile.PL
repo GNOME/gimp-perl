@@ -61,14 +61,24 @@ if ($ARGV[0] ne "--writemakefile") {
       yinyang 
    );
 # list of plugins using PDL
+
 @pdl_pins =
    qw(
       gouge 
-      map_to_gradient 
       redeye
       pixelmap 
       view3d 
    );  
+
+# plugins that are useful code examples, but not even arguably useful 
+# gimp plugins due to silliness or duplication
+
+@uninstalled_pins = 
+  qw(
+     example-fu
+     example-net
+     map_to_gradient 
+  );
 
 # GTK isn't absolutely required, but for most people it is highly 
 # desirable, so make a nice big notice saying so.

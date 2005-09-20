@@ -12,7 +12,6 @@ Make a 2.2 release so I can tag it and start towards 2.4.  Critical items:
 Gtk-CRITICAL **: file gtktooltips.c: line 314 (gtk_tooltips_set_tip): assertion `GTK_IS_TOOLTIPS (tooltips)' failed at ..../Gimp/UI.pm line 821.
 " repeated when I use a color picker.
 
-
 Win32 port?
 
 Add a gtk2 gimp console.

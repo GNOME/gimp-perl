@@ -1,3 +1,26 @@
+2005-09-19  Seth Burgess <sjburges@gimp.org>
+	* Makefile.PL: adjust installed scripts
+	* TODO: updated
+	* examples/testall: script to exercise other scripts (not
+	  yet complete, but good enough for below)
+	* examples/blowinout
+	* examples/bricks  
+	* examples/dust  
+	* examples/example-net  
+	* examples/glowing_steel  
+	* examples/goldenmean  
+	* examples/guides_to_selection  
+	* examples/innerbevel  
+	* examples/mirrorsplit  
+	* examples/perlotine  
+	* examples/repdup  
+	* examples/scratches
+	* examples/selective_sharpen
+	* examples/tex-to-float
+	* examples/xachlego
+	* examples/xachshadow: a variety of fixes caught with testing
+	
+
 2005-09-14  Seth Burgess <sjburges@gimp.org>
 	* UI/UI.pm: Fixed up the various selection diaglogs; still has some 
 	  brokeness I suspect is on the gimp side, and is VERY slow on the 
