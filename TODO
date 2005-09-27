@@ -1,16 +1,11 @@
 <Seth's random notes>
 Make a 2.2 release so I can tag it and start towards 2.4.  Critical items:
-* Cleanup unused stuff:
-  Remove Gimp/PDL.pm
-  Remove Module
-  Remove embed
-  Remove etc
-  Remove nolib
-  Remove examples/image_list
-  Remove or rewrite font_table - logic in it no longer applicable.
 * Fix the code so I don't get "
 Gtk-CRITICAL **: file gtktooltips.c: line 314 (gtk_tooltips_set_tip): assertion `GTK_IS_TOOLTIPS (tooltips)' failed at ..../Gimp/UI.pm line 821.
 " repeated when I use a color picker.
+
+--- end of crticial items list ---
+
 
 Win32 port?
 
