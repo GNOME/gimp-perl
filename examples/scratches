@@ -9,9 +9,9 @@ use Gimp::Util;
 # weisses Bild "verrauscht" und mit motion-blur in einem
 # bestimmten Winkel weichgezeichnet.
 sub new_scratchlayer {
-    my ($image,$length,$gamma,$angle) = @_;
+    my ($image,$drawable,$length,$gamma,$angle) = @_;
     my $type = $image->layertype(0);
-    my $layer = $image->layer_new ($image->width, $image->height, $image->layertype(0),
+    my $layer = $image->layer_new ($drawable->width, $drawable->height, $image->layertype(0),
                                   "displace layer ($angle)", 100, NORMAL_MODE);
     $layer->add_layer(-1);
     $layer->fill (WHITE_FILL);
@@ -46,8 +46,8 @@ register "scratches",
 
    # Erzeuge zwei "scratchlayer", die die Verschiebung in X und Y
    # angeben.
-   my $layer1 = new_scratchlayer ($image, $length, $gamma, $anglex);
-   my $layer2 = new_scratchlayer ($image, $length, $gamma, $angley);
+   my $layer1 = new_scratchlayer ($image, $drawable, $length, $gamma, $anglex);
+   my $layer2 = new_scratchlayer ($image, $drawable, $length, $gamma, $angley);
 
    # Verschmiere das Bild.
    $drawable->displace ($width, $width, 1, 1, $layer1, $layer2, WRAP);

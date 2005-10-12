@@ -1,4 +1,8 @@
 2005-10-11  Seth Burgess <sjburges@gimp.org>
+	* examples/scratches: fixed problem if layersize!=imagesize 
+	that Carol pointed out.
+
+2005-10-11  Seth Burgess <sjburges@gimp.org>
 	* examples/billboard: run from an image
 	* Makefile.PL: install
 	* acconfig.h
