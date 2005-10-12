@@ -34,6 +34,7 @@ register "guide_remove",
     #
     # Remove all existing guides
     #    
+    $img->undo_group_start;
     $i=$img->find_next_guide(0);
     while ($i != 0) {
       $img->delete_guide($i);
@@ -45,6 +46,7 @@ register "guide_remove",
     #
     $img->selection_all();
     $img->selection_none();        
+    $img->undo_group_end;
  
     return();
 };
