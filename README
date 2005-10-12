@@ -5,13 +5,11 @@ NAME
 
 WARNING
 
-       This version of the module only works for Gimp-2.0; you may experience
-       installation problems with Gimp-2.2, but it has worked before.
+       This version of the module only works for Gimp-2.2 and Gimp-2.3.
 
        Current limitations:
-       
-       There may be problems installing on a system with a Gimp 1.2 development
-       still installed (reported once).  I've not yet looked into this.
+
+       Please report all problems       
 
 SYNOPSIS
 
@@ -47,14 +45,14 @@ PREREQUISITES
        http://www.gimp.org/
        ftp://ftp.gimp.org/pub/gimp/
 
-          gimp-2.0 (or newer, e.g. CVS or CVS snapshots) is required.  For
+          gimp-2.2 (or newer, e.g. CVS or CVS snapshots) is required.  For
           older versions of The Gimp, use version 1.2* of the Gimp-Perl
-          module.
+          module.  Likewise for v2.0.
 
        Gtk, the perl extension for gtk+2
        http://gtk2-perl.sourceforge.net
 
-          The special "gtk2-perl-xs" variant is required, the inline
+          The "gtk2-perl-xs" variant is required, the "inline"
           version is *NOT* supported. Releases (as on CPAN) may work.
 
        PDL, the Perl Data Language
@@ -127,13 +125,6 @@ SUPPORT/MAILING LISTS/MORE INFO
 
        New releases will be announced to gimp-announce.
        
-       There is a low-traffic mailinglist for general discussion about 
-       Gimp-Perl.  To subscribe, send a mail with the single line
-
-       subscribe
-       
-       to gimp-perl-request@lists.netcentral.net.
-
        You can also upload your scripts to the gimp registry at
        http://registry.gimp.org/.  
        
@@ -203,7 +194,8 @@ register "gimp_fu_example_script",                      # fill in a function nam
          sub {
 
    # now do sth. useful with the garbage we got ;)
-   my($width,$height,$text,$brd1,$brd2,$font,$fg,$bg,$ignore,$xtraimg,$xtradrw,$effecttype,$brush,$pattern,$gradient)=@_;
+   my($width,$height,$text,$brd1,$brd2,$font,$fg,$bg,$ignore,$xtraimg,
+      $xtradrw,$effecttype,$brush,$pattern,$gradient)=@_;
 
    # set tracing, disable this to get rid of the debugging output
    Gimp::set_trace(TRACE_CALL);
@@ -220,8 +212,8 @@ register "gimp_fu_example_script",                      # fill in a function nam
 
    # now a few syntax examples
 
-   Palette->set_foreground($fg) unless $ignore;
-   Palette->set_background($bg) unless $ignore;
+   Context->set_foreground($fg) unless $ignore;
+   Context->set_background($bg) unless $ignore;
 
    fill $l BACKGROUND_FILL;
    $text_layer = $img->text_fontname(-1, 10, 10, $text, 5, 1, 10, PIXELS, $font);
@@ -234,6 +226,6 @@ register "gimp_fu_example_script",                      # fill in a function nam
    $img;        # return the image, or an empty list, i.e. ()
 };
 
-exit main;
+exit main;  # call the "main" funciton to start the script working
 
 

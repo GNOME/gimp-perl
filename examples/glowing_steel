@@ -337,7 +337,7 @@ register
   [
    [PF_STRING, "string", "string", "GET LOST"],
    # The font in the poster was like "cobalt extended"
-   [PF_FONT, "font", "Font", undef],
+   [PF_FONT, "font", "Font", "Bitstream Charter Bold 72"],
    [PF_SPINNER, "size", "Size", 100, [0, 3000, 1]],
    [PF_COLOR, "glow_color", "Color", [1.0, 0.8157, 0]],
    [PF_COLOR, "background", "Color", [0x00, 0x00, 0x00]],
