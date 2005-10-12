@@ -1,7 +1,17 @@
+2005-10-11  Seth Burgess <sjburges@gimp.org>
+	* examples/billboard: run from an image
+	* Makefile.PL: install
+	* acconfig.h
+	* aclocal.m4
+	* config.pl.in
+	* configure
+	* confgiure.ac
+	* configure.frag: removed unused files
+	* Made 2.2pre1 release
+
 2005-10-11  Carol Spears <carol@gimp.org>
 	* examples/centerguide
 	* examples/guide_remove: undo_group_start and undo_group_end added
-
 
 2005-09-19  Seth Burgess <sjburges@gimp.org>
 	* Module/*
@@ -31,6 +41,7 @@
 	* examples/tex-to-float
 	* examples/xachlego
 	* examples/xachshadow: a variety of fixes caught with testing
+	
 
 2005-09-14  Seth Burgess <sjburges@gimp.org>
 	* UI/UI.pm: Fixed up the various selection diaglogs; still has some 
