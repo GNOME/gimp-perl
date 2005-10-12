@@ -37,9 +37,11 @@ register	"center_guide",
 		if ($center == 1) {
 			$hc = int(($h / 2.6179) + 0.5);
 		};
+                $img->undo_group_start;
 		$bit_bucket = $img->add_hguide($hc);
 		$bit_bucket = $img->add_vguide($vc);
 		gimp_drawable_update($layer, 0, 0, $w, $h);
+                $img->undo_group_end;
 	};
 exit main;
 =head1 LICENSE

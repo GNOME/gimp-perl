@@ -27,12 +27,12 @@ $gradient1 = '"Burning Paper"';
 $width     = 200;
 $height    = 300;
 
-$testimage = "/home/seth/cvs/gimp-perl/examples/testimg1.JPG";
+$testimage = "/home/carol/test.jpg";
 
 @testbench = (
 ["add_glow"               , 2, $REQ_ALPHA, [$color1, 5] ],
 ["animate_cells"          , 3, $REQ_ALPHA, [0] ],
-["auto_red_eye"           , 1, $REQ_NONE , [] ],
+#["auto_red_eye"           , 1, $REQ_NONE , [] ],
 ["blowinout"              , 1, $REQ_NONE , [ 30, 8, "30", 0, 0] ],
 ["blur_2x2"               , 1, $REQ_NONE , [] ],
 ["brushed_metal"          , 1, $REQ_NONE , [40,120,1,$gradient1] ],
