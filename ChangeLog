@@ -1,3 +1,8 @@
+2005-10-11  Carol Spears <carol@gimp.org>
+	* examples/centerguide
+	* examples/guide_remove: undo_group_start and undo_group_end added
+
+
 2005-09-19  Seth Burgess <sjburges@gimp.org>
 	* Module/*
 	* Gimp/PDL.pm
