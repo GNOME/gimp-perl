@@ -730,7 +730,7 @@ msgid "/Xtns/Render"
 msgstr "/Rozš./Vyobrazení"
 
 msgid "OK"
-msgstr "OK"
+msgstr "Budiž"
 
 msgid "accepted unix connection"
 msgstr "přijato unixové spojení"
