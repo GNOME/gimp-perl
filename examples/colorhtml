@@ -184,7 +184,7 @@ and will disturb the current font colour.
 =head1 LICENSE
 
 Copyright Marc Lehman.  CSS addtions (c) Carol Spears.
-Distrubuted under the same terms as Gimp-Perl.
+Distributed under the same terms as Gimp-Perl.
 
 =cut
 

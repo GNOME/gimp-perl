@@ -138,7 +138,7 @@ The bytes per pixel value of the destination area.
 =head1 LICENSE
 
 Copyright Marc Lehman.
-Distrubuted under the same terms as Gimp-Perl.
+Distributed under the same terms as Gimp-Perl.
 
 =cut
 

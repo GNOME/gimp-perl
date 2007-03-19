@@ -1,3 +1,45 @@
+2007-03-19  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* examples/burst
+	* examples/centerguide
+	* examples/colorhtml
+	* examples/dataurl
+	* examples/ditherize
+	* examples/dots
+	* examples/dust
+	* examples/example-fu
+	* examples/example-net
+	* examples/example-oo
+	* examples/fade-alpha
+	* examples/feedback
+	* examples/frame_filter
+	* examples/frame_reshuffle
+	* examples/goldenmean
+	* examples/gouge
+	* examples/guidegrid
+	* examples/guides_to_selection
+	* examples/innerbevel
+	* examples/layerfuncs
+	* examples/map_to_gradient
+	* examples/perlotine
+	* examples/pixelmap
+	* examples/prep4gif
+	* examples/randomart1
+	* examples/randomblends
+	* examples/repdup
+	* examples/scratches
+	* examples/sethspin
+	* examples/stampify
+	* examples/stamps
+	* examples/translogo
+	* examples/triangle
+	* examples/warp-sharp
+	* examples/webify
+	* examples/windify
+	* examples/xachlego
+	* examples/xachshadow
+	* examples/xachvision: s/Distrubuted/Distributed/
+
 2005-10-11  Seth Burgess <sjburges@gimp.org>
 	* examples/scratches: fixed problem if layersize!=imagesize 
 	that Carol pointed out.
