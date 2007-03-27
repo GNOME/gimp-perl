@@ -59,33 +59,19 @@ sub xlfd_unpack {
     my $size_unit_overload = shift;
     # XLFDs fields can contain anything, including minus signs, but we
     # gracefully ignore these weird things here ;)
-    my $p = "[^-]*";
-    my($foundry,
-         $family,
-           $weight,
-              $slant,
+    my($dummy1,
+         $foundry,
+           $family,
+             $weight,
+               $slant,
                  $set_width,
-                    $pixelsize,
+                   $dummy2,
+                     $pixelsize,
                        $pointsize, 
-                          $spacing,
-                             $registry,
-                                $encoding,
-      ) = $fontname=~
-     /^-($p)     (?# foundry )
-       -($p)     (?# family  )
-       -($p)     (?# weight  )
-       -($p)     (?# slant   )
-       -($p)     (?# set_Width )
-       -$p       
-       -($p)     (?# pixelsize )
-       -($p)     (?# pointsize )
-       -$p      
-       -$p       
-       -($p)     (?# spacing )
-       -$p
-       -($p)     (?# rgstry )
-       -($p)     (?# encdng )
-     /x or die __"xlfd_unpack: unmatched XLFD '$fontname'\n";
+                         $spacing,
+                           $registry,
+                             $encoding
+      ) = split(/-/, $fontname);
 
     my $size;
     if ($pixelsize && $pixelsize ne "*") {
@@ -96,8 +82,25 @@ sub xlfd_unpack {
     $size = $size_overload if $size_overload;
     my $size_unit = ($pointsize > 0);
     $size_unit = $size_unit if defined $size_unit_overload;
+
     return ($size, $size_unit, $foundry, $family, $weight, $slant,
 	    $set_width, $spacing, $registry, $encoding);
+}
+
+#This routine handles both old and new style font description. New style
+#strings are of form "Utopia Bold 70" where the last number is the font size.
+sub xlfd_size {
+    my($font) = @_;
+    my($size, $words);
+
+    if ($font =~ /^-/) {
+        $size = xlfd_unpack(@_);
+    } else {
+        @words = split(/ /, $font);
+        $size = $words[@words - 1];
+    }
+
+    return($size);
 }
 
 sub fun {

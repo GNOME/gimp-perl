@@ -21,7 +21,7 @@ Gimp::Fu - "easy to use" framework for Gimp scripts
 
 Currently, there are only three functions in this module. This
 fully suffices to provide a professional interface and the
-ability to run this script from within the Gimp and standalone
+ability to run this script from within GIMP and standalone
 from the commandline.
 
 Dov Grobgeld has written an excellent tutorial for Gimp-Perl. 
@@ -43,8 +43,8 @@ In general, a Gimp::Fu script looks like this:
    exit main;
 
 (This distribution comes with example scripts. One is
-C<examples/example-fu.pl>, which is small Gimp::Fu-script you can take as
-starting point for your experiments)
+C<examples/example-fu.pl>, which is a small Gimp::Fu-script you can take as
+a starting point for your experiments)
 
 =cut
 
@@ -64,7 +64,7 @@ sub PF_TOGGLE	() { Gimp::PDB_END+1	};
 sub PF_SLIDER	() { Gimp::PDB_END+2	};
 sub PF_FONT	() { Gimp::PDB_END+3	};
 sub PF_SPINNER	() { Gimp::PDB_END+4	};
-sub PF_ADJUSTMENT(){ Gimp::PDB_END+5	}; # compatibility fix for script-fu _ONLY_
+sub PF_ADJUSTMENT(){ Gimp::PDB_END+5	}; # compatability fix for script-fu _ONLY_
 sub PF_BRUSH	() { Gimp::PDB_END+6	};
 sub PF_PATTERN	() { Gimp::PDB_END+7	};
 sub PF_GRADIENT	() { Gimp::PDB_END+8	};
@@ -398,8 +398,8 @@ Gimp::on_query {
 
 =item function name
 
-The pdb name of the function, i.e. the name under which is will be
-registered in the Gimp database. If it doesn't start with "perl_fu_",
+The PDB name of the function, i.e. the name under which it will be
+registered in the GIMP database. If it doesn't start with "perl_fu_",
 "file_", "plug_in_" or "extension_", it will be prepended. If you
 don't want this, prefix your function name with a single "+". The idea
 here is that every Gimp::Fu plug-in will be found under the common
@@ -423,29 +423,32 @@ script-author. Default is "=pod(AUTHOR)".
 
 =item copyright
 
-The copyright designation for this script. Important! Safe your intellectual
+The copyright designation for this script. Important! Save your intellectual
 rights! The default is "=pod(AUTHOR)".
 
 =item date
 
-The "last modified" time of this script. There is no strict syntax here, but
+The "last modified" date of this script. There is no strict syntax here, but
 I recommend ISO format (yyyymmdd or yyyy-mm-dd). Default value is "=pod(DATE)".
 
 =item menu path
 
-The menu entry Gimp should create. It should start either with <Image>, if
-you want an entry in the image menu (the one that opens when clicking into
-an image), <Toolbox>/Xtns, for the Xtns menu or <None> for none.
+The menu entry GIMP should create. It should start either with <Image>, if
+you want an entry in the image menu (the one that opens when right-clicking
+an image), <Toolbox>/Xtns for the Xtns menu, or <None> if the script does
+not need to have a menu entry.
 
 =item image types
 
 The types of images your script will accept. Examples are "RGB", "RGB*",
 "GRAY, RGB" etc... Most scripts will want to use "*", meaning "any type".
+For scripts registering under <Toolbox>/Xtns the script should use the
+empty string "".
 
 =item the parameter array
 
-An array ref containing parameter definitions. These are similar to the
-parameter definitions used for C<gimp_install_procedure>, but include an
+An array reference containing parameter definitions. These are similar to
+the parameter definitions used for C<gimp_install_procedure> but include an
 additional B<default> value used when the caller doesn't supply one, and
 optional extra arguments describing some types like C<PF_SLIDER>.
 
@@ -453,15 +456,15 @@ Each array element has the form C<[type, name, description, default_value, extra
 
 <Image>-type plugins get two additional parameters, image (C<PF_IMAGE>) and
 drawable (C<PF_DRAWABLE>). Do not specify these yourself. Also, the
-C<run_mode> argument is never given to the script, but its value can be
+C<run_mode> argument is never given to the script but its value can be
 accessed in the package-global C<$run_mode>. The B<name> is used in the
-dialog box as a hint, the B<description> will be used as a tooltip.
+dialog box as a hint. The B<description> will be used as a tooltip.
 
 See the section PARAMETER TYPES for the supported types.
 
 =item the return values
 
-This is just like the parameter array, just that it describes the return
+This is just like the parameter array except that it describes the return
 values. Of course, default values and the enhanced Gimp::Fu parameter
 types don't make much sense here. (Even if they did, it's not implemented
 anyway..). This argument is optional.
@@ -478,7 +481,7 @@ value array, C<[]>, if you want to specify it).
 
 =item the code
 
-This is either a anonymous sub declaration (C<sub { your code here; }>, or a
+This is either an anonymous sub declaration (C<sub { your code here; }>, or a
 coderef, which is called when the script is run. Arguments (including the
 image and drawable for <Image> plug-ins) are supplied automatically.
 
@@ -497,7 +500,7 @@ return an array.
 
 Are all mapped to a string entry, since perl doesn't really distinguish
 between all these datatypes. The reason they exist is to help other scripts
-(possibly written in other languages! really!). It's nice to be able to
+(possibly written in other languages! Really!). It's nice to be able to
 specify a float as 13.45 instead of "13.45" in C! C<PF_VALUE> is synonymous
 to C<PF_STRING>, and <PF_INT> is synonymous to <PF_INT32>.
 
@@ -516,7 +519,7 @@ A gimp drawable (image, channel or layer).
 
 =item PF_TOGGLE, PF_BOOL
 
-A boolean value (anything perl would accept as true or false). The description
+A boolean value (anything Perl would accept as true or false). The description
 will be used for the toggle-button label!
 
 =item PF_SLIDER
@@ -530,7 +533,8 @@ Default values will be substitued for missing entries, like in:
 
 =item PF_SPINNER
 
-The same as PF_SLIDER, except that this one uses a spinbutton instead of a scale.
+The same as PF_SLIDER, except that this one uses a spinbutton instead of a
+scale.
 
 =item PF_RADIO
 
@@ -549,11 +553,11 @@ will be returned. If the second is activated, 7 is returned.
 
 Lets the user select a font and returns a X Logical Font Descriptor (XLFD).
 The default argument, if specified, must be a full XLFD specification, or a
-warning will be printed. Please note that the gimp text functions using
+warning will be printed. Please note that the GIMP text functions using
 these fontnames (gimp_text_..._fontname) ignore the size. You can extract
 the size and dimension by using the C<xlfd_size> function.
 
-In older Gimp-Versions a user-supplied string is returned.
+In older GIMP versions a user-supplied string is returned.
 
 =item PF_BRUSH, PF_PATTERN, PF_GRADIENT
 
@@ -789,7 +793,7 @@ This is the internal function used to save images. As it does more than just
 gimp_file_save, I thought it would be handy in other circumstances as well.
 
 The C<img> is the image you want to save (which might get changed during
-the operation!), C<options_and_path> denotes the filename and optinal
+the operation!), C<options_and_path> denotes the filename and optional
 options. If there are no options, C<save_image> tries to deduce the filetype
 from the extension. The syntax for options is
 

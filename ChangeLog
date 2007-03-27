@@ -1,3 +1,11 @@
+2007-03-26  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* Gimp/Compat.pm: Replaced xlfd_unpack() with a simpler version that
+	actually works. Added the missing xlfd_size() routine.
+
+	* Gimp/Fu.pm: Fixed some typographical and grammatical errors.
+	Reminder: The notes about PF_FONT and what it returns needs updating.
+
 2007-03-19  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* examples/burst
