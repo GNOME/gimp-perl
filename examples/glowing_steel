@@ -200,7 +200,7 @@ sub perl_fu_brushed_metal {
 
   gimp_brightness_contrast($templ, 50, 0);
   plug_in_noisify($image, $templ, 0, 0.3, 0.3, 0.3, 0);
-  plug_in_mblur($image, $templ, 0, $length, $angle, 0.0, 0.0, 1);
+  plug_in_mblur($image, $templ, 0, $length, $angle, 0.0, 0.0);
 
   # Now put it into the target layer
   gimp_selection_load($target_select);
