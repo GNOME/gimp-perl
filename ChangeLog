@@ -1,5 +1,11 @@
 2007-07-09  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* examples/glowing_steel: Changed previous fix. Check version number
+	of GIMP to decide if extra parameter is needed. Applied the changes
+	suggested by Spam Less. Fixes bug #310820.
+
+2007-07-09  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* examples/glowing_steel: Removed extra parameter in call to mblur.
 
 2007-03-26  Kevin Cozens  <kcozens@cvs.gnome.org>
