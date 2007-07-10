@@ -1,5 +1,12 @@
 2007-07-10  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* TODO: Removed item regarding adding POD info to gimpdoc.
+
+	* gimpdoc: Added POD information based on man page created by
+	Ben Gertzfield. Fixes bug #117349.
+
+2007-07-10  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* examples/glowing_steel: Applied changes suggested by Sven Neumann
 	in bug #310820.
 

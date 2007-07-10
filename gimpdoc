@@ -432,3 +432,51 @@ EOF
 Gimp::end;
 
 close PAGER;
+__END__
+
+#GIMPDOC 1 "13 July 2003" "Version 1.2.5" "GIMP Manual Pages"
+
+=pod
+
+=head1 NAME
+
+gimpdoc - print documentation on GIMP PDB functions
+
+=head1 SYNOPSIS
+
+B<gimpdoc> [-r] [-w I<dir>] function ...
+
+=head1 DESCRIPTION
+
+I<gimpdoc> is a Perl script that can query GIMP PDB functions for
+their interfaces and documentation and format a man-style or HTML-format
+documentation page to document their usage.
+
+=head1 OPTIONS
+
+I<gimpdoc> accepts the following options:
+
+B<-r>      print raw manual page source as produced by tbl|nroff.
+
+B<-w> I<dir>  create HTML documentation, storing files in I<dir>.
+
+=over 8
+
+=item B<function>
+
+The GIMP PDB function to document.  If an exact match is not found,
+searches all PDB functions with a substring match to find any functions with
+similar names.
+
+=back
+
+=head1 SEE ALSO
+
+B<gimp>(1), B<GIMP>(3pm)
+
+=head1 AUTHORS
+
+I<gimpdoc> is part of the GIMP Perl plug-in, written by Marc Lehmann
+(pcg@goof.com).
+
+=cut
