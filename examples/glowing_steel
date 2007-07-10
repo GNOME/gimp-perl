@@ -48,7 +48,8 @@ sub perl_fu_glowing_steel {
   ($size, $units) = xlfd_size($font) if $size < 1;
   die("glowing_steel: No font size given or inferable") if $size < 1;
 
-  my $old = gimp_context_get_foreground();
+  gimp_context_push();
+
   my $image = gimp_image_new(100, 100, RGB);
   gimp_image_undo_disable($image);
   my $textlayer = gimp_text_fontname($image, -1, $radius*2,
@@ -85,11 +86,11 @@ sub perl_fu_glowing_steel {
   # Make the glow:
   perl_fu_add_glow($image, $textlayer, $glow, $radius);
 
-  gimp_context_set_foreground($old);
-
   gimp_image_undo_enable($image);
   gimp_selection_none($image);
   gimp_image_set_active_layer($image,$backlayer);
+
+  gimp_context_pop();
 
   return $image;
 }
@@ -135,13 +136,14 @@ sub perl_fu_add_glow {
   gimp_selection_all($image);
   gimp_edit_clear($glow);
   # Add the glow
-  my $old = gimp_context_get_foreground();
+
+  gimp_context_push();
+
   gimp_context_set_foreground($color);
   gimp_selection_layer_alpha($drawable);
   gimp_selection_grow($image, $radius);
   gimp_selection_feather($image, $radius*1.5);
   gimp_edit_bucket_fill($glow,FG_BUCKET_FILL,NORMAL_MODE,100,255,0,0,0);
-  gimp_context_set_foreground($old);
   gimp_selection_layer_alpha($drawable);
   gimp_edit_clear($glow);
 
@@ -149,6 +151,8 @@ sub perl_fu_add_glow {
   gimp_floating_sel_anchor($drawable) if $is_float;
   gimp_image_set_active_layer($image,$old_draw);
   gimp_image_undo_group_end($image);
+
+  gimp_context_pop();
   gimp_displays_flush();
 }
 
@@ -256,12 +260,13 @@ sub perl_fu_highlight_edges {
   }
   gimp_image_add_layer($image, $black, $lnum);
   gimp_image_add_layer($image, $white, $lnum);
+
   gimp_context_push();
+
   gimp_context_set_foreground([255,255,255]);
   gimp_edit_bucket_fill($white,FG_BUCKET_FILL,NORMAL_MODE,100,255,0,0,0);
   gimp_context_set_foreground([0,0,0]);
   gimp_edit_bucket_fill($black,FG_BUCKET_FILL,NORMAL_MODE,100,255,0,0,0);
-  gimp_context_pop();
   gimp_layer_translate($white, -1*$pixels, -1*$pixels);
   gimp_layer_translate($black, 1*$pixels, 1*$pixels);
   $white = gimp_image_merge_down($image, $white, EXPAND_AS_NECESSARY);
@@ -273,6 +278,8 @@ sub perl_fu_highlight_edges {
   gimp_floating_sel_anchor($drawable) if $is_float;
   # gimp_image_set_active_layer($image,$old_draw);
   gimp_image_undo_group_end($image);
+
+  gimp_context_pop();
   gimp_displays_flush();
 }
 
