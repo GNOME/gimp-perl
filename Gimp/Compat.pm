@@ -43,7 +43,7 @@ Gimp-Perl extension (contact him to include new functions) is Marc Lehmann
 
 package      Gimp::Compat;
 
-$VERSION=2.0;
+$VERSION=2;
 
 use Gimp ('croak', '__');
 
@@ -59,6 +59,7 @@ sub xlfd_unpack {
     my $size_unit_overload = shift;
     # XLFDs fields can contain anything, including minus signs, but we
     # gracefully ignore these weird things here ;)
+#split(/-/, "-*-utopia-bold-r-*-*-30-*-*-*-*-*-*-*")
     my($dummy1,
          $foundry,
            $family,
@@ -94,7 +95,7 @@ sub xlfd_size {
     my($size, $words);
 
     if ($font =~ /^-/) {
-        $size = xlfd_unpack(@_);
+        ($size) = xlfd_unpack(@_);
     } else {
         @words = split(/ /, $font);
         $size = $words[@words - 1];

@@ -1,3 +1,8 @@
+2007-10-31  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* Gimp/Compat.pm (xlfd_size): Grab the first item in list of values
+	returned from xlfd_unpack() when using XLFD font descriptions.
+
 2007-09-05  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* .cvsignore
