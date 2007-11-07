@@ -477,7 +477,7 @@ sub interact($$$$@) {
 
         if ($type == PF_ADJUSTMENT) { # support for scm2perl
            my (@x)=@$default;
-           $default=shift @x;
+           $value=shift @x;
            $type = pop(@x) ? PF_SPINNER : PF_SLIDER;
            $extra=[@x];
         }

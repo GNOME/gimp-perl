@@ -1,3 +1,8 @@
+2007-11-07  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* UI/UI.pm (interact): Set $value to initial value for PF_ADJUSTMENT.
+	Fixes bug #494743.
+
 2007-10-31  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* Gimp/Compat.pm (xlfd_size): Grab the first item in list of values
