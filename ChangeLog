@@ -1,3 +1,10 @@
+2007-11-19  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* Gimp.pm: Fixed parsing of colour strings of format #ff00ff.
+
+	* Gimp/Lib.xs: INT8ARRAY data uses unsigned 8-bit bytes. Are any other
+	changes needed?
+
 2007-11-07  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* UI/UI.pm (interact): Set $value to initial value for PF_ADJUSTMENT.

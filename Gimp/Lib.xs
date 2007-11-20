@@ -1012,7 +1012,7 @@ convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
       
       case GIMP_PDB_INT32ARRAY:	av2gimp (arg, sv, d_int32array , gint32 , Sv32); break;
       case GIMP_PDB_INT16ARRAY:	av2gimp (arg, sv, d_int16array , gint16 , SvIV); break;
-      case GIMP_PDB_INT8ARRAY:	av2gimp (arg, sv, d_int8array  , gint8  , SvIV); break;
+      case GIMP_PDB_INT8ARRAY:	av2gimp (arg, sv, d_int8array  , guint8 , SvIV); break;
       case GIMP_PDB_FLOATARRAY:	av2gimp (arg, sv, d_floatarray , gdouble, SvNV); break;
       case GIMP_PDB_STRINGARRAY:av2gimp (arg, sv, d_stringarray, gchar *, SvPv); break;
 	
