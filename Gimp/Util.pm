@@ -129,7 +129,8 @@ sub text_draw {
 
   warn __"text string is empty" if $text eq "";
   warn __"no font specified, using default" if $font eq "";
-  $font = "Helvetica" if ($font eq "");
+#FIXME: The following line always sets font to Helvetica if uncommented.
+#  $font = "Helvetica" if ($font eq "");
 
   $tcol = Gimp->palette_get_foreground ();
   Gimp->palette_set_foreground ($fgcolor);
@@ -179,7 +180,9 @@ sub image_create_text {
 
   warn (__"text string is empty") if ($text eq "");
   warn (__"no font specified, using default") if ($font eq "");
-  $font = "Helvetica" if ($font eq "");
+#FIXME: The following line always sets font to Helvetica if uncommented.
+# This was preventing use of different fonts in gimp_text_fontname() calls.
+#  $font = "Helvetica" if ($font eq "");
   # create an image. We'll just set whatever size here because we want
   # to resize the image when we figure out how big the text is.
   $image = Gimp->image_new(64,64,RGB); # don't waste too much  resources ;-/

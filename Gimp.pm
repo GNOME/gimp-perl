@@ -296,7 +296,8 @@ sub canonicalize_colour {
       return [@loc_col];
    } elsif  
    ($_[0] =~ /^#([0-9a-fA-F]{2,2})([0-9a-fA-F]{2,2})([0-9a-fA-F]{2,2})$/) {
-    return [ map { eval "0x$_/255.0" } split (/ /, "$1 $2 $3") ];
+    # convert hex specfier of #xxyyzz
+    return [ map { eval "0x$_/255.0" } ($1, $2, $3) ];
    } else {
       unless (%rgb_db) {
          if ($rgb_db_path) {
