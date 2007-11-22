@@ -1,3 +1,14 @@
+2007-11-22  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* Gimp.pm (canonicalize_colour): Added back the lost comment string.
+	Simplified previous change to eliminate need for call to split().
+
+	* Gimp/Util.pm (text_draw, image_create_text): Commented out the line
+	which sets $font to Helvetica if it was an empty string. The check
+	in image_create_text was always setting $font to Helvetica. Added
+	FIXME note about this problem. These routines shouldn't be needed.
+	Fixes bug #301509.
+
 2007-11-19  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* Gimp.pm: Fixed parsing of colour strings of format #ff00ff.
