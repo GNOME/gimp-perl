@@ -1,5 +1,9 @@
 2007-12-07  Kevin Cozens  <kcozens@pc.localdomain>
 
+	* Changes: Added previous fix to list of changes.
+
+2007-12-07  Kevin Cozens  <kcozens@pc.localdomain>
+
 	* UI/UI.pm: Add default size to fontname string passed to font
 	requester when needed. Fixes bug #494754.
 
