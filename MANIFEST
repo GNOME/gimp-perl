@@ -33,7 +33,6 @@ examples/glowing_steel
 examples/goldenmean
 examples/gouge
 examples/guidegrid
-examples/guide_remove
 examples/guides_to_selection
 examples/iland
 examples/image_tile
@@ -70,7 +69,6 @@ examples/yinyang
 extra.c
 extra.h
 Gimp/Compat.pm
-Gimp/Config.pm
 Gimp/Config.pm.in
 Gimp/Data.pm
 gimpdoc
@@ -79,7 +77,6 @@ Gimp/Feature.pm
 Gimp/Fu.pm
 Gimp/Lib.pm
 Gimp/Lib.xs
-Gimp/Makefile
 Gimp/Makefile.PL
 Gimp/Module.pm
 Gimp/OO.pod
@@ -91,11 +88,10 @@ Gimp.xs
 gppport.h
 insenums
 logo.xpm
+MAINTAINERS
 makeenums.pl
-Makefile
 Makefile.PL
 MANIFEST
-Net/Makefile
 Net/Makefile.PL
 Net/Net.pm
 Net/Net.xs
@@ -151,7 +147,6 @@ t/run.t
 typemap
 typemap.pdl
 UI/basewidget.pm
-UI/Makefile
 UI/Makefile.PL
 UI/typemap
 UI/UI.pm
