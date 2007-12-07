@@ -139,6 +139,19 @@ cddr	=> 'sub cddr {
    @x >1 ? [@x] : $x[0];
 }',
 
+cdddr	=> 'sub cdddr {
+   my(@x)=@{$_[0]};
+   shift(@x); shift(@x); shift(@x);
+   @x >1 ? [@x] : $x[0];
+}',
+
+cddddr	=> 'sub cddddr {
+   my(@x)=@{$_[0]};
+   shift(@x); shift(@x);
+   shift(@x); shift(@x); shift(@x);
+   @x >1 ? [@x] : $x[0];
+}',
+
 max	=> 'sub max {
    $_[0] > $_[1] ? $_[0] : $_[1];
 }',
@@ -238,9 +251,10 @@ cp_expr	: /car\b/   '(' ...pdbfun e_call ')'
 	| /aref\b/ expr gen["->["] expr gen["]"]
 	
 	| /$compat_fun/ { $::add_funcs{$compat_fun{$item[1]}}++ } <reject>
-	| /car\b/   gen["\@{"] expr gen["}[0]"]
-	| /cadr\b/  gen["\@{"] expr gen["}[1]"]
-	| /caddr\b/ gen["\@{"] expr gen["}[2]"]
+	| /car\b/    gen["\@{"] expr gen["}[0]"]
+	| /cadr\b/   gen["\@{"] expr gen["}[1]"]
+	| /caddr\b/  gen["\@{"] expr gen["}[2]"]
+	| /cadddr\b/ gen["\@{"] expr gen["}[3]"]
 	| 'null?' gen["!\@{"] expr gen["}"]
 	| /cons\b/  gen["["] expr gen[", "] expr gen["]"]
 	

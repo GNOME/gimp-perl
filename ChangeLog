@@ -1,3 +1,9 @@
+2007-12-07  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* TODO: Added notes regarding some additional issues. 
+
+	* scm2perl: Added support for caddr, cadddr, cdddr, and cddddr.
+
 2007-12-03  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* examples/guide_remove: Deleting in favour of the Script-Fu script

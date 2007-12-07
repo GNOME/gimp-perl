@@ -1,3 +1,12 @@
+<Kevin's random notes>
+* Review TODO list to see which issues still need to be addressed.
+* Get list of enums from GIMP instead of using a hard-coded list.
+* Make use of new GIMP font requester.
+* When a script is run from the command line which takes a PF_ADJUSTMENT, the
+  value passed to the script is the full list of arguments and not the default
+  value for the spinner or slider.
+
+
 <Seth's random notes>
 Make a 2.2 release so I can tag it and start towards 2.4.  Critical items:
 * Cleanup unused stuff:
@@ -23,6 +32,7 @@ Impprove documentation quality - feedback desired!
 HIGify dialogs as possible.
 
 A Compat12.pm for GIMP 1.2 compatibility (no way to convert xlfd stuff though).
+Done? (I fixed some xlfd stuff - kc)
 
 Make a 'utils' directory for gimpdoc, scm2perl, embedxpm, xcf2pnm and move out of the root directory.
 
