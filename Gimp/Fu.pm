@@ -551,11 +551,10 @@ will be returned. If the second is activated, 7 is returned.
 
 =item PF_FONT
 
-Lets the user select a font and returns a X Logical Font Descriptor (XLFD).
-The default argument, if specified, must be a full XLFD specification, or a
-warning will be printed. Please note that the GIMP text functions using
-these fontnames (gimp_text_..._fontname) ignore the size. You can extract
-the size and dimension by using the C<xlfd_size> function.
+Lets the user select a font whose name is returned as a string. Please note
+that the GIMP text functions using these fontnames (gimp_text_..._fontname)
+ignore the size. Size is only used in the font-selector. You are asked to
+set it to a useful value (24 pixels is a good choice) when using PF-FONT.
 
 In older GIMP versions a user-supplied string is returned.
 

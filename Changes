@@ -3,6 +3,22 @@ Revision history for Gimp-Perl extension.
 Please add detailed ChangeLog entries to the ChangeLog file, keeping this
 file to document revision changes (similar to a GNU-style NEWS file).
 
+2.2   Fri Dec  7, 2007
+	- TODO: Added notes regarding some additional issues. 
+	- gimpdoc: Added POD information based on man page created by
+	  Ben Gertzfield. Fixes bug #117349.
+	- Gimp.pm: Fixed parsing of colour strings of format #ff00ff.
+	- Gimp/Lib.xs: INT8ARRAY data uses unsigned 8-bit bytes.
+	- Gimp/Compat.pm: Fixed problems with xlfd_unpack() and xlfd_size().
+	- Gimp/Fu.pm: Fixed some typographical and grammatical errors.
+	- Gimp/Util.pm: Use the specified font. Fixes bug #301509.
+	- UI/UI.pm: Fixed initial value for PF_ADJUSTMENT. Fixes bug #494743.
+	- Fixes/changes to the example scripts
+	  examples/glowing_steel: Several changes including fix for bug #310820.
+	  examples/scratches: Fix from Seth Burgess) when layersize!=imagesize.
+	  examples/guide_remove: Deleted in favour of the Script-Fu script.
+	- scm2perl: Added support for caddr, cadddr, cdddr, and cddddr.
+
 2.2pre1 Tues Oct 11, 2005
 	- un-deprecated lots of scripts
 	- un-deprecated modules

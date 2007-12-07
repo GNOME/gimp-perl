@@ -1,5 +1,11 @@
 2007-12-07  Kevin Cozens  <kcozens@pc.localdomain>
 
+	* Changes: Updated with information about the pending 2.2 release.
+
+	* Gimp/Fu.pm: Updated information about PF_FONT parameter type.
+
+2007-12-07  Kevin Cozens  <kcozens@pc.localdomain>
+
 	* MANIFEST: Removed examples/guide_remove.
 
 2007-12-07  Kevin Cozens  <kcozens@cvs.gnome.org>
