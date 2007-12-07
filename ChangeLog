@@ -1,5 +1,10 @@
 2007-12-07  Kevin Cozens  <kcozens@pc.localdomain>
 
+	* UI/UI.pm: Add default size to fontname string passed to font
+	requester when needed. Fixes bug #494754.
+
+2007-12-07  Kevin Cozens  <kcozens@pc.localdomain>
+
 	* Changes: Updated with information about the pending 2.2 release.
 
 	* Gimp/Fu.pm: Updated information about PF_FONT parameter type.

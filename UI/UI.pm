@@ -505,7 +505,16 @@ sub interact($$$$@) {
            
            my $l = new Gtk2::Label "!error!";
            my $setval = sub {
+	      my($words);
               $val = $_[0];
+
+	      #Append a size to font name string if no size is given so
+	      #sample text will be displayed properly in font requester.
+	      @words = split(/ /, $val);
+	      if (@words == 0 || $words[@words - 1] <= 0) {
+	         $val .= " 24";
+              };
+
               unless (defined $val && $fs->set_font_name ($val)) {
                  warn sprintf __"Illegal default font description for $function: %s\n", $val
                     if defined $val;
@@ -515,17 +524,17 @@ sub interact($$$$@) {
               
               $l->set (label => " $val ");
            };
-           
+
            $fs->ok_button->signal_connect (clicked => sub {$setval->($fs->get_font_name); $fs->hide});
            $fs->cancel_button->signal_connect (clicked => sub {$fs->hide});
            
            push @setvals, $setval;
            push @getvals, sub { $val };
-           
+ 
            $a = new Gtk2::Button;
            $a->add ($l);
            $a->signal_connect (clicked => sub { show $fs });
-           
+
         } elsif ($type == PF_SPINNER) {
            my $adj = _new_adjustment ($value, $extra);
            $a = new Gtk2::SpinButton $adj, 1, 0;
