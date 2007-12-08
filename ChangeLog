@@ -1,19 +1,19 @@
-2007-12-07  Kevin Cozens  <kcozens@pc.localdomain>
+2007-12-07  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* Changes: Added previous fix to list of changes.
 
-2007-12-07  Kevin Cozens  <kcozens@pc.localdomain>
+2007-12-07  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* UI/UI.pm: Add default size to fontname string passed to font
 	requester when needed. Fixes bug #494754.
 
-2007-12-07  Kevin Cozens  <kcozens@pc.localdomain>
+2007-12-07  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* Changes: Updated with information about the pending 2.2 release.
 
 	* Gimp/Fu.pm: Updated information about PF_FONT parameter type.
 
-2007-12-07  Kevin Cozens  <kcozens@pc.localdomain>
+2007-12-07  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* MANIFEST: Removed examples/guide_remove.
 
