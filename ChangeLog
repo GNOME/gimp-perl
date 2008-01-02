@@ -1,3 +1,47 @@
+2008-01-02  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* examples/animate_cells:
+	* examples/blowinout:
+	* examples/bricks:
+	* examples/burst:
+	* examples/centerguide:
+	* examples/colorhtml:
+	* examples/dataurl:
+	* examples/dust:
+	* examples/example-fu:
+	* examples/fade-alpha:
+	* examples/feedback:
+	* examples/frame_filter:
+	* examples/frame_reshuffle:
+	* examples/gallery:
+	* examples/goldenmean:
+	* examples/gouge:
+	* examples/guidegrid:
+	* examples/guides_to_selection:
+	* examples/image_tile:
+	* examples/layerfuncs:
+	* examples/mirrorsplit:
+	* examples/perlotine:
+	* examples/pixelmap:
+	* examples/prep4gif:
+	* examples/randomart1:
+	* examples/randomblends:
+	* examples/repdup:
+	* examples/roundsel:
+	* examples/scratches:
+	* examples/stampify:
+	* examples/stamps:
+	* examples/tex-to-float:
+	* examples/translogo:
+	* examples/triangle:
+	* examples/view3d:
+	* examples/warp-sharp:
+	* examples/webify:
+	* examples/windify:
+	* examples/xachlego:
+	* examples/xachshadow:
+	* examples/xachvision: s?/opt/bin/perl?/usr/bin/perl?
+
 2007-12-07  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* Changes: Added previous fix to list of changes.
@@ -225,7 +269,8 @@
 	* examples/scratches: undeprecated
 	* examples/repdup: undeprecated
 	* examples/redeye: undeprecated, tried to match the new menu layout
-	* examples/map_to_gradient: undeprecated, tried to match the new menu layout
+	* examples/map_to_gradient: undeprecated, tried to match the new menu
+	layout
 
 2005-09-07  Carol Spears <carol@gimp.org>
 	* examples/goldenmean
@@ -287,7 +332,7 @@
 2005-04-03  Carol Spears <carol@gimp.org>
 	* examples/burst: changed deprecated pdb calls. 
 	* examples/sethspin: changed deprecated pdb calls, including changing
-          gimp-rotate to a much longer name that also wanted new information 
+	  gimp-rotate to a much longer name that also wanted new information 
 	  and in a different order.  removed the -1 to the progress_init to 
 	  stop those pop-ups. 
 
@@ -303,12 +348,11 @@
 
 2004-06-28  Seth Burgess <sjburges@gimp.org>
 	* UI/UI.xs: fixed an XS error that shows up for GCC 2.95; 
-          shouldn't create a temp variable in CODE: - put it in PREINIT:
-          Reported by Marc 'HE' Brockschmidt <he@debian.org>.
-          Fixed a typo in GradientSelect.
-        
-        * examples/burst: s/undo_push/undo
-       
+	  shouldn't create a temp variable in CODE: - put it in PREINIT:
+	  Reported by Marc 'HE' Brockschmidt <he@debian.org>.
+	  Fixed a typo in GradientSelect.
+	
+	* examples/burst: s/undo_push/undo
 
 2004-04-17  Seth Burgess <sjburges@gimp.org>
 	* updated TODO for suggestion in bug 117349
@@ -321,23 +365,23 @@
 2004-05-15  Seth Burgess <sjburges@gimp.org>
 	* Made 2.0 release.
 
-        * Gimp.pm 
-        * Changes: updated docs to reflect
+	* Gimp.pm 
+	* Changes: updated docs to reflect
 
 2004-05-15  Seth Burgess <sjburges@gimp.org>
 	* examples/fade-alpha: s/RADIAL/GRADIENT_RADIAL/ fixes bug #141444
-        * examples/selective_sharpen: change threshold to be zero based, fix 
-          a bug if no selection was present. 
+	* examples/selective_sharpen: change threshold to be zero based, fix 
+	  a bug if no selection was present. 
 
 2004-05-15  Seth Burgess <sjburges@gimp.org>
 	* examples/selective_sharpen: use a curve suggested by tigert 
-          to "Basically just darken the very dark noisy grays to black 
-          and boost everything else."
+	  to "Basically just darken the very dark noisy grays to black 
+	  and boost everything else."
 
 2004-05-15  Seth Burgess <sjburges@gimp.org>
 	* examples/selective_sharpen: added new script based on tigert's 
 	  method.
-        * Makefile.PL: install it 
+	* Makefile.PL: install it 
 	* MANIFEST: updated accordingly
 
 2004-05-15  Seth Burgess <sjburges@gimp.org>
@@ -352,7 +396,7 @@
 	* Makefile.PL: upped Gtk requirement to at least rev 1.0, removed
 	scm2scm from EXE_FILES, removed REC_DECENT warning.
 
-        * Gimp.pm: reordered docuemntation, so that canonicalize_colour 
+	* Gimp.pm: reordered docuemntation, so that canonicalize_colour 
 	doesn't come first on CPAN listing for GIMP.
 
 2004-05-07  Seth Burgess <sjburges@gimp.org>
@@ -381,10 +425,10 @@
 
 	* Makefile.PL: removed reference to povray
 
-        * t/run.t: removed regex that wasn't matching; use 
+	* t/run.t: removed regex that wasn't matching; use 
 	  --gimpplugindir instead.  'make test' should work for more people.
-     
-        * examples/pixelmap: strip \n's from image title (prevent gui oddity)
+
+	* examples/pixelmap: strip \n's from image title (prevent gui oddity)
 
 2004-04-24  Seth Burgess <sjburges@gimp.org>
 	* examples/animate_cells:  s/channel_ops_duplicate/image_duplicate/
@@ -393,7 +437,7 @@
 	* examples/dataurl: Changed png to pass right # of parameters, changed 
 	some deprecated functions, fixed some sub's in Gimp.xs for the 
 	export functionality.
-        * examples/ditherize: s/push_undo/undo/g
+	* examples/ditherize: s/push_undo/undo/g
 	* examples/example-fu: uncommented the now functional widgets for 
 	gradient, brush, texture.  Added a couple other comments.
 	* examples/example-net: commented
@@ -414,7 +458,7 @@
 	Added some more EXPORT_CAN_HANDLE*.
 	* Gimp.xs: corresponding EXPORT_CAN_HANDLE* additions. 
 	
- 	* examples/examples.TODO: updated accordingly + failures.  Now have 
+	* examples/examples.TODO: updated accordingly + failures.  Now have 
 	everything sorted into working and not working.
 
 2004-04-24  Seth Burgess <sjburges@gimp.org>
@@ -440,12 +484,12 @@
 	* examples/example-oo
 	* examples/fade-alpha
 	* examples/feedback
-        * examples/fire
+	* examples/fire
 	* examples/fit-text
 	* examples/font_table
 	* examples/frame_filter
 	* examples/frame_reshuffle
-        * examples/gallery
+	* examples/gallery
 	* examples/gimp-make-img-map
 	* examples/gimpmagick
 	* examples/glowing_steel
@@ -466,7 +510,7 @@
 	* examples/parasite_editor
 	* examples/perlotine
 	* examples/pixelmap
-        * examples/povray
+	* examples/povray
 	* examples/prep4gif
 	* examples/randomart1
 	* examples/randomblends
@@ -479,11 +523,11 @@
 	* examples/stamps
 	* examples/terral_text
 	* examples/tex-to-float
-        * examples/translogo
+	* examples/translogo
 	* examples/triangle
 	* examples/triangu
 	* examples/view3d
-        * examples/visual
+	* examples/visual
 	* examples/warp-sharp
 	* examples/webify
 	* examples/windify
@@ -495,7 +539,7 @@
 
 	* examples/examples.TODO: updated accordingly
 
-        * TODO: updated
+	* TODO: updated
 
 	* Gimp/Util.pm: updated text_image_new for 2.0
 
@@ -554,7 +598,7 @@
 	* Gimp.pm: updated POD a bit to reflect a bit more reality
 	
 	* examples/fade-alpha: renamed registering to fade_alpha, fixed typos
-        * examples/frame_filter: moved to Filters/Generic/ 
+	* examples/frame_filter: moved to Filters/Generic/ 
 	* examples/pixelmap: moved to Filters/Generic/
 	* examples/examples.TODO: updated accordingly + can't use example-oo
 
@@ -592,7 +636,7 @@
 	* examples/glowing_steel: s/bucket_fill/edit_bucket_fill 
 	* examples/innerbevel: better defaults, better naming, removed debug
 	  code, more fudging.
-        * examples/warp-sharp: s/undo_push/undo/, added edge detect param
+	* examples/warp-sharp: s/undo_push/undo/, added edge detect param
 	* examples/examples.TODO: updated accordingly
 
 2004-2-29 Seth Burgess <sjburges@gimp.org>
@@ -600,7 +644,7 @@
 	  problems for a reference passed in.  Still has lousy error detection.
 	  Can hose up gimp's color selection pretty well.  Needs more testing.
 
- 	* examples/fade-alpha
+	* examples/fade-alpha
 	* examples/innerbevel
 	* examples/randomart1
 	* examples/randomblends: s/blend/edit_blend to remove deprecated
@@ -609,7 +653,7 @@
 2004-2-25 Seth Burgess <sjburges@gimp.org>
 	* Gimp/Util.pm: s/Gradient->get_active/Gradient->get_gradient/
 
-        * examples/dust: removed deprecated stuff
+	* examples/dust: removed deprecated stuff
 	* examples/map_to_gradient: added param to get non-reversed gradient
 	* examples/mirrorsplit: changed algorithm to add a layer; can't flip 
 	  without it being added now.  Changed deprecated stuff.
@@ -631,14 +675,14 @@
 
 2004-2-22 Seth Burgess <sjburges@gimp.org>
 	* UI/basewidget.pm: still needs to compile and return a value (for now) 
- 	so stuff should work again.
+	so stuff should work again.
 
 2004-2-21 Seth Burgess <sjburges@gimp.org>
 	* examples/yinyang: s/gimp_bucket_fill/gimp_edit_bucket_fill/
 	* examples/examples.TODO: updated appropriately
 
 	* README: cleaned up a bit, relected personal biases of myself more
-        * MANIFEST: added examples/dots
+	* MANIFEST: added examples/dots
 	* AUTHORS: gave myself some credit
 
 	* Makefile.PL: reorganized examples into alphabetical order for eaiser
@@ -657,9 +701,9 @@
 	* Gimp.pm, Fu.pm, Lib.pm, others: Upped version # to 2.0
 
 2004-1-28 21:45:36 CET Marc Lehman <pcg@goof.com>
-        * Changes, ChangeLog: Renamed Changes to ChangeLog, kept Changes
-        to document revision history (because users likely will look at
-        Changes to find which revision has which features).
+	* Changes, ChangeLog: Renamed Changes to ChangeLog, kept Changes
+	to document revision history (because users likely will look at
+	Changes to find which revision has which features).
 
 2003-12-28 Seth Burgess <sjburges@gimp.org>
 	* UI/UI.xs: add a call to gimp_stock_init() to UI startup, so we 
@@ -696,7 +740,7 @@
 	* examples/examples.TODO: added.  Keep track of testing of 
 	scripts and plans for their futures.
 
-        * examples/Create_Images
+	* examples/Create_Images
 	* examples/alpha2color
 	* examples/blended2
 	* examples/bricks
@@ -729,8 +773,8 @@
 	  installation-time, so were double-checked after install.
 
 	  s/gimp_image_active_drawable/gimp_image_get_active_drawable/
-          s/undo_push_group_start/undo_group_start/
-          s/undo_push_group_end/undo_group_end/
+	  s/undo_push_group_start/undo_group_start/
+	  s/undo_push_group_end/undo_group_end/
 	  s/gimp_convert_indexed/gimp_image_convert_indexed/
 	  s/gimp_convert_rgb/gimp_image_convert_rgb/
 	  s/set_name/drawable_set_name/
@@ -740,15 +784,15 @@
 	  s/drawable_mask/drawable_get_mask/
 	  s/gimp_image_floating_selection/gimp_image_get_floating_selection/
 	  s/layer_set_visible/drawable_set_visible/
-       
-        * examples/PDB: updated with a partial Gtk2 conversion; needs more
+
+	* examples/PDB: updated with a partial Gtk2 conversion; needs more
 	  work still.
 	* examples/dots: put in Render/Pattern/Dots instead of Render/Dots 
 	* examples/randomart1: removed last random selection, fixed colors
 	  to be within [0,0,0]-[1,1,1]
 	* examples/randomblends: fixed off-by-one error in loop
 	* examples/xachlego: removal of dead code
-        * examples/xachvision: switched grid orientation
-        * examples/xachshadow: added a $img->selection_none at end
-       
+	* examples/xachvision: switched grid orientation
+	* examples/xachshadow: added a $img->selection_none at end
+
 For older changes please refer to the Changes file and entries prior to 1.3.

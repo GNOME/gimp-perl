@@ -1,4 +1,4 @@
-#!/opt/bin/perl
+#!/usr/bin/perl
 
 use Gimp qw(:auto N_ __);
 use Gimp::Fu;

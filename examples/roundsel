@@ -1,4 +1,4 @@
-#!/opt/bin/perl
+#!/usr/bin/perl
 
 # Use gaussian blur and levels to round selection corners
 

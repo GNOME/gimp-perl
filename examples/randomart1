@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
+eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 
 # <sjburges@gimp.org> 12/13/03: adjusted number of blend arguments to 

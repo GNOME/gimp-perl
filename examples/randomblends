@@ -1,4 +1,4 @@
-#!/opt/bin/perl
+#!/usr/bin/perl
 
 # <sjburges@gimp.org>
 # This is adrian's idea - take random blends and difference them.  You're

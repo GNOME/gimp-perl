@@ -1,6 +1,6 @@
-#!/opt/bin/perl -w
+#!/usr/bin/perl -w
 
-eval 'exec /opt/bin/perl -w -S $0 ${1+"$@"}'
+eval 'exec /usr/bin/perl -w -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 # <sjburges@gimp.org>
 use Gimp;

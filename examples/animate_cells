@@ -1,6 +1,6 @@
-#!/opt/bin/perl
+#!/usr/bin/perl
 
-eval 'exec /opt/bin/perl  -S $0 ${1+"$@"}'
+eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 #
 # A plug-in for GIMP which animates a series of layers as if

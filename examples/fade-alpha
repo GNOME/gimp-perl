@@ -1,4 +1,4 @@
-#!/opt/bin/perl -w
+#!/usr/bin/perl -w
 
 use Gtk2;
 use Gimp qw(:auto);

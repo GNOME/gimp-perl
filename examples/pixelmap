@@ -1,4 +1,4 @@
-#!/opt/bin/perl
+#!/usr/bin/perl
 
 use Gimp::Feature 'pdl';
 use Gimp 1.099;
