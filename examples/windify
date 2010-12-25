@@ -36,8 +36,7 @@ sub windify {
                      15, #length
                      $angle, 
                      gimp_drawable_width($windlayercopy)/2,
-                     gimp_drawable_height($windlayercopy)/2,
-                     0 # doesn't matter for linear
+                     gimp_drawable_height($windlayercopy)/2
                      );
 	gimp_layer_set_mode($windlayercopy, 10); # Lighten Only
 	gimp_image_merge_visible_layers($out,0);
