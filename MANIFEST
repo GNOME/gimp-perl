@@ -5,7 +5,6 @@ config.pl
 COPYING
 COPYING.Artistic
 COPYING.GNU
-embedxpm
 enums.pl
 examples/animate_cells
 examples/billboard
@@ -68,7 +67,6 @@ examples/xachvision
 examples/yinyang
 extra.c
 extra.h
-gimpdoc
 gimpenums.c
 gppport.h
 Gimp/Compat.pm
@@ -139,7 +137,6 @@ po/zh_TW.po
 pxgettext
 README
 README.win32
-scm2perl
 t/loadlib.t
 t/load.t
 TODO
@@ -151,4 +148,7 @@ UI/Makefile.PL
 UI/typemap
 UI/UI.pm
 UI/UI.xs
-xcftopnm
+utils/embedxpm
+utils/gimpdoc
+utils/scm2perl
+utils/xcftopnm
