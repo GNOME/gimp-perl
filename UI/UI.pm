@@ -38,7 +38,7 @@ of the API has been converted.
 
 # <sjburges@gimp.org> removed the camel logo from scripts
 
-$VERSION = 2.2;
+$VERSION = 2.3;
 
 if (eval { require Gtk2; import Gtk2 (); 1 }) {
    local $/;
