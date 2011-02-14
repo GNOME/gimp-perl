@@ -68,11 +68,12 @@ examples/xachvision
 examples/yinyang
 extra.c
 extra.h
+gimpdoc
+gimpenums.c
+gppport.h
 Gimp/Compat.pm
 Gimp/Config.pm.in
 Gimp/Data.pm
-gimpdoc
-gimpenums.c
 Gimp/Feature.pm
 Gimp/Fu.pm
 Gimp/Lib.pm
@@ -81,11 +82,10 @@ Gimp/Makefile.PL
 Gimp/Module.pm
 Gimp/OO.pod
 Gimp/Pixel.pod
-Gimp.pm
 Gimp/Pod.pm
 Gimp/Util.pm
+Gimp.pm
 Gimp.xs
-gppport.h
 insenums
 logo.xpm
 MAINTAINERS
