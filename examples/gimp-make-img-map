@@ -254,18 +254,18 @@ sub decoration_drop_shadow {
     $tiled_img->add_layer_mask($tiled_shadow, $tiled_shadow_msk);
     
     # Fill all the layers with some contents
-    gimp_palette_set_background([128,128,128]); 
+    gimp_context_set_background([128,128,128]); 
     $tiled_drw->edit_fill(BACKGROUND_FILL);
     
-    gimp_palette_set_background($bgcolor);
+    gimp_context_set_background($bgcolor);
     $tiled_background->edit_fill(BACKGROUND_FILL);
     if ($bgpattern) {
 	print "Setting pattern\n";
-	gimp_patterns_set_pattern($bgpattern);
+	gimp_context_set_pattern($bgpattern);
 	$tiled_background->bucket_fill(PATTERN_BUCKET_FILL,
 				       NORMAL, 100, 0, FALSE, 0,0);
     }
-    gimp_palette_set_background([0, 0, 0]);  # Shadow color
+    gimp_context_set_background([0, 0, 0]);  # Shadow color
     $tiled_shadow->edit_fill(BACKGROUND_FILL);
     
     # Add all the layers to the image
@@ -277,7 +277,7 @@ sub decoration_drop_shadow {
     my $xpos = 0;
     
     # Set color for drawing in mask
-    gimp_palette_set_background([255, 255, 255]);
+    gimp_context_set_background([255, 255, 255]);
     for $ly_idx (0..@$layout-1) {
 	my ($img, $xpos, $ypos) = @{$layout->[$ly_idx]};
 #	($layer) = @{gimp_image_get_layers($img)};
@@ -333,18 +333,18 @@ sub decoration_sunken_windows {
     $tiled_punch_layer->add_layer_mask($tiled_punch_mask);
     
     # Fill all the layers with some contents
-    gimp_palette_set_background([128,128,128]); 
+    gimp_context_set_background([128,128,128]); 
     $tiled_drw->edit_fill(BACKGROUND_FILL);
     
-    gimp_palette_set_background($bgcolor);
+    gimp_context_set_background($bgcolor);
     $tiled_punch_layer->edit_fill(BACKGROUND_FILL);
     if ($bgpattern) {
 	print "Setting pattern\n";
-	gimp_patterns_set_pattern($bgpattern);
+	gimp_context_set_pattern($bgpattern);
 	$tiled_punch_layer->bucket_fill(PATTERN_BUCKET_FILL,
 				NORMAL, 100, 0, FALSE, 0,0);
     }
-    gimp_palette_set_background([255, 255, 255]);  # Punch stencil
+    gimp_context_set_background([255, 255, 255]);  # Punch stencil
     $tiled_punch_stencil->edit_fill(BACKGROUND_FILL);
     
     # Add all the layers to the image
@@ -356,7 +356,7 @@ sub decoration_sunken_windows {
     my $xpos = 0;
     
     # Set color for drawing in mask
-    gimp_palette_set_background([0, 0, 0]);
+    gimp_context_set_background([0, 0, 0]);
     for $ly_idx (0..@$layout-1) {
 	my ($img, $xpos, $ypos) = @{$layout->[$ly_idx]};
 	my $layer = Gimp::gimp_image_get_active_layer($img);
@@ -451,10 +451,9 @@ Gimp::on_net sub {
 	    my ($img, $xpos, $ypos) = @{$layout->[$idx]};
 	    my($w,$h) = ($img->width, $img->height);
 	    
-	    printf INDEX "%s %.0f %.0f %.0f %.0f %s\n",
-	        $filenames[$idx], $xpos, $ypos, $xpos+$w, $ypos+$h, $descr;
-	    printf "%s %.0f %.0f %.0f %.0f %s\n",
-	        $filenames[$idx], $xpos, $ypos, $xpos+$w, $ypos+$h, $descr;
+           printf INDEX "%s %.0f %.0f %.0f %.0f %s\n",
+                $filenames[$idx], $xpos, $ypos, $xpos+$w, $ypos+$h, $descr;
+           printf "%s %.0f %.0f %.0f %.0f %s\n",
 	}
 	close(INDEX);
     }

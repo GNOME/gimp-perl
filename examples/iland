@@ -21,7 +21,7 @@ sub landscape {
 	my ($image, $drawable, $floor,$component, $delta,$elevation, $camerapos) = @_;
 	
 	#gimp_tile_cache_size(20000);
-	gimp_selection_clear($image);
+	gimp_selection_none($image);
 	plug_in_rotate(RUN_NONINTERACTIVE, $image, -1, $camerapos, 1) if ($camerapos != 0);
 	$width=gimp_image_width($image);
 	$height=gimp_image_height($image);

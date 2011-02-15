@@ -65,7 +65,7 @@ sub perl_fu_glowing_steel {
   if (gimp_version() gt "2.3")  # make work for 2.2 or 2.3
     { gimp_layer_set_lock_alpha($textlayer, 1); } 
   else 
-    { gimp_layer_set_preserve_trans($textlayer,1); }
+    { gimp_layer_set_lock_alpha($textlayer,1); }
 
   perl_fu_brushed_metal($image, $textlayer, 25, 135);
 

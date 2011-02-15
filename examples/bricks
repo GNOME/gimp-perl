@@ -112,7 +112,7 @@ sub do_bricks {
     gimp_selection_all($image);
     if ($bp ne "") 
       {
-      gimp_patterns_set_pattern($bp);
+      gimp_context_set_pattern($bp);
       gimp_edit_bucket_fill($layerb,2,0,100,0,0,1,1); 
       }
     $border->edit_copy();

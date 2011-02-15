@@ -31,7 +31,7 @@ register	"stampify",
 		my $layer1 = gimp_layer_new($img2, $nw, $nh, RGBA_IMAGE, "Layer 1", 100, NORMAL_MODE);
 		gimp_image_add_layer($img2, $layer1, 0);
 		gimp_image_set_active_layer($img2, $layer1);
-		gimp_palette_set_background($paper);
+		gimp_context_set_background($paper);
 		gimp_drawable_fill($layer1, 1);
 # create horisontal holes
 		gimp_selection_none($img2);
@@ -54,7 +54,7 @@ register	"stampify",
 				CHANNEL_OP_ADD, 1, 0, 0);
 			$pos = $pos + $diameter + $gap;
 		}
-		gimp_palette_set_background($hole);
+		gimp_context_set_background($hole);
 		gimp_edit_fill($layer1, BACKGROUND_FILL);
 		gimp_selection_none($img2);
 # here comes the clever part! :-)

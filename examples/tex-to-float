@@ -126,7 +126,7 @@ sub grey_file_to_float {
     if (gimp_version() gt "2.3")  # make work for 2.2 or 2.3
       { gimp_layer_set_lock_alpha($floating_layer, 1); }
     else
-      { gimp_layer_set_preserve_trans($floating_layer,1); }
+      { gimp_layer_set_lock_alpha($floating_layer,1); }
     gimp_edit_fill($floating_layer, BACKGROUND_FILL);
 
     cleanup();

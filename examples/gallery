@@ -50,7 +50,7 @@ use Gimp::Util;
 sub printHeader {
 	my ($rf,$gf,$bf,$r,$g,$b, $htmlFile,$gallerytitle)=@_;
 	printf $htmlFile "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\">";
-   	printf $htmlFile "<body bgcolor='#%x%x%x'>\n",$r,$g,$b;
+        printf $htmlFile "<body bgcolor='#%x%x%x'>\n",$r,$g,$b;
         printf $htmlFile "<center><font face=\"verdana,arial\" size=\"5\" color=\"#%x%x%x\">",$rf,$gf,$bf;
 	printf $htmlFile "$gallerytitle\n";
         printf $htmlFile "<table><tr>\n";
@@ -67,7 +67,7 @@ sub printFooter {
 sub galleryMaker {
    my ($path, $label, $labelcolor, $labelpos, $font, $bright, $contrast, $rotate, $scalefix, $fixed, $gallerytitle, $color, $foregroundcolor, $galleryfile,$columns,$parentURL) = @_;
  
-   $oldforeground=gimp_palette_get_foreground();
+   $oldforeground=gimp_context_get_foreground();
    $path=$path.'/';
    if ($path eq ""){
         Gimp->message(__"All fields were not completed, sorry.");
@@ -116,7 +116,7 @@ sub galleryMaker {
 		   gimp_brightness_contrast($clayer, $bright, $contrast);
 		   if ( $label ne "" ){	
 			   my $newlayer=gimp_layer_new($img, 200, 100, RGB_IMAGE, "newlayer", 100, NORMAL_MODE);
-			   gimp_palette_set_foreground($labelcolor);
+			   gimp_context_set_foreground($labelcolor);
 			   my $txtlayer=gimp_text_fontname($img, -1, 1, 1, $label, 0, 0, 16, 0, $font); 
 			   if ($twidthEval == 0) {	
 			   	$txtwidth=gimp_drawable_width($txtlayer);
@@ -186,7 +186,7 @@ sub galleryMaker {
     printFooter($rf,$gf,$bf,$parentURL, *htmlFile);
     close htmlFile;
     Gimp->message(__"Your gallery ($galleryfile) has been generated through Gallery plug-in with $totalentries entries");
-    gimp_palette_set_foreground($oldforeground);
+    gimp_context_set_foreground($oldforeground);
    # return();
 
 }

@@ -26,7 +26,7 @@ sub plug_in_example_oo {
 # like Objtype->function, and it will be translated into 
 # gimp_objtype_function
 
-# instead of gimp_palette_set_background() you can use
+# instead of gimp_context_set_background() you can use
   Palette->set_background([200,200,100]);
 
 # Next, we have 2 examples of using the drawable or image as an object when

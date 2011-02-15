@@ -47,7 +47,7 @@ sub get_vguides {
     my @vguides;
     while ($i=$img->find_next_guide($i)) {
         if ($img->get_guide_orientation($i) == &Gimp::ORIENTATION_VERTICAL){
-            $keyval = sprintf("%4d", $img->get_guide_position($i));
+	    $keyval = sprintf("%4d", $img->get_guide_position($i));
             $vkeys{$keyval} = $i;
             }
         }
