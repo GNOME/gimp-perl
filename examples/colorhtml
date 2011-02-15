@@ -1,26 +1,19 @@
 #!/usr/bin/perl
-
 # pcg@goof.com
-
 use Gimp;
 use Gimp::Fu;
 use Gimp::UI;
 use Fcntl;
-
 my %replace = (
    "&" => "&amp;",
    "<" => "&lt;",
    ">" => "&gt;",
-);
-
 # read some file, make text out of it
 sub read_text {
    my $fh = shift;
    local $/;
    my $data = <$fh>;
    $data;
-}
-
 register "file_colorhtml_save",
          "Saves the image as coloured html text",
          "=pod",
@@ -45,12 +38,9 @@ register "file_colorhtml_save",
    my $export = Gimp::UI::export_image ($new_img=$img, $new_drawable=$drawable, "COLORHTML",
                                         EXPORT_CAN_HANDLE_RGB);
    die __"export failed" if $export == EXPORT_CANCEL;
-
    my ($w,$h) = ($new_drawable->width, $new_drawable->height);
    Gimp->tile_cache_ntiles($w / Gimp->tile_width + 1);
-
    sysopen FILE,$filename,O_CREAT|O_TRUNC|O_WRONLY or die __"Unable to open '$filename' for writing: $!\n";
-
    my $cssfile;
    if ($css) {
       if ($filename =~ /(.*)\.[^.]+$/) {
@@ -60,10 +50,8 @@ register "file_colorhtml_save",
       } else {
          $cssfile = "$filename.css"
       }
-
       sysopen CSS,$cssfile,O_CREAT|O_TRUNC|O_WRONLY or die __"Unable to open '$cssfile' for writing: $!\n";
    }
-
    my $data;
    if ($source == 0) {
       seek DATA, 0, 0;
@@ -75,7 +63,6 @@ register "file_colorhtml_save",
    } elsif ($source == 2) {
       $data = $text;
    }
-
    my @data;
    $data =~ y/\x21-\x7f//cd;
    @data = split //, $data;
@@ -84,13 +71,9 @@ register "file_colorhtml_save",
    }
    @data = ("X") x 80 unless @data;
    my @chars;
-
    my $region = $new_drawable->pixel_rgn (0, 0, $w, $h, 0, 0);
-
    init Progress __"Saving '$filename' as COLORHTML...";
-
    $closetag = $closetag ? "</font>" : "";
-
    if ($css) {
       my $file = $cssfile;
       $file = $1 if ($cssfile =~ m@/([^/]+)$@);
@@ -104,9 +87,7 @@ register "file_colorhtml_save",
 </head>
 <body><pre>
 HEADER
-
      $size = 8 + ($size - 2) * 2;
-
      print CSS <<HEADER;
 body {
    width: 100%;
@@ -115,12 +96,10 @@ body {
    font-size: ${size}px;
    background-color: #000000;
    color: #ffffff;
-}
 HEADER
    } else {
       print FILE "<html><body bgcolor=black>\n<font size=\"$size\"><pre>\n";
    }
-
    my %colors;
    for (my $y = 0; $y < $h; $y++) {
       my $pel = $region->get_row2 (0, $y, $w);
@@ -129,7 +108,6 @@ HEADER
          $pel =~ s{(...)}{
             "<span class=\"N".unpack("H*",$1)."\">".shift(@chars)."</span>"
          }ges;
-
          while ($pel =~ /"N([0-9a-fA-F]{6})"/g) {
              my $color = $1;
              print CSS "span.N$color { color: #$color; background-color: #000000; }\n" unless exists $colors{$color};
@@ -146,47 +124,31 @@ HEADER
       }
       
       print FILE $pel,"\n";
-
       update Progress $y/$h;
    }
    print FILE "</pre>\n</html>\n";
-
    $new_img->delete if $export == EXPORT_EXPORT;
    ();
-};
-
 Gimp::on_query {
    Gimp->register_save_handler("file_colorhtml_save", "colorhtml", "");
-};
-
 exit main;
-
 =head1 COLORHTML FILE FORMAT
-
 This file save filter writes a large regular grid filled with coloured
 characters. The characters can be stored in file and don't have anything to do
 with the image. The colour of each character, though, is taken from the image
 to save.
-
 This creates some kind of mosaic effect with characters.
-
 The pictures should be limited to about 120x120 pixels, since most
 browsers do not view larger images. The aspect ratio depends on the
 fixed-width font the browser is using, and is usually around 2:1 (so you
 should squash your image accordingly).
-
 The FONT tags can be saved either HTML-4.0 compliant (C<font color="#rrggbb">)
 or in a proprietary format most browsers support (C<font color=rrggbb>).
 To save even more space you can leave out the closing tag (C</font>),
 but this will potentially leave thousands of font elements open in the browser,
 and will disturb the current font colour.
-
 =head1 LICENSE
-
 Copyright Marc Lehman.  CSS addtions (c) Carol Spears.
 Distributed under the same terms as Gimp-Perl.
-
 =cut
-
 __END__
-
