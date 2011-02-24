@@ -217,8 +217,8 @@ print "writing Gimp/Config.pm... ";
 }
 print "ok\n";
 
-@EXE_FILES = qw(gimpdoc xcftopnm embedxpm);
-push @EXE_FILES, qw(scm2perl) if $PRD;
+@EXE_FILES = qw(utils/gimpdoc utils/xcftopnm utils/embedxpm);
+push @EXE_FILES, qw(utils/scm2perl) if $PRD;
 
 WriteMakefile(
     'dist'	=> {
