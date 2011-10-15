@@ -9,137 +9,137 @@ msgstr ""
 "Last-Translator: Valek Filippov <frob@df.ru>\n"
 "Language-Team: Russian <gnome-cyr@gnome.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=koi8-r\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
 msgid "expected perl-server at other end of socket, got @r\n"
-msgstr "на другом конце сокета ожидался perl-сервер, получено @r\n"
+msgstr "п╫п╟ п╢я─я┐пЁп╬п╪ п╨п╬п╫я├п╣ я│п╬п╨п╣я┌п╟ п╬п╤п╦п╢п╟п╩я│я▐ perl-я│п╣я─п╡п╣я─, п©п╬п╩я┐я┤п╣п╫п╬ @r\n"
 
 msgid "too many"
-msgstr "слишком много"
+msgstr "я│п╩п╦я┬п╨п╬п╪ п╪п╫п╬пЁп╬"
 
 msgid "<Image>/Filters/Logulator/Transparent Logo..."
-msgstr "<Image>/Фильтры/Регистратор/Прозрачная эмблема..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п═п╣пЁп╦я│я┌я─п╟я┌п╬я─/п÷я─п╬п╥я─п╟я┤п╫п╟я▐ я█п╪п╠п╩п╣п╪п╟..."
 
 msgid "$s: not an integer\n"
-msgstr "$s: не целое число\n"
+msgstr "$s: п╫п╣ я├п╣п╩п╬п╣ я┤п╦я│п╩п╬\n"
 
 msgid "<Image>/Select/Round Rectangular Selection..."
-msgstr "<Image>/Выделение/Выделение скругленного прямоугольника..."
+msgstr "<Image>/п▓я▀п╢п╣п╩п╣п╫п╦п╣/п▓я▀п╢п╣п╩п╣п╫п╦п╣ я│п╨я─я┐пЁп╩п╣п╫п╫п╬пЁп╬ п©я─я▐п╪п╬я┐пЁп╬п╩я▄п╫п╦п╨п╟..."
 
 msgid "<Image>/Guides/To Selection..."
-msgstr "<Image>/Направляющие/В выделение..."
+msgstr "<Image>/п²п╟п©я─п╟п╡п╩я▐я▌я┴п╦п╣/п▓ п╡я▀п╢п╣п╩п╣п╫п╦п╣..."
 
 msgid "Help for "
-msgstr "Справка о "
+msgstr "п║п©я─п╟п╡п╨п╟ п╬ "
 
 msgid "illegal parasite specification, expected three array members"
-msgstr "неверная спецификация паразита, ожидались три элемента массива"
+msgstr "п╫п╣п╡п╣я─п╫п╟я▐ я│п©п╣я├п╦я└п╦п╨п╟я├п╦я▐ п©п╟я─п╟п╥п╦я┌п╟, п╬п╤п╦п╢п╟п╩п╦я│я▄ я┌я─п╦ я█п╩п╣п╪п╣п╫я┌п╟ п╪п╟я│я│п╦п╡п╟"
 
 msgid "Last Modified"
-msgstr "Последнее измененное"
+msgstr "п÷п╬я│п╩п╣п╢п╫п╣п╣ п╦п╥п╪п╣п╫п╣п╫п╫п╬п╣"
 
 msgid "unable to read '$fn': $!"
-msgstr "не удалось прочесть '$fn': $!"
+msgstr "п╫п╣ я┐п╢п╟п╩п╬я│я▄ п©я─п╬я┤п╣я│я┌я▄ '$fn': $!"
 
 msgid "<Image>/Filters/Map/Image Tile..."
-msgstr "<Image>/Фильтры/Отображение/Image Tile..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п·я┌п╬п╠я─п╟п╤п╣п╫п╦п╣/Image Tile..."
 
 msgid "<Image>/Filters/Logulator/Crystal"
-msgstr "<Image>/Фильтры/Регистратор/Кристалл"
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п═п╣пЁп╦я│я┌я─п╟я┌п╬я─/п я─п╦я│я┌п╟п╩п╩"
 
 msgid "Unable to read temporary image tile $tmp: $!"
 msgstr ""
 
 msgid "run_mode must be INTERACTIVE, NONINTERACTIVE or RUN_WITH_LAST_VALS\n"
 msgstr ""
-"run_mode должен быть INTERACTIVE, NONINTERACTIVE или RUN_WITH_LAST_VALS\n"
+"run_mode п╢п╬п╩п╤п╣п╫ п╠я▀я┌я▄ INTERACTIVE, NONINTERACTIVE п╦п╩п╦ RUN_WITH_LAST_VALS\n"
 
 msgid "Font Selection Dialog ($desc)"
-msgstr "Диалог выбора шрифта ($desc)"
+msgstr "п■п╦п╟п╩п╬пЁ п╡я▀п╠п╬я─п╟ я┬я─п╦я└я┌п╟ ($desc)"
 
 msgid "xlfd_unpack: unmatched XLFD '$fontname'\n"
-msgstr "xlfd_unpack: несовпадающее XLFD \"$fontname\"\n"
+msgstr "xlfd_unpack: п╫п╣я│п╬п╡п©п╟п╢п╟я▌я┴п╣п╣ XLFD \"$fontname\"\n"
 
 msgid "<Image>/Filters/Noise/Xach Vision..."
-msgstr "<Image>/Фильтры/Шум/Xach-видение..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п╗я┐п╪/Xach-п╡п╦п╢п╣п╫п╦п╣..."
 
 msgid ""
 "$function: function name contains unusual characters, good style is to use "
 "only 0-9, a-z and _"
 msgstr ""
-"$function: название функции содержит необычные символы, хороший стиль - "
-"использование только 0-9, a-z and _"
+"$function: п╫п╟п╥п╡п╟п╫п╦п╣ я└я┐п╫п╨я├п╦п╦ я│п╬п╢п╣я─п╤п╦я┌ п╫п╣п╬п╠я▀я┤п╫я▀п╣ я│п╦п╪п╡п╬п╩я▀, я┘п╬я─п╬я┬п╦п╧ я│я┌п╦п╩я▄ - "
+"п╦я│п©п╬п╩я▄п╥п╬п╡п╟п╫п╦п╣ я┌п╬п╩я▄п╨п╬ 0-9, a-z and _"
 
 msgid "Help"
-msgstr "Справка"
+msgstr "п║п©я─п╟п╡п╨п╟"
 
 msgid "<Image>/Image/Alpha/Clear Alpha..."
-msgstr "<Image>/Изображение/Альфа/Очистить альфа-канал..."
+msgstr "<Image>/п≤п╥п╬п╠я─п╟п╤п╣п╫п╦п╣/п░п╩я▄я└п╟/п·я┤п╦я│я┌п╦я┌я▄ п╟п╩я▄я└п╟-п╨п╟п╫п╟п╩..."
 
 msgid "<Image>/Filters/Map/Pixelmap..."
-msgstr "<Image>/Фильтры/Отображение/Отображение точек..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п·я┌п╬п╠я─п╟п╤п╣п╫п╦п╣/п·я┌п╬п╠я─п╟п╤п╣п╫п╦п╣ я┌п╬я┤п╣п╨..."
 
 msgid "unable to fork: $!"
-msgstr "не удалось выполнить fork: $!"
+msgstr "п╫п╣ я┐п╢п╟п╩п╬я│я▄ п╡я▀п©п╬п╩п╫п╦я┌я▄ fork: $!"
 
 msgid "FG"
-msgstr "Передний план"
+msgstr "п÷п╣я─п╣п╢п╫п╦п╧ п©п╩п╟п╫"
 
 msgid "FATAL: unable to create $tmp: $!\n"
-msgstr "ФАТАЛЬНАЯ ОШИБКА: невозможно создать $tmp: $!\n"
+msgstr "п╓п░п╒п░п⌡п╛п²п░п╞ п·п╗п≤п▒п п░: п╫п╣п╡п╬п╥п╪п╬п╤п╫п╬ я│п╬п╥п╢п╟я┌я▄ $tmp: $!\n"
 
 msgid "/Filters/Logulator"
-msgstr "/Фильтры/Регистратор"
+msgstr "/п╓п╦п╩я▄я┌я─я▀/п═п╣пЁп╦я│я┌я─п╟я┌п╬я─"
 
 msgid "dunno how to return param type %d"
-msgstr "неизвестно как вернуть параметр типа %d"
+msgstr "п╫п╣п╦п╥п╡п╣я│я┌п╫п╬ п╨п╟п╨ п╡п╣я─п╫я┐я┌я▄ п©п╟я─п╟п╪п╣я┌я─ я┌п╦п©п╟ %d"
 
 msgid "<Image>/Image/Alpha/Alpha2Color..."
-msgstr "<Image>/Изображение/Альфа/Альфа-канал -> Цвет..."
+msgstr "<Image>/п≤п╥п╬п╠я─п╟п╤п╣п╫п╦п╣/п░п╩я▄я└п╟/п░п╩я▄я└п╟-п╨п╟п╫п╟п╩ -> п╕п╡п╣я┌..."
 
 msgid "Image Types"
-msgstr "Типы изображений"
+msgstr "п╒п╦п©я▀ п╦п╥п╬п╠я─п╟п╤п╣п╫п╦п╧"
 
 msgid "<Image>/Filters/Render/Stampify..."
-msgstr "<Image>/Фильтры/Визуализация/Штамповать..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/п╗я┌п╟п╪п©п╬п╡п╟я┌я▄..."
 
 msgid "could not connect to the gimp server (make sure Perl-Server is running)"
 msgstr ""
-"невозможно подключиться к серверу gimp (убедитесь, что Perl-Server запущен)"
+"п╫п╣п╡п╬п╥п╪п╬п╤п╫п╬ п©п╬п╢п╨п╩я▌я┤п╦я┌я▄я│я▐ п╨ я│п╣я─п╡п╣я─я┐ gimp (я┐п╠п╣п╢п╦я┌п╣я│я▄, я┤я┌п╬ Perl-Server п╥п╟п©я┐я┴п╣п╫)"
 
 msgid "<Toolbox>/Xtns/Render/Stamps..."
-msgstr "<Toolbox>/Расш./Визуализация/Штампы..."
+msgstr "<Toolbox>/п═п╟я│я┬./п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/п╗я┌п╟п╪п©я▀..."
 
 msgid "More..."
-msgstr "Дальше..."
+msgstr "п■п╟п╩я▄я┬п╣..."
 
 msgid "<Toolbox>/Xtns/Render/Logos/Firetext..."
-msgstr "<Toolbox>/Расш./Визуализация/Эмблемы/Горящий текст..."
+msgstr "<Toolbox>/п═п╟я│я┬./п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/п╜п╪п╠п╩п╣п╪я▀/п⌠п╬я─я▐я┴п╦п╧ я┌п╣п╨я│я┌..."
 
 msgid "interface=... tag is no longer supported\n"
-msgstr "тэг interface=... больше не поддерживается\n"
+msgstr "я┌я█пЁ interface=... п╠п╬п╩я▄я┬п╣ п╫п╣ п©п╬п╢п╢п╣я─п╤п╦п╡п╟п╣я┌я│я▐\n"
 
 msgid "Text"
-msgstr "Текст"
+msgstr "п╒п╣п╨я│я┌"
 
 msgid "<Image>/Filters/Render/Random Blends..."
-msgstr "<Image>/Фильтры/Визуализация/Случайные смеси..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/п║п╩я┐я┤п╟п╧п╫я▀п╣ я│п╪п╣я│п╦..."
 
 msgid "Synopsis"
-msgstr "Резюме"
+msgstr "п═п╣п╥я▌п╪п╣"
 
 msgid "Plug-In Path"
-msgstr "Путь дополнения"
+msgstr "п÷я┐я┌я▄ п╢п╬п©п╬п╩п╫п╣п╫п╦я▐"
 
 msgid "Restore values to the previous ones"
-msgstr "Восстановить предыдущие значения"
+msgstr "п▓п╬я│я│я┌п╟п╫п╬п╡п╦я┌я▄ п©я─п╣п╢я▀п╢я┐я┴п╦п╣ п╥п╫п╟я┤п╣п╫п╦я▐"
 
 msgid "Illegal default font description for $function: $val\n"
-msgstr "Недопустимое описание шрифта по умолчанию для $function: $val\n"
+msgstr "п²п╣п╢п╬п©я┐я│я┌п╦п╪п╬п╣ п╬п©п╦я│п╟п╫п╦п╣ я┬я─п╦я└я┌п╟ п©п╬ я┐п╪п╬п╩я┤п╟п╫п╦я▌ п╢п╩я▐ $function: $val\n"
 
 msgid "parameter '$entry->[1]' is not optional\n"
-msgstr "параметр \"$entry->[1]\" не может быть опущен\n"
+msgstr "п©п╟я─п╟п╪п╣я┌я─ \"$entry->[1]\" п╫п╣ п╪п╬п╤п╣я┌ п╠я▀я┌я▄ п╬п©я┐я┴п╣п╫\n"
 
 msgid "-*-courier-medium-r-normal--*-120-*-*-*-*-*"
 msgstr "-*-courier-medium-r-normal--*-120-*-*-*-*-*"
@@ -148,15 +148,15 @@ msgid "WARNING: client tried to unlock without holding a lock"
 msgstr ""
 
 msgid "<Toolbox>/Xtns/Perl/Control Center..."
-msgstr "<Toolbox>/Расш./Perl/Центр управления..."
+msgstr "<Toolbox>/п═п╟я│я┬./Perl/п╕п╣п╫я┌я─ я┐п©я─п╟п╡п╩п╣п╫п╦я▐..."
 
 msgid "register called with too many or wrong arguments\n"
 msgstr ""
-"регистр вызван со слишком большим числом аргументов или с неверными "
-"аргументами\n"
+"я─п╣пЁп╦я│я┌я─ п╡я▀п╥п╡п╟п╫ я│п╬ я│п╩п╦я┬п╨п╬п╪ п╠п╬п╩я▄я┬п╦п╪ я┤п╦я│п╩п╬п╪ п╟я─пЁя┐п╪п╣п╫я┌п╬п╡ п╦п╩п╦ я│ п╫п╣п╡п╣я─п╫я▀п╪п╦ "
+"п╟я─пЁя┐п╪п╣п╫я┌п╟п╪п╦\n"
 
 msgid "<Image>/Filters/Animation/Animate Cells..."
-msgstr "<Image>/Фильтры/Анимация/Анимировать клетки..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п░п╫п╦п╪п╟я├п╦я▐/п░п╫п╦п╪п╦я─п╬п╡п╟я┌я▄ п╨п╩п╣я┌п╨п╦..."
 
 msgid "Spin Layer SRC (250ms)"
 msgstr ""
@@ -170,11 +170,11 @@ msgid ""
 "gimp_pixel_rgns_register supports only 1, 2 or 3 arguments, upgrade to gimp-"
 "1.1 and report this error"
 msgstr ""
-"gimp_pixel_rgns_register поддерживает только 1, 2 или 3 аргумента, обновите "
-"до gimp-1.1 и сообщите об этой ошибке"
+"gimp_pixel_rgns_register п©п╬п╢п╢п╣я─п╤п╦п╡п╟п╣я┌ я┌п╬п╩я▄п╨п╬ 1, 2 п╦п╩п╦ 3 п╟я─пЁя┐п╪п╣п╫я┌п╟, п╬п╠п╫п╬п╡п╦я┌п╣ "
+"п╢п╬ gimp-1.1 п╦ я│п╬п╬п╠я┴п╦я┌п╣ п╬п╠ я█я┌п╬п╧ п╬я┬п╦п╠п╨п╣"
 
 msgid "last argument to gimp_pattern_select_widget must be scalar ref"
-msgstr "последний аргумент gimp_pattern_select_widget должен быть ссылкой на скаляр"
+msgstr "п©п╬я│п╩п╣п╢п╫п╦п╧ п╟я─пЁя┐п╪п╣п╫я┌ gimp_pattern_select_widget п╢п╬п╩п╤п╣п╫ п╠я▀я┌я▄ я│я│я▀п╩п╨п╬п╧ п╫п╟ я│п╨п╟п╩я▐я─"
 
 msgid ""
 "\n"
@@ -184,50 +184,50 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"ВСТРОЕННАЯ ДОКУМЕНТАЦИЯ В ФОРМАТЕ POD:\n"
+"п▓п║п╒п═п·п∙п²п²п░п╞ п■п·п пёп°п∙п²п╒п░п╕п≤п╞ п▓ п╓п·п═п°п░п╒п∙ POD:\n"
 "\n"
 
 msgid "Fileselector for $name"
-msgstr "Выбор файла для $name"
+msgstr "п▓я▀п╠п╬я─ я└п╟п╧п╩п╟ п╢п╩я▐ $name"
 
 msgid "<Toolbox>/Xtns/Render/Pixelgenerator..."
-msgstr "<Toolbox>/Расш./Визуализация/Точкогенератор..."
+msgstr "<Toolbox>/п═п╟я│я┬./п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/п╒п╬я┤п╨п╬пЁп╣п╫п╣я─п╟я┌п╬я─..."
 
 msgid "unable to convert Gimp::Drawable into Gimp::GimpDrawable (id %d)"
-msgstr "невозможно преобразовать Gimp::Drawable в Gimp::GimpDrawable (id %d)"
+msgstr "п╫п╣п╡п╬п╥п╪п╬п╤п╫п╬ п©я─п╣п╬п╠я─п╟п╥п╬п╡п╟я┌я▄ Gimp::Drawable п╡ Gimp::GimpDrawable (id %d)"
 
 msgid "<Image>/Filters/Distorts/MirrorSplit..."
-msgstr "<Image>/Фильтры/Искажения/MirrorSplit..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п≤я│п╨п╟п╤п╣п╫п╦я▐/MirrorSplit..."
 
 msgid "<Image>/Filters/Noise/Feedback..."
-msgstr "<Image>/Фильтры/Шум/Обратная связь..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п╗я┐п╪/п·п╠я─п╟я┌п╫п╟я▐ я│п╡я▐п╥я▄..."
 
 msgid "<Toolbox>/Xtns/Animation/Billboard..."
-msgstr "<Toolbox>/Расш./Анимация/Доска объявлений..."
+msgstr "<Toolbox>/п═п╟я│я┬./п░п╫п╦п╪п╟я├п╦я▐/п■п╬я│п╨п╟ п╬п╠я┼я▐п╡п╩п╣п╫п╦п╧..."
 
 msgid "unable to create listening unix socket: $!\n"
 msgstr ""
 
 msgid ", %d bytes data]"
-msgstr ", %d байт данных]"
+msgstr ", %d п╠п╟п╧я┌ п╢п╟п╫п╫я▀я┘]"
 
 msgid "server requests authorization, but no authorization available\n"
-msgstr "сервер запросил авторизацию, но авторизация не доступна\n"
+msgstr "я│п╣я─п╡п╣я─ п╥п╟п©я─п╬я│п╦п╩ п╟п╡я┌п╬я─п╦п╥п╟я├п╦я▌, п╫п╬ п╟п╡я┌п╬я─п╦п╥п╟я├п╦я▐ п╫п╣ п╢п╬я│я┌я┐п©п╫п╟\n"
 
 msgid "pdl height != region height"
-msgstr "pdl-высота != высота области"
+msgstr "pdl-п╡я▀я│п╬я┌п╟ != п╡я▀я│п╬я┌п╟ п╬п╠п╩п╟я│я┌п╦"
 
 msgid "<Image>/Guides/Center Guide..."
-msgstr "<Image>/Направляющие/Центрировать..."
+msgstr "<Image>/п²п╟п©я─п╟п╡п╩я▐я▌я┴п╦п╣/п╕п╣п╫я┌я─п╦я─п╬п╡п╟я┌я▄..."
 
 msgid "Close"
-msgstr "Закрыть"
+msgstr "п≈п╟п╨я─я▀я┌я▄"
 
 msgid "unable to open $rgb_db_path"
-msgstr "не удалось открыть $rgb_db_path"
+msgstr "п╫п╣ я┐п╢п╟п╩п╬я│я▄ п╬я┌п╨я─я▀я┌я▄ $rgb_db_path"
 
 msgid "You can't run this script with an INDEXED image!!"
-msgstr "Вы не можете запустить этот скрипт на индексированном изображении!"
+msgstr "п▓я▀ п╫п╣ п╪п╬п╤п╣я┌п╣ п╥п╟п©я┐я│я┌п╦я┌я▄ я█я┌п╬я┌ я│п╨я─п╦п©я┌ п╫п╟ п╦п╫п╢п╣п╨я│п╦я─п╬п╡п╟п╫п╫п╬п╪ п╦п╥п╬п╠я─п╟п╤п╣п╫п╦п╦!"
 
 msgid ""
 "An even number of frames is needed for spin back.\n"
@@ -235,10 +235,10 @@ msgid ""
 msgstr ""
 
 msgid "<Image>/Filters/Render/Add Glow"
-msgstr "<Image>/Фильтры/Визуализация/Добавить свечение"
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/п■п╬п╠п╟п╡п╦я┌я▄ я│п╡п╣я┤п╣п╫п╦п╣"
 
 msgid "function name contains dashes instead of underscores"
-msgstr "название функции содержит дефисы вместо подчеркиваний"
+msgstr "п╫п╟п╥п╡п╟п╫п╦п╣ я└я┐п╫п╨я├п╦п╦ я│п╬п╢п╣я─п╤п╦я┌ п╢п╣я└п╦я│я▀ п╡п╪п╣я│я┌п╬ п©п╬п╢я┤п╣я─п╨п╦п╡п╟п╫п╦п╧"
 
 msgid "required callback 'run' not found\n"
 msgstr ""
@@ -246,7 +246,7 @@ msgstr ""
 msgid ""
 "$function: argument name '$p->[1]' contains illegal characters, only 0-9, a-"
 "z and _ allowed"
-msgstr "$function: название аргумента \"$p->[1]\" содержит недопустимые символы, могут быть использованы только 0-9, a-z и _"
+msgstr "$function: п╫п╟п╥п╡п╟п╫п╦п╣ п╟я─пЁя┐п╪п╣п╫я┌п╟ \"$p->[1]\" я│п╬п╢п╣я─п╤п╦я┌ п╫п╣п╢п╬п©я┐я│я┌п╦п╪я▀п╣ я│п╦п╪п╡п╬п╩я▀, п╪п╬пЁя┐я┌ п╠я▀я┌я▄ п╦я│п©п╬п╩я▄п╥п╬п╡п╟п╫я▀ я┌п╬п╩я▄п╨п╬ 0-9, a-z п╦ _"
 
 msgid "required callback 'query' not found\n"
 msgstr ""
@@ -255,121 +255,121 @@ msgid ""
 "Expected an INT32 but got '%s'. Add '*1' if you really intend to pass in a "
 "string"
 msgstr ""
-"Ожидалось INT32, а получено '%s'. Добавьте '*1' если вы действительно "
-"намереваетесь посылать строку"
+"п·п╤п╦п╢п╟п╩п╬я│я▄ INT32, п╟ п©п╬п╩я┐я┤п╣п╫п╬ '%s'. п■п╬п╠п╟п╡я▄я┌п╣ '*1' п╣я│п╩п╦ п╡я▀ п╢п╣п╧я│я┌п╡п╦я┌п╣п╩я▄п╫п╬ "
+"п╫п╟п╪п╣я─п╣п╡п╟п╣я┌п╣я│я▄ п©п╬я│я▀п╩п╟я┌я▄ я│я┌я─п╬п╨я┐"
 
 msgid "wrong authorization, aborting connection"
-msgstr "неудачная авторизация, соединение оборвано"
+msgstr "п╫п╣я┐п╢п╟я┤п╫п╟я▐ п╟п╡я┌п╬я─п╦п╥п╟я├п╦я▐, я│п╬п╣п╢п╦п╫п╣п╫п╦п╣ п╬п╠п╬я─п╡п╟п╫п╬"
 
 msgid ""
 "invalid GIMP_HOST: 'spawn' is not a valid connection method for the server"
 msgstr ""
 
 msgid "WARNING"
-msgstr "ВНИМАНИЕ"
+msgstr "п▓п²п≤п°п░п²п≤п∙"
 
 msgid "Brush Selection Dialog"
-msgstr "Диалог выбора кисти"
+msgstr "п■п╦п╟п╩п╬пЁ п╡я▀п╠п╬я─п╟ п╨п╦я│я┌п╦"
 
 msgid "(none)"
-msgstr "(нет)"
+msgstr "(п╫п╣я┌)"
 
 msgid ""
 "Expected an INT32 but got '%s'. Maybe you meant '%s' instead and forgot to "
 "'use strict'"
 msgstr ""
-"Ожидалось INT32, а получено '%s'. Возможно вы имели в виду '%s' вместо этого "
-"и забыли про 'use strict'"
+"п·п╤п╦п╢п╟п╩п╬я│я▄ INT32, п╟ п©п╬п╩я┐я┤п╣п╫п╬ '%s'. п▓п╬п╥п╪п╬п╤п╫п╬ п╡я▀ п╦п╪п╣п╩п╦ п╡ п╡п╦п╢я┐ '%s' п╡п╪п╣я│я┌п╬ я█я┌п╬пЁп╬ "
+"п╦ п╥п╟п╠я▀п╩п╦ п©я─п╬ 'use strict'"
 
 msgid "authorization required for tcp connections"
-msgstr "для TCP-соединений требуется авторизация"
+msgstr "п╢п╩я▐ TCP-я│п╬п╣п╢п╦п╫п╣п╫п╦п╧ я┌я─п╣п╠я┐п╣я┌я│я▐ п╟п╡я┌п╬я─п╦п╥п╟я├п╦я▐"
 
 msgid "[undefined]"
-msgstr "[неопределено]"
+msgstr "[п╫п╣п╬п©я─п╣п╢п╣п╩п╣п╫п╬]"
 
 msgid "<Image>/Guides/Remove Guides"
-msgstr "<Image>/Направляющие/Удалить"
+msgstr "<Image>/п²п╟п©я─п╟п╡п╩я▐я▌я┴п╦п╣/пёп╢п╟п╩п╦я┌я▄"
 
 msgid "unable to open Gimp::Net communications socket: $!\n"
 msgstr ""
 
 msgid "You can't run this script without an ALPHA CHANNEL!!"
-msgstr "Вы не можете запустить этот скрипт без Альфа-канала!!!"
+msgstr "п▓я▀ п╫п╣ п╪п╬п╤п╣я┌п╣ п╥п╟п©я┐я│я┌п╦я┌я▄ я█я┌п╬я┌ я│п╨я─п╦п©я┌ п╠п╣п╥ п░п╩я▄я└п╟-п╨п╟п╫п╟п╩п╟!!!"
 
 msgid "WARNING: shared locking requested but not implemented"
-msgstr "ВНИМАНИЕ: shared locking запрошен, но не реализован"
+msgstr "п▓п²п≤п°п░п²п≤п∙: shared locking п╥п╟п©я─п╬я┬п╣п╫, п╫п╬ п╫п╣ я─п╣п╟п╩п╦п╥п╬п╡п╟п╫"
 
 msgid "<Toolbox>/Xtns/Render/Yin-Yang..."
-msgstr "<Toolbox>/Расш./Визуализация/Yin-Yang..."
+msgstr "<Toolbox>/п═п╟я│я┬./п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/Yin-Yang..."
 
 msgid "<Image>/Filters/Logulator/SOTA Chrome"
-msgstr "<Image>/Фильтры/Регистратор/SOTA хром"
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п═п╣пЁп╦я│я┌я─п╟я┌п╬я─/SOTA я┘я─п╬п╪"
 
 msgid "%s: procedural database execution failed"
-msgstr "%s: сбой выполнения процедурной базы данных"
+msgstr "%s: я│п╠п╬п╧ п╡я▀п©п╬п╩п╫п╣п╫п╦я▐ п©я─п╬я├п╣п╢я┐я─п╫п╬п╧ п╠п╟п╥я▀ п╢п╟п╫п╫я▀я┘"
 
 msgid "<Image>/Video/VCR Console..."
-msgstr "<Image>/Видео/Пульт видеомагнитофона..."
+msgstr "<Image>/п▓п╦п╢п╣п╬/п÷я┐п╩я▄я┌ п╡п╦п╢п╣п╬п╪п╟пЁп╫п╦я┌п╬я└п╬п╫п╟..."
 
 msgid ", authorization required"
-msgstr ", требуется авторизация"
+msgstr ", я┌я─п╣п╠я┐п╣я┌я│я▐ п╟п╡я┌п╬я─п╦п╥п╟я├п╦я▐"
 
 msgid "<Toolbox>/Xtns/Render/Golden Mean..."
-msgstr "<Toolbox>/Расш./Визуализация/Золотая середина..."
+msgstr "<Toolbox>/п═п╟я│я┬./п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/п≈п╬п╩п╬я┌п╟я▐ я│п╣я─п╣п╢п╦п╫п╟..."
 
 msgid "unable to create socketpair for gimp communications: $!"
 msgstr ""
 
 msgid "<Image>/View/3D Surface..."
-msgstr "<Image>/Вид/3D поверхность..."
+msgstr "<Image>/п▓п╦п╢/3D п©п╬п╡п╣я─я┘п╫п╬я│я┌я▄..."
 
 msgid "trying to start gimp with options \"$opt\"\n"
-msgstr "попытка запуска Gimp с параметром \"$opt\"\n"
+msgstr "п©п╬п©я▀я┌п╨п╟ п╥п╟п©я┐я│п╨п╟ Gimp я│ п©п╟я─п╟п╪п╣я┌я─п╬п╪ \"$opt\"\n"
 
 msgid "<Toolbox>/Xtns/Render/Logos/Inner Bevel..."
-msgstr "<Toolbox>/Расш./Визуализация/Эмблемы/Inner Bevel..."
+msgstr "<Toolbox>/п═п╟я│я┬./п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/п╜п╪п╠п╩п╣п╪я▀/Inner Bevel..."
 
 msgid ""
 "menupath _must_ start with <Image>, <Toolbox>, <Load>, <Save> or <None>!"
 msgstr ""
-"путь меню _должен_ начинаться с <Image>, <Toolbox>, <Load>, <Save> или "
+"п©я┐я┌я▄ п╪п╣п╫я▌ _п╢п╬п╩п╤п╣п╫_ п╫п╟я┤п╦п╫п╟я┌я▄я│я▐ я│ <Image>, <Toolbox>, <Load>, <Save> п╦п╩п╦ "
 "<None>!"
 
 msgid "<Image>/Filters/Misc/Magick..."
-msgstr "<Image>/ФИльтры/Разное/Магия..."
+msgstr "<Image>/п╓п≤п╩я▄я┌я─я▀/п═п╟п╥п╫п╬п╣/п°п╟пЁп╦я▐..."
 
 msgid "<Toolbox>/Xtns/Perl/Server"
-msgstr "<Toolbox>/Расш./Perl/Сервер"
+msgstr "<Toolbox>/п═п╟я│я┬./Perl/п║п╣я─п╡п╣я─"
 
 msgid "<Image>/Edit/Repeat & Duplicate..."
-msgstr "<Image>/Правка/Повтор и дублирование..."
+msgstr "<Image>/п÷я─п╟п╡п╨п╟/п÷п╬п╡я┌п╬я─ п╦ п╢я┐п╠п╩п╦я─п╬п╡п╟п╫п╦п╣..."
 
 msgid "accepted unix connection"
-msgstr "принять unix-соединение"
+msgstr "п©я─п╦п╫я▐я┌я▄ unix-я│п╬п╣п╢п╦п╫п╣п╫п╦п╣"
 
 msgid "<Image>/Filters/Colors/Map To Gradient..."
-msgstr "<Image>/Фильтры/Цвета/Отобразить в градиент..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п╕п╡п╣я┌п╟/п·я┌п╬п╠я─п╟п╥п╦я┌я▄ п╡ пЁя─п╟п╢п╦п╣п╫я┌..."
 
 msgid "<Image>/Filters/Logulator/Imigre-26"
-msgstr "<Image>/Фильтры/Регистратор/Imigre-26"
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п═п╣пЁп╦я│я┌я─п╟я┌п╬я─/Imigre-26"
 
 msgid "gimp_tile_get_data is not yet implemented\n"
-msgstr "gimp_tile_get_data еще не реализовано\n"
+msgstr "gimp_tile_get_data п╣я┴п╣ п╫п╣ я─п╣п╟п╩п╦п╥п╬п╡п╟п╫п╬\n"
 
 msgid "dunno how to pass arg type %d"
-msgstr "неизвестно как передать аргумент типа %d"
+msgstr "п╫п╣п╦п╥п╡п╣я│я┌п╫п╬ п╨п╟п╨ п©п╣я─п╣п╢п╟я┌я▄ п╟я─пЁя┐п╪п╣п╫я┌ я┌п╦п©п╟ %d"
 
 msgid "Browse"
-msgstr "Просмотр"
+msgstr "п÷я─п╬я│п╪п╬я┌я─"
 
 msgid "Author"
-msgstr "Автор"
+msgstr "п░п╡я┌п╬я─"
 
 msgid "unable to create '$fn': $!"
-msgstr "не удалось создать '$fn': $!"
+msgstr "п╫п╣ я┐п╢п╟п╩п╬я│я▄ я│п╬п╥п╢п╟я┌я▄ '$fn': $!"
 
 msgid "received QUIT request"
-msgstr "получен запрос на выход (QUIT)"
+msgstr "п©п╬п╩я┐я┤п╣п╫ п╥п╟п©я─п╬я│ п╫п╟ п╡я▀я┘п╬п╢ (QUIT)"
 
 msgid "unable to create listening tcp socket: $!\n"
 msgstr ""
@@ -386,11 +386,11 @@ msgid ""
 "\n"
 "$help"
 msgstr ""
-"Аннотация:\n"
+"п░п╫п╫п╬я┌п╟я├п╦я▐:\n"
 "\n"
 "$blurb\n"
 "\n"
-"Справка:\n"
+"п║п©я─п╟п╡п╨п╟:\n"
 "\n"
 "$help"
 
@@ -398,113 +398,113 @@ msgid "OK"
 msgstr "OK"
 
 msgid "gimp_tile_set_data is not yet implemented\n"
-msgstr "gimp_tile_set_data еще не реализовано\n"
+msgstr "gimp_tile_set_data п╣я┴п╣ п╫п╣ я─п╣п╟п╩п╦п╥п╬п╡п╟п╫п╬\n"
 
 msgid "argument incompatible with type IMAGE"
-msgstr "аргумент несовместим с типом ИЗОБРАЖЕНИЕ"
+msgstr "п╟я─пЁя┐п╪п╣п╫я┌ п╫п╣я│п╬п╡п╪п╣я│я┌п╦п╪ я│ я┌п╦п©п╬п╪ п≤п≈п·п▒п═п░п√п∙п²п≤п∙"
 
 msgid "accepting connections on port $port"
-msgstr "принято соединение на порту $port"
+msgstr "п©я─п╦п╫я▐я┌п╬ я│п╬п╣п╢п╦п╫п╣п╫п╦п╣ п╫п╟ п©п╬я─я┌я┐ $port"
 
 msgid "<Image>/Filters/Text/Terral Text..."
-msgstr "<Image>/Фильтры/Текст/Земляной текст..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п╒п╣п╨я│я┌/п≈п╣п╪п╩я▐п╫п╬п╧ я┌п╣п╨я│я┌..."
 
 msgid "Description"
-msgstr "Описание"
+msgstr "п·п©п╦я│п╟п╫п╦п╣"
 
 msgid "params and return_vals must be array refs (even if empty)!"
-msgstr "params и return_vals должны быть ссылками на массив (даже если пусты)!"
+msgstr "params п╦ return_vals п╢п╬п╩п╤п╫я▀ п╠я▀я┌я▄ я│я│я▀п╩п╨п╟п╪п╦ п╫п╟ п╪п╟я│я│п╦п╡ (п╢п╟п╤п╣ п╣я│п╩п╦ п©я┐я│я┌я▀)!"
 
 msgid "<Image>/Filters/Logulator/Newsprint text"
-msgstr "<Image>/Фильтры/Регистратор/Газетный текст"
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п═п╣пЁп╦я│я┌я─п╟я┌п╬я─/п⌠п╟п╥п╣я┌п╫я▀п╧ я┌п╣п╨я│я┌"
 
 msgid "<Image>/Filters/Animation/BlowInOut..."
-msgstr "<Image>/Фильтры/Анимация/BlowInOut..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п░п╫п╦п╪п╟я├п╦я▐/BlowInOut..."
 
 msgid "$_: illegal switch, try $0 --help\n"
-msgstr "$_: недопустимый ключ, попробуйте $0 --help\n"
+msgstr "$_: п╫п╣п╢п╬п©я┐я│я┌п╦п╪я▀п╧ п╨п╩я▌я┤, п©п╬п©я─п╬п╠я┐п╧я┌п╣ $0 --help\n"
 
 msgid "Unable to convert a reference to type '%s'"
-msgstr "Невозможно преобразовать ссылку в тип \"%s\""
+msgstr "п²п╣п╡п╬п╥п╪п╬п╤п╫п╬ п©я─п╣п╬п╠я─п╟п╥п╬п╡п╟я┌я▄ я│я│я▀п╩п╨я┐ п╡ я┌п╦п© \"%s\""
 
 msgid "<Image>/Filters/Text/TeX String..."
-msgstr "<Image>/Фильтры/Текст/Строка TeX..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п╒п╣п╨я│я┌/п║я┌я─п╬п╨п╟ TeX..."
 
 msgid "<Image>/Guides/Guide Grid..."
-msgstr "<Image>/Направляющие/Сетка..."
+msgstr "<Image>/п²п╟п©я─п╟п╡п╩я▐я▌я┴п╦п╣/п║п╣я┌п╨п╟..."
 
 msgid "<Toolbox>/Xtns/PDB Explorer..."
-msgstr "<Toolbox>/Расш./Исследователь ПБД..."
+msgstr "<Toolbox>/п═п╟я│я┬./п≤я│я│п╩п╣п╢п╬п╡п╟я┌п╣п╩я▄ п÷п▒п■..."
 
 msgid "<Image>/Filters/Distorts/Windify..."
-msgstr "<Image>/Фильтры/Искажения/Windify..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п≤я│п╨п╟п╤п╣п╫п╦я▐/Windify..."
 
 msgid "<Image>/Filters/Apply Perl Expression..."
-msgstr "<Image>/Фильтры/Применить выражение Perl..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п÷я─п╦п╪п╣п╫п╦я┌я▄ п╡я▀я─п╟п╤п╣п╫п╦п╣ Perl..."
 
 msgid "gimp procedure '%s' not found"
-msgstr "процедура Gimp '%s' не найдена"
+msgstr "п©я─п╬я├п╣п╢я┐я─п╟ Gimp '%s' п╫п╣ п╫п╟п╧п╢п╣п╫п╟"
 
 msgid "Visual Scriptor"
-msgstr "Визуальный Scriptor"
+msgstr "п▓п╦п╥я┐п╟п╩я▄п╫я▀п╧ Scriptor"
 
 msgid "<Image>/Filters/Map/Xach Blocks..."
-msgstr "<Image>/Фильтры/Отображение/Xach-блоки..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п·я┌п╬п╠я─п╟п╤п╣п╫п╦п╣/Xach-п╠п╩п╬п╨п╦..."
 
 msgid "server going down..."
-msgstr "сервер отключается..."
+msgstr "я│п╣я─п╡п╣я─ п╬я┌п╨п╩я▌я┤п╟п╣я┌я│я▐..."
 
 msgid "unable to read temporary file $tmp: $!"
-msgstr "невозможно прочесть временный файл $tmp: $!"
+msgstr "п╫п╣п╡п╬п╥п╪п╬п╤п╫п╬ п©я─п╬я┤п╣я│я┌я▄ п╡я─п╣п╪п╣п╫п╫я▀п╧ я└п╟п╧п╩ $tmp: $!"
 
 msgid "Saving '$filename' as COLORHTML..."
-msgstr "Сохранение '$filename' как COLORHTML..."
+msgstr "п║п╬я┘я─п╟п╫п╣п╫п╦п╣ '$filename' п╨п╟п╨ COLORHTML..."
 
 msgid "being called as '%s', but '%s' not registered in the pdb"
-msgstr "вызвано как '%s', но '%s' не зарегистрировано в pdb"
+msgstr "п╡я▀п╥п╡п╟п╫п╬ п╨п╟п╨ '%s', п╫п╬ '%s' п╫п╣ п╥п╟я─п╣пЁп╦я│я┌я─п╦я─п╬п╡п╟п╫п╬ п╡ pdb"
 
 msgid "Shortcuts"
-msgstr "Сокращения"
+msgstr "п║п╬п╨я─п╟я┴п╣п╫п╦я▐"
 
 msgid "<Image>/Filters/Logulator/Speed text"
-msgstr "<Image>/Фильтры/Регистратор/Скоростной текст"
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п═п╣пЁп╦я│я┌я─п╟я┌п╬я─/п║п╨п╬я─п╬я│я┌п╫п╬п╧ я┌п╣п╨я│я┌"
 
 msgid "<Toolbox>/Xtns/Create_Images"
-msgstr "<Toolbox>/Расш./Создать_изображения"
+msgstr "<Toolbox>/п═п╟я│я┬./п║п╬п╥п╢п╟я┌я▄_п╦п╥п╬п╠я─п╟п╤п╣п╫п╦я▐"
 
 msgid "<Toolbox>/Xtns/Parasite Editor..."
-msgstr "<Toolbox>/Расш./Редактор паразитов..."
+msgstr "<Toolbox>/п═п╟я│я┬./п═п╣п╢п╟п╨я┌п╬я─ п©п╟я─п╟п╥п╦я┌п╬п╡..."
 
 msgid "9x15bold"
 msgstr "9x15bold"
 
 msgid "unauthorized command received, aborting connection"
-msgstr "получена неавторизованная команда, соединение оборвано"
+msgstr "п©п╬п╩я┐я┤п╣п╫п╟ п╫п╣п╟п╡я┌п╬я─п╦п╥п╬п╡п╟п╫п╫п╟я▐ п╨п╬п╪п╟п╫п╢п╟, я│п╬п╣п╢п╦п╫п╣п╫п╦п╣ п╬п╠п╬я─п╡п╟п╫п╬"
 
 msgid "%s: procedural database execution failed on invalid input arguments"
 msgstr ""
 
 msgid "<Toolbox>/Xtns/Visual Scriptor..."
-msgstr "<Toolbox>/Расш./Visual Scriptor..."
+msgstr "<Toolbox>/п═п╟я│я┬./Visual Scriptor..."
 
 msgid "NAME"
-msgstr "НАЗВАНИЕ"
+msgstr "п²п░п≈п▓п░п²п≤п∙"
 
 msgid "WARNING: $function returned something that is not an image: \"$img\"\n"
 msgstr ""
-"ВНИМАНИЕ: $function вернула что-то не являющееся изображением: \"$img\"\n"
+"п▓п²п≤п°п░п²п≤п∙: $function п╡п╣я─п╫я┐п╩п╟ я┤я┌п╬-я┌п╬ п╫п╣ я▐п╡п╩я▐я▌я┴п╣п╣я│я▐ п╦п╥п╬п╠я─п╟п╤п╣п╫п╦п╣п╪: \"$img\"\n"
 
 msgid "<Image>/Filters/Colors/Fire..."
-msgstr "<Image>/Фильтры/Цвета/Огонь..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п╕п╡п╣я┌п╟/п·пЁп╬п╫я▄..."
 
 msgid "<Image>/Filters/Logulator/Web title header"
-msgstr "<Image>/Фильтры/Регистратор/Web-заголовок"
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п═п╣пЁп╦я│я┌я─п╟я┌п╬я─/Web-п╥п╟пЁп╬п╩п╬п╡п╬п╨"
 
 msgid "FATAL: canonicalize_colour did not return a value!"
-msgstr "ФАТАЛЬНО: canonicalize_colour не вернуло значение!"
+msgstr "п╓п░п╒п░п⌡п╛п²п·: canonicalize_colour п╫п╣ п╡п╣я─п╫я┐п╩п╬ п╥п╫п╟я┤п╣п╫п╦п╣!"
 
 msgid "export failed"
-msgstr "сбой экспортирования"
+msgstr "я│п╠п╬п╧ я█п╨я│п©п╬я─я┌п╦я─п╬п╡п╟п╫п╦я▐"
 
 msgid ""
 "       interface-arguments are\n"
@@ -514,25 +514,25 @@ msgid ""
 msgstr ""
 
 msgid "<Image>/Filters/Edge-Detect/2x2 Edge Detect"
-msgstr "<Image>/Фильтры/Обнаружение края/2х2 обнаружение края"
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п·п╠п╫п╟я─я┐п╤п╣п╫п╦п╣ п╨я─п╟я▐/2я┘2 п╬п╠п╫п╟я─я┐п╤п╣п╫п╦п╣ п╨я─п╟я▐"
 
 msgid "<Image>/Layers/Center Layer"
-msgstr "<Image>/Слои/Центрировать слой"
+msgstr "<Image>/п║п╩п╬п╦/п╕п╣п╫я┌я─п╦я─п╬п╡п╟я┌я▄ я│п╩п╬п╧"
 
 msgid "closing connection %d (%d requests in %g seconds)"
-msgstr "закрытие соединения %d (%d запросов за %g секунд)"
+msgstr "п╥п╟п╨я─я▀я┌п╦п╣ я│п╬п╣п╢п╦п╫п╣п╫п╦я▐ %d (%d п╥п╟п©я─п╬я│п╬п╡ п╥п╟ %g я│п╣п╨я┐п╫п╢)"
 
 msgid "Reset all values to their default"
-msgstr "Сбросить все значения в исходные"
+msgstr "п║п╠я─п╬я│п╦я┌я▄ п╡я│п╣ п╥п╫п╟я┤п╣п╫п╦я▐ п╡ п╦я│я┘п╬п╢п╫я▀п╣"
 
 msgid "<Image>/Filters/Misc/Border Average..."
-msgstr "<Image>/Фильтры/Разное/Border Average..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п═п╟п╥п╫п╬п╣/Border Average..."
 
 msgid ""
 "conversion from string to type $pf_type2string{$type} is not yet "
 "implemented\n"
 msgstr ""
-"преобразование строки к типу $pf_type2string{$type} еще не реализовано\n"
+"п©я─п╣п╬п╠я─п╟п╥п╬п╡п╟п╫п╦п╣ я│я┌я─п╬п╨п╦ п╨ я┌п╦п©я┐ $pf_type2string{$type} п╣я┴п╣ п╫п╣ я─п╣п╟п╩п╦п╥п╬п╡п╟п╫п╬\n"
 
 msgid ""
 "Usage: $0 [gimp-args..] [interface-args..] [script-args..]\n"
@@ -546,63 +546,63 @@ msgid ""
 msgstr ""
 
 msgid "too many arguments"
-msgstr "слишком много аргументов"
+msgstr "я│п╩п╦я┬п╨п╬п╪ п╪п╫п╬пЁп╬ п╟я─пЁя┐п╪п╣п╫я┌п╬п╡"
 
 msgid ""
 "dimension mismatch, pdl has dimension %d but at most %d dimensions allowed"
-msgstr "несовпадение измерений, pdl имеет %d, а допустимый максимум -- %d"
+msgstr "п╫п╣я│п╬п╡п©п╟п╢п╣п╫п╦п╣ п╦п╥п╪п╣я─п╣п╫п╦п╧, pdl п╦п╪п╣п╣я┌ %d, п╟ п╢п╬п©я┐я│я┌п╦п╪я▀п╧ п╪п╟п╨я│п╦п╪я┐п╪ -- %d"
 
 msgid "Load"
-msgstr "Загрузить"
+msgstr "п≈п╟пЁя─я┐п╥п╦я┌я▄"
 
 msgid "unable to grok colour specification"
-msgstr "не удалось распознать спецификацию цвета"
+msgstr "п╫п╣ я┐п╢п╟п╩п╬я│я▄ я─п╟я│п©п╬п╥п╫п╟я┌я▄ я│п©п╣я├п╦я└п╦п╨п╟я├п╦я▌ я├п╡п╣я┌п╟"
 
 msgid "no additional information available, use --help\n"
-msgstr "дополнительная информация недоступна, используйте --help\n"
+msgstr "п╢п╬п©п╬п╩п╫п╦я┌п╣п╩я▄п╫п╟я▐ п╦п╫я└п╬я─п╪п╟я├п╦я▐ п╫п╣п╢п╬я│я┌я┐п©п╫п╟, п╦я│п©п╬п╩я▄п╥я┐п╧я┌п╣ --help\n"
 
 msgid ""
 "the gtk perl module is required to open a dialog\n"
 "window, running with default values"
 msgstr ""
-"чтобы открыть окно диалога, требуется модуль gtk perl\n"
-"запущенный с исходными значениями"
+"я┤я┌п╬п╠я▀ п╬я┌п╨я─я▀я┌я▄ п╬п╨п╫п╬ п╢п╦п╟п╩п╬пЁп╟, я┌я─п╣п╠я┐п╣я┌я│я▐ п╪п╬п╢я┐п╩я▄ gtk perl\n"
+"п╥п╟п©я┐я┴п╣п╫п╫я▀п╧ я│ п╦я│я┘п╬п╢п╫я▀п╪п╦ п╥п╫п╟я┤п╣п╫п╦я▐п╪п╦"
 
 msgid "Gradient Selection Dialog"
-msgstr "Диалог выбора градиента"
+msgstr "п■п╦п╟п╩п╬пЁ п╡я▀п╠п╬я─п╟ пЁя─п╟п╢п╦п╣п╫я┌п╟"
 
 msgid " matching functions"
-msgstr "соответствующие функции"
+msgstr "я│п╬п╬я┌п╡п╣я┌я│я┌п╡я┐я▌я┴п╦п╣ я└я┐п╫п╨я├п╦п╦"
 
 msgid "authorization ok, but: $r[1]\n"
-msgstr "авторизация успешна, но: $r[1]\n"
+msgstr "п╟п╡я┌п╬я─п╦п╥п╟я├п╦я▐ я┐я│п©п╣я┬п╫п╟, п╫п╬: $r[1]\n"
 
 msgid "Cannot call '$AUTOLOAD' at this time"
-msgstr "Невозможно вызвать '$AUTOLOAD' в этот момент"
+msgstr "п²п╣п╡п╬п╥п╪п╬п╤п╫п╬ п╡я▀п╥п╡п╟я┌я▄ '$AUTOLOAD' п╡ я█я┌п╬я┌ п╪п╬п╪п╣п╫я┌"
 
 msgid "function/macro \"$name\" not found in $class"
-msgstr "функция/макрос \"$name\" не найдена в $class"
+msgstr "я└я┐п╫п╨я├п╦я▐/п╪п╟п╨я─п╬я│ \"$name\" п╫п╣ п╫п╟п╧п╢п╣п╫п╟ п╡ $class"
 
 msgid "arguments to main not yet supported!"
-msgstr "аргументы к main пока не поддерживаются!"
+msgstr "п╟я─пЁя┐п╪п╣п╫я┌я▀ п╨ main п©п╬п╨п╟ п╫п╣ п©п╬п╢п╢п╣я─п╤п╦п╡п╟я▌я┌я│я▐!"
 
 msgid "accepting connections in $host"
-msgstr "приняты соединения в $host"
+msgstr "п©я─п╦п╫я▐я┌я▀ я│п╬п╣п╢п╦п╫п╣п╫п╦я▐ п╡ $host"
 
 msgid " (press Tab to complete)"
-msgstr " (нажмите Tab для завершения)"
+msgstr " (п╫п╟п╤п╪п╦я┌п╣ Tab п╢п╩я▐ п╥п╟п╡п╣я─я┬п╣п╫п╦я▐)"
 
 msgid "Save $name"
-msgstr "Сохранить $name"
+msgstr "п║п╬я┘я─п╟п╫п╦я┌я▄ $name"
 
 msgid "<Image>/Filters/Enhance/Warp Sharp..."
-msgstr "<Image>/Фильтры/Улучшение/Warp Sharp..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/пёп╩я┐я┤я┬п╣п╫п╦п╣/Warp Sharp..."
 
 msgid "<Image>/Filters/Web/Prepare for GIF..."
-msgstr "<Image>/Фильтры/Web/Подготовить для GIF..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/Web/п÷п╬п╢пЁп╬я┌п╬п╡п╦я┌я▄ п╢п╩я▐ GIF..."
 
 msgid "illegal type for colour specification"
-msgstr "неправильный тип спецификации цвета"
+msgstr "п╫п╣п©я─п╟п╡п╦п╩я▄п╫я▀п╧ я┌п╦п© я│п©п╣я├п╦я└п╦п╨п╟я├п╦п╦ я├п╡п╣я┌п╟"
 
 msgid "<Image> plug-in called without both image and drawable arguments!\n"
 msgstr ""
@@ -611,130 +611,130 @@ msgid "Seth Spin..."
 msgstr ""
 
 msgid "get current background colour from the gimp"
-msgstr "получить цвет фона из gimp"
+msgstr "п©п╬п╩я┐я┤п╦я┌я▄ я├п╡п╣я┌ я└п╬п╫п╟ п╦п╥ gimp"
 
 msgid "<Image>/Filters/Text/Fit Text..."
-msgstr "<Image>/Фильтры/Текст/Эаполнить текстом..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п╒п╣п╨я│я┌/п╜п╟п©п╬п╩п╫п╦я┌я▄ я┌п╣п╨я│я┌п╬п╪..."
 
 msgid "No horizontal or vertical guides found. Aborted."
 msgstr ""
-"Не найдено ни вертикальных ни горизонтальных направляющих. Выполнение "
-"прервано."
+"п²п╣ п╫п╟п╧п╢п╣п╫п╬ п╫п╦ п╡п╣я─я┌п╦п╨п╟п╩я▄п╫я▀я┘ п╫п╦ пЁп╬я─п╦п╥п╬п╫я┌п╟п╩я▄п╫я▀я┘ п╫п╟п©я─п╟п╡п╩я▐я▌я┴п╦я┘. п▓я▀п©п╬п╩п╫п╣п╫п╦п╣ "
+"п©я─п╣я─п╡п╟п╫п╬."
 
 msgid "accepting connections on port $Gimp::Net::default_tcp_port"
-msgstr "принятие соединения на порту $Gimp::Net::default_tcp_port"
+msgstr "п©я─п╦п╫я▐я┌п╦п╣ я│п╬п╣п╢п╦п╫п╣п╫п╦я▐ п╫п╟ п©п╬я─я┌я┐ $Gimp::Net::default_tcp_port"
 
 msgid "Menu Path"
-msgstr "Путь меню"
+msgstr "п÷я┐я┌я▄ п╪п╣п╫я▌"
 
 msgid "TYPE"
-msgstr "ТИП"
+msgstr "п╒п≤п÷"
 
 msgid "<Toolbox>/Xtns/Render/Povray/Texture..."
-msgstr "<Toolbox>/Расш./Визуализация/Povray/Текстура..."
+msgstr "<Toolbox>/п═п╟я│я┬./п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/Povray/п╒п╣п╨я│я┌я┐я─п╟..."
 
 msgid "You need at least 2 layers to perform prep4gif"
-msgstr "Вам нужны хотя бы 2 слоя для выполнения prep4gif"
+msgstr "п▓п╟п╪ п╫я┐п╤п╫я▀ я┘п╬я┌я▐ п╠я▀ 2 я│п╩п╬я▐ п╢п╩я▐ п╡я▀п©п╬п╩п╫п╣п╫п╦я▐ prep4gif"
 
 msgid "<Image>/Filters/Blur/2x2 Blur"
-msgstr "<Image>/Фильтры/Размывание/Размывание 2х2"
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п═п╟п╥п╪я▀п╡п╟п╫п╦п╣/п═п╟п╥п╪я▀п╡п╟п╫п╦п╣ 2я┘2"
 
 msgid "interface '$interface_type' unsupported."
-msgstr "интерфейс '$interface_type' не поддерживается."
+msgstr "п╦п╫я┌п╣я─я└п╣п╧я│ '$interface_type' п╫п╣ п©п╬п╢п╢п╣я─п╤п╦п╡п╟п╣я┌я│я▐."
 
 msgid "<Image>/Filters/Enhance/2x2 Contrast Enhance"
-msgstr "<Image>/Фильтры/Улучшение/2х2 Улучшение контраста"
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/пёп╩я┐я┤я┬п╣п╫п╦п╣/2я┘2 пёп╩я┐я┤я┬п╣п╫п╦п╣ п╨п╬п╫я┌я─п╟я│я┌п╟"
 
 msgid "<Load> plug-in called without the 3 standard arguments!\n"
-msgstr "Дополенение <Загрузить> вызвано без 3-х стандартных аргументов!\n"
+msgstr "п■п╬п©п╬п╩п╣п╫п╣п╫п╦п╣ <п≈п╟пЁя─я┐п╥п╦я┌я▄> п╡я▀п╥п╡п╟п╫п╬ п╠п╣п╥ 3-я┘ я│я┌п╟п╫п╢п╟я─я┌п╫я▀я┘ п╟я─пЁя┐п╪п╣п╫я┌п╬п╡!\n"
 
 msgid "Unable to grok '%s' as colour specifier"
-msgstr "Не удалось распознать \"%s\" как спецификатор цвета"
+msgstr "п²п╣ я┐п╢п╟п╩п╬я│я▄ я─п╟я│п©п╬п╥п╫п╟я┌я▄ \"%s\" п╨п╟п╨ я│п©п╣я├п╦я└п╦п╨п╟я┌п╬я─ я├п╡п╣я┌п╟"
 
 msgid "gimp-perl-pixel functions require the PDL::Core module"
-msgstr "функции gimp-perl-pixel требуется модуль PDL::Core"
+msgstr "я└я┐п╫п╨я├п╦п╦ gimp-perl-pixel я┌я─п╣п╠я┐п╣я┌я│я▐ п╪п╬п╢я┐п╩я▄ PDL::Core"
 
 msgid "a color must have three components (array elements)"
-msgstr "цвет должен иметь три компонента (элемента массива)"
+msgstr "я├п╡п╣я┌ п╢п╬п╩п╤п╣п╫ п╦п╪п╣я┌я▄ я┌я─п╦ п╨п╬п╪п©п╬п╫п╣п╫я┌п╟ (я█п╩п╣п╪п╣п╫я┌п╟ п╪п╟я│я│п╦п╡п╟)"
 
 msgid "Defaults"
-msgstr "Исх.значения"
+msgstr "п≤я│я┘.п╥п╫п╟я┤п╣п╫п╦я▐"
 
 msgid "Copyright"
-msgstr "Авторское право"
+msgstr "п░п╡я┌п╬я─я│п╨п╬п╣ п©я─п╟п╡п╬"
 
 msgid "<Image>/Select/Triangle..."
-msgstr "<Image>/Выделение/Треугольник..."
+msgstr "<Image>/п▓я▀п╢п╣п╩п╣п╫п╦п╣/п╒я─п╣я┐пЁп╬п╩я▄п╫п╦п╨..."
 
 msgid "<Image>/Filters/Render/Burst..."
-msgstr "<Image>/Фильтры/Визуализация/Взрыв..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/п▓п╥я─я▀п╡..."
 
 msgid "WARNING: client disconnected while holding an active lock\n"
 msgstr ""
 
 msgid "<Toolbox>/Xtns/Gimp::Fu Example..."
-msgstr "<Toolbox>/Расш./Пример Gimp::Fu..."
+msgstr "<Toolbox>/п═п╟я│я┬./п÷я─п╦п╪п╣я─ Gimp::Fu..."
 
 msgid "/Xtns/Render/Logos"
-msgstr "/Расш./Визуализация/Эмблемы"
+msgstr "/п═п╟я│я┬./п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/п╜п╪п╠п╩п╣п╪я▀"
 
 msgid "argument is not of type %s"
-msgstr "аргумент не типа %s"
+msgstr "п╟я─пЁя┐п╪п╣п╫я┌ п╫п╣ я┌п╦п©п╟ %s"
 
 msgid "server version $Gimp::VERSION started"
-msgstr "запущен сервер версии $Gimp::VERSION"
+msgstr "п╥п╟п©я┐я┴п╣п╫ я│п╣я─п╡п╣я─ п╡п╣я─я│п╦п╦ $Gimp::VERSION"
 
 msgid "Background"
-msgstr "Фон"
+msgstr "п╓п╬п╫"
 
 msgid "%s arguments for function '%s'"
-msgstr "%s аргументов для функции '%s'"
+msgstr "%s п╟я─пЁя┐п╪п╣п╫я┌п╬п╡ п╢п╩я▐ я└я┐п╫п╨я├п╦п╦ '%s'"
 
 msgid "<Toolbox>/Xtns/Render/Logos/Glowing Steel"
-msgstr "<Toolbox>/Расш./Визуализация/Эмблемы/Пылающая сталь"
+msgstr "<Toolbox>/п═п╟я│я┬./п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/п╜п╪п╠п╩п╣п╪я▀/п÷я▀п╩п╟я▌я┴п╟я▐ я│я┌п╟п╩я▄"
 
 msgid "only blessed scalars accepted here"
-msgstr "здесь допустимы только проклятые скаляры"
+msgstr "п╥п╢п╣я│я▄ п╢п╬п©я┐я│я┌п╦п╪я▀ я┌п╬п╩я▄п╨п╬ п©я─п╬п╨п╩я▐я┌я▀п╣ я│п╨п╟п╩я▐я─я▀"
 
 msgid "expected protocol version $Gimp::_PROT_VERSION, but server uses $r[0]\n"
 msgstr ""
-"ожидаемая версия протокола  $Gimp::_PROT_VERSION, а сервер использует $r[0]\n"
+"п╬п╤п╦п╢п╟п╣п╪п╟я▐ п╡п╣я─я│п╦я▐ п©я─п╬я┌п╬п╨п╬п╩п╟  $Gimp::_PROT_VERSION, п╟ я│п╣я─п╡п╣я─ п╦я│п©п╬п╩я▄п╥я┐п╣я┌ $r[0]\n"
 
 msgid "illegal parasite specification, arrayref expected"
-msgstr "недопустимая спецификация паразита, ожидалось arrayref"
+msgstr "п╫п╣п╢п╬п©я┐я│я┌п╦п╪п╟я▐ я│п©п╣я├п╦я└п╦п╨п╟я├п╦я▐ п©п╟я─п╟п╥п╦я┌п╟, п╬п╤п╦п╢п╟п╩п╬я│я▄ arrayref"
 
 msgid ""
 "dimension mismatch, pdl has dimension %d but at least %d dimensions required"
 msgstr ""
-"несоответствие измерений, измерений в pdl -- %d, а требуется хотя бы %d"
+"п╫п╣я│п╬п╬я┌п╡п╣я┌я│я┌п╡п╦п╣ п╦п╥п╪п╣я─п╣п╫п╦п╧, п╦п╥п╪п╣я─п╣п╫п╦п╧ п╡ pdl -- %d, п╟ я┌я─п╣п╠я┐п╣я┌я│я▐ я┘п╬я┌я▐ п╠я▀ %d"
 
 msgid "Save"
-msgstr "Сохранить"
+msgstr "п║п╬я┘я─п╟п╫п╦я┌я▄"
 
 msgid "<Image>/Filters/Logulator/Carved"
-msgstr "<Image>/Фильтры/Регистратор/Вырезка"
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п═п╣пЁп╦я│я┌я─п╟я┌п╬я─/п▓я▀я─п╣п╥п╨п╟"
 
 msgid "Function Info"
-msgstr "Информация о функции"
+msgstr "п≤п╫я└п╬я─п╪п╟я├п╦я▐ п╬ я└я┐п╫п╨я├п╦п╦"
 
 msgid "no font specified, using default"
-msgstr "шрифт не указан, используется установленный по умолчанию"
+msgstr "я┬я─п╦я└я┌ п╫п╣ я┐п╨п╟п╥п╟п╫, п╦я│п©п╬п╩я▄п╥я┐п╣я┌я│я▐ я┐я│я┌п╟п╫п╬п╡п╩п╣п╫п╫я▀п╧ п©п╬ я┐п╪п╬п╩я┤п╟п╫п╦я▌"
 
 msgid ""
 "the gtk perl module is required to run\n"
 "this plug-in in interactive mode\n"
 msgstr ""
-"для запуска этого дополнения в интерактивном\n"
-"режиме требуется модуль gtk-perl\n"
+"п╢п╩я▐ п╥п╟п©я┐я│п╨п╟ я█я┌п╬пЁп╬ п╢п╬п©п╬п╩п╫п╣п╫п╦я▐ п╡ п╦п╫я┌п╣я─п╟п╨я┌п╦п╡п╫п╬п╪\n"
+"я─п╣п╤п╦п╪п╣ я┌я─п╣п╠я┐п╣я┌я│я▐ п╪п╬п╢я┐п╩я▄ gtk-perl\n"
 
 msgid "authorization failed: $r[1]\n"
-msgstr "сбой авторизации: $r[1]\n"
+msgstr "я│п╠п╬п╧ п╟п╡я┌п╬я─п╦п╥п╟я├п╦п╦: $r[1]\n"
 
 msgid "Previous"
-msgstr "Предыдущее"
+msgstr "п÷я─п╣п╢я▀п╢я┐я┴п╣п╣"
 
 msgid "Command"
-msgstr "Команда"
+msgstr "п п╬п╪п╟п╫п╢п╟"
 
 msgid ""
 "$function: calling $AUTOLOAD without specifying the :auto import tag is "
@@ -742,40 +742,40 @@ msgid ""
 msgstr ""
 
 msgid "<Toolbox>/Xtns/Render/Bricks..."
-msgstr "<Toolbox>/Расш./Визуализация/Кирпичи..."
+msgstr "<Toolbox>/п═п╟я│я┬./п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/п п╦я─п©п╦я┤п╦..."
 
 msgid "DESCRIPTION"
-msgstr "ОПИСАНИЕ"
+msgstr "п·п÷п≤п║п░п²п≤п∙"
 
 msgid "Accelerator"
-msgstr "Ускоритель"
+msgstr "пёя│п╨п╬я─п╦я┌п╣п╩я▄"
 
 msgid "Cancel"
-msgstr "Отмена"
+msgstr "п·я┌п╪п╣п╫п╟"
 
 msgid "<Image>/Filters/Map/Xach Shadows..."
-msgstr "<Image>/Фильтры/Отображение/Xach-тени..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п·я┌п╬п╠я─п╟п╤п╣п╫п╦п╣/Xach-я┌п╣п╫п╦..."
 
 msgid "argument type %s expected (not %s)"
-msgstr "ожидался аргумент типа %s (а не %s)"
+msgstr "п╬п╤п╦п╢п╟п╩я│я▐ п╟я─пЁя┐п╪п╣п╫я┌ я┌п╦п©п╟ %s (п╟ п╫п╣ %s)"
 
 msgid "BG"
-msgstr "ФОН"
+msgstr "п╓п·п²"
 
 msgid ""
 "pixel size mismatch, pdl has %d channel pixels but %d channels are required"
 msgstr ""
-"несоответствие глубины точки растра, pdl имеет %d канальные точки растра, а "
-"требуется %d каналов"
+"п╫п╣я│п╬п╬я┌п╡п╣я┌я│я┌п╡п╦п╣ пЁп╩я┐п╠п╦п╫я▀ я┌п╬я┤п╨п╦ я─п╟я│я┌я─п╟, pdl п╦п╪п╣п╣я┌ %d п╨п╟п╫п╟п╩я▄п╫я▀п╣ я┌п╬я┤п╨п╦ я─п╟я│я┌я─п╟, п╟ "
+"я┌я─п╣п╠я┐п╣я┌я│я▐ %d п╨п╟п╫п╟п╩п╬п╡"
 
 msgid "<Image>/Filters/Render/Highlight Edges..."
-msgstr "<Image>/Фильтры/Визуализация/Яркие края..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/п╞я─п╨п╦п╣ п╨я─п╟я▐..."
 
 msgid "This module was built without support for PDL."
-msgstr "Этот модуль был собран без поддержки PDL."
+msgstr "п╜я┌п╬я┌ п╪п╬п╢я┐п╩я▄ п╠я▀п╩ я│п╬п╠я─п╟п╫ п╠п╣п╥ п©п╬п╢п╢п╣я─п╤п╨п╦ PDL."
 
 msgid "[unfinished]\n"
-msgstr "[незавершенное]\n"
+msgstr "[п╫п╣п╥п╟п╡п╣я─я┬п╣п╫п╫п╬п╣]\n"
 
 msgid "Spin Layer DEST (250ms)"
 msgstr ""
@@ -784,7 +784,7 @@ msgid "Bumpmap"
 msgstr ""
 
 msgid "Date/Version"
-msgstr "Дата/Версия"
+msgstr "п■п╟я┌п╟/п▓п╣я─я│п╦я▐"
 
 msgid "$function: argument/return value '$p->[1]' has illegal type '$p->[0]'"
 msgstr ""
@@ -793,142 +793,142 @@ msgid "required callback 'net' not found\n"
 msgstr ""
 
 msgid "function '$exe' not found in this script (must be one of "
-msgstr "функция \"$exe\" в этом скрипте не найдена (должна быть одна из "
+msgstr "я└я┐п╫п╨я├п╦я▐ \"$exe\" п╡ я█я┌п╬п╪ я│п╨я─п╦п©я┌п╣ п╫п╣ п╫п╟п╧п╢п╣п╫п╟ (п╢п╬п╩п╤п╫п╟ п╠я▀я┌я▄ п╬п╢п╫п╟ п╦п╥ "
 
 msgid "<Image>/Filters/Colors/Colour To Alpha..."
-msgstr "<Image>/Фильтрф/Цвета/Цвет -> Альфа-канал..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я└/п╕п╡п╣я┌п╟/п╕п╡п╣я┌ -> п░п╩я▄я└п╟-п╨п╟п╫п╟п╩..."
 
 msgid "/Xtns/Perl"
-msgstr "/Расш./Perl"
+msgstr "/п═п╟я│я┬./Perl"
 
 msgid "<Toolbox>/Xtns/Render/Random Art #1..."
-msgstr "<Toolbox>/Расш./Визуализация/Случайное искусство #1..."
+msgstr "<Toolbox>/п═п╟я│я┬./п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/п║п╩я┐я┤п╟п╧п╫п╬п╣ п╦я│п╨я┐я│я│я┌п╡п╬ #1..."
 
 msgid "accepted tcp connection from "
-msgstr "принято tcp-соединение с "
+msgstr "п©я─п╦п╫я▐я┌п╬ tcp-я│п╬п╣п╢п╦п╫п╣п╫п╦п╣ я│ "
 
 msgid "Status"
-msgstr "Состояние"
+msgstr "п║п╬я│я┌п╬я▐п╫п╦п╣"
 
 msgid "Load $name"
-msgstr "Загрузить $name"
+msgstr "п≈п╟пЁя─я┐п╥п╦я┌я▄ $name"
 
 msgid "<Save> plug-in called without the 5 standard arguments!\n"
-msgstr "Дополнение <Сохранить> вызвано без 5-и стандартных аргументов!\n"
+msgstr "п■п╬п©п╬п╩п╫п╣п╫п╦п╣ <п║п╬я┘я─п╟п╫п╦я┌я▄> п╡я▀п╥п╡п╟п╫п╬ п╠п╣п╥ 5-п╦ я│я┌п╟п╫п╢п╟я─я┌п╫я▀я┘ п╟я─пЁя┐п╪п╣п╫я┌п╬п╡!\n"
 
 msgid "unable to accept unix connection: $!\n"
-msgstr "невозможно принять unix-соединение: $!\n"
+msgstr "п╫п╣п╡п╬п╥п╪п╬п╤п╫п╬ п©я─п╦п╫я▐я┌я▄ unix-я│п╬п╣п╢п╦п╫п╣п╫п╦п╣: $!\n"
 
 msgid "<Toolbox>/Xtns/Perl Example Plug-in"
-msgstr "<Toolbox>/Расш./Пример дополнения Perl"
+msgstr "<Toolbox>/п═п╟я│я┬./п÷я─п╦п╪п╣я─ п╢п╬п©п╬п╩п╫п╣п╫п╦я▐ Perl"
 
 msgid "<Toolbox>/Xtns/Render/Povray/Preferences..."
-msgstr "<Toolbox>/Расш./Визуализация/Povray/Настройки..."
+msgstr "<Toolbox>/п═п╟я│я┬./п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/Povray/п²п╟я│я┌я─п╬п╧п╨п╦..."
 
 msgid "unable to accept tcp connection: $!\n"
-msgstr "неудалось принять TCP-соединение: $!\n"
+msgstr "п╫п╣я┐п╢п╟п╩п╬я│я▄ п©я─п╦п╫я▐я┌я▄ TCP-я│п╬п╣п╢п╦п╫п╣п╫п╦п╣: $!\n"
 
 msgid "(UNINITIALIZED)"
-msgstr "(НЕ ИНИЦИАЛИЗИРОВАНО)"
+msgstr "(п²п∙ п≤п²п≤п╕п≤п░п⌡п≤п≈п≤п═п·п▓п░п²п·)"
 
 msgid "<Image>/Filters/Render/Brushed Metal..."
-msgstr "<Image>/Фильтры/Визуализация/Чищеный метал..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/п╖п╦я┴п╣п╫я▀п╧ п╪п╣я┌п╟п╩..."
 
 msgid "perl-arrayref required as datatype for a gimp-array"
-msgstr "perl-arrayref в качестве типа данных для gimp-array"
+msgstr "perl-arrayref п╡ п╨п╟я┤п╣я│я┌п╡п╣ я┌п╦п©п╟ п╢п╟п╫п╫я▀я┘ п╢п╩я▐ gimp-array"
 
 msgid "<Image>/Filters/Web/Webify..."
-msgstr "<Image>/Фильтры/Web/Webify..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/Web/Webify..."
 
 msgid "Unable to open '$filename' for writing: $!\n"
-msgstr "Не удалось открыть '$filename' для записи: $!\n"
+msgstr "п²п╣ я┐п╢п╟п╩п╬я│я▄ п╬я┌п╨я─я▀я┌я▄ '$filename' п╢п╩я▐ п╥п╟п©п╦я│п╦: $!\n"
 
 msgid "Unsupported argumenttype $type"
-msgstr "Неподдерживаемый тип аргумента $type"
+msgstr "п²п╣п©п╬п╢п╢п╣я─п╤п╦п╡п╟п╣п╪я▀п╧ я┌п╦п© п╟я─пЁя┐п╪п╣п╫я┌п╟ $type"
 
 msgid "/Xtns/Render/Povray"
-msgstr "/Расш./Визуализация/Povray"
+msgstr "/п═п╟я│я┬./п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/Povray"
 
 msgid "Color"
-msgstr "Цвет"
+msgstr "п╕п╡п╣я┌"
 
 msgid "authorization unnecessary"
-msgstr "авторизация не нужна"
+msgstr "п╟п╡я┌п╬я─п╦п╥п╟я├п╦я▐ п╫п╣ п╫я┐п╤п╫п╟"
 
 msgid "illegal parasite specification, reference expected"
-msgstr "недопустимая спецификация паразита, ожидалась ссылка"
+msgstr "п╫п╣п╢п╬п©я┐я│я┌п╦п╪п╟я▐ я│п©п╣я├п╦я└п╦п╨п╟я├п╦я▐ п©п╟я─п╟п╥п╦я┌п╟, п╬п╤п╦п╢п╟п╩п╟я│я▄ я│я│я▀п╩п╨п╟"
 
 msgid "too many arguments, use --help\n"
-msgstr "слишком много аргументов, используйте --help\n"
+msgstr "я│п╩п╦я┬п╨п╬п╪ п╪п╫п╬пЁп╬ п╟я─пЁя┐п╪п╣п╫я┌п╬п╡, п╦я│п©п╬п╩я▄п╥я┐п╧я┌п╣ --help\n"
 
 msgid "<Toolbox>/Xtns/Render/Font Table..."
-msgstr "<Toolbox>/Расш./Визуализация/Таблица шрифтов..."
+msgstr "<Toolbox>/п═п╟я│я┬./п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/п╒п╟п╠п╩п╦я├п╟ я┬я─п╦я└я┌п╬п╡..."
 
 msgid "Edit"
-msgstr "Правка"
+msgstr "п÷я─п╟п╡п╨п╟"
 
 msgid "<Image>/Filters/Logulator/Blended II..."
-msgstr "<Image>/Фильтры/Регистратор/Смешанный II..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п═п╣пЁп╦я│я┌я─п╟я┌п╬я─/п║п╪п╣я┬п╟п╫п╫я▀п╧ II..."
 
 msgid "Saving '$filename' as DATAURL..."
-msgstr "Сохранение '$filename' как DATAURL..."
+msgstr "п║п╬я┘я─п╟п╫п╣п╫п╦п╣ '$filename' п╨п╟п╨ DATAURL..."
 
 msgid "text string is empty"
-msgstr "текстовая строка пуста"
+msgstr "я┌п╣п╨я│я┌п╬п╡п╟я▐ я│я┌я─п╬п╨п╟ п©я┐я│я┌п╟"
 
 msgid "<Image>/Filters/Distorts/Scratches..."
-msgstr "<Image>/Фильтры/Искажения/Царапины..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п≤я│п╨п╟п╤п╣п╫п╦я▐/п╕п╟я─п╟п©п╦п╫я▀..."
 
 msgid "$_: unknown/illegal file-save option"
-msgstr "$_: неизвестный/недопустимый параметр сохранения файла"
+msgstr "$_: п╫п╣п╦п╥п╡п╣я│я┌п╫я▀п╧/п╫п╣п╢п╬п©я┐я│я┌п╦п╪я▀п╧ п©п╟я─п╟п╪п╣я┌я─ я│п╬я┘я─п╟п╫п╣п╫п╦я▐ я└п╟п╧п╩п╟"
 
 msgid "/Xtns/Render"
-msgstr "/Расш./Визуализация"
+msgstr "/п═п╟я│я┬./п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐"
 
 msgid " = [argument error]\n"
-msgstr " = [ошибка аргумента]\n"
+msgstr " = [п╬я┬п╦п╠п╨п╟ п╟я─пЁя┐п╪п╣п╫я┌п╟]\n"
 
 msgid "<Image>/Select/Round..."
-msgstr "<Image>/Выделение/Круг..."
+msgstr "<Image>/п▓я▀п╢п╣п╩п╣п╫п╦п╣/п я─я┐пЁ..."
 
 msgid "plug-in returned %d more values than expected"
-msgstr "дополнение вернуло на %d значений больше чем ожидалось"
+msgstr "п╢п╬п©п╬п╩п╫п╣п╫п╦п╣ п╡п╣я─п╫я┐п╩п╬ п╫п╟ %d п╥п╫п╟я┤п╣п╫п╦п╧ п╠п╬п╩я▄я┬п╣ я┤п╣п╪ п╬п╤п╦п╢п╟п╩п╬я│я▄"
 
 msgid "$_ is not a valid import tag for package $pkg"
-msgstr "$_ не является допустимым тэгом импорта для пакета $pkg"
+msgstr "$_ п╫п╣ я▐п╡п╩я▐п╣я┌я│я▐ п╢п╬п©я┐я│я┌п╦п╪я▀п╪ я┌я█пЁп╬п╪ п╦п╪п©п╬я─я┌п╟ п╢п╩я▐ п©п╟п╨п╣я┌п╟ $pkg"
 
 msgid "url size is too large ($max > 1024)\n"
-msgstr "размер URL слишком большой ($max > 1024)\n"
+msgstr "я─п╟п╥п╪п╣я─ URL я│п╩п╦я┬п╨п╬п╪ п╠п╬п╩я▄я┬п╬п╧ ($max > 1024)\n"
 
 msgid "illegal command received, aborting connection"
-msgstr "получена недопустимая команда, соединение оборвано"
+msgstr "п©п╬п╩я┐я┤п╣п╫п╟ п╫п╣п╢п╬п©я┐я│я┌п╦п╪п╟я▐ п╨п╬п╪п╟п╫п╢п╟, я│п╬п╣п╢п╦п╫п╣п╫п╦п╣ п╬п╠п╬я─п╡п╟п╫п╬"
 
 msgid "<Image>/Filters/Noise/Ditherize..."
-msgstr "<Image>/Фильтры/Шум/Клишировать..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п╗я┐п╪/п п╩п╦я┬п╦я─п╬п╡п╟я┌я▄..."
 
 msgid "<Toolbox>/Xtns/Animation/Seth Spin..."
-msgstr "<Toolbox>/Расш./Анимация/Seth Spin..."
+msgstr "<Toolbox>/п═п╟я│я┬./п░п╫п╦п╪п╟я├п╦я▐/Seth Spin..."
 
 msgid "Pattern Selection Dialog"
-msgstr "Диалог выбора шаблона"
+msgstr "п■п╦п╟п╩п╬пЁ п╡я▀п╠п╬я─п╟ я┬п╟п╠п╩п╬п╫п╟"
 
 msgid "get current foreground colour from the gimp"
-msgstr "получить текущий цвет переднего плана из gimp"
+msgstr "п©п╬п╩я┐я┤п╦я┌я▄ я┌п╣п╨я┐я┴п╦п╧ я├п╡п╣я┌ п©п╣я─п╣п╢п╫п╣пЁп╬ п©п╩п╟п╫п╟ п╦п╥ gimp"
 
 msgid "<Image>/Filters/Render/Add Dust..."
-msgstr "<Image>/Фильтры/Визуализация/Добавить пыль..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/п▓п╦п╥я┐п╟п╩п╦п╥п╟я├п╦я▐/п■п╬п╠п╟п╡п╦я┌я▄ п©я▀п╩я▄..."
 
 msgid "not enough"
-msgstr "не достаточно"
+msgstr "п╫п╣ п╢п╬я│я┌п╟я┌п╬я┤п╫п╬"
 
 msgid "PDB Explorer - the olof edition (yet still an alpha version)"
-msgstr "Исследователь ПБД - olof-редакция (еще очень даже альфа-версия)"
+msgstr "п≤я│я│п╩п╣п╢п╬п╡п╟я┌п╣п╩я▄ п÷п▒п■ - olof-я─п╣п╢п╟п╨я├п╦я▐ (п╣я┴п╣ п╬я┤п╣п╫я▄ п╢п╟п╤п╣ п╟п╩я▄я└п╟-п╡п╣я─я│п╦я▐)"
 
 msgid "<Image>/Filters/Web/Perl-o-tine..."
-msgstr "<Image>/Фильтры/Web/Perl-o-tine..."
+msgstr "<Image>/п╓п╦п╩я▄я┌я─я▀/Web/Perl-o-tine..."
 
 msgid "<Image>/Layers/Stack/Reorder Layers..."
-msgstr "<Image>/Слои/Стопка/Переупорядочить..."
+msgstr "<Image>/п║п╩п╬п╦/п║я┌п╬п©п╨п╟/п÷п╣я─п╣я┐п©п╬я─я▐п╢п╬я┤п╦я┌я▄..."
 
 msgid "accepting connections on $unix_path"
-msgstr "принятие соединения на $unix_path"
+msgstr "п©я─п╦п╫я▐я┌п╦п╣ я│п╬п╣п╢п╦п╫п╣п╫п╦я▐ п╫п╟ $unix_path"
