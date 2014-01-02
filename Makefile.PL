@@ -14,7 +14,7 @@ if ($ARGV[0] ne "--writemakefile") {
    }
    
    # run the config.pl to setup enviornment
-   do './config.pl';
+   do './config.pl' or die $@;
    
    # Set it up to do lots of tests
    $EXTENSIVE_TESTS = 1;

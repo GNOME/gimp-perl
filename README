@@ -5,7 +5,7 @@ NAME
 
 WARNING
 
-       This version of the module only works for Gimp-2.2 and Gimp-2.3.
+       This version of the module is for use with GIMP 2.8.0 or later.
 
        Current limitations:
 

@@ -25,7 +25,10 @@ chomp $pluginlibs;
 # Get gimp's version and append to make binname
 $gimpbinname = ExtUtils::PkgConfig->modversion("gimp-2.0");
 $gimpbinname =~ s/^(\d\.\d).*/$1/; # strip off minor versions
+$gimpversion = $gimpbinname; # capture the x.y version number
 $gimpbinname = "gimp-" . $gimpbinname;
+
+die "Need GIMP version at least 2.8.0\n" unless $gimpversion >= 2.8;
 
 %cfg = (
    GIMP         => $gimppath . $gimpbinname,
@@ -147,4 +150,4 @@ sub MY::makefile {
    return $self->MM::makefile(@_);
 }
 
-
+1;
