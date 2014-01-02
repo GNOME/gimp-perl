@@ -2,13 +2,14 @@
 
 use Cwd 'abs_path';
 
-# make $topdir be where the gimp-perl sources start 
+# make $topdir be where the gimp-perl sources start
 $topdir = ".";
 $topdir .= "/.." while ! -f "$topdir/MANIFEST";
 $topdir = abs_path $topdir;
 
 use ExtUtils::PkgConfig;
 %gimpcfg = ExtUtils::PkgConfig->find("gimp-2.0");
+%gtkcfg  = ExtUtils::PkgConfig->find("gtk+-2.0");
 %glibcfg = ExtUtils::PkgConfig->find("glib-2.0");
 
 $^W=0;
@@ -21,33 +22,35 @@ $gimplibdir = ExtUtils::PkgConfig->variable("gimp-2.0", "gimplibdir");
 $pluginlibs = `$gimppath/gimptool-2.0 --libs`;
 chomp $pluginlibs;
 
-# Get gimp's version and append to make binname 
+# Get gimp's version and append to make binname
 $gimpbinname = ExtUtils::PkgConfig->modversion("gimp-2.0");
 $gimpbinname =~ s/^(\d\.\d).*/$1/; # strip off minor versions
 $gimpbinname = "gimp-" . $gimpbinname;
 
 %cfg = (
-   GIMP			=> $gimppath . $gimpbinname, 
-   GIMPTOOL		=> $gimppath . "gimptool-2.0",
-   _GIMP_INC		=> $gimpcfg{"cflags"},
-   _GIMP_INC_NOUI	=> $gimpcfg{"cflags"},
-   _GIMP_LIBS		=> $pluginlibs,
-   _GIMP_LIBS_NOUI	=> $gimpcfg{"libs"},
+   GIMP         => $gimppath . $gimpbinname,
+   GIMPTOOL     => $gimppath . "gimptool-2.0",
+   _GIMP_INC        => $gimpcfg{"cflags"},
+   _GIMP_INC_NOUI   => $gimpcfg{"cflags"},
+   _GIMP_LIBS       => $pluginlibs,
+   _GIMP_LIBS_NOUI  => $gimpcfg{"libs"},
 
-   GLIB_CFLAGS		=> $glibcfg{"cflags"},
-   GLIB_LIBS		=> $glibcfg{"libs"},
+   GTK_CFLAGS       => $gtkcfg{"cflags"},
 
-   gimpplugindir	=> $gimplibdir,
+   GLIB_CFLAGS      => $glibcfg{"cflags"},
+   GLIB_LIBS        => $glibcfg{"libs"},
 
-   _EXTENSIVE_TESTS	=> q[1],
+   gimpplugindir    => $gimplibdir,
 
-   pdl_inc		=> '',
-   pdl_typemaps		=> '',
-   INC1			=> '',
-   DEFINE1		=> '',
+   _EXTENSIVE_TESTS => q[1],
 
-   LIBS			=> q[],
-   INTLLIBS		=> q[],
+   pdl_inc      => '',
+   pdl_typemaps     => '',
+   INC1         => '',
+   DEFINE1      => '',
+
+   LIBS         => q[],
+   INTLLIBS     => q[],
 );
 
 sub expand {
@@ -72,15 +75,15 @@ while (($k,$v)=each(%cfg)) {
 }
 
 $GIMPTOOL       = expand($GIMPTOOL);
-$INTLLIBS	= expand($INTLLIBS);
+$INTLLIBS   = expand($INTLLIBS);
 
 $gimpplugindir  = `$GIMPTOOL --gimpplugindir`;
 $GIMP           = expand($GIMP);
 
-$GIMP_INC	=~ s%\$topdir%$topdir%g;
-$GIMP_INC_NOUI	=~ s%\$topdir%$topdir%g;
-$GIMP_LIBS	=~ s%\$topdir%$topdir%g;
-$GIMP_LIBS_NOUI	=~ s%\$topdir%$topdir%g;
+$GIMP_INC   =~ s%\$topdir%$topdir%g;
+$GIMP_INC_NOUI  =~ s%\$topdir%$topdir%g;
+$GIMP_LIBS  =~ s%\$topdir%$topdir%g;
+$GIMP_LIBS_NOUI =~ s%\$topdir%$topdir%g;
 
 # $...1 variables should be put in front of the corresponding MakeMaker values.
 $INC1    = "-I$topdir";
@@ -129,7 +132,7 @@ if ($PDL) {
 
    $pdl_inc      = $pdl_inc = &PDL::Core::Dev::PDL_INCLUDE;
    $pdl_typemaps = "@{[@pdl_typemaps = &PDL::Core::Dev::PDL_TYPEMAP]}";
-   $DEFINE1	.= " -DHAVE_PDL=1";
+   $DEFINE1 .= " -DHAVE_PDL=1";
 } else {
    @pdl_typemaps = "$topdir/typemap.pdl";
 }

@@ -11,7 +11,7 @@
 
 /* need to factor these out, otherwise we always need gtk :( */
 #include <libgimp/gimp.h>
-#include <libgimpwidgets/gimpchainbutton.h>
+#include <libgimpwidgets/gimpwidgets.h>
 #include <libgimpbase/gimpbasetypes.h>
 
 #include "extra.h"
@@ -53,13 +53,13 @@ newSV_color3 (gdouble e, gdouble f, gdouble g, gdouble a)
   return newRV_noinc ((SV *)av);
 }
 
-#define ENUM(name)			\
-  static GType t_ ## name;		\
-  static GType name ## _type (void)	\
-  {					\
-    if (!t_ ## name)			\
-      t_ ## name = g_enum_register_static (# name, _ ## name ## _values);	\
-    return t_ ## name;			\
+#define ENUM(name)          \
+  static GType t_ ## name;      \
+  static GType name ## _type (void) \
+  {                 \
+    if (!t_ ## name)            \
+      t_ ## name = g_enum_register_static (# name, _ ## name ## _values);   \
+    return t_ ## name;          \
   }
 
 ENUM(gimp_unit)

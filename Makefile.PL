@@ -246,7 +246,7 @@ WriteMakefile(
     		    'Gimp/Config.pm'	=> '$(INST_LIBDIR)/Gimp/Config.pm',
     		   },
     'LDFROM'	=> expand("\$(OBJECT) $LIBS $INTLLIBS"),
-    'INC'	=> "$INC1 $GIMP_INC_NOUI $CPPFLAGS $CFLAGS",
+    'INC'	=> "$INC1 $GIMP_INC_NOUI $GTK_CFLAGS $CPPFLAGS $CFLAGS",
     'DEFINE'	=> "$DEFINE1 $DEFS",
     'EXE_FILES'	=> \@EXE_FILES,
     'macro'	=> \%cfg,

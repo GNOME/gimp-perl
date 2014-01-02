@@ -1,7 +1,7 @@
 #include "config.h"
 
 #include <libgimp/gimp.h>
-#include <libgimp/gimpexport.h>
+#include <libgimp/gimpui.h>
 
 #include <locale.h>
 
