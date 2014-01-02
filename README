@@ -1,7 +1,7 @@
 NAME
 
-       Gimp - Perl extension for writing Gimp Extensions/Plug-ins/Load &
-       Save-Handlers
+       gimp-perl is a plug-in used for writing GIMP extensions/plug-ins/load &
+       save handlers in Perl.
 
 WARNING
 
@@ -34,20 +34,21 @@ PREREQUISITES
        To install/use this perl extension, you need to have the following
        software packages installed (the given order is best):
 
-       Perl5.008 (or higher):
+       Perl 5.6 (or higher):
 
-          While this extension might run with perl 5.6, I do not support
-          nor encourage it in any way.  The configure check will not let
-	  you compile it, so you'll have to change that if you really want
-	  an older perl.
+          While this extension might run with perl 5.6, it is being developed
+          using Perl 5.14, and later. If you encounter problems when trying to
+          use a version of Perl older than 5.14, update to a newer version of
+          Perl and try again. The developers of this module can neither support
+          nor encourage the use of older versions of Perl.
 
-       The GNU Image Manipulation Program, i.e. The GIMP:
+       The GNU Image Manipulation Program, aka. GIMP
        http://www.gimp.org/
        ftp://ftp.gimp.org/pub/gimp/
 
-          gimp-2.2 (or newer, e.g. CVS or CVS snapshots) is required.  For
-          older versions of The Gimp, use version 1.2* of the Gimp-Perl
-          module.  Likewise for v2.0.
+          gimp-2.8 (or newer, e.g. git master) is required.  For
+          older versions of GIMP, use version 1.2* of the gimp-perl
+          module.
 
        Gtk, the perl extension for gtk+2
        http://gtk2-perl.sourceforge.net
@@ -67,8 +68,8 @@ PREREQUISITES
 
 INSTALLATION
 
-       On unix/linux, you should be able to run "perl Makefile.PL" make, make
-       test && make install. To get a listing of configuration options, enter
+       On Unix/Linux, you should be able to run "perl Makefile.PL", make, make
+       test && make install. To get a listing of configuration options, enter:
 
        perl ./Makefile.PL --help
        
@@ -87,7 +88,7 @@ INSTALLATION
        
 OVERWRITING INSTALL LOCATIONS (PREFIX)
 
-       In the rare case that you want to install the Gimp-Perl modules
+       In the rare case that you want to install the gimp-perl modules
        somewhere else than in the standard location then there is a
        standard way to accomplish this.
 
@@ -101,7 +102,7 @@ OVERWRITING INSTALL LOCATIONS (PREFIX)
        If you are building a slp/deb/rpm/whatever package you usually want
        to use the normal prefix, while overwriting the prefix at "make
        install" time. In that case, just build gimp-perl (or the whole
-       gimp) as usual, but instead of just calling "make install", use
+       GIMP) as usual, but instead of just calling "make install", use
        something like the following command (this example is for debian):
 
           make prefix=`pwd`/debian/tmp/usr PREFIX=`pwd`/debian/tmp/usr \
@@ -136,8 +137,8 @@ SUPPORT/MAILING LISTS/MORE INFO
 
 BLURB
 
-       Gimp-Perl is an effort to make a usable, debuggable, and flexible 
-       interface to The GIMP through use of perl.
+       gimp-perl is an effort to make a usable, debuggable, and flexible 
+       interface to GIMP through use of Perl.
 
 LICENSE
 
@@ -227,5 +228,4 @@ register "gimp_fu_example_script",                      # fill in a function nam
 };
 
 exit main;  # call the "main" funciton to start the script working
-
 
