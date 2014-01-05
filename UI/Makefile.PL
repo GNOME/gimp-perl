@@ -38,7 +38,6 @@ $pkg->set_inc ("$DEFINE1 $DEFS $INC1 $GIMP_INC $CPPFLAGS $pdl_inc $CFLAGS");
 $pkg->set_libs ("$GIMP_LIBS");
 $pkg->add_pm (
               'UI.pm'		=> '$(INST_LIBDIR)/UI.pm',
-              'basewidget.pm'	=> '$(INST_LIBDIR)/basewidget.pm',
              );
 $pkg->add_typemaps ("$topdir/typemap", @pdl_typemaps);
 

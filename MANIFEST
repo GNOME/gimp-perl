@@ -143,7 +143,6 @@ TODO
 t/run.t
 typemap
 typemap.pdl
-UI/basewidget.pm
 UI/Makefile.PL
 UI/typemap
 UI/UI.pm
