@@ -231,6 +231,16 @@ WriteMakefile(
                     PDL			=> 0,
     		    Data::Dumper	=> 2.0,
 		   },
+    META_MERGE => {
+		    "meta-spec" => { version => 2 },
+		    resources => {
+		      repository => {
+			type => 'git',
+			url => 'git://git.gnome.org/gimp-perl',
+			web => 'https://git.gnome.org/browse/gimp-perl/',
+		      },
+		    },
+		  },
     'DIR'	=> [@DIRS],
     'NAME'	=> 'Gimp',
     'VERSION_FROM' => 'Gimp.pm',
