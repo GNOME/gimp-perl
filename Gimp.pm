@@ -681,7 +681,7 @@ package Gimp; # for __DATA__
 
 =head1 NAME
 
-Gimp: a Perl extension for writing Gimp Extensions/Plug-ins/Load & Save-Handlers
+Gimp - a Perl extension for writing Gimp Extensions/Plug-ins/Load & Save-Handlers
 
 This is a release of gimp-perl for gimp-2.0.  It is not compatible with version 1.2.x or below of The Gimp.
 
