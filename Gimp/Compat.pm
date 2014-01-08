@@ -43,7 +43,7 @@ Gimp-Perl extension (contact him to include new functions) is Marc Lehmann
 
 package      Gimp::Compat;
 
-$VERSION=2.3;
+$VERSION = 2.3001;
 
 use Gimp ('croak', '__');
 

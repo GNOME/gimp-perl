@@ -21,7 +21,7 @@ use Fcntl qw(F_SETFD);
 # TODO: use dynaloader
 require DynaLoader;
 
-$VERSION = 2.3;
+$VERSION = 2.3001;
 
 bootstrap Gimp::Net $VERSION;
 

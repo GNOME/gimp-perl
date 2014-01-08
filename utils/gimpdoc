@@ -4,7 +4,7 @@ use Gimp qw(:consts spawn_options=no-data);
 use Getopt::Std;
 #use Config '%Config';
 
-$VERSION=2.3;
+$VERSION = 2.3001;
 
 getopts('rw:');
 
