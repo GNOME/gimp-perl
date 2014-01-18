@@ -609,11 +609,11 @@ sub _pseudoclass {
   push(@{"$class\::PREFIXES"}		, @prefixes); @prefixes=@{"$class\::PREFIXES"};
 }
 
-_pseudoclass qw(Layer		gimp_drawable_ gimp_layer_ gimp_floating_sel_ gimp_image_ gimp_ plug_in_ perl_fu_);
-_pseudoclass qw(Image		gimp_image_ gimp_drawable_ gimp_ plug_in_ perl_fu_);
-_pseudoclass qw(Drawable	gimp_drawable_ gimp_layer_ gimp_channel_ gimp_image_ gimp_ plug_in_ perl_fu_);
+_pseudoclass qw(Layer		gimp_item_ gimp_layer_ gimp_floating_sel_ gimp_image_ gimp_ plug_in_ perl_fu_);
+_pseudoclass qw(Image		gimp_image_ gimp_item_ gimp_ plug_in_ perl_fu_);
+_pseudoclass qw(Drawable	gimp_item_ gimp_layer_ gimp_channel_ gimp_image_ gimp_ plug_in_ perl_fu_);
 _pseudoclass qw(Selection 	gimp_selection_);
-_pseudoclass qw(Channel		gimp_channel_ gimp_drawable_ gimp_selection_ gimp_image_ gimp_ plug_in_ perl_fu_);
+_pseudoclass qw(Channel		gimp_channel_ gimp_item_ gimp_selection_ gimp_image_ gimp_ plug_in_ perl_fu_);
 _pseudoclass qw(Display		gimp_display_ gimp_);
 _pseudoclass qw(Plugin		plug_in_);
 _pseudoclass qw(Gradient	gimp_gradient_);
@@ -622,6 +622,11 @@ _pseudoclass qw(Edit		gimp_edit_);
 _pseudoclass qw(Progress	gimp_progress_);
 _pseudoclass qw(Region		);
 _pseudoclass qw(GimpParasite	);
+
+push @Gimp::Drawable::ISA, qw(Gimp::Item);
+push @Gimp::Vector::ISA, qw(Gimp::Item);
+push @Gimp::Channel::ISA, qw(Gimp::Drawable);
+push @Gimp::Layer::ISA, qw(Gimp::Drawable);
 
 # "C"-Classes
 _pseudoclass qw(GimpDrawable	gimp_drawable_);

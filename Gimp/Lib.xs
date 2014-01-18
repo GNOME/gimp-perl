@@ -43,6 +43,7 @@
 
 #define PKG_COLOR	GIMP_PKG "Color"
 #define PKG_REGION	GIMP_PKG "Region"
+#define PKG_ITEM	GIMP_PKG "Item"
 #define PKG_DISPLAY	GIMP_PKG "Display"
 #define PKG_IMAGE	GIMP_PKG "Image"
 #define PKG_LAYER	GIMP_PKG "Layer"
@@ -645,7 +646,7 @@ autobless (SV *sv, int type)
   return sv;
 }
 
-/* return gint32 from object, wether iv or rv.  */
+/* return gint32 from object, whether iv or rv.  */
 static gint32
 unbless (SV *sv, char *type, char *croak_str)
 {
@@ -922,25 +923,21 @@ convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
       case GIMP_PDB_FLOAT:	arg->data.d_float	= sv2gimp_extract_noref (SvNV, "FLOAT");
       case GIMP_PDB_STRING:	arg->data.d_string	= sv2gimp_extract_noref (SvPv, "STRING");
 
+      case GIMP_PDB_ITEM:
       case GIMP_PDB_DISPLAY:
       case GIMP_PDB_IMAGE:	
       case GIMP_PDB_LAYER:	
       case GIMP_PDB_CHANNEL:
       case GIMP_PDB_DRAWABLE:
-      case GIMP_PDB_SELECTION:
-      case GIMP_PDB_BOUNDARY:
-      case GIMP_PDB_PATH:	
       case GIMP_PDB_STATUS:
 
         if (SvOK(sv))
           switch (arg->type) {
+            case GIMP_PDB_ITEM:		arg->data.d_item	= unbless(sv, PKG_ITEM  , croak_str); break;
             case GIMP_PDB_DISPLAY:	arg->data.d_display	= unbless(sv, PKG_DISPLAY  , croak_str); break;
             case GIMP_PDB_LAYER:	arg->data.d_layer	= unbless(sv, PKG_ANYABLE  , croak_str); break;
             case GIMP_PDB_CHANNEL:	arg->data.d_channel	= unbless(sv, PKG_ANYABLE  , croak_str); break;
             case GIMP_PDB_DRAWABLE:	arg->data.d_drawable	= unbless(sv, PKG_ANYABLE  , croak_str); break;
-            case GIMP_PDB_SELECTION:	arg->data.d_selection	= unbless(sv, PKG_SELECTION, croak_str); break;
-            case GIMP_PDB_BOUNDARY:	arg->data.d_boundary	= sv2gimp_extract_noref (SvIV, "BOUNDARY"); 
-            case GIMP_PDB_PATH:		arg->data.d_path	= sv2gimp_extract_noref (SvIV, "PATH"); 
             case GIMP_PDB_STATUS:	arg->data.d_status	= sv2gimp_extract_noref (SvIV, "STATUS");
             case GIMP_PDB_IMAGE:
               {
@@ -965,13 +962,11 @@ convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
           }
         else
           switch (arg->type) {
+            case GIMP_PDB_ITEM:		arg->data.d_item	= -1; break;
             case GIMP_PDB_DISPLAY:	arg->data.d_display	= -1; break;
             case GIMP_PDB_LAYER:	arg->data.d_layer	= -1; break;
             case GIMP_PDB_CHANNEL:	arg->data.d_channel	= -1; break;
             case GIMP_PDB_DRAWABLE:	arg->data.d_drawable	= -1; break;
-            case GIMP_PDB_SELECTION:	arg->data.d_selection	= -1; break;
-            case GIMP_PDB_BOUNDARY:	arg->data.d_boundary	= -1; break;
-            case GIMP_PDB_PATH:		arg->data.d_path	= -1; break;
             case GIMP_PDB_STATUS:	arg->data.d_status	= -1; break;
             case GIMP_PDB_IMAGE:	arg->data.d_image	= -1; return 0; break;
             default:			abort ();
