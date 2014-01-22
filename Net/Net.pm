@@ -175,16 +175,15 @@ sub start_server {
       push(@args,"--no-data") if $opt=~s/(^|:)no-?data//;
       push(@args,"-i") unless $opt=~s/(^|:)gui//;
       push(@args,"--verbose") if $Gimp::verbose;
-      { # block to suppress warning with broken perls (e.g. 5.004)
-         exec $Gimp::Config{GIMP},
-              "--no-splash",
-              #"never",
-              "--console-messages",
-              @args,
-              "-b",
-              "(extension-perl-server $args)",
-              "(gimp-quit 0)";
-      }
+      exec $Gimp::Config{GIMP},
+           "--no-splash",
+           #"never",
+           "--console-messages",
+           @args,
+           "-b",
+	   "(if (defined? 'extension-perl-server) (extension-perl-server $args))",
+	   "-b",
+           "(gimp-quit 0)";
       exit(255);
    } else {
       croak __"unable to fork: $!";
