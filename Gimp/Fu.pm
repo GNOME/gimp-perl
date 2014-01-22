@@ -25,7 +25,7 @@ ability to run this script from within GIMP and standalone
 from the commandline.
 
 Dov Grobgeld has written an excellent tutorial for Gimp-Perl. 
-You can find it at C<http://imagic.weizmann.ac.il/~dov/gimp/perl-tut-2.0/>.
+You can find it at C<http://www.gimp.org/tutorials/Basic_Perl/>.
 
 =head1 INTRODUCTION
 
