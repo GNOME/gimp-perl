@@ -230,6 +230,7 @@ WriteMakefile(
     		    Gtk2		=> 1.0,
                     PDL			=> 0,
     		    Data::Dumper	=> 2.0,
+		    IO::All		=> 0,
 		   },
     META_MERGE => {
 		    "meta-spec" => { version => 2 },

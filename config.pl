@@ -80,7 +80,7 @@ while (($k,$v)=each(%cfg)) {
 $GIMPTOOL       = expand($GIMPTOOL);
 $INTLLIBS   = expand($INTLLIBS);
 
-$gimpplugindir  = `$GIMPTOOL --gimpplugindir`;
+chomp($gimpplugindir  = `$GIMPTOOL --gimpplugindir`);
 $GIMP           = expand($GIMP);
 
 $GIMP_INC   =~ s%\$topdir%$topdir%g;
