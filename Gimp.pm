@@ -45,8 +45,8 @@ my @_consts = (@_param,
 'PDB_IMAGE',             'PDB_INT32',             'PDB_SELECTION',         'PDB_STATUS',            
 'PDB_STRINGARRAY',       'PDB_CHANNEL',           'PDB_FLOATARRAY',        'PDB_INT32ARRAY',        
 'PDB_DRAWABLE',          'PDB_BOUNDARY',          'PDB_REGION',            'PDB_PARASITE',          
-'PDB_INT8',              'HISTOGRAM_BLUE',              'HISTOGRAM_VALUE',             'HISTOGRAM_GREEN',             
-'HISTOGRAM_ALPHA',             'HISTOGRAM_RED',               'SHADOWS',               'HIGHLIGHTS',            
+'PDB_INT8',              'HISTOGRAM_BLUE',        'HISTOGRAM_VALUE',       'HISTOGRAM_GREEN',             
+'HISTOGRAM_ALPHA',       'HISTOGRAM_RED',         'SHADOWS',               'HIGHLIGHTS',            
 'MIDTONES',              'POINTS',                'PIXELS',                'STACK_TRACE_ALWAYS',    
 'STACK_TRACE_NEVER',     'STACK_TRACE_QUERY',     'GRAIN_EXTRACT_MODE',    'COLOR_ERASE_MODE',      
 'COLOR_MODE',            'LIGHTEN_ONLY_MODE',     'DIFFERENCE_MODE',       'DODGE_MODE',            
@@ -71,7 +71,7 @@ my @_consts = (@_param,
 'REPEAT_TRIANGULAR',     'REPEAT_SAWTOOTH',       'MASK_DISCARD',          'MASK_APPLY',            
 'ADD_WHITE_MASK',        'ADD_SELECTION_MASK',    'ADD_ALPHA_TRANSFER_MASK', 'ADD_BLACK_MASK',        'ADD_ALPHA_MASK',        
 'ADD_COPY_MASK',         'TRANSPARENT_FILL',      'BACKGROUND_FILL',       'FOREGROUND_FILL',       
-'WHITE_FILL',            'PATTERN_FILL',               'CHANNEL_OP_SUBTRACT',   'CHANNEL_OP_REPLACE',    
+'WHITE_FILL',            'PATTERN_FILL',          'CHANNEL_OP_SUBTRACT',   'CHANNEL_OP_REPLACE',    
 'CHANNEL_OP_INTERSECT',  'CHANNEL_OP_ADD',        'FLATTEN_IMAGE',         'EXPAND_AS_NECESSARY',   
 'CLIP_TO_BOTTOM_LAYER',  'CLIP_TO_IMAGE',         'CUSTOM_MODE',           'FG_TRANSPARENT_MODE',   
 'FG_BG_HSV_MODE',        'FG_BG_RGB_MODE',        
@@ -344,7 +344,7 @@ if (@ARGV) {
          if (/^-h$|^--?help$|^-\?$/) {
             $help=1;
             print __"Usage: $0 [gimp-args..] [interface-args..] [script-args..]
-       gimp-arguments are
+           gimp-arguments are
            -gimp <anything>           used internally only
            -h | -help | --help | -?   print some help
            -v | --verbose             be more verbose in what you do
@@ -609,6 +609,7 @@ sub _pseudoclass {
   push(@{"$class\::PREFIXES"}		, @prefixes); @prefixes=@{"$class\::PREFIXES"};
 }
 
+_pseudoclass qw(Item		gimp_item_);
 _pseudoclass qw(Layer		gimp_item_ gimp_layer_ gimp_floating_sel_ gimp_image_ gimp_ plug_in_ perl_fu_);
 _pseudoclass qw(Image		gimp_image_ gimp_item_ gimp_ plug_in_ perl_fu_);
 _pseudoclass qw(Drawable	gimp_item_ gimp_layer_ gimp_channel_ gimp_image_ gimp_ plug_in_ perl_fu_);

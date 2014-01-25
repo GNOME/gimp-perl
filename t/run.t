@@ -1,7 +1,7 @@
 use Config;
 use strict;
 use File::Temp;
-use Test::More tests => 19;
+use Test::More tests => 22;
 use IO::All;
 
 BEGIN { use_ok('Gimp', qw(:auto)); }
@@ -20,11 +20,8 @@ ok(io($perlserver)->print($s), 'wrote Perl-Server');
 ok(chmod(0700, $perlserver), 'chmod Perl-Server');
 ok(symlink("$plugins/script-fu", "$dir/script-fu"), 'symlink script-fu');
 ok(symlink("$plugins/sharpen", "$dir/sharpen"), 'symlink sharpen');
-ok (io("$dir/gimprc")->print(<<EOF), 'output gimprc');
-(show-tips no)
-(script-fu-path "")
-(plug-in-path "$dir")
-EOF
+ok(io("$dir/gimprc")->print("(plug-in-path \"$dir\")\n"), 'output gimprc');
+
 $ENV{GIMP2_DIRECTORY} = $dir;
 
 Gimp::init("spawn/");
@@ -50,4 +47,19 @@ ok(
 );
 ok(!$l->sharpen(10), 'call with maximum fu magic');
 ok(!Gimp->plug_in_sharpen($i,$l,10), 'call plugin using default');
+
+# exercise COLORARRAY
+my @palettes = Gimp->palettes_get_list("");
+my @colors = Gimp::Palette->get_colors($palettes[0]);
+#require Data::Dumper;warn Data::Dumper::Dumper(scalar @colors), "\n";
+cmp_ok(scalar(@colors), '==', 256, 'colorarray correct size');
+cmp_ok(scalar(@{ $colors[0] }), '==', 4, 'colorarray 1st el is correct size');
+
+# exercise VECTORS
+my $tl = $i->text_layer_new("hi", "Arial", 8, 3);
+$i->insert_layer($tl, 0, 0);
+my $vector = $tl->vectors_new_from_text_layer;
+my $vectorstring = $tl->vectors_export_to_string;
+ok($vectorstring =~ /^<\?xml/, 'vector string plausible');
+
 ok(!$i->delete, 'remove image');

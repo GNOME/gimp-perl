@@ -42,7 +42,6 @@
 #define GIMP_PKG	"Gimp::"	/* the package name */
 
 #define PKG_COLOR	GIMP_PKG "Color"
-#define PKG_REGION	GIMP_PKG "Region"
 #define PKG_ITEM	GIMP_PKG "Item"
 #define PKG_DISPLAY	GIMP_PKG "Display"
 #define PKG_IMAGE	GIMP_PKG "Image"
@@ -50,8 +49,8 @@
 #define PKG_CHANNEL	GIMP_PKG "Channel"
 #define PKG_DRAWABLE	GIMP_PKG "Drawable"
 #define PKG_SELECTION	GIMP_PKG "Selection"
-#define PKG_REGION	GIMP_PKG "Region"
 #define PKG_PARASITE	GIMP_PKG "Parasite"
+#define PKG_VECTORS	GIMP_PKG "Vectors"
 
 #define PKG_GDRAWABLE	GIMP_PKG "GimpDrawable"
 #define PKG_TILE	GIMP_PKG "Tile"
@@ -163,7 +162,7 @@ typedef gint32 CHANNEL;
 typedef gint32 DRAWABLE;
 typedef gint32 SELECTION;
 typedef gint32 DISPLAY;
-typedef gint32 REGION;
+typedef gint32 ITEM;
 typedef gint32 COLOR;
 typedef gpointer GimpPixelRgnIterator;
 
@@ -377,7 +376,8 @@ is_array (GimpPDBArgType typ)
       || typ == GIMP_PDB_INT16ARRAY
       || typ == GIMP_PDB_INT8ARRAY
       || typ == GIMP_PDB_FLOATARRAY
-      || typ == GIMP_PDB_STRINGARRAY;
+      || typ == GIMP_PDB_STRINGARRAY
+      || typ == GIMP_PDB_COLORARRAY;
 }
 
 static int
@@ -428,8 +428,8 @@ dump_params (int nparams, GimpParam *args, GimpParamDef *params)
   static char *ptype[GIMP_PDB_END+1] = {
     "INT32"      , "INT16"      , "INT8"      , "FLOAT"      , "STRING"     ,
     "INT32ARRAY" , "INT16ARRAY" , "INT8ARRAY" , "FLOATARRAY" , "STRINGARRAY",
-    "COLOR"      , "REGION"     , "DISPLAY"   , "IMAGE"      , "LAYER"      ,
-    "CHANNEL"    , "DRAWABLE"   , "SELECTION" , "BOUNDARY"   , "PATH"       ,
+    "COLOR"      , "ITEM"       , "DISPLAY"   , "IMAGE"      , "LAYER"      ,
+    "CHANNEL"    , "DRAWABLE"   , "SELECTION" , "COLORARRAY" , "VECTORS"    ,
     "PARASITE"   ,
     "STATUS"     , "END"
   };
@@ -466,8 +466,26 @@ dump_params (int nparams, GimpParam *args, GimpParamDef *params)
 	  case GIMP_PDB_CHANNEL:	trace_printf ("%d", args[i].data.d_channel); break;
 	  case GIMP_PDB_DRAWABLE:	trace_printf ("%d", args[i].data.d_drawable); break;
 	  case GIMP_PDB_SELECTION:	trace_printf ("%d", args[i].data.d_selection); break;
-	  case GIMP_PDB_BOUNDARY:	trace_printf ("%d", args[i].data.d_boundary); break;
-	  case GIMP_PDB_PATH:		trace_printf ("%d", args[i].data.d_path); break;
+	  case GIMP_PDB_COLORARRAY:
+		{
+		  int j; 
+		  trace_printf ("[");
+		  if (args[i].data.d_colorarray || !args[i-1].data.d_int32) {
+		    for (j = 0; j < args[i-1].data.d_int32; j++)
+		      trace_printf (
+			"[%f,%f,%f,%f]%s",
+			((GimpRGB) args[i].data.d_colorarray[j]).r,
+			((GimpRGB) args[i].data.d_colorarray[j]).g,
+			((GimpRGB) args[i].data.d_colorarray[j]).b,
+			((GimpRGB) args[i].data.d_colorarray[j]).a,
+			j < args[i-1].data.d_int32 - 1 ? ", " : ""
+		      );
+		  } else
+		    trace_printf (__("(UNINITIALIZED)"));
+		  trace_printf ("]");
+		}
+		break;
+	  case GIMP_PDB_VECTORS:	trace_printf ("%d", args[i].data.d_vectors); break;
 	  case GIMP_PDB_STATUS:		trace_printf ("%d", args[i].data.d_status); break;
 	  case GIMP_PDB_INT32ARRAY:	dump_printarray (args, i, gint32, d_int32array, "%d"); break;
 	  case GIMP_PDB_INT16ARRAY:	dump_printarray (args, i, gint16, d_int16array, "%d"); break;
@@ -616,13 +634,13 @@ param_stash (GimpPDBArgType type)
 {
   static HV *bless_hv[GIMP_PDB_END]; /* initialized to zero */
   static char *bless[GIMP_PDB_END] = {
-	                    0		, 0		, 0		, 0		, 0		,
-	                    0		, 0		, 0		, 0		, 0		,
-	                    PKG_COLOR	, PKG_REGION	, PKG_DISPLAY	, PKG_IMAGE	, PKG_LAYER	,
-	                    PKG_CHANNEL	, PKG_DRAWABLE	, PKG_SELECTION	, 0		, 0		,
-	                    PKG_PARASITE,
-	                    0
-	                   };
+            0           , 0           , 0            , 0        , 0        ,
+            0           , 0           , 0            , 0        , 0        ,
+            PKG_COLOR   , PKG_ITEM    , PKG_DISPLAY  , PKG_IMAGE, PKG_LAYER,
+            PKG_CHANNEL , PKG_DRAWABLE, PKG_SELECTION, 0        , 0        ,
+            PKG_PARASITE,
+            0
+          };
   
   if (bless [type] && !bless_hv [type])
     bless_hv [type] = gv_stashpv (bless [type], 1);
@@ -810,8 +828,7 @@ push_gimp_sv (const GimpParam *arg, int array_as_ref)
       case GIMP_PDB_CHANNEL:
       case GIMP_PDB_DRAWABLE:
       case GIMP_PDB_SELECTION:
-      case GIMP_PDB_BOUNDARY:
-      case GIMP_PDB_PATH:	
+      case GIMP_PDB_VECTORS:	
       case GIMP_PDB_STATUS:
          
         {
@@ -824,8 +841,7 @@ push_gimp_sv (const GimpParam *arg, int array_as_ref)
             case GIMP_PDB_CHANNEL:	id = arg->data.d_channel; break;
             case GIMP_PDB_DRAWABLE:	id = arg->data.d_drawable; break;
             case GIMP_PDB_SELECTION:	id = arg->data.d_selection; break;
-            case GIMP_PDB_BOUNDARY:	id = arg->data.d_boundary; break;
-            case GIMP_PDB_PATH:		id = arg->data.d_path; break;
+            case GIMP_PDB_VECTORS:	id = arg->data.d_vectors; break;
             case GIMP_PDB_STATUS:	id = arg->data.d_status; break;
             default:			abort ();
           }
@@ -862,14 +878,38 @@ push_gimp_sv (const GimpParam *arg, int array_as_ref)
           }
 
 	break;
-      
+
       /* did I say difficult before????  */
       case GIMP_PDB_INT32ARRAY:		push_gimp_av (arg, d_int32array , newSViv, array_as_ref); break;
       case GIMP_PDB_INT16ARRAY:		push_gimp_av (arg, d_int16array , newSViv, array_as_ref); break;
       case GIMP_PDB_INT8ARRAY:		push_gimp_av (arg, d_int8array  , newSVu8, array_as_ref); break;
       case GIMP_PDB_FLOATARRAY:		push_gimp_av (arg, d_floatarray , newSVnv, array_as_ref); break;
       case GIMP_PDB_STRINGARRAY:	push_gimp_av (arg, d_stringarray, neuSVpv, array_as_ref); break;
-	
+      case GIMP_PDB_COLORARRAY:	
+	{
+	  int j;
+	  AV *av;
+	  if (array_as_ref)
+	    av = newAV ();
+	  else
+	    { av = 0; EXTEND (SP, arg[-1].data.d_int32); }
+	  for (j = 0; j < arg[-1].data.d_int32; j++) {
+	    AV *color = newAV ();
+	    av_push (color, newSVnv (((GimpRGB) arg->data.d_colorarray[j]).r));
+	    av_push (color, newSVnv (((GimpRGB) arg->data.d_colorarray[j]).g));
+	    av_push (color, newSVnv (((GimpRGB) arg->data.d_colorarray[j]).b));
+	    av_push (color, newSVnv (((GimpRGB) arg->data.d_colorarray[j]).a));
+	    SV *color_ref = newRV_noinc ((SV *)color);
+	    if (array_as_ref)
+	      av_push (av, color_ref);
+	    else
+	      PUSHs (sv_2mortal (color_ref));
+	  }
+	  if (array_as_ref)
+	    PUSHs (sv_2mortal (newRV_noinc ((SV *)av)));
+	}
+	break;
+
       default:
 	croak (__("dunno how to return param type %d"), arg->type);
     }
@@ -929,6 +969,7 @@ convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
       case GIMP_PDB_LAYER:	
       case GIMP_PDB_CHANNEL:
       case GIMP_PDB_DRAWABLE:
+      case GIMP_PDB_VECTORS:
       case GIMP_PDB_STATUS:
 
         if (SvOK(sv))
@@ -938,6 +979,7 @@ convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
             case GIMP_PDB_LAYER:	arg->data.d_layer	= unbless(sv, PKG_ANYABLE  , croak_str); break;
             case GIMP_PDB_CHANNEL:	arg->data.d_channel	= unbless(sv, PKG_ANYABLE  , croak_str); break;
             case GIMP_PDB_DRAWABLE:	arg->data.d_drawable	= unbless(sv, PKG_ANYABLE  , croak_str); break;
+            case GIMP_PDB_VECTORS:	arg->data.d_vectors	= unbless(sv, PKG_ANYABLE  , croak_str); break;
             case GIMP_PDB_STATUS:	arg->data.d_status	= sv2gimp_extract_noref (SvIV, "STATUS");
             case GIMP_PDB_IMAGE:
               {
@@ -967,6 +1009,7 @@ convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
             case GIMP_PDB_LAYER:	arg->data.d_layer	= -1; break;
             case GIMP_PDB_CHANNEL:	arg->data.d_channel	= -1; break;
             case GIMP_PDB_DRAWABLE:	arg->data.d_drawable	= -1; break;
+            case GIMP_PDB_VECTORS:	arg->data.d_vectors	= -1; break;
             case GIMP_PDB_STATUS:	arg->data.d_status	= -1; break;
             case GIMP_PDB_IMAGE:	arg->data.d_image	= -1; return 0; break;
             default:			abort ();
@@ -1010,9 +1053,31 @@ convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
       case GIMP_PDB_INT8ARRAY:	av2gimp (arg, sv, d_int8array  , guint8 , SvIV); break;
       case GIMP_PDB_FLOATARRAY:	av2gimp (arg, sv, d_floatarray , gdouble, SvNV); break;
       case GIMP_PDB_STRINGARRAY:av2gimp (arg, sv, d_stringarray, gchar *, SvPv); break;
+
+      case GIMP_PDB_COLORARRAY:
+	if (SvROK (sv) && SvTYPE(SvRV(sv)) == SVt_PVAV) {
+	  int i;
+	  AV *av = (AV *)SvRV(sv);
+	  arg[-1].data.d_int32 = av_len (av) + 1;
+	  arg->data.d_colorarray = g_new (GimpRGB, av_len (av) + 1);
+	  for (i = 0; i <= av_len (av); i++)
+	    canonicalize_colour (
+	      croak_str,
+	      *av_fetch (av, i, 0), 
+	      &arg->data.d_colorarray[i]
+	    );
+	} else {
+	  sprintf (croak_str, __("perl-arrayref required as datatype for a gimp-array"));
+	  arg->data.d_colorarray = 0;
+	}
+	break;
 	
       default:
-	sprintf (croak_str, __("dunno how to pass arg type %d"), arg->type);
+	croak (
+	  __("tried to convert '%s' to unknown type %d"),
+	  SvPV_nolen(sv),
+	  arg->type
+	);
     }
   
   return 1;
