@@ -49,10 +49,10 @@ ok(!$l->sharpen(10), 'call with maximum fu magic');
 ok(!Gimp->plug_in_sharpen($i,$l,10), 'call plugin using default');
 
 # exercise COLORARRAY
-my @palettes = Gimp->palettes_get_list("");
+my @palettes = Gimp->palettes_get_list("Default");
 my @colors = Gimp::Palette->get_colors($palettes[0]);
 #require Data::Dumper;warn Data::Dumper::Dumper(scalar @colors), "\n";
-cmp_ok(scalar(@colors), '==', 256, 'colorarray correct size');
+cmp_ok(scalar(@colors), '==', 23, 'colorarray correct size');
 cmp_ok(scalar(@{ $colors[0] }), '==', 4, 'colorarray 1st el is correct size');
 
 # exercise VECTORS
