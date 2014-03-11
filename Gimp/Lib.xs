@@ -92,7 +92,7 @@ static void need_pdl (void)
 static pdl *new_pdl (int a, int b, int c)
 {
   pdl *p = PDL->new();
-  PDL_Long dims[3];
+  PDL_Indx dims[3];
   int ndims = 0;
 
   if (c > 0) dims[ndims++] = c;
@@ -121,7 +121,7 @@ static void old_pdl (pdl **p, short ndims, int dim0)
     croak (__("pixel size mismatch, pdl has %d channel pixels but %d channels are required"), (*p)->dims[0], dim0);
 }
 
-static void pixel_rgn_pdl_delete_data (pdl *p, int param)
+static void pixel_rgn_pdl_delete_data (pdl *p, size_t param)
 {
   p->data = 0;
 }
@@ -185,7 +185,7 @@ static int gdrawable_free (pTHX_ SV *obj, MAGIC *mg)
 {
   GimpDrawable *gdr = (GimpDrawable *)SvIV(obj);
 
-  g_hash_table_remove (gdrawable_cache, (gpointer)gdr->drawable_id);
+  g_hash_table_remove (gdrawable_cache, GINT_TO_POINTER(gdr->drawable_id));
   gimp_drawable_detach (gdr);
 
   return 0;
@@ -203,7 +203,7 @@ static SV *new_gdrawable (gint32 id)
 
    assert (sizeof (gpointer) >= sizeof (id));
 
-   if ((sv = (SV*)g_hash_table_lookup (gdrawable_cache, (gpointer)id)))
+   if ((sv = (SV*)g_hash_table_lookup (gdrawable_cache, GINT_TO_POINTER(id))))
      SvREFCNT_inc (sv);
    else
      {
@@ -219,7 +219,7 @@ static SV *new_gdrawable (gint32 id)
        sv_magic (sv, 0, '~', 0, 0);
        mg_find (sv, '~')->mg_virtual = &vtbl_gdrawable;
 
-       g_hash_table_insert (gdrawable_cache, (gpointer)id, (void *)sv);
+       g_hash_table_insert (gdrawable_cache, GINT_TO_POINTER(id), (void *)sv);
      }
    
    return sv_bless (newRV_noinc (sv), stash);
@@ -2156,7 +2156,7 @@ gimp_pixel_rgn_data(pr,newdata=0)
         else
           {
             pdl *p = PDL->new();
-            PDL_Long dims[3];
+            PDL_Indx dims[3];
 
             dims[0] = pr->bpp;
             dims[1] = pr->rowstride / pr->bpp;
