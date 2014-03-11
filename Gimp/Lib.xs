@@ -197,6 +197,13 @@ static void trace_printf (char *frmt, ...)
 
 #endif
 
+void throw_exception(const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer user_data)
+{
+  char buffer[MAX_STRING];
+  snprintf (buffer, sizeof buffer, "%s: %s", log_domain, message);
+  croak(buffer);
+}
+
 /* new SV with len len.  There _must_ be a better way, but newSV doesn't work.  */
 static SV *newSVn (STRLEN len)
 {
@@ -2205,6 +2212,12 @@ gimp_pixel_rgn_data(...)
 
 BOOT:
 	trace_file = PerlIO_stderr ();
+	g_log_set_handler(
+	  "LibGimp",
+	  G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_ERROR | G_LOG_FLAG_FATAL,
+	  throw_exception,
+	  NULL
+	);
 
 #
 # this function overrides a pdb function for speed
