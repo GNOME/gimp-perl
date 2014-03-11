@@ -1,28 +1,10 @@
-use Config;
 use strict;
-use File::Temp;
-use Test::More tests => 23;
-use IO::All;
+use Test::More tests => 15;
+use Gimp qw(:auto);
 
-BEGIN { use_ok('Gimp', qw(:auto)); }
-our %cfg;
-require_ok './config.pl';
-
-my $plugins = $cfg{gimpplugindir} . '/plug-ins';
-ok(-d $plugins, 'plugins dir exists');
-ok(-x "$plugins/script-fu", 'script-fu executable');
-
-my $dir = File::Temp->newdir;
-my $perlserver = "$dir/Perl-Server.pl";
-my $s = io("Perl-Server")->all or die "unable to read the Perl-Server";
-$s =~ s/^(#!).*?(\n)/$Config{startperl}$2/;
-ok(io($perlserver)->print($s), 'wrote Perl-Server');
-ok(chmod(0700, $perlserver), 'chmod Perl-Server');
-ok(symlink("$plugins/script-fu", "$dir/script-fu"), 'symlink script-fu');
-ok(symlink("$plugins/sharpen", "$dir/sharpen"), 'symlink sharpen');
-ok(io("$dir/gimprc")->print("(plug-in-path \"$dir\")\n"), 'output gimprc');
-
-$ENV{GIMP2_DIRECTORY} = $dir;
+our $dir;
+our $DEBUG = 0;
+require 't/gimpsetup.pl';
 
 Gimp::init("spawn/");
 
@@ -31,7 +13,7 @@ ok(
   (my $l = $i->layer_new(10,10,RGBA_IMAGE,"new layer",100,VALUE_MODE)),
   'Different OO syntax for creating a layer',
 );
-ok(!Gimp->image_add_layer($l,0), 'Yet another OO syntax');
+ok(!Gimp->image_insert_layer($l,0,0), 'Yet another OO syntax');
 is("new layer", $l->get_name, 'layer name');
 ok(
   !$l->paintbrush(50,[1,1,2,2,5,3,7,4,2,8],PAINT_CONSTANT,0), 
