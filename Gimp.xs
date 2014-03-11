@@ -5,11 +5,6 @@
 
 #include <locale.h>
 
-/* FIXME */
-/* sys/param.h is redefining these! */
-#undef MIN
-#undef MAX
-
 /* dunno where this comes from */
 #undef VOIDUSED
 

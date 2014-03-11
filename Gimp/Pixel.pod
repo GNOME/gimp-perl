@@ -52,7 +52,7 @@ get one from any drawable, by calling the C<get> function:
 
 in a sense, <$gdrawable> contains all tiles. Changes you make to them might
 not be reflected in the image until you destroy this variable. (Thats the
-reason I used "my" int he above example. Once $gdrawable gets out of scope,
+reason I used "my" in the above example. Once $gdrawable gets out of scope,
 the drawable in the gimp automatically gets updated).
 
 To get access to a tile, you have to call C<get_tile> or C<get_tile2>.
@@ -87,8 +87,7 @@ the C<GimpDrawable>:
 
 which method you choose is purely a question of style...
 
-The following functions return packed pixel data (see L<Gimp::PDL> for an
-easier way to manipulate on image data):
+The following functions return packed pixel data:
 
  $piddle = $region->get_pixel(45,60);		# return the pixel at (45|60)
  $piddle = $region->get_row(45,60,10);		# return ten horizontal pixels

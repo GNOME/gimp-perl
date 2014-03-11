@@ -153,7 +153,7 @@ sub start_server {
       or socketpair $server_fh,$gimp_fh,AF_LOCAL,SOCK_STREAM,PF_UNSPEC
       or croak __"unable to create socketpair for gimp communications: $!";
 
-   # do it here so it i done only once
+   # do it here so it is done only once
    require Gimp::Config;
    $gimp_pid = fork;
    if ($gimp_pid > 0) {

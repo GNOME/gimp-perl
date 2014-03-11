@@ -20,7 +20,7 @@ sub gimp_init {
 }
 
 sub gimp_end {
-   Gimp::croak Gimp::_("gimp_end not implemented for in the Lib interface");
+   Gimp::croak Gimp::_("gimp_end not implemented for the Lib interface");
 }
 
 sub lock {
@@ -60,7 +60,7 @@ sub _gimp_append_data($$) {
    gimp_set_data ($_[0], gimp_get_data ($_[0]) . $_[1]);
 }
 
-# convinience functions
+# convenience functions
 sub gimp_drawable_pixel_rgn($$$$$$) {
    Gimp::gimp_pixel_rgn_init(@_);
 }

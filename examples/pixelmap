@@ -60,7 +60,7 @@ register "pixelmap",
          N_"<Image>/Filters/Generic/Pixelmap...",
          "*",	
          [
-           [PF_TEXT,		"expression"	, "The perl expression to use",	"(\$x*\$y*0.01)\n->slice(\"*\$bpp\")"]
+           [PF_TEXT,		"expression"	, "The perl expression to use",	'($x*$y*0.01)'."\n".'->slice("*$bpp")']
          ],
          \&pixelmap;
 
