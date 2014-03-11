@@ -58,9 +58,6 @@
 
 #define PKG_ANY		((char *)0)
 
-static char pkg_anyable[] = PKG_DRAWABLE ", " PKG_LAYER " or " PKG_CHANNEL;
-#define PKG_ANYABLE	(pkg_anyable)
-
 static int trace = TRACE_NONE;
 
 #if HAVE_PDL
@@ -634,13 +631,29 @@ param_stash (GimpPDBArgType type)
 {
   static HV *bless_hv[GIMP_PDB_END]; /* initialized to zero */
   static char *bless[GIMP_PDB_END] = {
-            0           , 0           , 0            , 0        , 0        ,
-            0           , 0           , 0            , 0        , 0        ,
-            PKG_COLOR   , PKG_ITEM    , PKG_DISPLAY  , PKG_IMAGE, PKG_LAYER,
-            PKG_CHANNEL , PKG_DRAWABLE, PKG_SELECTION, 0        , 0        ,
-            PKG_PARASITE,
-            0
-          };
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    PKG_COLOR,
+    PKG_ITEM,
+    PKG_DISPLAY,
+    PKG_IMAGE,
+    PKG_LAYER,
+    PKG_CHANNEL,
+    PKG_DRAWABLE,
+    PKG_SELECTION,
+    0,
+    PKG_VECTORS,
+    PKG_PARASITE,
+    0
+  };
   
   if (bless [type] && !bless_hv [type])
     bless_hv [type] = gv_stashpv (bless [type], 1);
@@ -669,11 +682,7 @@ static gint32
 unbless (SV *sv, char *type, char *croak_str)
 {
   if (sv_isobject (sv))
-    if (type == PKG_ANY
-	|| (type == PKG_ANYABLE && (sv_derived_from (sv, PKG_DRAWABLE)
-	                            || sv_derived_from (sv, PKG_LAYER)
-	                            || sv_derived_from (sv, PKG_CHANNEL)))
-	|| sv_derived_from (sv, type))
+    if (type == PKG_ANY || sv_derived_from (sv, type))
       {
 	if (SvTYPE (SvRV (sv)) == SVt_PVMG)
 	  return SvIV (SvRV (sv));
@@ -965,8 +974,8 @@ convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
 
       case GIMP_PDB_ITEM:
       case GIMP_PDB_DISPLAY:
-      case GIMP_PDB_IMAGE:	
-      case GIMP_PDB_LAYER:	
+      case GIMP_PDB_IMAGE:
+      case GIMP_PDB_LAYER:
       case GIMP_PDB_CHANNEL:
       case GIMP_PDB_DRAWABLE:
       case GIMP_PDB_VECTORS:
@@ -976,24 +985,21 @@ convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
           switch (arg->type) {
             case GIMP_PDB_ITEM:		arg->data.d_item	= unbless(sv, PKG_ITEM  , croak_str); break;
             case GIMP_PDB_DISPLAY:	arg->data.d_display	= unbless(sv, PKG_DISPLAY  , croak_str); break;
-            case GIMP_PDB_LAYER:	arg->data.d_layer	= unbless(sv, PKG_ANYABLE  , croak_str); break;
-            case GIMP_PDB_CHANNEL:	arg->data.d_channel	= unbless(sv, PKG_ANYABLE  , croak_str); break;
-            case GIMP_PDB_DRAWABLE:	arg->data.d_drawable	= unbless(sv, PKG_ANYABLE  , croak_str); break;
-            case GIMP_PDB_VECTORS:	arg->data.d_vectors	= unbless(sv, PKG_ANYABLE  , croak_str); break;
+            case GIMP_PDB_LAYER:	arg->data.d_layer	= unbless(sv, PKG_ITEM  , croak_str); break;
+            case GIMP_PDB_CHANNEL:	arg->data.d_channel	= unbless(sv, PKG_ITEM  , croak_str); break;
+            case GIMP_PDB_DRAWABLE:	arg->data.d_drawable	= unbless(sv, PKG_ITEM  , croak_str); break;
+            case GIMP_PDB_VECTORS:	arg->data.d_vectors	= unbless(sv, PKG_ITEM  , croak_str); break;
             case GIMP_PDB_STATUS:	arg->data.d_status	= sv2gimp_extract_noref (SvIV, "STATUS");
             case GIMP_PDB_IMAGE:
               {
-                if (sv_derived_from (sv, PKG_DRAWABLE))
-                  arg->data.d_image = gimp_drawable_get_image    (unbless(sv, PKG_DRAWABLE, croak_str));
-                else if (sv_derived_from (sv, PKG_LAYER   ))
-                  arg->data.d_image = gimp_drawable_get_image   (unbless(sv, PKG_LAYER   , croak_str));
-                else if (sv_derived_from (sv, PKG_CHANNEL ))
-                  arg->data.d_image = gimp_drawable_get_image (unbless(sv, PKG_CHANNEL , croak_str));
-                else if (sv_derived_from (sv, PKG_IMAGE) || !SvROK (sv))
-                  {
-                    arg->data.d_image =                          unbless(sv, PKG_IMAGE   , croak_str); break;
-                  }
-                else
+                if (sv_derived_from (sv, PKG_ITEM))
+                  arg->data.d_image = gimp_item_get_image(
+		    unbless(sv, PKG_ITEM, croak_str)
+		  );
+                else if (sv_derived_from (sv, PKG_IMAGE) || !SvROK (sv)) {
+		  arg->data.d_image = unbless(sv, PKG_IMAGE, croak_str);
+		  break;
+		} else
                   strcpy (croak_str, __("argument incompatible with type IMAGE"));
 
                 return 0;

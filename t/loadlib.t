@@ -6,9 +6,3 @@ BEGIN { @ARGV = '-gimp' }
 
 use Gimp qw(:consts);
 print "ok 1\n";
-
-
-
-
-
-

@@ -1,7 +1,7 @@
 use Config;
 use strict;
 use File::Temp;
-use Test::More tests => 22;
+use Test::More tests => 23;
 use IO::All;
 
 BEGIN { use_ok('Gimp', qw(:auto)); }
@@ -48,7 +48,7 @@ ok(
 ok(!$l->sharpen(10), 'call with maximum fu magic');
 ok(!Gimp->plug_in_sharpen($i,$l,10), 'call plugin using default');
 
-# exercise COLORARRAY
+# exercise COLORARRAY - read only as can't find proc that takes as input
 my @palettes = Gimp->palettes_get_list("Default");
 my @colors = Gimp::Palette->get_colors($palettes[0]);
 #require Data::Dumper;warn Data::Dumper::Dumper(scalar @colors), "\n";
@@ -58,8 +58,9 @@ cmp_ok(scalar(@{ $colors[0] }), '==', 4, 'colorarray 1st el is correct size');
 # exercise VECTORS
 my $tl = $i->text_layer_new("hi", "Arial", 8, 3);
 $i->insert_layer($tl, 0, 0);
-my $vector = $tl->vectors_new_from_text_layer;
-my $vectorstring = $tl->vectors_export_to_string;
-ok($vectorstring =~ /^<\?xml/, 'vector string plausible');
+my $vectors = $tl->vectors_new_from_text_layer;
+cmp_ok(ref($vectors), 'eq', 'Gimp::Vectors', 'vectors object returned');
+my $vectorstring = $vectors->export_to_string; # takes VECTORS as input - QED
+like($vectorstring, qr/<path id="hi"/, 'vector string plausible');
 
 ok(!$i->delete, 'remove image');
