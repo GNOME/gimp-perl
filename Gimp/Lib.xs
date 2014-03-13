@@ -1385,82 +1385,54 @@ gimp_micro_version()
 
 # checks whether a gimp procedure exists
 int
-_gimp_procedure_available (utf8_str proc_name)
-	CODE:
-	{
-		char *proc_blurb;
-		char *proc_help;
-		char *proc_author;
-		char *proc_copyright;
-		char *proc_date;
-		GimpPDBProcType proc_type;
-		int nparams;
-		int nreturn_vals;
-		GimpParamDef *params;
-		GimpParamDef *return_vals;
+gimp_procedural_db_proc_exists(char *proc_name)
+CODE:
+  if (!gimp_is_initialized)
+    croak (__("gimp_procedural_db_proc_exists(%s) called without an active connection"), proc_name);
+  RETVAL = gimp_procedural_db_proc_exists(proc_name);
+OUTPUT:
+RETVAL
 
-                if (!gimp_is_initialized)
-                  croak (__("_gimp_procedure_available(%s) called without an active connection"), proc_name);
-
-		if (gimp_procedural_db_proc_info (proc_name, &proc_blurb, &proc_help, &proc_author,
-		    &proc_copyright, &proc_date, &proc_type, &nparams, &nreturn_vals,
-		    &params, &return_vals) == TRUE)
-		  {
-		    g_free (proc_blurb);
-		    g_free (proc_help);
-		    g_free (proc_author);
-		    g_free (proc_copyright);
-		    g_free (proc_date);
-		    gimp_destroy_paramdefs (params, nparams);
-		    gimp_destroy_paramdefs (return_vals, nreturn_vals);
-		    RETVAL = TRUE;
-		  }
-		else
-		  RETVAL = FALSE;
-
-	}
-	OUTPUT:
-	RETVAL
-
-#if 0
-
-# checks whether a gimp procedure exists
+# get gimp procedure info
 void
 gimp_procedural_db_proc_info(proc_name)
-	char * proc_name
-	PPCODE:
-	{
-		char *proc_blurb;
-		char *proc_help;
-		char *proc_author;
-		char *proc_copyright;
-		char *proc_date;
-		GimpPDBProcType proc_type;
-		int nparams;
-		int nreturn_vals;
-		GimpParamDef *params;
-		GimpParamDef *return_vals;
+char * proc_name
+PPCODE:
+{
+  char *proc_blurb;
+  char *proc_help;
+  char *proc_author;
+  char *proc_copyright;
+  char *proc_date;
+  GimpPDBProcType proc_type;
+  int nparams;
+  int nreturn_vals;
+  GimpParamDef *params;
+  GimpParamDef *return_vals;
 
-                if (!gimp_is_initialized)
-                  croak ("gimp_procedural_db_proc_info called without an active connection");
+  if (!gimp_is_initialized)
+    croak("gimp_procedural_db_proc_info called without an active connection");
 
-		if (gimp_procedural_db_proc_info (proc_name, &proc_blurb, &proc_help, &proc_author,
-		    &proc_copyright, &proc_date, &proc_type, &nparams, &nreturn_vals,
-		    &params, &return_vals) == TRUE)
-		  {
-                    EXTEND (SP,8);
-                    PUSHs (newSVpv (proc_blurb,0));	g_free (proc_blurb);
-		    PUSHs (newSVpv (proc_help,0));	g_free (proc_help);
-		    PUSHs (newSVpv (proc_author,0));	g_free (proc_author);
-		    PUSHs (newSVpv (proc_copyright,0));	g_free (proc_copyright);
-		    PUSHs (newSVpv (proc_date,0));	g_free (proc_date);
-		    PUSHs (newSViv (proc_type));
-                    PUSHs (newSV_paramdefs (params, nparams));		gimp_destroy_paramdefs (params, nparams);
-		    PUSHs (newSV_paramdefs (return_vals, nreturn_vals));gimp_destroy_paramdefs (return_vals, nreturn_vals);
-		  }
-	}
-
-#endif
+  if (
+    gimp_procedural_db_proc_info(
+      proc_name, &proc_blurb, &proc_help, &proc_author,
+      &proc_copyright, &proc_date, &proc_type, &nparams, &nreturn_vals,
+      &params, &return_vals
+    ) != TRUE
+  )
+    XSRETURN_EMPTY;
+  EXTEND(SP,8);
+  PUSHs(newSVpv(proc_blurb,0));		g_free(proc_blurb);
+  PUSHs(newSVpv(proc_help,0));		g_free(proc_help);
+  PUSHs(newSVpv(proc_author,0));	g_free(proc_author);
+  PUSHs(newSVpv(proc_copyright,0));	g_free(proc_copyright);
+  PUSHs(newSVpv(proc_date,0));		g_free(proc_date);
+  PUSHs(newSViv(proc_type));
+  PUSHs(newSV_paramdefs(params, nparams));
+    gimp_destroy_paramdefs(params, nparams);
+  PUSHs(newSV_paramdefs(return_vals, nreturn_vals));
+    gimp_destroy_paramdefs(return_vals, nreturn_vals);
+}
 
 void
 gimp_call_procedure (proc_name, ...)

@@ -11,7 +11,7 @@ BEGIN {
 
 use subs qw(
 	gimp_call_procedure		gimp_main	gimp_init
-	_gimp_procedure_available	set_trace	gimp_end
+	gimp_procedural_db_proc_exists	set_trace	gimp_end
         initialized
 );
 

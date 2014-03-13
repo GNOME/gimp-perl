@@ -54,7 +54,7 @@ sub import {
    };
 }
 
-sub _gimp_procedure_available {
+sub gimp_procedural_db_proc_exists {
    my $req="TEST".$_[0];
    print $server_fh pack("N",length($req)).$req;
    read($server_fh,$req,1);

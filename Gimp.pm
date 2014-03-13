@@ -531,7 +531,7 @@ eval "require $interface_pkg" or croak "$@";
 $interface_pkg->import;
 
 # create some common aliases
-for(qw(_gimp_procedure_available gimp_call_procedure set_trace initialized)) {
+for(qw(gimp_procedural_db_proc_exists gimp_call_procedure set_trace initialized)) {
    *$_ = \&{"$interface_pkg\::$_"};
 }
 
@@ -586,7 +586,7 @@ sub AUTOLOAD {
             recroak $@ if $@; wantarray ? @r : $r[0];
          };
          goto &$AUTOLOAD;
-      } elsif (_gimp_procedure_available ($sub)) {
+      } elsif (gimp_procedural_db_proc_exists($sub)) {
          *{$AUTOLOAD} = sub {
             shift unless ref $_[0];
             unshift @_, $sub;

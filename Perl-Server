@@ -93,7 +93,7 @@ sub handle_request($) {
          print $fh pack("N",length($data)).$data;
       } elsif ($req eq "TEST") {
          no strict 'refs';
-         print $fh (defined(*{"Gimp::Lib::$data"}{CODE}) || Gimp::_gimp_procedure_available($data)) ? "1" : "0";
+         print $fh (defined(*{"Gimp::Lib::$data"}{CODE}) || Gimp::gimp_procedural_db_proc_exists($data)) ? "1" : "0";
       } elsif ($req eq "DTRY") {
          Gimp::Net::destroy_objects Gimp::Net::net2args 0,$data;
          print $fh pack("N",0); # fix to work around using non-sysread/write functions
