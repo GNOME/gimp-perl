@@ -537,58 +537,50 @@ convert_array2paramdef (AV *av, GimpParamDef **res)
   GimpParamDef *def = 0;
 
   if (av_len (av) >= 0)
-    for(;;)
-      {
-	int idx;
+    for(;;) {
+      int idx;
 
-	for (idx = 0; idx <= av_len (av); idx++)
-	  {
-	    SV *sv = *av_fetch (av, idx, 0);
-	    SV *type = 0;
-	    SV *name = 0;
-	    SV *help = 0;
+      for (idx = 0; idx <= av_len (av); idx++) {
+	SV *sv = *av_fetch (av, idx, 0);
+	SV *type = 0;
+	SV *name = 0;
+	SV *help = 0;
 
-	    if (SvROK (sv) && SvTYPE (SvRV (sv)) == SVt_PVAV)
-	      {
-	        AV *av = (AV *)SvRV(sv);
-	        SV **x;
+	if (SvROK (sv) && SvTYPE (SvRV (sv)) == SVt_PVAV) {
+	  AV *av = (AV *)SvRV(sv);
+	  SV **x;
 
-	        if ((x = av_fetch (av, 0, 0))) type = *x;
-	        if ((x = av_fetch (av, 1, 0))) name = *x;
-	        if ((x = av_fetch (av, 2, 0))) help = *x;
-	      }
-	    else if (SvIOK(sv))
-	      type = sv;
+	  if ((x = av_fetch (av, 0, 0))) type = *x;
+	  if ((x = av_fetch (av, 1, 0))) name = *x;
+	  if ((x = av_fetch (av, 2, 0))) help = *x;
+	} else if (SvIOK(sv))
+	  type = sv;
 
-	    if (type)
-	      {
-	        if (def)
-	          {
-	            if (is_array (SvIV (type)))
-	              {
-	                def->type = GIMP_PDB_INT32;
-	                def->name = "array_size";
-	                def->description = "the size of the following array";
-	                def++;
-	              }
+	if (type) {
+	  if (def) {
+	    if (is_array (SvIV (type))) {
+	      def->type = GIMP_PDB_INT32;
+	      def->name = "array_size";
+	      def->description = "the size of the following array";
+	      def++;
+	    }
 
-	            def->type = SvIV (type);
-	            def->name = name ? SvPV_nolen (name) : 0;
-	            def->description = help ? SvPV_nolen (help) : 0;
-	            def++;
-	          }
-	        else
-	          count += 1 + !!is_array (SvIV (type));
-	      }
-	    else
-	      croak (__("malformed paramdef, expected [PARAM_TYPE,\"NAME\",\"DESCRIPTION\"] or PARAM_TYPE"));
+	    def->type = SvIV (type);
+	    def->name = name ? SvPV_nolen (name) : 0;
+	    def->description = help ? SvPV_nolen (help) : 0;
+	    def++;
 	  }
-
-	if (def)
-	  break;
-
-	*res = def = g_new (GimpParamDef, count);
+	  else
+	    count += 1 + !!is_array (SvIV (type));
+	} else
+	  croak (__("malformed paramdef, expected [PARAM_TYPE,\"NAME\",\"DESCRIPTION\"] or PARAM_TYPE"));
       }
+
+      if (def)
+	break;
+
+      *res = def = g_new (GimpParamDef, count);
+    }
   else
     *res = 0;
 
@@ -717,27 +709,23 @@ canonicalize_colour (char *err, SV *sv, GimpRGB *c)
   SPAGAIN;
 
   sv = POPs;
-  if (SvROK(sv))
-    {
-      if (SvTYPE(SvRV(sv)) == SVt_PVAV)
-	{
-	  AV *av = (AV *)SvRV(sv);
+  if (SvROK(sv)) {
+    if (SvTYPE(SvRV(sv)) == SVt_PVAV) {
+      AV *av = (AV *)SvRV(sv);
 
-          c->r = SvNV (*av_fetch (av, 0, 0));
-          c->g = SvNV (*av_fetch (av, 1, 0));
-          c->b = SvNV (*av_fetch (av, 2, 0));
+      c->r = SvNV (*av_fetch (av, 0, 0));
+      c->g = SvNV (*av_fetch (av, 1, 0));
+      c->b = SvNV (*av_fetch (av, 2, 0));
 
-          if (av_len(av) == 2)
-            c->a = 1.0;
-          else if (av_len(av) == 3)
-            c->a = SvNV (*av_fetch (av, 3, 0));
-          else
-            sprintf (err, __("a color must have three (RGB) or four (RGBA) components (array elements)"));
-	}
+      if (av_len(av) == 2)
+	c->a = 1.0;
+      else if (av_len(av) == 3)
+	c->a = SvNV (*av_fetch (av, 3, 0));
       else
-	sprintf (err, __("illegal type for colour specification"));
-    }
-  else
+	sprintf (err, __("a color must have three (RGB) or four (RGBA) components (array elements)"));
+    } else
+      sprintf (err, __("illegal type for colour specification"));
+  } else
     sprintf (err, __("unable to grok colour specification"));
 
   PUTBACK;
@@ -1146,119 +1134,119 @@ static void pii_run(const gchar *name,
   GimpParamDef *params;
   GimpParamDef *return_defs;
 
-   if (return_vals) /* the libgimp is soooooooo braindamaged. */
-     {
-       destroy_params (return_vals, nreturn_vals);
-       return_vals = 0;
-     }
+   /* the libgimp is soooooooo braindamaged. */
+   if (return_vals) {
+     destroy_params (return_vals, nreturn_vals);
+     return_vals = 0;
+   }
 
-  if (gimp_procedural_db_proc_info (name, &proc_blurb, &proc_help, &proc_author,
-	                   &proc_copyright, &proc_date, &proc_type, &_nparams, &nreturn_vals,
-	                   &params, &return_defs) == TRUE)
-    {
-      g_free (proc_blurb);
-      g_free (proc_help);
-      g_free (proc_author);
-      g_free (proc_copyright);
-      g_free (proc_date);
-      gimp_destroy_paramdefs (params, _nparams);
-
-      PUSHMARK(SP);
-
-      EXTEND (SP, 3);
-      PUSHs (sv_2mortal (newSVpv ("-run", 4)));
-      PUSHs (sv_2mortal (newSVpv (name, 0)));
-
-      if (nparams)
-	{
-	  EXTEND (SP, perl_param_count (param, nparams));
-	  PUTBACK;
-	  for (i = 0; i < nparams; i++)
-	    {
-	      if (i < nparams-1 && is_array (param[i+1].type))
-	        i++;
-
-	      push_gimp_sv (param+i, nparams > 2);
-	    }
-
-	  SPAGAIN;
-	}
-      else
-	PUTBACK;
-
-      count = perl_call_pv ("Gimp::callback", G_EVAL
-	                    | (nreturn_vals == 0 ? G_VOID : nreturn_vals == 1 ? G_SCALAR : G_ARRAY));
-      SPAGAIN;
-
-      if (SvTRUE (ERRSV))
-	{
-          if (strEQ ("IGNORE THIS MESSAGE\n", SvPV_nolen (ERRSV)))
-            {
-              nreturn_vals = 0;
-              return_vals = g_new (GimpParam, 1);
-              return_vals->type = GIMP_PDB_STATUS;
-              return_vals->data.d_status = GIMP_PDB_SUCCESS;
-              *xnreturn_vals = nreturn_vals+1;
-              *xreturn_vals = return_vals;
-            }
-          else
-            err_msg = g_strdup (SvPV_nolen (ERRSV));
-	}
-      else
-	{
-	  int i;
-	  char errmsg [MAX_STRING];
-	  errmsg [0] = 0;
-
-	  return_vals = (GimpParam *) g_new0 (GimpParam, nreturn_vals+1);
-	  return_vals->type = GIMP_PDB_STATUS;
-	  return_vals->data.d_status = GIMP_PDB_SUCCESS;
-	  *xnreturn_vals = nreturn_vals+1;
-	  *xreturn_vals = return_vals++;
-
-	  for (i = nreturn_vals; i-- && count; )
-	     {
-	       return_vals[i].type = return_defs[i].type;
-	       if ((i >= nreturn_vals-1 || !is_array (return_defs[i+1].type))
-	           && convert_sv2gimp (errmsg, &return_vals[i], TOPs))
-	         {
-	           --count;
-	           (void) POPs;
-	         }
-
-	       if (errmsg [0])
-	         {
-	           err_msg = g_strdup (errmsg);
-	           break;
-	         }
-	     }
-
-	  if (count && !err_msg)
-	    err_msg = g_strdup_printf (__("plug-in returned %d more values than expected"), count);
-	}
-
-      gimp_destroy_paramdefs (return_defs, nreturn_vals);
-
-      PUTBACK;
-    }
-  else
+  if (
+    gimp_procedural_db_proc_info (
+      name, &proc_blurb, &proc_help, &proc_author,
+      &proc_copyright, &proc_date, &proc_type, &_nparams, &nreturn_vals,
+      &params, &return_defs
+    ) != TRUE
+  ) {
     err_msg = g_strdup_printf (__("being called as '%s', but '%s' not registered in the pdb"), name, name);
+    goto error;
+  }
 
-  if (err_msg)
-    {
-      gimp_die_msg (err_msg);
-      g_free (err_msg);
+  g_free (proc_blurb);
+  g_free (proc_help);
+  g_free (proc_author);
+  g_free (proc_copyright);
+  g_free (proc_date);
+  gimp_destroy_paramdefs (params, _nparams);
 
-      if (return_vals)
-	destroy_params (*xreturn_vals, nreturn_vals+1);
+  PUSHMARK(SP);
 
+  EXTEND (SP, 3);
+  PUSHs (sv_2mortal (newSVpv ("-run", 4)));
+  PUSHs (sv_2mortal (newSVpv (name, 0)));
+
+  if (nparams) {
+    EXTEND (SP, perl_param_count (param, nparams));
+    PUTBACK;
+    for (i = 0; i < nparams; i++) {
+      if (i < nparams-1 && is_array (param[i+1].type))
+	i++;
+
+      push_gimp_sv (param+i, nparams > 2);
+    }
+
+    SPAGAIN;
+  } else
+    PUTBACK;
+
+  count = perl_call_pv (
+    "Gimp::callback",
+    G_EVAL | G_ARRAY
+  );
+  SPAGAIN;
+
+  if (SvTRUE (ERRSV)) {
+    if (strEQ ("IGNORE THIS MESSAGE\n", SvPV_nolen (ERRSV))) {
       nreturn_vals = 0;
       return_vals = g_new (GimpParam, 1);
       return_vals->type = GIMP_PDB_STATUS;
-      return_vals->data.d_status = GIMP_PDB_EXECUTION_ERROR;
+      return_vals->data.d_status = GIMP_PDB_SUCCESS;
       *xnreturn_vals = nreturn_vals+1;
       *xreturn_vals = return_vals;
+    } else
+      err_msg = g_strdup (SvPV_nolen (ERRSV));
+  } else {
+    int i;
+    char errmsg [MAX_STRING];
+    errmsg [0] = 0;
+
+    return_vals = (GimpParam *) g_new0 (GimpParam, nreturn_vals+1);
+    return_vals->type = GIMP_PDB_STATUS;
+    return_vals->data.d_status = GIMP_PDB_SUCCESS;
+    *xnreturn_vals = nreturn_vals+1;
+    *xreturn_vals = return_vals++;
+
+    for (i = nreturn_vals; i-- && count; ) {
+      return_vals[i].type = return_defs[i].type;
+      if (
+	(i >= nreturn_vals-1 || !is_array (return_defs[i+1].type)) &&
+	convert_sv2gimp (errmsg, &return_vals[i], TOPs)
+      ) {
+	--count;
+	(void) POPs;
+      }
+
+      if (errmsg [0]) {
+	err_msg = g_strdup (errmsg);
+	break;
+      }
     }
+
+    /* shouldn't be fatal
+    if (count && !err_msg)
+      err_msg = g_strdup_printf (__("plug-in returned %d more values than expected"), count);
+    */
+  }
+
+  gimp_destroy_paramdefs (return_defs, nreturn_vals);
+
+  PUTBACK;
+
+  if (!err_msg)
+    return;
+
+  error:
+  gimp_die_msg (err_msg);
+  g_free (err_msg);
+
+  if (return_vals)
+    destroy_params (*xreturn_vals, nreturn_vals+1);
+
+  nreturn_vals = 0;
+  return_vals = g_new (GimpParam, 1);
+  return_vals->type = GIMP_PDB_STATUS;
+  return_vals->data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  *xnreturn_vals = nreturn_vals+1;
+  *xreturn_vals = return_vals;
 }
 
 #define pii_init 0 /* init gets called on every startup, so disable it for the time being. */
@@ -1453,7 +1441,7 @@ PPCODE:
   int nvalues;
   GimpParamDef *params;
   GimpParamDef *return_vals;
-  int i=0, j=0; /* work around bogus warning.  */
+  int i=0, j=0;
 
   if (!gimp_is_initialized)
     croak (__("gimp_call_procedure(%s,...) called without an active connection"), proc_name);
@@ -1469,162 +1457,188 @@ PPCODE:
       proc_name, &proc_blurb, &proc_help, &proc_author,
       &proc_copyright, &proc_date, &proc_type, &nparams, &nreturn_vals,
       &params, &return_vals
-    ) == TRUE
-  ) {
-    int runmode = nparams
-		  && params[0].type == GIMP_PDB_INT32
-		  && (  !strcmp (params[0].name, "run_mode") || !strcmp (params[0].name, "run-mode"));
-    g_free (proc_blurb);
-    g_free (proc_help);
-    g_free (proc_author);
-    g_free (proc_copyright);
-    g_free (proc_date);
+    ) != TRUE
+  )
+    croak (__("gimp procedure '%s' not found"), proc_name);
+
+  int runmode = nparams
+		&& params[0].type == GIMP_PDB_INT32
+		&& (  !strcmp (params[0].name, "run_mode") || !strcmp (params[0].name, "run-mode"));
+  g_free (proc_blurb);
+  g_free (proc_help);
+  g_free (proc_author);
+  g_free (proc_copyright);
+  g_free (proc_date);
+
+  if (nparams)
+    args = (GimpParam *) g_new0 (GimpParam, nparams);
+
+  for (i = 0, j = 1; i < nparams && j < items; i++) {
+    args[i].type = params[i].type;
+    if (i == 0 && runmode) {
+      /* If it's a valid value for the run mode, and # of parameters
+	 are correct we assume the user explicitly included the run
+	 mode parameter */
+      if (
+	nparams==(items-1) &&
+	(SvIV(ST(j))==GIMP_RUN_INTERACTIVE || SvIV(ST(j))==GIMP_RUN_NONINTERACTIVE)
+      ) {
+	args->data.d_int32 = SvIV(ST(j));
+	j++;
+      } else {
+	args->data.d_int32 = GIMP_RUN_NONINTERACTIVE;
+      }
+    } else if (
+      (!SvROK(ST(j)) || i >= nparams-1 || !is_array (params[i+1].type))
+    ) {
+      convert_sv2gimp(croak_str, &args[i], ST(j)) && j++;
+    }
+
+    if (croak_str [0]) {
+      if (trace & TRACE_CALL) {
+	dump_params (i, args, params);
+	trace_printf (__(" = [argument error]\n"));
+      }
+
+      goto error;
+    }
+  }
+
+  if (trace & TRACE_CALL) {
+    dump_params (i, args, params);
+    trace_printf (" = ");
+  }
+
+  if (i < nparams || j < items) {
+    if (trace & TRACE_CALL)
+      trace_printf (__("[unfinished]\n"));
+
+    sprintf(
+      croak_str,
+      __("%s arguments for function '%s', wanted %d, got %d"),
+      i < nparams ? __("not enough") : __("too many"),
+      proc_name,
+      nparams,
+      i
+    );
 
     if (nparams)
-      args = (GimpParam *) g_new0 (GimpParam, nparams);
+      destroy_params (args, nparams);
+  } else {
+    values = gimp_run_procedure2 (proc_name, &nvalues, nparams, args);
 
-    for (i = 0, j = 1; i < nparams && j < items; i++) {
-      args[i].type = params[i].type;
-      if (i == 0 && runmode) {
-	/* If it's a valid value for the run mode, and # of parameters
-	   are correct we assume the user explicitly included the run
-	   mode parameter */
-	if (
-	  nparams==(items-1) &&
-	  (SvIV(ST(j))==GIMP_RUN_INTERACTIVE || SvIV(ST(j))==GIMP_RUN_NONINTERACTIVE)
-	) {
-	  args->data.d_int32 = SvIV(ST(j));
-	  j++;
-	} else {
-	  args->data.d_int32 = GIMP_RUN_NONINTERACTIVE;
-	}
-      } else if (
-	(!SvROK(ST(j)) || i >= nparams-1 || !is_array (params[i+1].type)) &&
-	convert_sv2gimp (croak_str, &args[i], ST(j))
-      ) {
-	j++;
-      }
-
-      if (croak_str [0]) {
-	if (trace & TRACE_CALL) {
-	  dump_params (i, args, params);
-	  trace_printf (__(" = [argument error]\n"));
-	}
-
-	goto error;
-      }
-    }
+    if (nparams)
+      destroy_params (args, nparams);
 
     if (trace & TRACE_CALL) {
-      dump_params (i, args, params);
-      trace_printf (" = ");
+      dump_params (nvalues-1, values+1, return_vals);
+      trace_printf ("\n");
     }
 
-    if (i < nparams || j < items) {
-      if (trace & TRACE_CALL)
-	trace_printf (__("[unfinished]\n"));
+    if (values && values[0].type == GIMP_PDB_STATUS) {
+      if (
+	values[0].data.d_status == GIMP_PDB_EXECUTION_ERROR ||
+	values[0].data.d_status == GIMP_PDB_CALLING_ERROR
+      )
+	sprintf (croak_str, __("%s: %s"), proc_name, gimp_get_pdb_error ());
+      else if (values[0].data.d_status == GIMP_PDB_SUCCESS) {
+	EXTEND(SP, perl_paramdef_count (return_vals, nvalues-1));
+	PUTBACK;
+	for (i = 0; i < nvalues-1; i++) {
+	  if (i < nvalues-2 && is_array (values[i+2].type))
+	    i++;
 
-      sprintf(
-	croak_str,
-	__("%s arguments for function '%s', wanted %d, got %d"),
-	i < nparams ? __("not enough") : __("too many"),
-	proc_name,
-	nparams,
-	i
-      );
+	  push_gimp_sv (values+i+1, nvalues > 2+1);
+	}
 
-      if (nparams)
-	destroy_params (args, nparams);
-    } else {
-      values = gimp_run_procedure2 (proc_name, &nvalues, nparams, args);
-
-      if (nparams)
-	destroy_params (args, nparams);
-
-      if (trace & TRACE_CALL) {
-	dump_params (nvalues-1, values+1, return_vals);
-	trace_printf ("\n");
-      }
-
-      if (values && values[0].type == GIMP_PDB_STATUS) {
-	if (values[0].data.d_status == GIMP_PDB_EXECUTION_ERROR)
-	  sprintf (croak_str, __("%s: procedural database execution failed"), proc_name);
-	else if (values[0].data.d_status == GIMP_PDB_CALLING_ERROR)
-	  sprintf (croak_str, __("%s: procedural database execution failed on invalid input arguments"), proc_name);
-	else if (values[0].data.d_status == GIMP_PDB_SUCCESS) {
-	  EXTEND(SP, perl_paramdef_count (return_vals, nvalues-1));
-	  PUTBACK;
-	  for (i = 0; i < nvalues-1; i++) {
-	    if (i < nvalues-2 && is_array (values[i+2].type))
-	      i++;
-
-	    push_gimp_sv (values+i+1, nvalues > 2+1);
-	  }
-
-	  SPAGAIN;
-	} else
-	  sprintf (croak_str, __("unsupported status code: %d, fatal error\n"), values[0].data.d_status);
+	SPAGAIN;
       } else
-	sprintf (croak_str, __("gimp didn't return an execution status, fatal error"));
+	sprintf (croak_str, __("unsupported status code: %d, fatal error\n"), values[0].data.d_status);
+    } else
+      sprintf (croak_str, __("gimp didn't return an execution status, fatal error"));
 
-    }
+  }
 
-    error:
+  error:
 
-    if (values)
-      gimp_destroy_params (values, nreturn_vals);
+  if (values)
+    gimp_destroy_params (values, nreturn_vals);
 
-    gimp_destroy_paramdefs (params, nparams);
-    gimp_destroy_paramdefs (return_vals, nreturn_vals);
+  gimp_destroy_paramdefs (params, nparams);
+  gimp_destroy_paramdefs (return_vals, nreturn_vals);
 
 
-    if (croak_str[0])
-      croak (croak_str);
-  } else
-    croak (__("gimp procedure '%s' not found"), proc_name);
+  if (croak_str[0])
+    croak (croak_str);
 }
 
 void
 gimp_install_procedure(name, blurb, help, author, copyright, date, menu_path, image_types, type, params, return_vals)
-	utf8_str	name
-	utf8_str	blurb
-	utf8_str	help
-	utf8_str	author
-	utf8_str	copyright
-	utf8_str	date
-	SV *	menu_path
-	SV *	image_types
-	int	type
-	SV *	params
-	SV *	return_vals
-	ALIAS:
-		gimp_install_temp_proc = 1
-	CODE:
-        if (SvROK(params) && SvTYPE(SvRV(params)) == SVt_PVAV
-            && SvROK(return_vals) && SvTYPE(SvRV(return_vals)) == SVt_PVAV)
-          {
-            GimpParamDef *apd; int nparams;
-            GimpParamDef *rpd; int nreturn_vals;
+  utf8_str	name
+  utf8_str	blurb
+  utf8_str	help
+  utf8_str	author
+  utf8_str	copyright
+  utf8_str	date
+  SV *		menu_path
+  SV *		image_types
+  int		type
+  SV *		params
+  SV *		return_vals
+ALIAS:
+  gimp_install_temp_proc = 1
+CODE:
+  if (
+    !(
+      SvROK(params) &&
+      SvTYPE(SvRV(params)) == SVt_PVAV &&
+      SvROK(return_vals) &&
+      SvTYPE(SvRV(return_vals)) == SVt_PVAV
+    )
+  )
+    croak (__("params and return_vals must be array refs (even if empty)!"));
 
-            nparams      = convert_array2paramdef ((AV *)SvRV(params)     , &apd);
-            nreturn_vals = convert_array2paramdef ((AV *)SvRV(return_vals), &rpd);
-
-            if (ix)
-              gimp_install_temp_proc(name,blurb,help,author,copyright,date,SvPv(menu_path),SvPv(image_types),
-                                     type,nparams,nreturn_vals,apd,rpd,pii_run);
-            else
-              {
-	        gimp_plugin_domain_register ("gimp-perl", datadir "/locale");
-
-                gimp_install_procedure(name,blurb,help,author,copyright,date,SvPv(menu_path),SvPv(image_types),
-                                       type,nparams,nreturn_vals,apd,rpd);
-              }
-
-            g_free (rpd);
-            g_free (apd);
-          }
-        else
-          croak (__("params and return_vals must be array refs (even if empty)!"));
+  GimpParamDef *apd; int nparams;
+  GimpParamDef *rpd; int nreturn_vals;
+  nparams      = convert_array2paramdef ((AV *)SvRV(params)     , &apd);
+  nreturn_vals = convert_array2paramdef ((AV *)SvRV(return_vals), &rpd);
+  if (ix)
+    gimp_install_temp_proc(
+      name,
+      blurb,
+      help,
+      author,
+      copyright,
+      date,
+      SvPv(menu_path),
+      SvPv(image_types),
+      type,
+      nparams,
+      nreturn_vals,
+      apd,
+      rpd,
+      pii_run
+    );
+  else {
+    gimp_plugin_domain_register ("gimp-perl", datadir "/locale");
+    gimp_install_procedure(
+      name,
+      blurb,
+      help,
+      author,
+      copyright,
+      date,
+      SvPv(menu_path),
+      SvPv(image_types),
+      type,
+      nparams,
+      nreturn_vals,
+      apd,
+      rpd
+    );
+  }
+  g_free (rpd);
+  g_free (apd);
 
 void
 gimp_uninstall_temp_proc(name)

@@ -362,11 +362,22 @@ Gimp::on_query {
          undef $menupath unless Gimp::Feature::present('gtk');
       }
       
-      Gimp->gimp_install_procedure($function,$blurb,$help,$author,$copyright,$date,
-                                   $menupath,$imagetypes,$type,
-                                   [[Gimp::PDB_INT32,"run_mode","Interactive, [non-interactive]"],
-                                    @$params],
-                                   $results);
+      Gimp->install_procedure(
+	$function,
+	$blurb,
+	$help,
+	$author,
+	$copyright,
+	$date,
+	$menupath,
+	$imagetypes,
+	$type,
+	[
+	  [Gimp::PDB_INT32, "run_mode", "Interactive, [non-interactive]"],
+	  @$params,
+	],
+	$results,
+      );
 
       Gimp::logger(message => 'OK', function => $function, fatal => 0);
    }
@@ -452,7 +463,8 @@ the parameter definitions used for C<gimp_install_procedure> but include an
 additional B<default> value used when the caller doesn't supply one, and
 optional extra arguments describing some types like C<PF_SLIDER>.
 
-Each array element has the form C<[type, name, description, default_value, extra_args]>.
+Each array element has the form C<[type, name, description, default_value,
+extra_args]>.
 
 <Image>-type plugins get two additional parameters, image (C<PF_IMAGE>) and
 drawable (C<PF_DRAWABLE>). Do not specify these yourself. Also, the
@@ -465,13 +477,8 @@ See the section PARAMETER TYPES for the supported types.
 =item the return values
 
 This is just like the parameter array except that it describes the return
-values. Of course, default values and the enhanced Gimp::Fu parameter
-types don't make much sense here. (Even if they did, it's not implemented
-anyway..). This argument is optional.
-
-If you supply a parameter type (e.g. C<PF_IMAGE>) instead of a full
-specification (C<[PF_IMAGE, ...]>), Gimp::Fu might supply some default
-values. This is only implemented for C<PF_IMAGE> at the moment.
+values. Specify the type and variable name only. This argument is optional
+- if unspecified, assumes return of an image.
 
 =item the features requirements
 
@@ -544,7 +551,7 @@ to an array filled with C<Option-Name => Option-Value> pairs. Gimp::Fu
 will then generate a horizontal frame with radio buttons, one for each
 alternative. For example:
 
- [PF_RADIO, "direction", "the direction to move to", 5, [Left => 5,  Right => 7]]]
+ [PF_RADIO, "direction", "direction to move to", 5, [Left => 5,  Right => 7]]]
 
 draws two buttons, when the first (the default, "Left") is activated, 5
 will be returned. If the second is activated, 7 is returned.
@@ -613,9 +620,8 @@ documentation. If the named section is not found (or is empty, as in
 "=pod()"), the full pod documentation is embedded.
 
 Most of the mentioned arguments have default values (see THE REGISTER
-FUNCTION) that are used when the arguments are either undefined or empty
-strings, making the register call itself much shorter and, IMHO, more
-readable.
+FUNCTION) that are used when the arguments are undefined, making the
+register call itself much shorter.
 
 =cut
 
@@ -659,8 +665,10 @@ sub register($$$$$$$$$;@) {
 
    for my $p (@$params,@$results) {
       next unless ref $p;
-      int($p->[0]) eq $p->[0] or croak __"$function: argument/return value '$p->[1]' has illegal type '$p->[0]'";
-      $p->[1]=~/^[0-9a-z_]+$/ or carp __"$function: argument name '$p->[1]' contains illegal characters, only 0-9, a-z and _ allowed";
+      croak __"$function: argument/return value '$p->[1]' has illegal type '$p->[0]'"
+	unless int($p->[0]) eq $p->[0];
+      carp __"$function: argument name '$p->[1]' contains illegal characters, only 0-9, a-z and _ allowed"
+	unless $p->[1]=~/^[0-9a-z_]+$/;
    }
 
    $function="perl_fu_".$function unless $function =~ /^(?:perl_fu_|extension_|plug_in_|file_)/ || $function =~ s/^\+//;
@@ -675,13 +683,7 @@ sub register($$$$$$$$$;@) {
       $run_mode = shift;	# global!
       my(@pre,@defaults,@lastvals,$input_image);
 
-      if (@defaults) {
-         for (0..$#{$params}) {
-	    $params->[$_]->[3]=$defaults[$_];
-	 }
-      }
-
-      # supplement default arguments
+      # set default arguments
       for (0..$#{$params}) {
          $_[$_]=$params->[$_]->[3] unless defined($_[$_]);
       }
@@ -742,18 +744,18 @@ sub register($$$$$$$$$;@) {
       print $function,"(",join(",",(@pre,@_)),")\n" if $Gimp::verbose;
 
       Gimp::set_trace ($old_trace);
-      my @imgs = &$code(@pre,@_);
+      my @retvals = $code->(@pre,@_);
       $old_trace = Gimp::set_trace (0);
 
       if ($menupath !~ /^<Load>\//) {
-         if (@imgs) {
-            for my $i (0..$#imgs) {
-               my $img = $imgs[$i];
+         if (@retvals) {
+            for my $i (0..$#retvals) {
+               my $img = $retvals[$i];
                next unless defined $img;
                if (ref $img eq "Gimp::Image") {
                   if ($outputfile) {
                      my $path = sprintf $outputfile,$i;
-                     if ($#imgs and $path eq $outputfile) {
+                     if ($#retvals and $path eq $outputfile) {
                         $path=~s/\.(?=[^.]*$)/$i./; # insert image number before last dot
                      }
                      print "saving image $path\n" if $Gimp::verbose;
@@ -771,7 +773,7 @@ sub register($$$$$$$$$;@) {
       }
 
       Gimp::set_trace ($old_trace);
-      wantarray ? @imgs : $imgs[0];
+      wantarray ? @retvals : $retvals[0];
    };
 
    Gimp::register_callback($function,$perl_sub);

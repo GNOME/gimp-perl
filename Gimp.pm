@@ -441,62 +441,47 @@ unless($no_SIG) {
 
 my %callback;
 
-sub cbchain($) {
-   my $cb = shift;
-   $callback{$cb} ? @{$callback{$cb}} : ();
+sub cbchain {
+  map { $callback{$_} ? @{$callback{$_}} : (); } @_;
 }
 
 sub callback {
-   my $type = shift;
-   my @cb;
-   if ($type eq "-run") {
-      local $function = shift;
-      local $in_run = 1;
-      _initialized_callback;
-      {
-         local $^W = 0;
-         @cb = (
-            @{$callback{run}},
-            @{$callback{lib}},
-            @{$callback{$function}},
-         );
-      }
-      die_msg __"required callback 'run' not found\n" unless @cb;
-      for (@cb) { &$_ }
-   } elsif ($type eq "-net") {
-      local $in_net = 1;
-      _initialized_callback;
-      {
-         local $^W = 0;
-         @cb = (
-            @{$callback{run}},
-            @{$callback{net}},
-            @{$callback{$function}},
-         );
-      }
-      die_msg __"required callback 'net' not found\n" unless @cb;
-      for (@cb) { &$_ }
-   } elsif ($type eq "-query") {
-      local $in_query = 1;
-      _initialized_callback;
-      {
-         local $^W = 0;
-         @cb = (
-            @{$callback{query}},
-         );
-      }
-      die_msg __"required callback 'query' not found\n" unless @cb;
-      for (@cb) { &$_ }
-   } elsif ($type eq "-quit") {
-      local $in_quit = 1;
-      {
-         local $^W = 0;
-         @cb = (
-            @{$callback{quit}},
-         );
-      }
-      for (@cb) { &$_ }
-   }
+  my $type = shift;
+  my @cb;
+  if ($type eq "-run") {
+    local $function = shift;
+    local $in_run = 1;
+    _initialized_callback;
+    @cb = cbchain(qw(run lib), $function);
+    die_msg __"required callback 'run' not found\n" unless @cb;
+    # returning list of last func's return values
+    my @retvals;
+    for (@cb) {
+      @retvals = &$_;
+    }
+    @retvals;
+  } elsif ($type eq "-net") {
+    local $in_net = 1;
+    _initialized_callback;
+    @cb = cbchain(qw(run net), $function);
+    die_msg __"required callback 'net' not found\n" unless @cb;
+    # returning list of last func's return values
+    my @retvals;
+    for (@cb) {
+      @retvals = &$_;
+    }
+    @retvals;
+  } elsif ($type eq "-query") {
+    local $in_query = 1;
+    _initialized_callback;
+    @cb = cbchain(qw(query));
+    die_msg __"required callback 'query' not found\n" unless @cb;
+    for (@cb) { &$_ }
+  } elsif ($type eq "-quit") {
+    local $in_quit = 1;
+    @cb = cbchain(qw(quit));
+    for (@cb) { &$_ }
+  }
 }
 
 sub register_callback($$) {
@@ -562,42 +547,42 @@ sub recroak($) {
 }
 
 sub AUTOLOAD {
-   my ($class,$name) = $AUTOLOAD =~ /^(.*)::(.*?)$/;
-   for(@{"$class\::PREFIXES"}) {
-      my $sub = $_.$name;
-      if (exists $ignore_function{$sub}) {
-        *{$AUTOLOAD} = sub { () };
-        goto &$AUTOLOAD;
-      } elsif (UNIVERSAL::can(Gimp::Util,$sub)) {
-         my $ref = \&{"Gimp::Util::$sub"};
-         *{$AUTOLOAD} = sub {
-            shift unless ref $_[0];
-            #goto &$ref; # does not work, PERLBUG! #FIXME
-            my @r = eval { &$ref };
-            recroak $@ if $@; wantarray ? @r : $r[0];
-         };
-         goto &$AUTOLOAD;
-      } elsif (UNIVERSAL::can($interface_pkg,$sub)) {
-         my $ref = \&{"$interface_pkg\::$sub"};
-         *{$AUTOLOAD} = sub {
-            shift unless ref $_[0];
-            #goto &$ref; # does not work, PERLBUG! #FIXME
-            my @r = eval { &$ref };
-            recroak $@ if $@; wantarray ? @r : $r[0];
-         };
-         goto &$AUTOLOAD;
-      } elsif (gimp_procedural_db_proc_exists($sub)) {
-         *{$AUTOLOAD} = sub {
-            shift unless ref $_[0];
-            unshift @_, $sub;
-            #goto &gimp_call_procedure; # does not work, PERLBUG! #FIXME
-            my @r = eval { gimp_call_procedure (@_) };
-            recroak $@ if $@; wantarray ? @r : $r[0];
-         };
-         goto &$AUTOLOAD;
-      }
-   }
-   croak __"function/macro \"$name\" not found in $class";
+  my ($class,$name) = $AUTOLOAD =~ /^(.*)::(.*?)$/;
+  for(@{"$class\::PREFIXES"}) {
+    my $sub = $_.$name;
+    if (exists $ignore_function{$sub}) {
+      *{$AUTOLOAD} = sub { () };
+      goto &$AUTOLOAD;
+    } elsif (UNIVERSAL::can(Gimp::Util,$sub)) {
+      my $ref = \&{"Gimp::Util::$sub"};
+      *{$AUTOLOAD} = sub {
+	shift unless ref $_[0];
+	#goto &$ref; # does not work, PERLBUG! #FIXME
+	my @r = eval { &$ref };
+	recroak $@ if $@; wantarray ? @r : $r[0];
+      };
+      goto &$AUTOLOAD;
+    } elsif (UNIVERSAL::can($interface_pkg,$sub)) {
+      my $ref = \&{"$interface_pkg\::$sub"};
+      *{$AUTOLOAD} = sub {
+	shift unless ref $_[0];
+	#goto &$ref; # does not work, PERLBUG! #FIXME
+	my @r = eval { &$ref };
+	recroak $@ if $@; wantarray ? @r : $r[0];
+      };
+      goto &$AUTOLOAD;
+    } elsif (gimp_procedural_db_proc_exists($sub)) {
+      *{$AUTOLOAD} = sub {
+	shift unless ref $_[0];
+	unshift @_, $sub;
+	#goto &gimp_call_procedure; # does not work, PERLBUG! #FIXME
+	my @r = eval { gimp_call_procedure (@_) };
+	recroak $@ if $@; wantarray ? @r : $r[0];
+      };
+      goto &$AUTOLOAD;
+    }
+  }
+  croak __"function/macro \"$name\" not found in $class";
 }
 
 sub _pseudoclass {
@@ -610,14 +595,14 @@ sub _pseudoclass {
 }
 
 _pseudoclass qw(Item		gimp_item_);
-_pseudoclass qw(Layer		gimp_item_ gimp_layer_ gimp_floating_sel_ gimp_image_ gimp_ plug_in_ perl_fu_);
-_pseudoclass qw(Image		gimp_image_ gimp_item_ gimp_ plug_in_ perl_fu_);
-_pseudoclass qw(Drawable	gimp_item_ gimp_layer_ gimp_channel_ gimp_image_ gimp_ plug_in_ perl_fu_);
+_pseudoclass qw(Layer		gimp_layer_ gimp_drawable_ gimp_item_ gimp_floating_sel_ gimp_image_ gimp_ plug_in_ perl_fu_ gimp_drawable_);
+_pseudoclass qw(Image		gimp_image_ gimp_ plug_in_ perl_fu_);
+_pseudoclass qw(Drawable	gimp_drawable_ gimp_item_ gimp_channel_ gimp_image_ gimp_ plug_in_ perl_fu_);
 _pseudoclass qw(Selection 	gimp_selection_);
 _pseudoclass qw(Vectors 	gimp_vectors_);
-_pseudoclass qw(Channel		gimp_channel_ gimp_item_ gimp_selection_ gimp_image_ gimp_ plug_in_ perl_fu_);
+_pseudoclass qw(Channel		gimp_channel_ gimp_drawable_ gimp_item_ gimp_selection_ gimp_image_ gimp_ plug_in_ perl_fu_);
 _pseudoclass qw(Display		gimp_display_ gimp_);
-_pseudoclass qw(Plugin		plug_in_);
+_pseudoclass qw(Plugin		plug_in_ perl_fu_);
 _pseudoclass qw(Gradient	gimp_gradient_);
 _pseudoclass qw(Gradients	gimp_gradients_);
 _pseudoclass qw(Edit		gimp_edit_);

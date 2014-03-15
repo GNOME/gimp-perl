@@ -61,7 +61,7 @@ sub _gimp_append_data($$) {
 }
 
 # convenience functions
-sub gimp_drawable_pixel_rgn($$$$$$) {
+sub gimp_gdrawable_pixel_rgn($$$$$$$) {
    Gimp::gimp_pixel_rgn_init(@_);
 }
 

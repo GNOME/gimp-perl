@@ -308,14 +308,14 @@ Gimp::Net - Communication module for the gimp-perl server.
 
 =head1 DESCRIPTION
 
-For Gimp::Net (and thus commandline and remote scripts) to work, you first have to
-install the "Perl-Server" extension somewhere where Gimp can find it (e.g in
-your .gimp/plug-ins/ directory). Usually this is done automatically while installing
-the Gimp extension. If you have a menu entry C<<Xtns>/Perl-Server>
-then it is probably installed.
+For Gimp::Net (and thus commandline and remote scripts) to work, you
+first have to install the "Perl-Server" extension somewhere where Gimp
+can find it (e.g in your .gimp/plug-ins/ directory). Usually this is
+done automatically while installing the Gimp extension. If you have a
+menu entry C<<Xtns>/Perl-Server> then it is probably installed.
 
-The Perl-Server can either be started from the C<<Xtns>> menu in Gimp, or automatically
-when a perl script can't find a running Perl-Server.
+The Perl-Server can either be started from the C<<Xtns>> menu in Gimp,
+or automatically when a perl script can't find a running Perl-Server.
 
 When started from within The Gimp, the Perl-Server will create a unix
 domain socket to which local clients can connect. If an authorization
@@ -377,11 +377,6 @@ set the connection to use on subsequent commands. C<conn_id> is the
 connection id as returned by get_connection().
 
 =back
-
-=head1 BUGS
-
-(Ver 0.04) This module is much faster than it ought to be... Silly that I wondered
-wether I should implement it in perl or C, since perl is soo fast.
 
 =head1 AUTHOR
 
