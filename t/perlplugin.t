@@ -11,93 +11,68 @@ require 't/gimpsetup.pl';
 my $plugin = "$dir/test_perl_filter";
 die "write $plugin: $!" unless io($plugin)->print($Config{startperl}.<<'EOF');
 
+use strict;
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 
-sub test_dies {
-  my ($text) = @_;
-  die $text."\n";
+sub boilerplate_params {
+  my ($testing, $menuloc) = @_;
+  (
+    ("exercise gimp-perl filter testing $testing") x 2,
+    ("boilerplate id") x 2,
+    "20140310",
+    N_$menuloc,
+    "*",
+  );
 }
 
-sub test_return_text {
-  my ($text) = @_;
-  return $text;
-}
+# & to dodge annoying prototype preventing use of boilerplate_params!
+&register(
+  "test_dies",
+  boilerplate_params('exceptions', '<None>'),
+  [ [PF_STRING, "text", "Input text", 'default' ], ],
+  sub { die $_[0]."\n" }
+);
 
-sub test_return_colour {
-  my ($colour) = @_;
-  return $colour;
-}
+&register(
+  "test_pf_adjustment",
+  boilerplate_params('returning text', '<None>'),
+  [ [PF_ADJUSTMENT, "input", "input", [100, 2, 1000, 1, 10, 0, 1]  ], ],
+  [ [PF_INT32, "num", "Output number", ], ],
+  sub { @_ }
+);
 
-# returns a value despite such not being declared
-# previously, excess returns were a fatal error, but none were ever returned
-# now not an error
-sub test_perl_filter {
-  my ($i, $drawable, $text) = @_;
-  my $tl = $i->text_layer_new("hi", "Arial", 8, 3);
-  $i->insert_layer($tl, 0, 0);
-  $tl->set_name($text);
-  return $image;
-}
+&register(
+  "test_return_text",
+  boilerplate_params('returning text', '<None>'),
+  [ [PF_STRING, "text", "Input text", 'default' ], ],
+  [ [PF_STRING, "text", "Output text", ], ],
+  sub { @_ }
+);
 
-register	"test_dies",
-		"exercise gimp-perl filter testing exceptions",
-		"exercise gimp-perl filter testing exceptions",
-		"boilerplate id",
-		"boilerplate id",
-		"20140310",
-		N_"<None>",
-		"*",
-	[
-	  [PF_STRING, "text", "Input text", 'default' ],
-	],
-	[],
-	\&test_dies;
+&register(
+  "test_return_colour",
+  boilerplate_params('returning color', '<None>'),
+  [ [PF_COLOR, "colour", "Input colour", [ 5, 5, 5 ], ], ],
+  [ [PF_COLOR, "colour", "Output colour", ], ],
+  sub { @_ }
+);
 
-register	"test_return_text",
-		"exercise gimp-perl filter returning text",
-		"exercise gimp-perl filter returning text",
-		"boilerplate id",
-		"boilerplate id",
-		"20140310",
-		N_"<None>",
-		"*",
-	[
-	  [PF_STRING, "text", "Input text", 'default' ],
-	],
-	[
-	  [PF_STRING, "text", "Output text", ],
-	],
-	\&test_return_text;
-
-register	"test_return_colour",
-		"exercise gimp-perl filter returning color",
-		"exercise gimp-perl filter returning color",
-		"boilerplate id",
-		"boilerplate id",
-		"20140310",
-		N_"<None>",
-		"*",
-	[
-	  [PF_COLOR, "colour", "Input colour", [ 5, 5, 5 ], ],
-	],
-	[
-	  [PF_COLOR, "colour", "Output colour", ],
-	],
-	\&test_return_colour;
-
-register	"test_perl_filter",
-		"exercise gimp-perl for a filter",
-		"exercise gimp-perl for a filter",
-		"boilerplate id",
-		"boilerplate id",
-		"20140310",
-		N_"<Image>/Filters",
-		"*",
-	[
-	  [PF_STRING, "text", "Text to name layer", "hello"],
-	],
-	\&test_perl_filter;
+&register(
+  "test_perl_filter",
+  boilerplate_params('filter', '<Image>/Filters'),
+  [ [PF_STRING, "text", "Text to name layer", "hello"], ],
+  sub {
+    # returns a value despite such not being declared
+    # previously, excess returns were a fatal error, but none were ever returned
+    # now not an error
+    my ($i, $drawable, $text) = @_;
+    my $tl = $i->text_layer_new("hi", "Arial", 8, 3);
+    $i->insert_layer($tl, 0, 0);
+    $tl->set_name($text);
+    return $i;
+  }
+);
 
 exit main;
 EOF
@@ -120,10 +95,10 @@ is(Gimp::Plugin->test_return_text(undef), 'default', 'test default on plugin');
 ok((my $c = Gimp::Plugin->test_return_colour([6, 6, 6])), 'return colour');
 my $send_text = 'exception';
 eval { Gimp::Plugin->test_dies($send_text); };
-my $at = $@;
-chomp $at;
-is($at, $send_text, 'check exception returned correctly');
-
-ok(!$i->delete, 'remove image');
+is($@, "$send_text\n", 'exception returned correctly');
+eval { is(Gimp::Plugin->test_pf_adjustment('text'), 'text', 'adj'); };
+like($@, qr/INT32/, 'pf_adjustment dies on non-INT32');
+is(Gimp::Plugin->test_pf_adjustment(17), 17, 'test adj return');
+is(Gimp::Plugin->test_pf_adjustment(undef), 100, 'test adj default');
 
 done_testing;

@@ -64,7 +64,7 @@ sub PF_TOGGLE	() { Gimp::PDB_END+1	};
 sub PF_SLIDER	() { Gimp::PDB_END+2	};
 sub PF_FONT	() { Gimp::PDB_END+3	};
 sub PF_SPINNER	() { Gimp::PDB_END+4	};
-sub PF_ADJUSTMENT(){ Gimp::PDB_END+5	}; # compatability fix for script-fu _ONLY_
+sub PF_ADJUSTMENT(){ Gimp::PDB_END+5	}; # compatibility fix for script-fu _ONLY_
 sub PF_BRUSH	() { Gimp::PDB_END+6	};
 sub PF_PATTERN	() { Gimp::PDB_END+7	};
 sub PF_GRADIENT	() { Gimp::PDB_END+8	};
@@ -474,11 +474,19 @@ dialog box as a hint. The B<description> will be used as a tooltip.
 
 See the section PARAMETER TYPES for the supported types.
 
+The default values have an effect when called from a menu in GIMP, and
+when the script is called from the command line. However, they have a
+limited effect when called from Gimp::Net; data types that do not have
+an "invalid" value, like text does, may not be passed as an undefined
+value; this is because while Perl can use C<undef> instead of anything,
+GIMP cannot. For instance, it is possible to pass a C<PF_STRING> as
+undef, which will then be set to the supplied default value, but not
+a C<PF_COLOR>.
+
 =item the return values
 
 This is just like the parameter array except that it describes the return
-values. Specify the type and variable name only. This argument is optional
-- if unspecified, assumes return of an image.
+values. Specify the type and variable name only. This argument is optional.
 
 =item the features requirements
 
@@ -685,7 +693,10 @@ sub register($$$$$$$$$;@) {
 
       # set default arguments
       for (0..$#{$params}) {
-         $_[$_]=$params->[$_]->[3] unless defined($_[$_]);
+         next if defined $_[$_];
+         my $default = $params->[$_]->[3];
+         $default = $default->[0] if $params->[$_]->[0] == PF_ADJUSTMENT;
+         $_[$_] = $default;
       }
 
       for($menupath) {
