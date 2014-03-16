@@ -1116,6 +1116,7 @@ static void pii_run(const gchar *name,
                     gint *xnreturn_vals,
                     GimpParam **xreturn_vals)
 {
+  // static as need to leave allocated until finished with
   static GimpParam *return_vals;
   static int nreturn_vals;
 
@@ -1134,11 +1135,11 @@ static void pii_run(const gchar *name,
   GimpParamDef *params;
   GimpParamDef *return_defs;
 
-   /* the libgimp is soooooooo braindamaged. */
-   if (return_vals) {
-     destroy_params (return_vals, nreturn_vals);
-     return_vals = 0;
-   }
+  /* the libgimp is soooooooo braindamaged. */
+  if (return_vals) {
+    destroy_params (return_vals, nreturn_vals);
+    return_vals = 0;
+  }
 
   if (
     gimp_procedural_db_proc_info (
@@ -1192,8 +1193,9 @@ static void pii_run(const gchar *name,
       return_vals->data.d_status = GIMP_PDB_SUCCESS;
       *xnreturn_vals = nreturn_vals+1;
       *xreturn_vals = return_vals;
-    } else
+    } else {
       err_msg = g_strdup (SvPV_nolen (ERRSV));
+    }
   } else {
     int i;
     char errmsg [MAX_STRING];
@@ -1204,6 +1206,8 @@ static void pii_run(const gchar *name,
     return_vals->data.d_status = GIMP_PDB_SUCCESS;
     *xnreturn_vals = nreturn_vals+1;
     *xreturn_vals = return_vals++;
+    // this probably shouldn't be ++ except for the convenience below -
+    //   gets destroy_params() top of function
 
     for (i = nreturn_vals; i-- && count; ) {
       return_vals[i].type = return_defs[i].type;
@@ -1236,15 +1240,17 @@ static void pii_run(const gchar *name,
 
   error:
   gimp_die_msg (err_msg);
-  g_free (err_msg);
+  // not g_free(err_msg) as gets used for return_vals[1]
 
   if (return_vals)
     destroy_params (*xreturn_vals, nreturn_vals+1);
 
-  nreturn_vals = 0;
-  return_vals = g_new (GimpParam, 1);
-  return_vals->type = GIMP_PDB_STATUS;
-  return_vals->data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  nreturn_vals = 1;
+  return_vals = g_new (GimpParam, 2);
+  return_vals[0].type = GIMP_PDB_STATUS;
+  return_vals[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  return_vals[1].type = GIMP_PDB_STRING;
+  return_vals[1].data.d_string = err_msg;
   *xnreturn_vals = nreturn_vals+1;
   *xreturn_vals = return_vals;
 }
@@ -1524,40 +1530,57 @@ PPCODE:
 
     if (nparams)
       destroy_params (args, nparams);
-  } else {
-    values = gimp_run_procedure2 (proc_name, &nvalues, nparams, args);
-
-    if (nparams)
-      destroy_params (args, nparams);
-
-    if (trace & TRACE_CALL) {
-      dump_params (nvalues-1, values+1, return_vals);
-      trace_printf ("\n");
-    }
-
-    if (values && values[0].type == GIMP_PDB_STATUS) {
-      if (
-	values[0].data.d_status == GIMP_PDB_EXECUTION_ERROR ||
-	values[0].data.d_status == GIMP_PDB_CALLING_ERROR
-      )
-	sprintf (croak_str, __("%s: %s"), proc_name, gimp_get_pdb_error ());
-      else if (values[0].data.d_status == GIMP_PDB_SUCCESS) {
-	EXTEND(SP, perl_paramdef_count (return_vals, nvalues-1));
-	PUTBACK;
-	for (i = 0; i < nvalues-1; i++) {
-	  if (i < nvalues-2 && is_array (values[i+2].type))
-	    i++;
-
-	  push_gimp_sv (values+i+1, nvalues > 2+1);
-	}
-
-	SPAGAIN;
-      } else
-	sprintf (croak_str, __("unsupported status code: %d, fatal error\n"), values[0].data.d_status);
-    } else
-      sprintf (croak_str, __("gimp didn't return an execution status, fatal error"));
-
+    goto error;
   }
+
+  values = gimp_run_procedure2 (proc_name, &nvalues, nparams, args);
+
+  if (nparams)
+    destroy_params (args, nparams);
+
+  if (values && values[0].type != GIMP_PDB_STATUS) {
+    sprintf (croak_str, __("gimp didn't return an execution status, fatal error"));
+    goto error;
+  }
+  if (
+    values[0].data.d_status == GIMP_PDB_EXECUTION_ERROR ||
+    values[0].data.d_status == GIMP_PDB_CALLING_ERROR
+  ) {
+    if (nvalues > 1 && values[1].type == GIMP_PDB_STRING) {
+      // values[1] ought to be the error string
+      sprintf (croak_str, "%s", values[1].data.d_string);
+    } else
+      // just try gimp_get_pdb_error()
+      sprintf (croak_str, "%s: %s", proc_name, gimp_get_pdb_error ());
+    if (trace & TRACE_CALL) {
+      trace_printf ("(");
+      if ((trace & TRACE_DESC) == TRACE_DESC)
+	trace_printf ("\n\t");
+      trace_printf (__("EXCEPTION: \"%s\""), croak_str);
+      if ((trace & TRACE_DESC) == TRACE_DESC)
+	trace_printf ("\n\t");
+      trace_printf (")\n");
+    }
+    goto error;
+  }
+  if (values[0].data.d_status != GIMP_PDB_SUCCESS) {
+    sprintf (croak_str, __("unsupported status code: %d, fatal error\n"), values[0].data.d_status);
+    goto error;
+  }
+
+  if (trace & TRACE_CALL) {
+    dump_params (nvalues-1, values+1, return_vals);
+    trace_printf ("\n");
+  }
+
+  EXTEND(SP, perl_paramdef_count (return_vals, nvalues-1));
+  PUTBACK;
+  for (i = 0; i < nvalues-1; i++) {
+    if (i < nvalues-2 && is_array (values[i+2].type))
+      i++;
+    push_gimp_sv (values+i+1, nvalues > 2+1);
+  }
+  SPAGAIN;
 
   error:
 
@@ -1566,7 +1589,6 @@ PPCODE:
 
   gimp_destroy_paramdefs (params, nparams);
   gimp_destroy_paramdefs (return_vals, nreturn_vals);
-
 
   if (croak_str[0])
     croak (croak_str);

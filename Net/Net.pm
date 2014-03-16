@@ -77,44 +77,34 @@ sub command {
    print $server_fh pack("N",length($req)).$req;
 }
 
-my($len,@args,$trace,$req); # small speedup, these are really local to gimp_call_procedure
-
 sub gimp_call_procedure {
-   if ($trace_level) {
-      $req="TRCE".args2net(0,$trace_level,@_);
-      print $server_fh pack("N",length($req)).$req;
-      do {
-         read($server_fh,$len,4) == 4 or die "protocol error (3)";
-         $len=unpack("N",$len);
-         read($server_fh,$req,abs($len)) == $len or die "protocol error (4)";
-         if ($len<0) {
-            ($req,@args)=net2args(0,$req);
-            print "ignoring callback $req\n";
-            redo;
-         }
-         ($trace,$req,@args)=net2args(0,$req);
-         if (ref $trace_res eq "SCALAR") {
-            $$trace_res = $trace;
-         } else {
-            print $trace_res $trace;
-         }
-      } while 0;
-   } else {
-      $req="EXEC".args2net(0,@_);
-      print $server_fh pack("N",length($req)).$req;
-      do {
-         read($server_fh,$len,4) == 4 or die "protocol error (5)";
-         $len=unpack("N",$len);
-         read($server_fh,$req,abs($len)) == $len or die "protocol error (6)";
-         if ($len<0) {
-            ($req,@args)=net2args(0,$req);
-            print "ignoring callback $req\n";
-            redo;
-         }
-         ($req,@args)=net2args(0,$req);
-      } while 0;
-   }
-   croak $req if $req;
+   my (@args,$trace,$req);
+   $req = ($trace_level ? "TRCE" : "EXEC") . args2net(
+     0, ($trace_level ? $trace_level : ()), @_
+   );
+   print $server_fh pack("N",length($req)).$req;
+   do {
+      my $len;
+      read($server_fh,$len,4) == 4 or die "protocol error (3)";
+      $len=unpack("N",$len);
+      read($server_fh,$req,abs($len)) == $len or die "protocol error (4)";
+      if ($len<0) {
+	 ($req,@args)=net2args(0,$req);
+	 print "ignoring callback $req\n";
+	 redo;
+      }
+      @args = net2args(0,$req);
+      $trace = shift @args if $trace_level;
+      $req = shift @args;
+      if ($trace_level) {
+	 if (ref $trace_res eq "SCALAR") {
+	    $$trace_res = $trace;
+	 } else {
+	    print $trace_res $trace;
+	 }
+      }
+   } while 0;
+   die $req if $req;
    wantarray ? @args : $args[0];
 }
 

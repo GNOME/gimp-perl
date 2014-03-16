@@ -14,6 +14,11 @@ die "write $plugin: $!" unless io($plugin)->print($Config{startperl}.<<'EOF');
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 
+sub test_dies {
+  my ($text) = @_;
+  die $text."\n";
+}
+
 sub test_return_text {
   my ($text) = @_;
   return $text;
@@ -34,6 +39,20 @@ sub test_perl_filter {
   $tl->set_name($text);
   return $image;
 }
+
+register	"test_dies",
+		"exercise gimp-perl filter testing exceptions",
+		"exercise gimp-perl filter testing exceptions",
+		"boilerplate id",
+		"boilerplate id",
+		"20140310",
+		N_"<None>",
+		"*",
+	[
+	  [PF_STRING, "text", "Input text", 'default' ],
+	],
+	[],
+	\&test_dies;
 
 register	"test_return_text",
 		"exercise gimp-perl filter returning text",
@@ -99,6 +118,11 @@ is('value', $tl->get_name, 'layer name');
 is(Gimp::Plugin->test_return_text('text'), 'text', 'call return text');
 is(Gimp::Plugin->test_return_text(undef), 'default', 'test default on plugin');
 ok((my $c = Gimp::Plugin->test_return_colour([6, 6, 6])), 'return colour');
+my $send_text = 'exception';
+eval { Gimp::Plugin->test_dies($send_text); };
+my $at = $@;
+chomp $at;
+is($at, $send_text, 'check exception returned correctly');
 
 ok(!$i->delete, 'remove image');
 

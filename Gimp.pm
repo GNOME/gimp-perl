@@ -559,7 +559,7 @@ sub AUTOLOAD {
 	shift unless ref $_[0];
 	#goto &$ref; # does not work, PERLBUG! #FIXME
 	my @r = eval { &$ref };
-	recroak $@ if $@; wantarray ? @r : $r[0];
+	die $@ if $@; wantarray ? @r : $r[0];
       };
       goto &$AUTOLOAD;
     } elsif (UNIVERSAL::can($interface_pkg,$sub)) {
@@ -568,7 +568,7 @@ sub AUTOLOAD {
 	shift unless ref $_[0];
 	#goto &$ref; # does not work, PERLBUG! #FIXME
 	my @r = eval { &$ref };
-	recroak $@ if $@; wantarray ? @r : $r[0];
+	die $@ if $@; wantarray ? @r : $r[0];
       };
       goto &$AUTOLOAD;
     } elsif (gimp_procedural_db_proc_exists($sub)) {
@@ -577,7 +577,7 @@ sub AUTOLOAD {
 	unshift @_, $sub;
 	#goto &gimp_call_procedure; # does not work, PERLBUG! #FIXME
 	my @r = eval { gimp_call_procedure (@_) };
-	recroak $@ if $@; wantarray ? @r : $r[0];
+	die $@ if $@; wantarray ? @r : $r[0];
       };
       goto &$AUTOLOAD;
     }
