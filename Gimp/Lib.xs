@@ -1485,9 +1485,9 @@ PPCODE:
   )
     croak (__("gimp procedure '%s' not found"), proc_name);
 
-  int runmode = nparams
+  int runmode_firstparam = nparams
 		&& params[0].type == GIMP_PDB_INT32
-		&& (  !strcmp (params[0].name, "run_mode") || !strcmp (params[0].name, "run-mode"));
+		&& (!strcmp (params[0].name, "run_mode") || !strcmp (params[0].name, "run-mode"));
   g_free (proc_blurb);
   g_free (proc_help);
   g_free (proc_author);
@@ -1497,22 +1497,30 @@ PPCODE:
   if (nparams)
     args = (GimpParam *) g_new0 (GimpParam, nparams);
 
-  for (i = 0, j = 1; i < nparams && j < items; i++) {
+  if (runmode_firstparam) {
+    /* If it's a valid value for the run mode, and # of parameters
+       are consistent with this, we assume the user explicitly passed the run
+       mode parameter */
+    args[0].type = params[0].type;
+    if (
+      nparams==(items-1) &&
+      (SvIV(ST(j))==GIMP_RUN_INTERACTIVE || SvIV(ST(j))==GIMP_RUN_NONINTERACTIVE)
+    ) {
+      args->data.d_int32 = SvIV(ST(1)); // ST(0) = proc_name
+      j = 2; // because ST(0) is proc_name, ST(1) is runmode
+    } else {
+      args->data.d_int32 = GIMP_RUN_NONINTERACTIVE;
+      j = 1; // because ST(0) is proc_name
+    }
+    i = 1; // first proc input param to put stack entries into
+  } else {
+    i = 0; // first proc input param to put stack entries into
+    j = 1; // because ST(0) is proc_name
+  }
+
+  for (; i < nparams && j < items; i++) {
     args[i].type = params[i].type;
-    if (i == 0 && runmode) {
-      /* If it's a valid value for the run mode, and # of parameters
-	 are correct we assume the user explicitly included the run
-	 mode parameter */
-      if (
-	nparams==(items-1) &&
-	(SvIV(ST(j))==GIMP_RUN_INTERACTIVE || SvIV(ST(j))==GIMP_RUN_NONINTERACTIVE)
-      ) {
-	args->data.d_int32 = SvIV(ST(j));
-	j++;
-      } else {
-	args->data.d_int32 = GIMP_RUN_NONINTERACTIVE;
-      }
-    } else if (
+    if (
       (!SvROK(ST(j)) || i >= nparams-1 || !is_array (params[i+1].type))
     ) {
       convert_sv2gimp(croak_str, &args[i], ST(j)) && j++;

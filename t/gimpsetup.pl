@@ -3,6 +3,7 @@
 #    use Test::*; # to make available ok()
 #    use Gimp qw(:auto);
 #    our $dir;
+#    our $myplugins; # if want to write_plugin to right place!
 # if encounters problems, does a die()
 
 use strict;
@@ -15,20 +16,22 @@ our $DEBUG = 0 unless defined $DEBUG;
 our %cfg;
 require './config.pl';
 
-my $plugins = $cfg{gimpplugindir} . '/plug-ins';
-die "plugins dir: $!" unless -d $plugins;
-die "script-fu not executable: $!" unless-x "$plugins/script-fu";
+my $sysplugins = $cfg{gimpplugindir} . '/plug-ins';
+die "plugins dir: $!" unless -d $sysplugins;
+die "script-fu not executable: $!" unless-x "$sysplugins/script-fu";
 
 our $dir = File::Temp->newdir($DEBUG ? (CLEANUP => 0) : ());;#
-my $perlserver = "$dir/Perl-Server";
+our $myplugins = "$dir/plug-ins";
+die "mkdir $myplugins: $!\n" unless mkdir $myplugins;
+my $perlserver = "$myplugins/Perl-Server";
 my $s = io("Perl-Server")->all or die "unable to read the Perl-Server: $!";
 $s =~ s/^(#!).*?(\n)/$Config{startperl}$2/;
 write_plugin($DEBUG, $perlserver, $s);
-die "symlink script-fu: $!"
-  unless symlink("$plugins/script-fu", "$dir/script-fu");
-die "symlink sharpen: $!" unless symlink("$plugins/sharpen", "$dir/sharpen");
+map {
+  die "symlink $_: $!" unless symlink("$sysplugins/$_", "$myplugins/$_");
+} qw(script-fu sharpen);
 die "output gimprc: $!"
-  unless io("$dir/gimprc")->print("(plug-in-path \"$dir\")\n");
+  unless io("$dir/gimprc")->print("(plug-in-path \"$myplugins\")\n");
 map { die "mkdir $dir/$_: $!" unless mkdir "$dir/$_"; }
   qw(palettes gradients patterns brushes dynamics);
 

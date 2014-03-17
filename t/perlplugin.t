@@ -5,10 +5,11 @@ use Gimp qw(:auto);
 use Config;
 
 our $dir;
+our $myplugins;
 our $DEBUG = 0;
 require 't/gimpsetup.pl';
 
-my $plugin = "$dir/test_perl_filter";
+my $plugin = "$myplugins/test_perl_filter";
 write_plugin($DEBUG, $plugin, $Config{startperl}.<<'EOF');
 
 use strict;
@@ -59,6 +60,27 @@ sub boilerplate_params {
 );
 
 &register(
+  "test_return_int32array",
+  boilerplate_params('returning array', '<None>'),
+  [],
+  [
+    [ PDB_INT32ARRAY, "array1", "Output array1", ],
+    [ PDB_INT32ARRAY, "array2", "Output array1", ],
+  ],
+  sub { ([1, 2], [3, 4]) }
+);
+
+&register(
+  "test_no_params",
+  boilerplate_params('no params', '<None>'),
+  [],
+  [
+    [ PF_INT32, "int", "Output int", ],
+  ],
+  sub { 1 }
+);
+
+&register(
   "test_perl_filter",
   boilerplate_params('filter', '<Image>/Filters'),
   [ [PF_STRING, "text", "Text to name layer", "hello"], ],
@@ -89,15 +111,25 @@ ok(!$i->insert_layer($l0,0,0), 'insert layer');
 ok(!$i->test_perl_filter(undef, 'value'), 'call filter'); # 1st param drawable
 my ($tl) = $i->get_layers;
 is('value', $tl->get_name, 'layer name');
-is(Gimp::Plugin->test_return_text('text'), 'text', 'call return text');
-is(Gimp::Plugin->test_return_text(undef), 'default', 'test default on plugin');
-ok((my $c = Gimp::Plugin->test_return_colour([6, 6, 6])), 'return colour');
+is(Gimp::Plugin->test_return_text('text'), 'text', 'return text');
+my $incolour = [6, 6, 6, 1];
+is_deeply(
+  Gimp::Plugin->test_return_colour($incolour),
+  Gimp::canonicalize_color($incolour),
+  'return colour'
+);
 my $send_text = 'exception';
 eval { Gimp::Plugin->test_dies($send_text); };
 is($@, "$send_text\n", 'exception returned correctly');
 eval { is(Gimp::Plugin->test_pf_adjustment('text'), 'text', 'adj'); };
 like($@, qr/INT32/, 'pf_adjustment dies on non-INT32');
-is(Gimp::Plugin->test_pf_adjustment(17), 17, 'test adj return');
-is(Gimp::Plugin->test_pf_adjustment(undef), 100, 'test adj default');
+is(Gimp::Plugin->test_pf_adjustment(17), 17, 'adj return');
+is(Gimp::Plugin->test_pf_adjustment(undef), 100, 'adj default');
+is(Gimp::Plugin->test_no_params, 1, 'no params');
+is_deeply(
+  [ Gimp::Plugin->test_return_int32array ],
+  [ [1, 2], [3, 4] ],
+  'return array'
+);
 
 done_testing;

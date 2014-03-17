@@ -171,11 +171,8 @@ sub extension_perl_server {
         while(!$server_quit and !eof($fh)) {
            last unless handle_request($fh);
         }
-#        Gimp::gimp_quit(0);	# borken in libgimp #d#FIXME#
-        kill 'KILL',getppid();	# borken do not do this.. #d#FIXME#
+        Gimp::gimp_quit(0);
         exit(0);
-#        close $fh;
-        return;
      }
   } else {
      $run_mode=&Gimp::RUN_INTERACTIVE;

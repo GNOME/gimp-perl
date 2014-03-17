@@ -22,32 +22,6 @@
 
 #include "../perl-intl.h"
 
-#if HAVE_PDL
-
-# include <pdlcore.h>
-
-#if 0
-/* hack, undocumented, argh! */
-static Core* PDL; /* Structure hold core C functions */
-
-/* get pointer to PDL structure. */
-static void need_pdl (void)
-{
-  SV *CoreSV;
-
-  if (!PDL)
-    {
-      /* Get pointer to structure of core shared C routines */
-      if (!(CoreSV = perl_get_sv("PDL::SHARE",FALSE)))
-        Perl_croak(__("gimp-perl-pixel functions require the PDL::Core module"));
-
-      PDL = (Core*) SvIV(CoreSV);
-    }
-}
-#endif
-
-#endif
-
 #define is_dynamic(sv)				\
 	(strEQ ((sv), "Gimp::Tile")		\
          || strEQ ((sv), "Gimp::PixelRgn")	\
