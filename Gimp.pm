@@ -541,11 +541,6 @@ sub ignore_functions(@) {
    @ignore_function{@_}++;
 }
 
-sub recroak($) {
-  $_[0] =~ s/ at \S+ line \d+.*$//s;
-  croak $_[0];
-}
-
 sub AUTOLOAD {
   my ($class,$name) = $AUTOLOAD =~ /^(.*)::(.*?)$/;
   for(@{"$class\::PREFIXES"}) {

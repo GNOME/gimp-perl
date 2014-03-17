@@ -9,7 +9,7 @@ our $DEBUG = 0;
 require 't/gimpsetup.pl';
 
 my $plugin = "$dir/test_perl_filter";
-die "write $plugin: $!" unless io($plugin)->print($Config{startperl}.<<'EOF');
+write_plugin($DEBUG, $plugin, $Config{startperl}.<<'EOF');
 
 use strict;
 use Gimp qw(:auto __ N_);
@@ -76,7 +76,6 @@ sub boilerplate_params {
 
 exit main;
 EOF
-die "chmod $plugin: $!" unless chmod 0700, $plugin;
 
 #Gimp::set_trace(TRACE_ALL);
 Gimp::init("spawn/");
