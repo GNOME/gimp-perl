@@ -1,6 +1,7 @@
 use strict;
 use Test::More;
 #BEGIN { $Gimp::verbose = 1; }
+#Gimp::set_trace(TRACE_ALL);
 use Gimp qw(:auto);
 use Config;
 
@@ -10,7 +11,8 @@ our $DEBUG = 0;
 require 't/gimpsetup.pl';
 
 my $plugin = "$myplugins/test_perl_filter";
-write_plugin($DEBUG, $plugin, $Config{startperl}.<<'EOF');
+write_plugin($DEBUG, $plugin, $Config{startperl}.
+  "\nBEGIN { \$Gimp::verbose = ".int($Gimp::verbose).'; }'.<<'EOF');
 
 use strict;
 use Gimp qw(:auto __ N_);
@@ -31,31 +33,31 @@ sub boilerplate_params {
 &register(
   "test_dies",
   boilerplate_params('exceptions', '<None>'),
-  [ [PF_STRING, "text", "Input text", 'default' ], ],
+  [ [ PF_STRING, "text", "Input text", 'default' ], ],
   sub { die $_[0]."\n" }
 );
 
 &register(
   "test_pf_adjustment",
   boilerplate_params('returning text', '<None>'),
-  [ [PF_ADJUSTMENT, "input", "input", [100, 2, 1000, 1, 10, 0, 1]  ], ],
-  [ [PF_INT32, "num", "Output number", ], ],
+  [ [ PF_ADJUSTMENT, "input", "input", [100, 2, 1000, 1, 10, 0, 1]  ], ],
+  [ [ PF_INT32, "num", "Output number", ], ],
   sub { @_ }
 );
 
 &register(
   "test_return_text",
   boilerplate_params('returning text', '<None>'),
-  [ [PF_STRING, "text", "Input text", 'default' ], ],
-  [ [PF_STRING, "text", "Output text", ], ],
+  [ [ PF_STRING, "text", "Input text", 'default' ], ],
+  [ [ PF_STRING, "text", "Output text", ], ],
   sub { @_ }
 );
 
 &register(
   "test_return_colour",
   boilerplate_params('returning color', '<None>'),
-  [ [PF_COLOR, "colour", "Input colour", [ 5, 5, 5 ], ], ],
-  [ [PF_COLOR, "colour", "Output colour", ], ],
+  [ [ PF_COLOR, "colour", "Input colour", [ 5, 5, 5 ], ], ],
+  [ [ PF_COLOR, "colour", "Output colour", ], ],
   sub { @_ }
 );
 
@@ -99,7 +101,6 @@ sub boilerplate_params {
 exit main;
 EOF
 
-#Gimp::set_trace(TRACE_ALL);
 Gimp::init("spawn/");
 
 ok((my $i = Gimp::Image->new(10,10,RGB)), 'new image');

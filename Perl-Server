@@ -161,7 +161,8 @@ sub extension_perl_server {
   my $run_mode=$_[0];
   $ps_flags=$_[1];
   my $extra=$_[2];
-  
+  $Gimp::verbose=$_[3];
+
   if ($run_mode == &Gimp::RUN_NONINTERACTIVE) {
      if ($ps_flags & &Gimp::_PS_FLAG_BATCH) {
         my($fh) = local *FH;
@@ -309,6 +310,7 @@ Gimp::on_query {
                             [&Gimp::PDB_INT32, "run_mode", "Interactive, [non-interactive]"],
                             [&Gimp::PDB_INT32, "flags", "internal flags (must be 0)"],
                             [&Gimp::PDB_INT32, "extra", "multi-purpose ;)"],
+                            [&Gimp::PDB_INT32, "verbose", "Gimp verbose var"],
                            ],[]);
 
    Gimp->install_procedure("gimp_procedural_db_constant_register", "Register a plug-in specific integer constant",

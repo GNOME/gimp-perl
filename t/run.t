@@ -1,13 +1,13 @@
 use strict;
 use Test::More tests => 15;
 #BEGIN { $Gimp::verbose = 1; }
+#Gimp::set_trace(TRACE_ALL);
 use Gimp qw(:auto);
 
 our $dir;
 our $DEBUG = 0;
 require 't/gimpsetup.pl';
 
-#Gimp::set_trace(TRACE_ALL);
 Gimp::init("spawn/");
 
 ok((my $i = new Image(10,10,RGB)), 'OO Syntax for new image');

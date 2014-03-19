@@ -136,7 +136,6 @@ sub start_server {
    my $opt = shift;
    $opt = $Gimp::spawn_opts unless $opt;
    print __"trying to start gimp with options \"$opt\"\n" if $Gimp::verbose;
-   print $opt if $Gimp::verbose;
    $server_fh=local *SERVER_FH;
    my $gimp_fh=local *CLIENT_FH;
    socketpair $server_fh,$gimp_fh,AF_UNIX,SOCK_STREAM,PF_UNSPEC
@@ -159,9 +158,11 @@ sub start_server {
          open STDERR,">&1";
       }
       my @args;
-      my $args = &Gimp::RUN_NONINTERACTIVE." ".
-                 (&Gimp::_PS_FLAG_BATCH | &Gimp::_PS_FLAG_QUIET)." ".
-                 fileno($gimp_fh);
+      my $args = join ' ',
+	&Gimp::RUN_NONINTERACTIVE,
+	(&Gimp::_PS_FLAG_BATCH | &Gimp::_PS_FLAG_QUIET),
+	fileno($gimp_fh),
+	int($Gimp::verbose);
       push(@args,"--no-data") if $opt=~s/(^|:)no-?data//;
       push(@args,"-i") unless $opt=~s/(^|:)gui//;
       push(@args,"--verbose") if $Gimp::verbose;
