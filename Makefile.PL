@@ -6,20 +6,15 @@ require ExtUtils::Depends;
 
 $|=1;
 
-
 if ($ARGV[0] ne "--writemakefile") {
    # convert any prefix= to --prefix=
    for(@ARGV) {
       s/^prefix=/--prefix=/i;
    }
-   
+
    # run the config.pl to setup enviornment
    do './config.pl' or die $@;
-   
-   # Set it up to do lots of tests
-   $EXTENSIVE_TESTS = 1;
-   $ENV{'EXTENSIVE_TESTS'} = $EXTENSIVE_TESTS;
-  
+
    # get compile/link args
    $ENV{CC}=$Config{cc};
    $ENV{LD}=$Config{ld};
@@ -46,8 +41,8 @@ if ($ARGV[0] ne "--writemakefile") {
       blended2 blowinout bricks burst  
       centerguide  
       ditherize dots dust 
-      font_table frame_filter frame_reshuffle 
-      glowing_steel goldenmean guidegrid guide_remove guides_to_selection
+      frame_filter frame_reshuffle 
+      glowing_steel goldenmean guidegrid guides_to_selection
       image_tile innerbevel  
       layerfuncs mirrorsplit 
       perlotine prep4gif 
@@ -135,21 +130,38 @@ install-po:
 ".$install;
 }
 
+sub basename {
+  my $dest = shift;
+  $dest =~ s#.*/##;
+  $dest;
+}
+
+sub plugin_target {
+  my $plugin = shift;
+  my $dest = '$(INST_PLUGINS)/'.basename($plugin);
+  <<EOF;
+$dest : $plugin \$(FIRST_MAKEFILE) \$(INST_PLUGINS)\$(DFSEP).exists
+	\$(NOECHO) \$(RM_F) $dest
+	\$(CP) $plugin $dest
+	\$(FIXIN) $dest
+	-\$(NOECHO) \$(CHMOD) \$(PERM_RWX) $dest
+
+EOF
+}
+
 sub MY::postamble {
    my $self=shift;
-   my $install_program = $cfg{INSTALL};
-   $install_program =~ s{^\.\./}{../../};
    my $GT = "$GIMPTOOL --install-admin-bin";
    my $UT = "$GIMPTOOL --uninstall-admin-bin";
    my $GT2 = '';
-   my $postamble="
+   <<EOF;
 
 objclean :: clean
 maintainer-clean :: realclean
 distclean :: realclean
 check :: test
 
-MY_FIXIN = \$(PERL) -I\$(PERL_ARCHLIB) -I\$(PERL_LIB) -MExtUtils::MakeMaker -e 'MY->fixin(\@ARGV)'
+INST_PLUGINS = blib/plugins
 
 all ::
 
@@ -157,23 +169,27 @@ clean ::
 	test -f Makefile || mv -f Makefile.old Makefile
 	\$(RM_RF) inst-temp
 
-install-plugins ::
-	\$(RM_RF) inst-temp
-	\$(MKPATH) inst-temp
-	cd inst-temp ; \\
-	\$(UMASK_NULL) ; \\
-	\$(CP) ".join(' ',map("'../examples/$_'",sort @pins))." ../Perl-Server . ; \\
-	\$(CHMOD) 755 * ; \\
-	\$(MY_FIXIN) * ; \\
-	for plugin in * ; do \\
-	   $GT \"\$\$plugin\" $GT2 ; \\
-	done
-	\$(RM_RF) inst-temp
+\$(INST_PLUGINS)\$(DFSEP).exists :: Makefile.PL
+	\$(NOECHO) \$(MKPATH) \$(INST_PLUGINS)
+	\$(NOECHO) \$(CHMOD) \$(PERM_DIR) \$(INST_PLUGINS)
+	\$(NOECHO) \$(TOUCH) \$(INST_PLUGINS)\$(DFSEP).exists
+
+@{[
+join '', map { plugin_target($_) } 'Perl-Server', map { "examples/$_" } @pins
+]}
+
+all :: pure_plugins
+
+pure_plugins : @{[
+  map { "\$(INST_PLUGINS)/".basename($_) } 'Perl-Server', @pins
+]}
+
+install-plugins :: pure_plugins
+	cd \$(INST_PLUGINS) ; \\
+	for plugin in * ; do $GT \"\$\$plugin\" $GT2 ; done
 
 uninstall :: force_uninstall_from_\$(INSTALLDIRS)dirs
-	for plugin in Perl-Server @pins; do \\
-           $UT $GT2\$\$plugin; \\
-        done
+	for plugin in Perl-Server @pins; do $UT $GT2\$\$plugin; done
 
 force_uninstall_from_perldirs ::
 	\$(PERL) -MExtUtils::Install -e 'uninstall(\$\$ARGV[0],1,0)' ".$self->catfile('$(PERL_ARCHLIB)','auto','$(FULLEXT)','.packlist')."
@@ -192,9 +208,7 @@ setver:
 gimpenums.c: makeenums.pl
 	perl makeenums.pl arrays ~/cvs/gimp/libgimp*/*.h >gimpenums.c
 
-";
-
-   $postamble;
+EOF
 }
 
 @DIRS= qw/Gimp Net UI/;
