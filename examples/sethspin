@@ -9,7 +9,7 @@ eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
 #       - Steinar H. Gunderson <sgunderson@bigfoot.com>
 
 
-# This one's all mine.  Well, its GPL/Artisitic but I'm the author and creator. 
+# This one's all mine.  Well, its GPL/Artistic but I'm the author and creator. 
 # You need gimp 1.1 or better for this; too much has changed, and I don't think
 # 1.0.x had a perspective PDB function anyway 
 
@@ -78,9 +78,9 @@ sub saw {  # a sawtooth function on PI
 sub spin_layer { # the function for actually spinning the layer
     my ($img, $spin, $dest, $numframes, $prp) = @_;
 
-    my $floater,  # The transformed image
+    my ($floater,  # The transformed image
        $framelay, # The background color
-       $frameno;  # The current frame
+       $frameno);  # The current frame
 
     # Now let's spin it!
     $stepsize = 3.14159/$numframes; # in radians 
@@ -131,7 +131,7 @@ register "seth_spin",
          "Seth Burgess",
          "Seth Burgess <sjburges\@gimp.org>",
          "1.7",
-         N_"<Toolbox>/Xtns/Animation/Seth Spin...",
+         N_"<Image>/Filters/Animation/Seth Spin...",
          "*",
          [
           [PF_DRAWABLE, "source", "What drawable to spin from?"],
@@ -187,7 +187,7 @@ register "seth_spin",
    
     # go back from destination to spinlayer if spinning back 
     if ($spinback) { 
-        @layerlist = $img->get_layers();
+#        @layerlist = $img->get_layers();
         spin_layer($img, $destlayer, $spinlayer, $frames/2, $perspective);
     }    
  

@@ -32,6 +32,7 @@ register "random_blends",
     my($img,$layer,$numgradients) =@_;
     eval { $img->undo_group_start };  
     Context->push();
+    my $sel;
     ($sel,$x1,$y1,$x2,$y2) = $img->gimp_selection_bounds;
     srand();
 

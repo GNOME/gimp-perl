@@ -45,7 +45,6 @@ register	"stampify",
 			$pos = $pos + $diameter + $gap;
 		}
 # create vertical holes
-		my $nholes = int (($nh + $gap) / ($diameter + $gap) + 0.5);
 		$pos = 0;
 		for ($i = 0; $i<$nholes; $i++) {
 			gimp_ellipse_select($img2,

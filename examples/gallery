@@ -80,7 +80,7 @@ sub galleryMaker {
 
    $countTotal=`ls $path*.jpg | wc -l`+`ls $path*.JPG | wc -l`;
    $gallerytitle=~s/ /_/g;	
-   opendir(cpath, $path) or die ("Unable to open destination path");
+   opendir(CPATH, $path) or die ("Unable to open destination path");
    $sysval=system("mkdir $path$gallerytitle");
    if ($sysval != 0){
     	Gimp->message(__"Make sure you've got write access to selected path ...\nMaybe the target path already exist in which case you can simply change the Gallery title and launch again");
@@ -102,7 +102,7 @@ sub galleryMaker {
    my $xcorrection=0;
 
    Gimp->progress_init("Releasing the gallery");
-   while (defined($cfile=readdir(cpath))) { 	
+   while (defined($cfile=readdir(CPATH))) { 	
 	   if (( $cfile =~ /.jpg/ ) || ($cfile =~ /.JPG/)) {
 		   my $img=gimp_file_load("$path$cfile", "$path$cfile");
 		   my $clayer=gimp_image_get_active_layer($img);
@@ -155,8 +155,8 @@ sub galleryMaker {
 		   $tbfname=~s/ /m/g;	
 		   system("cp $cvname $tbfname");
 		   gimp_image_delete($img);	
-		   my $img=gimp_file_load("$tbfname", "$tbfname");
-		   my $clayer=gimp_image_get_active_layer($img);
+		   $img=gimp_file_load("$tbfname", "$tbfname");
+		   $clayer=gimp_image_get_active_layer($img);
 		   gimp_image_scale($img, $tbwidth, $tbheight);
 
 		   #Processing detail HTML		

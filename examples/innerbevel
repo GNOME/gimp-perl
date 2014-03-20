@@ -17,7 +17,7 @@ N_"/Xtns/Render"; N_"/Xtns/Render/Logos"; # i18n workaround
 $defaultcolor1 = [124,10,18];
 $defaultcolor2 = [200,19,27];
 
-$path = N_"<Toolbox>/Xtns/Render/Logos/Inner Bevel...";
+$path = N_"<Image>/Filters/Render/Logos/Inner Bevel...";
 $shortdesc = "Perform an inner bevel on text";
 $longdesc = "This uses tigert's inner bevel method on text, which can be found with his other excellent tutorials at http://tigert.gimp.org/";
 $date = "1999-03-23";
@@ -75,9 +75,9 @@ $img = gimp_image_new($dims[0]+30, $dims[1]+10, RGB);
 # i.e. create a text layer on transparent only...
 
 # -- step 2 --
-$layertmp = $img->add_new_layer(0,TRANSPARENT_FILL);
-$txtlayer = $img->text_fontname(-1, 10, 10, $text, 0, 1, (split / /,$font)[-1], PIXELS, $font);
-$dsp = gimp_display_new($img);  # display the image early
+$img->add_new_layer(0,TRANSPARENT_FILL);
+$img->text_fontname(-1, 10, 10, $text, 0, 1, (split / /,$font)[-1], PIXELS, $font);
+gimp_display_new($img);  # display the image early
 $layer = $img->merge_visible_layers(EXPAND_AS_NECESSARY);
 @pt1 = ($layer->width * 0.5 -1, 0);
 @pt2 = ($layer->width * 0.5 +1, $layer->height);

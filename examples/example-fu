@@ -60,7 +60,7 @@ register "gimp_fu_example_script",			# fill in a function name
    Context->set_background($bg) unless $ignore;
 
    fill $l BACKGROUND_FILL;
-   $text_layer = $img->text_fontname(-1, 10, 10, $text, 5, 1, 10, PIXELS, $font);
+   my $text_layer = $img->text_fontname(-1, 10, 10, $text, 5, 1, 10, PIXELS, $font);
 
    Context->set_foreground("green");
 

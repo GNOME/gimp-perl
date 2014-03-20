@@ -105,6 +105,7 @@ fades from if you have Fade set\n",
     $progress_increment = 1/$points;
     $progress = 0;
 
+    my $dumb;
     ($dumb, $x1, $y1, $x2, $y2) = $img->selection_bounds;
     # $img->selection_none;
     

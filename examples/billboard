@@ -55,7 +55,7 @@ sub spin_layer { # the function for actually spinning the layer
 			@x = $img->selection_bounds();
 			# x[1],x[2]                  x[3],x[2]
 	        # x[1],x[4]                  x[3],x[4]
-			$floater = $framelay->transform_perspective_default(
+			$framelay->transform_perspective_default(
 		$x[1]+saw($i)*$prp*$framelay->width,$x[2]+$blindheight *sin($i)/2,  
 		$x[3]-saw($i)*$prp*$framelay->width,$x[2]+$blindheight *sin($i)/2,
 		$x[1]-saw($i)*$prp*$framelay->width,$x[4]-$blindheight *sin($i)/2,  

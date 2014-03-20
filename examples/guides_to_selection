@@ -36,7 +36,7 @@ register "guide_to_selection",
       my ($x,$y,$w,$h);
       $x = $img->get_guide_position($i);
       if ($img->get_guide_orientation($i) == ORIENTATION_HORIZONTAL) {
-         ($x,$y,$w,$h) = (0,$x-$width,$W,1);
+         ($x,$y,$w,$h) = (0,$x-$w,$W,1);
       } else {
          ($x,$y,$w,$h) = ($x,0,1,$H);
       }

@@ -3,11 +3,6 @@
 use Gimp ":auto";
 use Gimp::Fu;
 
-# some #define's for edge detect plugin
-sub WRAP()         {0}
-sub SMEAR()        {1}
-sub BLACK()        {2}
-
 sub SOBEL()        {0} 
 sub PREWITT()      {1} 
 sub GRADIENT()     {2} 

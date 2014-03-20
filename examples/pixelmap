@@ -70,7 +70,7 @@ register "pixelgen",
          "Marc Lehmann",
          "Marc Lehmann <pcg\@goof.com>",
          "19991115",
-         N_"<Toolbox>/Xtns/Render/Pixelgenerator...",
+         N_"<Image>/Filters/Render/Pixelgenerator...",
          undef,
          [
            [PF_SPINNER,		"width"		, "The width of the new image to generate",	512, [1, 4096, 1]],
@@ -139,7 +139,5 @@ The bytes per pixel value of the destination area.
 
 Copyright Marc Lehman.
 Distributed under the same terms as Gimp-Perl.
-
-=cut
 
 =cut

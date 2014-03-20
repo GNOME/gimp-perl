@@ -83,8 +83,8 @@ register
   "animate_cells",
   "Perform cell animation from a single, layered image",
   "Use this plugin to animate a series of layers in the same way that\
-	a physical animation process would use cells.",
-  "Aaron Sherman", "Aaron Sherman (c)", "1999-03-15",
+	a physical animation process would use cells. Version $animate_cells_version",
+  "Aaron Sherman", "Aaron Sherman (c)", $animate_cells_released,
   N_"<Image>/Filters/Animation/Animate Cells...",
   "*",
   [

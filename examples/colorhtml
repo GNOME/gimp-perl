@@ -8,12 +8,15 @@ my %replace = (
    "&" => "&amp;",
    "<" => "&lt;",
    ">" => "&gt;",
+);
 # read some file, make text out of it
 sub read_text {
    my $fh = shift;
    local $/;
    my $data = <$fh>;
    $data;
+}
+
 register "file_colorhtml_save",
          "Saves the image as coloured html text",
          "=pod",
@@ -55,11 +58,11 @@ register "file_colorhtml_save",
    my $data;
    if ($source == 0) {
       seek DATA, 0, 0;
-      $data = read_text *DATA;
+      $data = read_text DATA;
    } elsif ($source == 1) {
       local *FILE;
       open FILE, "<$text" or die "$text: $!\n";
-      $data = read_text *FILE;
+      $data = read_text FILE;
    } elsif ($source == 2) {
       $data = $text;
    }
@@ -129,8 +132,11 @@ HEADER
    print FILE "</pre>\n</html>\n";
    $new_img->delete if $export == EXPORT_EXPORT;
    ();
+};
+
 Gimp::on_query {
    Gimp->register_save_handler("file_colorhtml_save", "colorhtml", "");
+};
 exit main;
 =head1 COLORHTML FILE FORMAT
 This file save filter writes a large regular grid filled with coloured

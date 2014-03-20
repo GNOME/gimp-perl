@@ -85,7 +85,7 @@ sub get_hguides {
 
 sub dosel { 
     ($img, $savepath, $imgpath, $imgbasename, $extension, $l,$r,$t,$b, $i,$j) = @_;
-    $filename =~ m/^(.*)\.[^\.]*$/ ;
+#    $filename =~ m/^(.*)\.[^\.]*$/ ;
     $imgname = "$imgbasename-$i-$j.$extension";
     $tmpimg = $img->duplicate;
     # print "Cropping from $l to $r, $t to $b\n";

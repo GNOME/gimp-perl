@@ -112,7 +112,7 @@ register("yinyang",
 	"Aaron Sherman", 
 	"(c) 1998, Aaron Sherman",
 	"1999b", 
-	N_"<Toolbox>/Xtns/Render/Yin-Yang...", 
+	N_"<Image>/Filters/Render/Yin-Yang...", 
 	undef,
 	[
 		[PF_INT32, "width", "Width", 256],

@@ -337,7 +337,8 @@ register
 	"a glowing surface. This effect was inspired by a poster for the ".
 	"film \"Lost In Space\".",
   "Aaron Sherman", "Aaron Sherman (c)", "1999-06-14",
-  N_"<Toolbox>/Xtns/Render/Logos/Glowing Steel",
+  N_"<Image>/Filters/Render/Logos/Glowing Steel",
+  
   undef,
   [
    [PF_STRING, "string", "string", "GET LOST"],

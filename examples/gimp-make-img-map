@@ -52,6 +52,18 @@ Released under the Artistic license.
 =cut
 
 BEGIN {
+# Defaults
+$max_height = 64;
+$layout_width = 600;
+$bgcolor = [194,194,194];
+$decoration = 'drop-shadow';
+$gutter_x = 15;
+$gutter_y = 15;
+$pad_x = 20;
+$pad_y = 20;
+$compensate_for_darkening = 0;
+chop($PWD = `pwd`);
+
 $HELP=<<__;
 make-img-map - Make an image map from a list of images
 
@@ -92,18 +104,6 @@ __
 }
 
 use Gimp qw( :auto );
-
-# Defaults
-$max_height = 64;
-$layout_width = 600;
-$bgcolor = [194,194,194];
-$decoration = 'drop-shadow';
-$gutter_x = 15;
-$gutter_y = 15;
-$pad_x = 20;
-$pad_y = 20;
-$compensate_for_darkening = 0;
-chop($PWD = `pwd`);
 
 # Routine for parsing the input format
 sub get_next_record {
