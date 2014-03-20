@@ -1,8 +1,5 @@
 #include "config.h"
 
-/* dunno where this comes from */
-#undef VOIDUSED
-
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
@@ -34,6 +31,7 @@ typedef GtkWidget GimpColorSelect_own;
 typedef GtkWidget GimpColorSelector_own;
 typedef GtkWidget GimpDialog_own;
 typedef GtkWidget GimpFileEntry_own;
+typedef GtkWidget GimpFontSelectButton_own;
 typedef GtkWidget GimpOffsetArea_own;
 typedef GtkWidget GimpPathEditor_own;
 typedef GtkWidget GimpPickButton_own;
@@ -281,6 +279,18 @@ GimpFileEntry_own * gimp_file_entry_new (SV *unused_class, utf8_str title, utf8_
 utf8_str gimp_file_entry_get_filename (GimpFileEntry *entry)
 
 void gimp_file_entry_set_filename (GimpFileEntry *entry, utf8_str filename)
+
+MODULE = Gimp::UI	PACKAGE = Gimp::UI::FontSelectButton	PREFIX = gimp_font_select_button_
+
+BOOT:
+	gperl_register_object (GIMP_TYPE_FONT_SELECT_BUTTON, "Gimp::UI::FontSelectButton");
+
+GimpFontSelectButton_own * gimp_font_select_button_new (SV *unused_class, utf8_str title, utf8_str font_name)
+	C_ARGS: title, font_name
+
+utf8_str_const gimp_font_select_button_get_font (GimpFontSelectButton *button)
+
+void gimp_font_select_button_set_font (GimpFontSelectButton *button, utf8_str font_name)
 
 MODULE = Gimp::UI	PACKAGE = Gimp::UI::OffsetArea	PREFIX = gimp_offset_area_
 

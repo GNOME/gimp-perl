@@ -24,6 +24,8 @@ GimpDialog *		GOBJECT
 GimpDialog_own *	GOBJECT_OWN
 GimpFileEntry  *	GOBJECT
 GimpFileEntry_own *	GOBJECT_OWN
+GimpFontSelectButton *	GOBJECT
+GimpFontSelectButton_own *	GOBJECT_OWN
 GimpOffsetArea *	GOBJECT
 GimpOffsetArea_own *	GOBJECT_OWN
 GimpPathEditor *	GOBJECT

@@ -11,6 +11,7 @@ gint *						T_PTROBJ
 guchar *					T_PV
 
 utf8_str					T_UTF8
+utf8_str_const					T_UTF8
 
 GimpDrawable *					T_GDRAWABLE
 GimpTile *					T_TILE

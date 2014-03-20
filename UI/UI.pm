@@ -420,6 +420,25 @@ sub help_window(\$$$) {
 
    $$helpwin->show_all;
 }
+
+sub _instrument {
+  return unless $Gimp::verbose;
+  my $obj = shift;
+  $class = ref $obj;
+  my %sig2done;
+  map {
+    my $c = $_;
+    map {
+#warn "$c:$_->{signal_name}\n";
+      my $s = $_->{signal_name};
+      $obj->signal_connect(
+	$s => sub { warn "SIG:$s(@_)\n";0 }
+      ) unless $sig2done{$s};
+      $sig2done{$s} = 1;
+    } Glib::Type->list_signals($c);
+  } Glib::Type->list_ancestors($class);
+}
+
 sub interact($$$$@) {
    my $function = shift;
    my $blurb = shift;
@@ -499,41 +518,45 @@ sub interact($$$$@) {
            &new_PF_STRING;
            
         } elsif ($type == PF_FONT) {
+           $a = new Gtk2::HBox 0,5;
+           $default = 'Arial' unless defined $default;
+           my $b = new Gimp::UI::FontSelectButton $desc, $default;
+           $a->pack_start ($b, 1, 1, 0);
+           push @setvals, sub { $b->set_font($_[0]) };
+           push @getvals, sub { $b->get_font };
+           set_tip $t $b,$desc;
+	   _instrument($b);
+
+if (0) {
            my $fs = new Gtk2::FontSelectionDialog sprintf __"Font Selection Dialog (%s)", $desc;
            my $def = __"Helvetica 34";
            my $val;
-           
            my $l = new Gtk2::Label "!error!";
            my $setval = sub {
 	      my($words);
               $val = $_[0];
-
 	      #Append a size to font name string if no size is given so
 	      #sample text will be displayed properly in font requester.
 	      @words = split(/ /, $val);
 	      if (@words == 0 || $words[@words - 1] <= 0) {
 	         $val .= " 24";
               };
-
               unless (defined $val && $fs->set_font_name ($val)) {
                  warn sprintf __"Illegal default font description for $function: %s\n", $val
                     if defined $val;
                  $val = $def;
                  $fs->set_font_name ($val);
               }
-              
               $l->set (label => " $val ");
            };
-
            $fs->ok_button->signal_connect (clicked => sub {$setval->($fs->get_font_name); $fs->hide});
            $fs->cancel_button->signal_connect (clicked => sub {$fs->hide});
-           
            push @setvals, $setval;
            push @getvals, sub { $val };
- 
            $a = new Gtk2::Button;
            $a->add ($l);
            $a->signal_connect (clicked => sub { show $fs });
+}
 
         } elsif ($type == PF_SPINNER) {
            my $adj = _new_adjustment ($value, $extra);
@@ -553,18 +576,14 @@ sub interact($$$$@) {
            
         } elsif ($type == PF_COLOR) {
            $a = new Gtk2::HBox 0,5;
-
            $default = [0.8,0.6,0.1] unless defined $default;
-
            $default = &Gimp::canonicalize_color($default);
-
-           my $b = new Gimp::UI::ColorButton $name, 90, 14, $default, 'small-checks';
-     
+           my $b = new Gimp::UI::ColorButton $desc, 90, 14, $default, 'small-checks';
            $a->pack_start ($b, 1, 1, 0);
-
            push @setvals, sub { $b->set_color (defined $_[0] ? Gimp::canonicalize_color $_[0] : [0.8,0.6,0.1]) };
            push @getvals, sub { $b->get_color };
            set_tip $t $b,$desc;
+	   _instrument($b);
            
 #           my $c = new Gtk2::Button __"FG";
 #           signal_connect $c clicked => sub {

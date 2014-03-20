@@ -13,6 +13,7 @@
 #define TRACE_ALL	0xff
 
 typedef char *utf8_str;
+typedef const char *utf8_str_const;
 
 #endif
 
