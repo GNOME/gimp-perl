@@ -30,10 +30,14 @@ write_plugin($DEBUG, $perlserver, $s);
 map {
   die "symlink $_: $!" unless symlink("$sysplugins/$_", "$myplugins/$_");
 } qw(script-fu sharpen);
-die "output gimprc: $!"
-  unless io("$dir/gimprc")->print("(plug-in-path \"$myplugins\")\n");
 map { die "mkdir $dir/$_: $!" unless mkdir "$dir/$_"; }
   qw(palettes gradients patterns brushes dynamics);
+my %files = (
+  'tags.xml' => "<?xml version='1.0' encoding='UTF-8'?><tags></tags>\n",
+  'gimprc' => "(plug-in-path \"$myplugins\")\n",
+);
+map { die "write $dir/$_: $!" unless io("$dir/$_")->print($files{$_}); }
+  keys %files;
 
 $ENV{GIMP2_DIRECTORY} = $dir;
 

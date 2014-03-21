@@ -1,8 +1,8 @@
 use strict;
 use Test::More;
 #BEGIN { $Gimp::verbose = 1; }
-#Gimp::set_trace(TRACE_ALL);
 use Gimp qw(:auto);
+#Gimp::set_trace(TRACE_ALL);
 use Config;
 
 our $dir;
@@ -98,6 +98,17 @@ sub boilerplate_params {
   }
 );
 
+&register(
+  "test_dialogs",
+  boilerplate_params('filter', '<None>'),
+  [
+    [ PF_COLOR, "colour", "Image colour", [255, 127, 0], ],
+    [ PF_FONT, "font", "Font", 'Arial', ],
+    [ PF_INT, "size", "Size", 100],
+  ],
+  sub { }
+);
+
 exit main;
 EOF
 
@@ -111,7 +122,7 @@ ok(
 ok(!$i->insert_layer($l0,0,0), 'insert layer');
 ok(!$i->test_perl_filter(undef, 'value'), 'call filter'); # 1st param drawable
 my ($tl) = $i->get_layers;
-is('value', $tl->get_name, 'layer name');
+is($tl->get_name, 'value', 'layer name');
 is(Gimp::Plugin->test_return_text('text'), 'text', 'return text');
 my $incolour = [6, 6, 6, 1];
 is_deeply(
@@ -132,5 +143,8 @@ is_deeply(
   [ [1, 2], [3, 4] ],
   'return array'
 );
+# if enable next line, brings up script dialog
+# color one works, font doesn't - speculate is due to being in "batch mode"
+#Gimp::Plugin->test_dialogs(RUN_INTERACTIVE, [0,0,0], "Arial", 150, );
 
 done_testing;

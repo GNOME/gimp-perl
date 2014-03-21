@@ -1,8 +1,8 @@
 use strict;
 use Test::More tests => 15;
 #BEGIN { $Gimp::verbose = 1; }
-#Gimp::set_trace(TRACE_ALL);
 use Gimp qw(:auto);
+#Gimp::set_trace(TRACE_ALL);
 
 our $dir;
 our $DEBUG = 0;
@@ -16,7 +16,7 @@ ok(
   'Different OO syntax for creating a layer',
 );
 ok(!Gimp->image_insert_layer($l,0,0), 'Yet another OO syntax');
-is("new layer", $l->get_name, 'layer name');
+is($l->get_name, "new layer", 'layer name');
 ok(
   !$l->paintbrush(50,[1,1,2,2,5,3,7,4,2,8],PAINT_CONSTANT,0), 
   'some painting with variable length arrays, default value',
