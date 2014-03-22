@@ -90,8 +90,7 @@ NOTICE:  unable to use the Perl-Gtk2 interface. Many features (like
 
 EOF
 
-require ExtUtils::MakeMaker;
-import ExtUtils::MakeMaker;
+use ExtUtils::MakeMaker;
 
 push @pins, @pdl_pins if $PDL;
 push @pins, @gtk_pins if $GTK;
@@ -164,10 +163,6 @@ check :: test
 INST_PLUGINS = blib/plugins
 
 all ::
-
-clean ::
-	test -f Makefile || mv -f Makefile.old Makefile
-	\$(RM_RF) inst-temp
 
 \$(INST_PLUGINS)\$(DFSEP).exists :: Makefile.PL
 	\$(NOECHO) \$(MKPATH) \$(INST_PLUGINS)

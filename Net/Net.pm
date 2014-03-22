@@ -1,14 +1,36 @@
-#
+package Gimp::Net;
+
 # This package is loaded by the Gimp, and is !private!, so don't
 # use it standalone, it won't work.
+
+# the protocol is quite easy ;)
+# at connect() time the server returns
+# PERL-SERVER protocolversion [AUTH]
 #
-package Gimp::Net;
+# length_of_packet cmd
+#
+# cmd			response		description
+# AUTH password		ok [message]		authorize yourself
+# QUIT						quit server
+# EXEC in-args		status out-args		run simple command
+# TRCE trace in-args	trace status out-args	run simple command (with tracing)
+# TEST procname		bool			check for procedure existance
+# DTRY in-args					destroy all argument objects
+# LOCK lock? shared?				lock or unlock
+# RSET						reset server (NYI)
+#
+# args is "number of arguments" arguments preceded by length
+# type is first character
+# Sscalar-value
+# Aelem1\0elem2...
+# Rclass\0scalar-value
 
 use strict 'vars';
 use vars qw(
    $VERSION
    $default_tcp_port $default_unix_dir $default_unix_sock
    $server_fh $trace_level $trace_res $auth $gimp_pid
+   $PROTOCOL_VERSION
 );
 use subs qw(gimp_call_procedure);
 use base qw(DynaLoader);
@@ -17,6 +39,13 @@ use Socket; # IO::Socket is _really_ slow, so don't use it!
 
 use Gimp ('croak','__');
 use Fcntl qw(F_SETFD);
+
+use constant {
+  PS_FLAG_QUIET => 1 << 0, # do not output messages
+  PS_FLAG_BATCH => 1 << 1, # started via Gimp::Net, extra = filehandle
+};
+
+$PROTOCOL_VERSION = "3"; # protocol version
 
 # TODO: use dynaloader
 require DynaLoader;
@@ -44,7 +73,7 @@ sub import {
    # overwrite some destroy functions
    *Gimp::Tile::DESTROY=
    *Gimp::PixelRgn::DESTROY=
-   *Gimp::GDrawable::DESTROY=sub {
+   *Gimp::GimpDrawable::DESTROY=sub {
       my $req="DTRY".args2net(0,@_);
       print $server_fh pack("N",length($req)).$req;
 
@@ -79,6 +108,7 @@ sub command {
 
 sub gimp_call_procedure {
    my (@args,$trace,$req);
+   warn "Net::gimp_call_procedure[$trace_level](@_)" if $Gimp::verbose;
    $req = ($trace_level ? "TRCE" : "EXEC") . args2net(
      0, ($trace_level ? $trace_level : ()), @_
    );
@@ -158,9 +188,10 @@ sub start_server {
          open STDERR,">&1";
       }
       my @args;
+      my $flags = PS_FLAG_BATCH | ($Gimp::verbose ? PS_FLAG_QUIET : 0);
       my $args = join ' ',
 	&Gimp::RUN_NONINTERACTIVE,
-	(&Gimp::_PS_FLAG_BATCH | &Gimp::_PS_FLAG_QUIET),
+	$flags,
 	fileno($gimp_fh),
 	int($Gimp::verbose);
       push(@args,"--no-data") if $opt=~s/(^|:)no-?data//;
@@ -171,6 +202,8 @@ sub start_server {
            #"never",
            "--console-messages",
            @args,
+	   "--batch-interpreter",
+	   "plug-in-script-fu-eval",
            "-b",
 	   "(if (defined? 'extension-perl-server) (extension-perl-server $args))",
 	   "-b",
@@ -225,13 +258,13 @@ sub gimp_init {
    defined $server_fh or croak __"could not connect to the gimp server (make sure Perl-Server is running)";
    { my $fh = select $server_fh; $|=1; select $fh }
    
-   my @r = response;
+   my @r = response();
    
    die __"expected perl-server at other end of socket, got @r\n"
       unless $r[0] eq "PERL-SERVER";
    shift @r;
-   die __"expected protocol version $Gimp::_PROT_VERSION, but server uses $r[0]\n"
-      unless $r[0] eq $Gimp::_PROT_VERSION;
+   die __"expected protocol version $PROTOCOL_VERSION, but server uses $r[0]\n"
+      unless $r[0] eq $PROTOCOL_VERSION;
    shift @r;
    
    for(@r) {
@@ -240,7 +273,7 @@ sub gimp_init {
             unless $auth;
          my $req = "AUTH".$auth;
          print $server_fh pack("N",length($req)).$req;
-         my @r = response;
+         my @r = response();
          die __"authorization failed: $r[1]\n" unless $r[0];
          print __"authorization ok, but: $r[1]\n" if $Gimp::verbose and $r[1];
       }
@@ -286,7 +319,270 @@ END {
    gimp_end;
 }
 
+# start of server-used block
+use vars qw($use_unix $use_tcp $trace_res $server_quit $max_pkt $unix $tcp
+            $ps_flags $auth @authorized $exclusive $rm $saved_rm %stats);
+# you can enable unix sockets, tcp sockets, or both (or neither...)
+#
+# enabling tcp sockets can be a security risk. If you don't understand why,
+# you shouldn't enable it!
+#
+$use_unix	= 1;
+$use_tcp	= 1;	# tcp is enabled only when authorization is available
+
+$server_quit = 0;
+
+my $max_pkt = 1024*1024*8;
+my $exclusive = 0;
+
+sub slog {
+  return if $ps_flags & &PS_FLAG_QUIET;
+  print time(),": ",@_,"\n";
+}
+
+# this is hardcoded into handle_request!
+sub reply {
+   my $fh=shift;
+   my $data=args2net(0,@_);
+   print $fh pack("N",length($data)).$data;
+}
+
+sub handle_request($) {
+   my($fh)=@_;
+   my ($req,$data);
+
+   eval {
+      local $SIG{ALRM}=sub { die "1\n" };
+      #alarm(6) unless $ps_flags & &PS_FLAG_BATCH;
+      my $length;
+      read($fh,$length,4) == 4 or die "2\n";
+      $length=unpack("N",$length);
+      $length>0 && $length<$max_pkt or die "3\n";
+      #alarm(6) unless $ps_flags & &PS_FLAG_BATCH;
+      read($fh,$req,4) == 4 or die "4\n";
+      #alarm(20) unless $ps_flags & &PS_FLAG_BATCH;
+      read($fh,$data,$length-4) == $length-4 or die "5\n";
+      #alarm(0);
+   };
+   return 0 if $@;
+
+   if(!$auth or $authorized[fileno($fh)]) {
+      if ($req eq "TRCE" or $req eq "EXEC") {
+         no strict 'refs';
+         my @args = net2args(1, $data);
+         my $trace_level = shift @args if $req eq "TRCE";
+	 my $function = shift @args;
+         Gimp::set_trace($trace_level) if $req eq "TRCE";
+         $trace_res = "" if $req eq "TRCE";
+         @args = eval { Gimp->$function(@args) };
+	 unshift @args, $@;
+	 unshift @args, $trace_res if $req eq "TRCE";
+         $data = args2net(1,@args);
+         print $fh pack("N",length($data)).$data;
+         Gimp::set_trace(0) if $req eq "TRCE";
+      } elsif ($req eq "TEST") {
+         no strict 'refs';
+         print $fh (defined(*{"Gimp::Lib::$data"}{CODE}) || Gimp::gimp_procedural_db_proc_exists($data)) ? "1" : "0";
+      } elsif ($req eq "DTRY") {
+         destroy_objects net2args 0,$data;
+         print $fh pack("N",0); # fix to work around using non-sysread/write functions
+      } elsif ($req eq "QUIT") {
+         slog __"received QUIT request";
+         $server_quit = 1;
+      } elsif($req eq "AUTH") {
+         $data=args2net(0,1,__"authorization unnecessary");
+         print $fh pack("N",length($data)).$data;
+      } elsif($req eq "LOCK") {
+         my($lock,$shared)=unpack("N*",$data);
+         slog __"WARNING: shared locking requested but not implemented" if $shared;
+         if($lock) {
+            unless($exclusive) {
+               $saved_rm=$rm;
+               undef $rm; vec($rm,fileno($fh),1)=1;
+            }
+            $exclusive++;
+         } else {
+            if ($exclusive) {
+               $exclusive--;
+               $rm = $saved_rm unless $exclusive;
+            } else {
+               slog __"WARNING: client tried to unlock without holding a lock";
+            }
+         }
+      } else {
+         print $fh pack("N",0);
+         slog __"illegal command received, aborting connection";
+         return 0;
+      }
+   } else {
+      if($req eq "AUTH") {
+         my($ok,$msg);
+         if($data eq $auth) {
+            $ok=1;
+            $authorized[fileno($fh)]=1;
+         } else {
+            $ok=0;
+            $msg=__"wrong authorization, aborting connection";
+            slog $msg;
+            sleep 5; # safety measure
+         }
+         $data=args2net(0,$ok,$msg);
+         print $fh pack("N",length($data)).$data;
+         return $ok;
+      } else {
+         print $fh pack("N",0);
+         slog __"unauthorized command received, aborting connection";
+         return 0;
+      }
+   }
+   return 1;
+}
+
+my %handles;
+
+sub new_connection {
+  my $fh = shift;
+  select $fh; $|=1; select STDOUT;
+  $handles{fileno($fh)}=$fh;
+  my @r = ("PERL-SERVER",$PROTOCOL_VERSION);
+  push(@r,"AUTH") if $auth;
+  reply $fh,@r;
+  vec($rm,fileno($fh),1)=1;
+  $stats{fileno($fh)}=[0,time];
+}
+
+sub extension_perl_server {
+  my $run_mode=$_[0];
+  $ps_flags=$_[1];
+  my $extra=$_[2];
+  $Gimp::verbose=$_[3];
+
+  if ($run_mode == &Gimp::RUN_NONINTERACTIVE) {
+     if ($ps_flags & &PS_FLAG_BATCH) {
+        my($fh) = local *FH;
+        open $fh,"+<&$extra" or die __"unable to open Gimp::Net communications socket: $!\n";
+        select $fh; $|=1; select STDOUT;
+        reply $fh,"PERL-SERVER",$PROTOCOL_VERSION;
+        while(!$server_quit and !eof($fh)) {
+           last unless handle_request($fh);
+        }
+        Gimp->quit(0);
+        exit(0);
+     }
+  } else {
+     $run_mode=&Gimp::RUN_INTERACTIVE;
+     $ps_flags=0;
+  }
+
+  my $host = $ENV{'GIMP_HOST'};
+  $auth = $host=~s/^(.*)\@// ? $1 : undef;	# get authorization
+
+  slog __"server version $Gimp::VERSION started".($auth ? __", authorization required" : "");
+
+  $SIG{PIPE}='IGNORE'; # may not work, since libgimp (eech) overwrites it.        
+  my($unix_path)=$default_unix_dir.$default_unix_sock;
+
+  if ($host ne "") {
+     if ($host=~s{^spawn/}{}) {
+        die __"invalid GIMP_HOST: 'spawn' is not a valid connection method for the server";
+     } elsif ($host=~s{^unix/}{/}) {
+        $unix = local *FH;
+        socket($unix,AF_UNIX,SOCK_STREAM,PF_UNSPEC)
+          && bind($unix,sockaddr_un $host)
+          && listen($unix,5)
+            or die __"unable to create listening unix socket: $!\n";
+        slog __"accepting connections in $host";
+        vec($rm,fileno($unix),1)=1;
+     } else {
+        $host=~s{^tcp/}{};
+        my($host,$port)=split /:/,$host;
+        $port=$default_tcp_port unless $port;
+        $tcp = local *FH;
+        socket($tcp,PF_INET,SOCK_STREAM,scalar getprotobyname('tcp') || 6)
+           && setsockopt($tcp,SOL_SOCKET,SO_REUSEADDR,1)
+           && bind($tcp,sockaddr_in $port,INADDR_ANY)
+           && listen($tcp,5)
+             or die __"unable to create listening tcp socket: $!\n";
+        slog __"accepting connections on port $port";
+        vec($rm,fileno($tcp),1)=1;
+     }
+  } else {
+     if ($use_unix) {
+        unlink $unix_path;
+        rmdir $default_unix_dir;
+        mkdir $default_unix_dir,0700 or die "$!";
+        $unix = local *FH;
+        socket($unix,AF_UNIX,SOCK_STREAM,PF_UNSPEC)
+           && bind($unix,sockaddr_un $unix_path)
+           && listen($unix,5)
+             or die __"unable to create listening unix socket: $!\n";
+        slog __"accepting connections on $unix_path";
+        vec($rm,fileno($unix),1)=1;
+     }
+     if ($use_tcp && $auth) {
+        $tcp = local *FH;
+        socket($tcp,PF_INET,SOCK_STREAM,scalar getprotobyname('tcp') || 6)
+           && setsockopt($tcp,SOL_SOCKET,SO_REUSEADDR,1)
+           && bind($tcp,sockaddr_in $default_tcp_port,INADDR_ANY)
+           && listen($tcp,5)
+             or die __"unable to create listening tcp socket: $!\n";
+        slog __"accepting connections on port $default_tcp_port";
+        vec($rm,fileno($tcp),1)=1;
+    }
+  }
+
+  !$tcp || $auth or die __"authorization required for tcp connections";
+
+  while(!$server_quit) {
+    my $r;
+    if(select($r=$rm,undef,undef,undef)>0) {
+      if ($tcp && vec($r,fileno($tcp),1)) {
+        my $h = local *FH;
+        my ($port,$host) = sockaddr_in (accept ($h,$tcp)) or die __"unable to accept tcp connection: $!\n";
+        new_connection($h);
+        slog __"accepted tcp connection from ",inet_ntoa($host),":$port";
+      }
+      if ($unix && vec($r,fileno($unix),1)) {
+        my $h = local *FH;
+        accept ($h,$unix) or die __"unable to accept unix connection: $!\n";
+        new_connection($h);
+        slog __"accepted unix connection";
+      }
+      for my $f (keys(%handles)) {
+        if(vec($r,$f,1)) {
+          my $fh=$handles{$f};
+          if(handle_request($fh)) {
+            $stats{$f}[0]++;
+          } else {
+            slog sprintf __"closing connection %d (%d requests in %g seconds)", $f, $stats{$f}[0], time-$stats{$f}[1];
+            if ($exclusive) {
+               $rm = $saved_rm;
+               $exclusive = 0;
+               slog __"WARNING: client disconnected while holding an active lock\n";
+            }
+            vec($rm,$f,1)=0;
+            delete $handles{$f};
+            undef $fh;
+          }
+          last; # this is because the client might have called lock()
+        }
+      }
+    }
+  }
+
+  slog __"server going down...";
+  if ($use_tcp) {
+    undef $tcp;
+  }
+  if ($use_unix) {
+    undef $unix;
+    unlink $unix_path;
+    rmdir $default_unix_dir;
+  }
+}
+
 1;
+
 __END__
 
 =head1 NAME

@@ -24,13 +24,6 @@ sub MY::const_loadlibs {
    $self->SUPER::const_loadlibs(@_);
 }
 
-sub MY::postamble {
-   <<"EOF";
-clean ::
-	test -f Makefile || mv -f Makefile.old Makefile
-EOF
-}
-
 $GIMP_INC = "-I../../.. $GIMP_INC" if $IN_GIMP;
 
 # change add_define to add them in here instead

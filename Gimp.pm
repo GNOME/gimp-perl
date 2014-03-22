@@ -178,13 +178,6 @@ sub COMPRESSION_PACKBITS	(){ 2 }
 sub TRUE			(){ 1 }
 sub FALSE			(){ 0 }
 
-# internal constants shared with Perl-Server
-
-sub _PS_FLAG_QUIET	{ 0000000001 };	# do not output messages
-sub _PS_FLAG_BATCH	{ 0000000002 }; # started via Gimp::Net, extra = filehandle
-
-$_PROT_VERSION = "3";			# protocol version
-
 use Gimp::ColorDB;
 use Carp qw(croak);
 

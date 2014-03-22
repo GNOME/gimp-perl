@@ -2,13 +2,6 @@ use ExtUtils::MakeMaker;
 
 do '../config.pl';
 
-sub MY::postamble {
-   <<"EOF";
-clean ::
-	test -f Makefile || mv -f Makefile.old Makefile
-EOF
-}
-
 $GIMP_INC_NOUI = "-I../../.. $GIMP_INC_NOUI" if $IN_GIMP;
 
 WriteMakefile(
