@@ -3,8 +3,47 @@ package Gimp::Fu;
 use Gimp ('croak', '__');
 use Gimp::Data;
 use File::Basename;
+use strict;
+use Carp qw(croak);
+use vars qw($run_mode);
 
-require Exporter;
+use constant {
+  PF_INT8 => Gimp::PDB_INT8,
+  PF_INT16 => Gimp::PDB_INT16,
+  PF_INT32 => Gimp::PDB_INT32,
+  PF_FLOAT => Gimp::PDB_FLOAT,
+  PF_STRING => Gimp::PDB_STRING,
+  PF_COLOR => Gimp::PDB_COLOR,
+  PF_COLOUR => Gimp::PDB_COLOR,
+  PF_IMAGE => Gimp::PDB_IMAGE,
+  PF_LAYER => Gimp::PDB_LAYER,
+  PF_CHANNEL => Gimp::PDB_CHANNEL,
+  PF_DRAWABLE => Gimp::PDB_DRAWABLE,
+};
+
+# if put => Gimp::PDB_END below, fails - probable perl bug (5.18.1)
+use constant PDB_END => Gimp::PDB_END();
+
+use constant {
+  PF_TOGGLE => PDB_END + 1,
+  PF_SLIDER => PDB_END + 2,
+  PF_FONT => PDB_END + 3,
+  PF_SPINNER => PDB_END + 4,
+  PF_ADJUSTMENT => PDB_END + 5,
+  PF_BRUSH => PDB_END() + 6,
+  PF_PATTERN => PDB_END + 7,
+  PF_GRADIENT => PDB_END + 8,
+  PF_RADIO => PDB_END + 9,
+  PF_CUSTOM => PDB_END + 10,
+  PF_FILE => PDB_END + 11,
+  PF_TEXT => PDB_END + 12,
+};
+
+use constant {
+  PF_BOOL => PF_TOGGLE,
+  PF_INT => PF_INT32,
+  PF_VALUE => PF_STRING,
+};
 
 =head1 NAME
 
@@ -48,38 +87,9 @@ a starting point for your experiments)
 
 =cut
 
-sub PF_INT8	() { Gimp::PDB_INT8	};
-sub PF_INT16	() { Gimp::PDB_INT16	};
-sub PF_INT32	() { Gimp::PDB_INT32	};
-sub PF_FLOAT	() { Gimp::PDB_FLOAT	};
-sub PF_STRING	() { Gimp::PDB_STRING	};
-sub PF_COLOR	() { Gimp::PDB_COLOR	};
-sub PF_COLOUR	() { Gimp::PDB_COLOR	};
-sub PF_IMAGE	() { Gimp::PDB_IMAGE	};
-sub PF_LAYER	() { Gimp::PDB_LAYER	};
-sub PF_CHANNEL	() { Gimp::PDB_CHANNEL	};
-sub PF_DRAWABLE	() { Gimp::PDB_DRAWABLE	};
-
-sub PF_TOGGLE	() { Gimp::PDB_END+1	};
-sub PF_SLIDER	() { Gimp::PDB_END+2	};
-sub PF_FONT	() { Gimp::PDB_END+3	};
-sub PF_SPINNER	() { Gimp::PDB_END+4	};
-sub PF_ADJUSTMENT(){ Gimp::PDB_END+5	}; # compatibility fix for script-fu _ONLY_
-sub PF_BRUSH	() { Gimp::PDB_END+6	};
-sub PF_PATTERN	() { Gimp::PDB_END+7	};
-sub PF_GRADIENT	() { Gimp::PDB_END+8	};
-sub PF_RADIO	() { Gimp::PDB_END+9	};
-sub PF_CUSTOM	() { Gimp::PDB_END+10	};
-sub PF_FILE	() { Gimp::PDB_END+11	};
-sub PF_TEXT	() { Gimp::PDB_END+12	};
-
-sub PF_BOOL	() { PF_TOGGLE		};
-sub PF_INT	() { PF_INT32		};
-sub PF_VALUE	() { PF_STRING		};
-
 sub Gimp::RUN_FULLINTERACTIVE (){ Gimp::RUN_INTERACTIVE+100 };	# you don't want to know
 
-%pf_type2string = (
+my %pf_type2string = (
          &PF_INT8	=> 'small integer',
          &PF_INT16	=> 'medium integer',
          &PF_INT32	=> 'integer',
@@ -104,7 +114,9 @@ sub Gimp::RUN_FULLINTERACTIVE (){ Gimp::RUN_INTERACTIVE+100 };	# you don't want 
          &PF_DRAWABLE	=> 'drawable',
 );
 
-@_params=qw(PF_INT8 PF_INT16 PF_INT32 PF_FLOAT PF_VALUE PF_STRING PF_COLOR
+my @scripts;
+
+my @_params=qw(PF_INT8 PF_INT16 PF_INT32 PF_FLOAT PF_VALUE PF_STRING PF_COLOR
             PF_COLOUR PF_TOGGLE PF_IMAGE PF_DRAWABLE PF_FONT PF_LAYER
             PF_CHANNEL PF_BOOL PF_SLIDER PF_INT PF_SPINNER PF_ADJUSTMENT
             PF_BRUSH PF_PATTERN PF_GRADIENT PF_RADIO PF_CUSTOM PF_FILE
@@ -121,14 +133,10 @@ sub import {
       if ($_ eq ":params") {
          push (@_, @_params);
       } else {
+	 no strict 'refs';
          *{"${up}::$_"} = \&$_;
       }
    }
-}
-
-sub carp {
-   require Carp;
-   goto &Carp::carp;
 }
 
 # Some Standard Arguments
@@ -174,9 +182,9 @@ sub interact {
       my @res = map {
          die __"the gtk perl module is required to run\nthis plug-in in interactive mode\n" unless defined $_->[3];
          $_->[3];
-      } @types;
+      } @{ $_[3] };
       Gimp::logger(message => __"the gtk perl module is required to open a dialog\nwindow, running with default values",
-                   fatal => 1, function => $function);
+                   fatal => 1, function => $_[0]);
       return (1,@res);
    }
 
@@ -566,12 +574,7 @@ will be returned. If the second is activated, 7 is returned.
 
 =item PF_FONT
 
-Lets the user select a font whose name is returned as a string. Please note
-that the GIMP text functions using these fontnames (gimp_text_..._fontname)
-ignore the size. Size is only used in the font-selector. You are asked to
-set it to a useful value (24 pixels is a good choice) when using PF-FONT.
-
-In older GIMP versions a user-supplied string is returned.
+Lets the user select a font whose name is returned as a string.
 
 =item PF_BRUSH, PF_PATTERN, PF_GRADIENT
 
@@ -675,13 +678,13 @@ sub register($$$$$$$$$;@) {
       next unless ref $p;
       croak __"$function: argument/return value '$p->[1]' has illegal type '$p->[0]'"
 	unless int($p->[0]) eq $p->[0];
-      carp __"$function: argument name '$p->[1]' contains illegal characters, only 0-9, a-z and _ allowed"
+      carp(__"$function: argument name '$p->[1]' contains illegal characters, only 0-9, a-z and _ allowed")
 	unless $p->[1]=~/^[0-9a-z_]+$/;
    }
 
    $function="perl_fu_".$function unless $function =~ /^(?:perl_fu_|extension_|plug_in_|file_)/ || $function =~ s/^\+//;
 
-   $function=~/^[0-9a-z_]+(-ALT)?$/ or carp __"$function: function name contains unusual characters, good style is to use only 0-9, a-z and _";
+   $function=~/^[0-9a-z_]+(-ALT)?$/ or carp(__"$function: function name contains unusual characters, good style is to use only 0-9, a-z and _");
 
    Gimp::logger message => __"function name contains dashes instead of underscores",
                 function => $function, fatal => 0
@@ -853,14 +856,14 @@ sub save_image($$) {
    my($img,$path)=@_;
    my($interlace,$flatten,$quality,$type,$smooth,$compress,$loop,$dispose);
 
-   $interlace=0;
-   $quality=0.75;
-   $smooth=0;
-   $compress=7;
-   $loop=0;
-   $delay=0;
-   $dispose=0;
-   $noextra=0;
+   my $interlace=0;
+   my $quality=0.75;
+   my $smooth=0;
+   my $compress=7;
+   my $loop=0;
+   my $delay=0;
+   my $dispose=0;
+   my $noextra=0;
 
    $_=$path=~s/^([^:]+):// ? $1 : "";
    $type=uc($1) if $path=~/\.([^.]+)$/;
