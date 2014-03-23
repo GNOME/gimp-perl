@@ -4,7 +4,7 @@ do '../config.pl';
 
 sub MY::const_config {
    my $self = shift;
-   $self->{LDDLFLAGS}="$GIMP_LIBS_NOUI $self->{LDDLFLAGS} $LDFLAGS $LIBS $INTLLIBS";
+   $self->{LDLOADLIBS}="$GIMP_LIBS_NOUI $self->{LDLOADLIBS} $LIBS $INTLLIBS";
    package MY;
    $self->SUPER::const_config(@_);
 }
@@ -19,13 +19,6 @@ sub MY::const_loadlibs {
    }
    package MY;
    $self->SUPER::const_loadlibs(@_);
-}
-
-sub MY::postamble {
-   <<"EOF";
-clean ::
-	test -f Makefile || mv -f Makefile.old Makefile
-EOF
 }
 
 $GIMP_INC_NOUI = "-I../../.. $GIMP_INC_NOUI" if $IN_GIMP;

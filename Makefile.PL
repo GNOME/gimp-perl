@@ -200,9 +200,6 @@ tags: .
 setver:
 	\$(PERL) -pi -e 's/^(\\s*\\\$\$VERSION\\s*=\\s*).*\$\$/\$\${1}\$(VERSION);/' *.pm Gimp/*.pm UI/*.pm Net/*.pm
 
-gimpenums.c: makeenums.pl
-	perl makeenums.pl arrays ~/cvs/gimp/libgimp*/*.h >gimpenums.c
-
 EOF
 }
 
