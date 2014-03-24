@@ -55,9 +55,9 @@ register "plug_in_ditherize",
    $sel->selection_load;
    $sel->remove_channel;
 
-   my $copy = new Image($w, $h, $image->base_type);
+   my $copy = new Gimp::Image($w, $h, $image->base_type);
    $copy->undo_disable;
-   my $draw = new Layer($copy, $w, $h,
+   my $draw = new Gimp::Layer($copy, $w, $h,
                         $imagetype2layertype{$image->base_type},
                         "temporary layer", 100, NORMAL_MODE);
    $copy->add_layer ($draw, 1);

@@ -28,29 +28,27 @@ etc. Of course, your fingers will suffer from severe injuries as well.
 
 A solution to this situation is to use OO-syntax. Gimp plays some (very)
 dirty tricks and provides a number of classes, like C<Gimp::Image> and
-C<Gimp::Palette> that allow shorter identifiers to be used (all these appear
-with the C<Gimp::> prefix as well as without, i.e. C<Gimp::Palette> is the
-same class as C<Palette>).
+C<Gimp::Palette> that allow shorter identifiers to be used.
 
 If you call a method, C<Gimp> tries to find a gimp function by
 prepending a number of prefixes until it finds a valid function:
 
  $image = Gimp->image_new(...); # calls gimp_image_new(...)
- $image = Image->new(...);	# calls gimp_image_new as well
- $image = new Image(...);	# the same in green
- Palette->set_foreground(...)	# calls gimp_palette_set_foreground(..)
+ $image = Gimp::Image->new(...);	# calls gimp_image_new as well
+ $image = new Gimp::Image(...);	# the same in green
+ Gimp::Palette->set_foreground(...)	# calls gimp_palette_set_foreground(..)
 
 Return values from functions are automatically blessed (through
 The Magic Autobless feature ;) to their corresponding classes, i.e.
 
- $image = new Image(...);	# $image is now blessed to Gimp::Image
+ $image = new Gimp::Image(...);	# $image is now blessed to Gimp::Image
  $image->height;		# calls gimp_image_height($image)
  $image->flatten;		# likewise gimp_flatten($image)
  $image->histogram(...);	# calls gimp_histogram($image,...), since
 				# gimp_image_histogram does not exist
 
-The class argument (C<$image> in the above examples) is prepended to the
-argument list.
+The object argument (C<$image> in the above examples) is prepended to the
+argument list - this is how Perl does OO.
 
 Another shortcut: many functions want a (redundant) image argument, like
 
@@ -74,15 +72,15 @@ these three calls are equivalent:
 You can call all sorts of sensible and not-so-sensible functions,
 so this feature can be abused:
 
- patterns_list Image;		# will call gimp_patterns_list
- quit Plugin;			# will quit the Gimp, not an Plugin.
+ patterns_list Gimp::Image;	# will call gimp_patterns_list
+ quit Gimp::Plugin;		# will quit the Gimp, not an Plugin.
 
 there is no image involved here whatsoever...
 
 =head1 AVAILABLE CLASSES
 
-The following classes (with and without Gimp::) are available. The prefixes
-that are checked are shown as well (the null prefix "" is implicit).
+The following classes are available. The prefixes that are checked are
+shown as well (the null prefix "" is implicit).
 
 =over 4
 
@@ -90,7 +88,7 @@ that are checked are shown as well (the null prefix "" is implicit).
 
  gimp_
 
-=item Layer
+=item Gimp::Layer
 
  gimp_layer_
  gimp_drawable_
@@ -100,7 +98,7 @@ that are checked are shown as well (the null prefix "" is implicit).
  plug_in_
  perl_fu_
 
-=item Image
+=item Gimp::Image
 
  gimp_image_
  gimp_drawable_
@@ -108,7 +106,7 @@ that are checked are shown as well (the null prefix "" is implicit).
  plug_in_
  perl_fu_
 
-=item Drawable
+=item Gimp::Drawable
 
  gimp_drawable_
  gimp_layer_
@@ -117,11 +115,11 @@ that are checked are shown as well (the null prefix "" is implicit).
  plug_in_
  perl_fu_
 
-=item Selection
+=item Gimp::Selection
 
  gimp_selection_
 
-=item Channel
+=item Gimp::Channel
 
  gimp_channel_
  gimp_drawable_
@@ -131,52 +129,53 @@ that are checked are shown as well (the null prefix "" is implicit).
  plug_in_
  perl_fu_
 
-=item Display
+=item Gimp::Display
 
  gimp_display_
  gimp_
 
-=item Palette
+=item Gimp::Palette
 
  gimp_palette_
 
-=item Plugin
+=item Gimp::Plugin
 
  plug_in_
+ perl_fu_
 
-=item Gradients
+=item Gimp::Gradients
 
  gimp_gradients_
 
-=item Edit
+=item Gimp::Edit
 
  gimp_edit_
 
-=item Progress
+=item Gimp::Progress
 
  gimp_progress_
 
-=item Region
+=item Gimp::Region
 
 (none except the implicit null prefix)
 
-=item Tile
+=item Gimp::Tile
 
  gimp_tile_
 
-=item PixelRgn
+=item Gimp::PixelRgn
 
  gimp_pixel_rgn_
 
-=item GDrawable
+=item Gimp::GimpDrawable
 
  gimp_gdrawable_
 
-=item Brushes
+=item Gimp::Brushes
 
  gimp_brushes_
 
-=item Patterns
+=item Gimp::Patterns
 
  gimp_patterns_
 

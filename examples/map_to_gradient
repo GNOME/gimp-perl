@@ -44,8 +44,8 @@ register "map_to_gradient",
 
    my @bounds = $drawable->bounds;
    {
-      my $src = new PixelRgn ($drawable,@bounds,0,0);
-      my $dst = new PixelRgn ($drawable,@bounds,1,1);
+      my $src = new Gimp::PixelRgn ($drawable,@bounds,0,0);
+      my $dst = new Gimp::PixelRgn ($drawable,@bounds,1,1);
 
       my $iter = Gimp->pixel_rgns_register($src,$dst);
       my $area = $bounds[2]*$bounds[3];

@@ -20,8 +20,8 @@ sub iterate {
    $bounds[2]-- if $bounds[0]+$bounds[2] >= ($drawable->offsets)[0]+$drawable->width;
    $bounds[3]-- if $bounds[1]+$bounds[3] >= ($drawable->offsets)[1]+$drawable->height;
    {
-      my $src = new PixelRgn ($drawable,@bounds[0,1],$bounds[2]+1,$bounds[3]+1,0,0);
-      my $dst = new PixelRgn ($drawable,@bounds,1,1);
+      my $src = new Gimp::PixelRgn ($drawable,@bounds[0,1],$bounds[2]+1,$bounds[3]+1,0,0);
+      my $dst = new Gimp::PixelRgn ($drawable,@bounds,1,1);
 
       my $iter = Gimp->pixel_rgns_register ($dst);
       my $area = $bounds[2]*$bounds[3];

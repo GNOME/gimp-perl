@@ -29,8 +29,8 @@ sub pixelmap {					# es folgt das eigentliche Skript...
    {
       # $src and $dst must either be scoped or explicitly undef'ed
       # before merge_shadow.
-      my $src  = new PixelRgn $drawable->get,@_bounds,0,0;
-      my $_dst = new PixelRgn $drawable,@_bounds,1,1;
+      my $src  = new Gimp::PixelRgn $drawable->get,@_bounds,0,0;
+      my $_dst = new Gimp::PixelRgn $drawable,@_bounds,1,1;
 
       $_expr = eval $_expr; die "$@" if $@;
 
@@ -83,10 +83,10 @@ register "pixelgen",
          [PF_IMAGE],
          sub {
    my($w,$h,$type,$expr)=@_;
-   my $image = new Image $w, $h, Gimp->layer2imagetype($type);
+   my $image = new Gimp::Image $w, $h, Gimp->layer2imagetype($type);
    my $layername = $expr;
    $layername =~ s/\n//g;
-   my $layer = new Layer $image, $w, $h, $type, $layername, 100, NORMAL_MODE;
+   my $layer = new Gimp::Layer $image, $w, $h, $type, $layername, 100, NORMAL_MODE;
    $image->add_layer($layer, 0);
    eval { pixelmap($image, $layer, $expr) };
    if ($@) {

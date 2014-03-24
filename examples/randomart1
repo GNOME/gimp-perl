@@ -40,7 +40,7 @@ register "random_art_1",			# Funktionsname
    Context->push();
 
    # Erzeuge ein neues Bild
-   my $image = new Image($w,$h,RGB);
+   my $image = new Gimp::Image($w,$h,RGB);
    $image->undo_disable;
 
    # Erzeuge die erste Ebene für das Bild

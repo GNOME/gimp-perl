@@ -184,6 +184,7 @@ use Carp qw(croak);
 my @_procs = ('main', '__', 'N_');
 #my @_default = (@_procs, ':consts' ,':_auto2');
 my @_default = (@_procs, ':consts');
+my @POLLUTE_CLASSES;
 
 # we really abuse the import facility..
 sub import($;@) {
@@ -213,6 +214,11 @@ sub import($;@) {
             #*{$AUTOLOAD} = sub { Gimp->$name(@_) }; # old version
             goto &$AUTOLOAD;
          };
+      } elsif ($_ eq ":pollute") {
+	for my $class (@POLLUTE_CLASSES) {
+	  push @{"$class\::ISA"}, "Gimp::$class";
+	  push @{"$class\::PREFIXES"}, @{"Gimp::$class\::PREFIXES"};
+	}
       } elsif ($_ eq ":consts") {
          push(@export,@_consts);
       } elsif ($_ eq ":param") {
@@ -272,8 +278,8 @@ sub wrap_text {
 $spawn_opts = "";
 
 # extra check for Gimp::Feature::import
-$in_query=0 unless defined $in_query;		# perl -w is SOOO braindamaged
-$in_top=$in_quit=$in_run=$in_net=$in_init=0;	# perl -w is braindamaged
+$in_query=0 unless defined $in_query;
+$in_top=$in_quit=$in_run=$in_net=$in_init=0;
 ($function)=$0=~/([^\/\\]+)$/;
 
 $verbose=0 unless defined $verbose;
@@ -530,25 +536,28 @@ sub _pseudoclass {
   my ($class, @prefixes)= @_;
   unshift(@prefixes,"");
   *{"Gimp::$class\::AUTOLOAD"} = \&AUTOLOAD;
-  push(@{"$class\::ISA"}		, "Gimp::$class");
   push(@{"Gimp::$class\::PREFIXES"}	, @prefixes); @prefixes=@{"Gimp::$class\::PREFIXES"};
-  push(@{"$class\::PREFIXES"}		, @prefixes); @prefixes=@{"$class\::PREFIXES"};
+  push @POLLUTE_CLASSES, $class;
 }
 
-_pseudoclass qw(Item		gimp_item_);
-_pseudoclass qw(Layer		gimp_layer_ gimp_drawable_ gimp_item_ gimp_floating_sel_ gimp_image_ gimp_ plug_in_ perl_fu_ gimp_drawable_);
-_pseudoclass qw(Image		gimp_image_ gimp_ plug_in_ perl_fu_);
-_pseudoclass qw(Drawable	gimp_drawable_ gimp_item_ gimp_channel_ gimp_image_ gimp_ plug_in_ perl_fu_);
+my @plugin_prefixes = qw(plug_in_ perl_fu_);
+my @image_prefixes = (qw(gimp_image_ gimp_), @plugin_prefixes);
+my @item_prefixes = (qw(gimp_item_), @image_prefixes);
+my @drawable_prefixes = (qw(gimp_drawable_), @item_prefixes);
+
+_pseudoclass qw(Item		), @item_prefixes;
+_pseudoclass qw(Layer		gimp_layer_ gimp_floating_sel_), @drawable_prefixes;
+_pseudoclass qw(Image		), @image_prefixes;
+_pseudoclass qw(Drawable	), @drawable_prefixes;
 _pseudoclass qw(Selection 	gimp_selection_);
 _pseudoclass qw(Vectors 	gimp_vectors_);
-_pseudoclass qw(Channel		gimp_channel_ gimp_drawable_ gimp_item_ gimp_selection_ gimp_image_ gimp_ plug_in_ perl_fu_);
+_pseudoclass qw(Channel		gimp_channel_ gimp_selection_), @drawable_prefixes;
 _pseudoclass qw(Display		gimp_display_ gimp_);
-_pseudoclass qw(Plugin		plug_in_ perl_fu_);
+_pseudoclass qw(Plugin		), @plugin_prefixes;
 _pseudoclass qw(Gradient	gimp_gradient_);
 _pseudoclass qw(Gradients	gimp_gradients_);
 _pseudoclass qw(Edit		gimp_edit_);
 _pseudoclass qw(Progress	gimp_progress_);
-_pseudoclass qw(Region		);
 _pseudoclass qw(GimpParasite	);
 
 push @Gimp::Drawable::ISA, qw(Gimp::Item);
@@ -612,7 +621,7 @@ Gimp - a Perl extension for writing Gimp Extensions/Plug-ins/Load &
 Save-Handlers
 
 This is a release of gimp-perl for gimp-2.8.  It is not compatible with
-version 2.6 or below of The Gimp.
+version 2.6 or below of GIMP.
 
 This is mostly a reference manual. For a quick intro, look at
 L<Gimp::Fu>. 
@@ -633,16 +642,34 @@ available to your plug-in.
 
 Import useful constants, like RGB, RUN_NONINTERACTIVE... as well as all
 libgimp and pdb functions automagically into the caller's namespace. 
-This will overwrite your AUTOLOAD function, if you have one.
+This will overwrite your AUTOLOAD function, if you have one. The AUTOLOAD
+function that gets installed must only be used in OO mode - either as
+an object or a class method call - the only exception is when the first
+argument is a reference (including objects):
+
+ use Gimp qw(:auto);
+ Gimp->displays_flush; # fine
+ my $name = $layer->get_name; # also fine
+ gimp_quit(0); # will lose its parameter, due to Perl's OO implementation!
+ Gimp->quit(0); # works correctly
+ gimp_image_undo_disable($image); # as does this, by a coincidence
 
 =item :param
 
-Import PARAM_* constants (PDB_INT32, PDB_STRING etc.) only.
+Import constants for plugin parameter types (PDB_INT32, PDB_STRING
+etc.) only.
 
 =item :consts
 
-All constants from gimpenums.h (BG_IMAGE_FILL, RUN_NONINTERACTIVE,
+All constants found by querying GIMP (BG_IMAGE_FILL, RUN_NONINTERACTIVE,
 NORMAL_MODE, PDB_INT32 etc.).
+
+=item :pollute
+
+In previous version of C<gimp-perl>, you could refer to GIMP classes
+as either e.g. Gimp::Image, OR Image. Now in order to not pollute the
+namespace, the second option will be available only when this option
+is specified.
 
 =item spawn_options=I<options>
 
@@ -664,16 +691,16 @@ or specialized execution.  Lots of examples are in the C<examples/>
 directory of your gimp-perl source tree, or installed in your plug-ins
 directory if you are running from a package.
 
-Using the C<Xtns-E<gt>DB Browser> is a good way to learn The GIMP's
+Using the C<Help/Procedure Browser> is a good way to learn GIMP's
 Procedural Database(pdb).  For referencing functions you already know of,
-the included script gimpdoc is useful.
+the included script L<gimpdoc> is useful.
 
 =head1 DESCRIPTION
 
 Gimp-Perl is a module for writing plug-ins, extensions, standalone
 scripts, and file-handlers for The GNU Image Manipulation Program (The
 GIMP).  It can be used to automate repetitive tasks, achieve a precision
-hard to get through manual use of The GIMP, interface to a web server,
+hard to get through manual use of GIMP, interface to a web server,
 or other tasks that involve Gimp.
 
 It is developed on Linux, and should work with similar OSes.
@@ -683,7 +710,7 @@ Some highlights:
 =over 2
 
 =item *
-Access to The GIMP's Procedural Database (pdb) for manipulation of
+Access to GIMP's Procedural Database (pdb) for manipulation of
 most objects.
 
 =item *
@@ -695,7 +722,7 @@ Image(600,300,RGB)>
 Networked plug-ins look/behave the same as those running from within gimp.  
 
 =item *
-Gimp::Fu will start The GIMP for you, if it cannot connect to an existing
+Gimp::Fu will start GIMP for you, if it cannot connect to an existing
 GIMP process.
 
 =item *
@@ -710,8 +737,9 @@ Over 50 example scripts to give you a good starting point, or use as is.
 =head1 ARCHITECTURE
 
 There are two modes of operation: the perl is called by GIMP (as a
-plugin/filter), or GIMP is called by perl (which uses the Gimp::Net
-functionality).
+plugin/filter) ("plugin mode"), or GIMP is called by perl (which uses the
+Gimp::Net functionality) - either connecting to an existing GIMP process
+("net mode"), or starting its own one ("batch mode").
 
 =head2 Plugin
 
@@ -755,19 +783,19 @@ Before the call to C<Gimp::main>, I<no> other PDB function must be called.
 In a C<Gimp::Fu>-script, it will actually call C<Gimp::Fu::main> instead
 of C<Gimp::main>:
 
- exit main;		# Gimp::Fu::main is exported by default when using Gimp::Fu
+ exit main; # Gimp::Fu::main is exported by default when using Gimp::Fu
 
 This is similar to Gtk, Tk or similar modules, where you have to call the
 main eventloop. 
 
 Although you call C<exit> with the result of C<main>, the main function
-might not actually return. This depends on both the version of Gimp and
+might not actually return. This depends on both the version of GIMP and
 the version of the Gimp-Perl module that is in use.  Do not depend on
 C<main> to return at all, but still call C<exit> immediately.
 
 =head2 CALLBACKS
 
-The Gimp module provides routines to be optionally filled in by a
+The C<Gimp> module provides routines to be optionally filled in by a
 plug-in writer.  This does not apply if using C<Gimp::Fu>, as these are
 done automatically.
 
@@ -781,11 +809,12 @@ gimp_install_procedure.
 
 =item Gimp::on_net
 
-Run when called from a network interface (from the Perl-Server or from running it standalone).
+Run when called from a network interface (from the Perl-Server or from
+running it standalone).
 
 =item Gimp::on_lib
 
-Run only when called itneractively from within Gimp.
+Run only when called interactively from within Gimp.
 
 =item Gimp::on_run
 
@@ -800,15 +829,16 @@ B<PDB> (the Procedural DataBase), and functions from B<libgimp> (the
 C-language interface library).
 
 You can get a listing and description of every PDB function by starting
-the B<DB Browser> extension in the GIMP B<Xtns> menu (but remember to change 
+the B<DB Browser> extension in GIMP's B<Xtns> menu (but remember to change 
  "-" (dashes) to  "_" (underscores)).
 
 B<libgimp> functions can't be traced (and won't be traceable in the
 foreseeable future).
 
 To call pdb functions (or equivalent libgimp functions), just treat them like
-normal perl (this requires the use of the C<:auto> import tag, but see below
-for another possibility!):
+normal perl (this requires the use of the C<:auto> import tag - see
+the import C<:auto> note for non-OO limitation; see below for another
+possibility!):
 
  gimp_palette_set_foreground([20,5,7]);
  gimp_palette_set_background("cornsilk");
@@ -840,7 +870,7 @@ supported. Initializations can later be done in the init function.
 
 =item Gimp::gtk_init()
 
-Initialize Gtk in a similar way the Gimp itself did it. This automatically
+Initialize Gtk in a similar way GIMP itself did it. This automatically
 parses gimp's gtkrc and sets a variety of default settings (visual,
 colormap, gamma, shared memory...).
 
@@ -864,7 +894,7 @@ and the net callback. At the moment it only works for the Net interface
  use Gimp;
  
  Gimp::init;
- <do something with the gimp>
+ <do something with GIMP>
 
 The optional argument to init has the same format as the GIMP_HOST variable
 described in L<Gimp::Net>. Calling C<Gimp::end> is optional.  This is used
@@ -872,7 +902,7 @@ in the process of testing the module ('make test').
 
 =item Gimp::lock(), Gimp::unlock()
 
-These functions can be used to gain exclusive access to the Gimp. After
+These functions can be used to gain exclusive access to GIMP. After
 calling lock, all accesses by other clients will be blocked and executed
 after the call to unlock. Calls to lock and unlock can be nested.
 
@@ -896,7 +926,7 @@ usually only the case after gimp_main or gimp_init have been called.
 =item Gimp::register_callback(gimp_function_name, perl_function)
 
 Using this function you can overwrite the standard Gimp behaviour of
-calling a perl subroutine of the same name as the gimp function.
+calling a perl subroutine of the same name as the GIMP function.
 
 The first argument is the name of a registered gimp function that you want
 to overwrite ('perl_fu_make_something'), and the second argument can be

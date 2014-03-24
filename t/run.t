@@ -10,7 +10,7 @@ require 't/gimpsetup.pl';
 
 Gimp::init("spawn/");
 
-ok((my $i = new Image(10,10,RGB)), 'OO Syntax for new image');
+ok((my $i = new Gimp::Image(10,10,RGB)), 'OO Syntax for new image');
 ok(
   (my $l = $i->layer_new(10,10,RGBA_IMAGE,"new layer",100,VALUE_MODE)),
   'Different OO syntax for creating a layer',
@@ -26,8 +26,8 @@ ok(
   'paint without default value',
 );
 ok(
-  !Plugin->sharpen(RUN_NONINTERACTIVE,$i,$l,10),
-  'call external plugin through Plugin->, use explicit RUN_NONINTERACTIVE',
+  !Gimp::Plugin->sharpen(RUN_NONINTERACTIVE,$i,$l,10),
+  'call plugin through Gimp::Plugin->, use explicit RUN_NONINTERACTIVE',
 );
 ok(!$l->sharpen(10), 'call with maximum fu magic');
 ok(!Gimp->plug_in_sharpen($i,$l,10), 'call plugin using default');

@@ -19,7 +19,7 @@ sub plug_in_example_oo {
   my $bg=new Layer($img,300,200,RGB_IMAGE,"Background",100,NORMAL_MODE);
 
 # instead of gimp_display_new($img);
-  new Display($img);
+  new Gimp::Display($img);
 
 # For any of Image, Drawable, Layer, Palette, Edit, Gradients, Patterns, 
 # Progress, Channel, Selection, Display, Plugin, you can use a syntax
