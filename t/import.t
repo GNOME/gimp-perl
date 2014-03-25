@@ -16,4 +16,7 @@ ok($@, 'polluting version should fail');
 Gimp->import(':pollute');
 ok(Image->new(10,10,RGB), 'polluting version should now work');
 
+Gimp::Net::server_quit;
+Gimp::Net::server_wait;
+
 done_testing;

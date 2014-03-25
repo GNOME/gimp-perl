@@ -39,4 +39,7 @@ is_deeply(
   "canonicalise_color"
 );
 
+Gimp::Net::server_quit;
+Gimp::Net::server_wait;
+
 done_testing;

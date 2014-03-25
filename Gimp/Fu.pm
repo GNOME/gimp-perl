@@ -854,7 +854,7 @@ some examples:
 
 sub save_image($$) {
    my($img,$path)=@_;
-   my($interlace,$flatten,$quality,$type,$smooth,$compress,$loop,$dispose);
+   my($flatten,$type);
 
    my $interlace=0;
    my $quality=0.75;

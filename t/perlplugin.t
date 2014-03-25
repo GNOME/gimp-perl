@@ -147,4 +147,7 @@ is_deeply(
 # color one works, font doesn't - speculate is due to being in "batch mode"
 #Gimp::Plugin->test_dialogs(RUN_INTERACTIVE, [0,0,0], "Arial", 150, );
 
+Gimp::Net::server_quit;
+Gimp::Net::server_wait;
+
 done_testing;

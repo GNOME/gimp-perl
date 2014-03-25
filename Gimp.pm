@@ -3,11 +3,11 @@ package Gimp;
 use strict 'vars';
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK $AUTOLOAD %EXPORT_TAGS @EXPORT_FAIL
             $interface_pkg $interface_type
-            @PREFIXES $_PROT_VERSION
-            @gimp_gui_functions $function $basename $spawn_opts
+            @PREFIXES
+            $function $basename $spawn_opts
             $in_quit $in_run $in_net $in_init $in_query $no_SIG
             $help $verbose $host $in_top);
-use subs qw(init end lock unlock canonicalize_color);
+use subs qw(init end lock unlock);
 
 BEGIN {
    $VERSION = 2.3001;
@@ -189,6 +189,7 @@ my @POLLUTE_CLASSES;
 # we really abuse the import facility..
 sub import($;@) {
    my $pkg = shift;
+   warn "$pkg->import(@_)" if $verbose;
    my $up = caller;
    my @export;
 
@@ -235,7 +236,7 @@ sub import($;@) {
          croak __"$_ is not a valid import tag for package $pkg";
       }
    }
-   
+
    for(@export) {
       *{"$up\::$_"} = \&$_;
    }
@@ -273,6 +274,8 @@ sub wrap_text {
    $x;
 }
 
+# section on command-line handling/interface selection
+
 ($basename = $0) =~ s/^.*[\\\/]//;
 
 $spawn_opts = "";
@@ -295,14 +298,15 @@ if (@ARGV) {
          $_=shift(@ARGV);
          if (/^-h$|^--?help$|^-\?$/) {
             $help=1;
-            print __"Usage: $0 [gimp-args..] [interface-args..] [script-args..]
+            print __<<EOF;
+Usage: $0 [gimp-args..] [interface-args..] [script-args..]
            gimp-arguments are
            -gimp <anything>           used internally only
            -h | -help | --help | -?   print some help
            -v | --verbose             be more verbose in what you do
            --host|--tcp HOST[:PORT]   connect to HOST (optionally using PORT)
                                       (for more info, see Gimp::Net(3))
-";
+EOF
          } elsif (/^-v$|^--verbose$/) {
             $verbose++;
          } elsif (/^--host$|^--tcp$/) {
@@ -315,6 +319,8 @@ if (@ARGV) {
    }
 }
 
+# section on logging
+
 my @log;
 
 sub format_msg {
@@ -323,19 +329,6 @@ sub format_msg {
 }
 
 sub _initialized_callback {
-   # load the compatibility module on older versions
-   if ($interface_pkg eq "Gimp::Lib") {
-      # this must match @max_gimp_version in Gimp::Compat
-      my @compat_gimp_version = (1,3);
-      if ((Gimp->major_version < $compat_gimp_version[0])
-          || (Gimp->major_version == $compat_gimp_version[0]
-              && Gimp->minor_version < $compat_gimp_version[1])) {
-         require Gimp::Compat;
-         $compat_gimp_version[0] == $Gimp::Compat::max_gimp_version[0]
-            && $compat_gimp_version[1] == $Gimp::Compat::max_gimp_version[1]
-               or die "FATAL: Gimp::Compat version mismatch\n";
-      }
-   }
    if (@log) {
       my $oldtrace = set_trace(0);
       unless ($in_net || $in_query || $in_quit || $in_init) {
@@ -367,6 +360,8 @@ sub die_msg {
    logger(message => substr($_[0],0,-1), fatal => 1, function => 'ERROR');
 }
 
+# section on error-handling
+
 # this needs to be improved
 sub quiet_die {
    $in_top ? exit(1) : die "IGNORE THIS MESSAGE\n";
@@ -390,6 +385,8 @@ unless($no_SIG) {
       }
    };
 }
+
+# section on callbacks
 
 my %callback;
 
@@ -454,7 +451,7 @@ sub quiet_main {
    main;
 }
 
-##############################################################################
+# section on interface_pkg
 
 if ($interface_type=~/^lib$/i) {
    $interface_pkg="Gimp::Lib";
@@ -464,7 +461,7 @@ if ($interface_type=~/^lib$/i) {
    croak __"interface '$interface_type' unsupported.";
 }
 
-eval "require $interface_pkg" or croak "$@";
+eval "require $interface_pkg" or croak $@;
 $interface_pkg->import;
 
 # create some common aliases
@@ -473,21 +470,15 @@ for(qw(gimp_procedural_db_proc_exists gimp_call_procedure set_trace initialized)
 }
 
 *init  = \&{"$interface_pkg\::gimp_init"};
-*end   = \&{"$interface_pkg\::gimp_end" };
-*lock  = \&{"$interface_pkg\::lock" };
-*unlock= \&{"$interface_pkg\::unlock" };
+*end   = \&{"$interface_pkg\::gimp_end"};
+*lock  = \&{"$interface_pkg\::lock"};
+*unlock= \&{"$interface_pkg\::unlock"};
+
+# section on AUTOLOAD
 
 my %ignore_function = (DESTROY => 1);
 
 @PREFIXES=("gimp_", "");
-
-@gimp_gui_functions = qw(
-   gimp_progress_init
-   gimp_progress_update
-   gimp_displays_flush
-   gimp_display_new
-   gimp_display_delete
-);
 
 sub ignore_functions(@) {
    @ignore_function{@_}++;
@@ -495,6 +486,7 @@ sub ignore_functions(@) {
 
 sub AUTOLOAD {
   my ($class,$name) = $AUTOLOAD =~ /^(.*)::(.*?)$/;
+  warn "AUTOLOAD $AUTOLOAD(@_)" if $Gimp::verbose;
   for(@{"$class\::PREFIXES"}) {
     my $sub = $_.$name;
     if (exists $ignore_function{$sub}) {
@@ -520,6 +512,7 @@ sub AUTOLOAD {
       goto &$AUTOLOAD;
     } elsif (gimp_procedural_db_proc_exists($sub)) {
       *{$AUTOLOAD} = sub {
+	warn "gimp_call_procedure(@_)" if $Gimp::verbose;
 	shift unless ref $_[0];
 	unshift @_, $sub;
 	#goto &gimp_call_procedure; # does not work, PERLBUG! #FIXME
@@ -531,6 +524,8 @@ sub AUTOLOAD {
   }
   croak __"function/macro \"$name\" not found in $class";
 }
+
+# section on classes
 
 sub _pseudoclass {
   my ($class, @prefixes)= @_;

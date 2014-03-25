@@ -48,3 +48,8 @@ my $vectorstring = $vectors->export_to_string; # takes VECTORS as input - QED
 like($vectorstring, qr/<path id="hi"/, 'vector string plausible');
 
 ok(!$i->delete, 'remove image');
+
+Gimp::Net::server_quit;
+Gimp::Net::server_wait;
+
+done_testing;
