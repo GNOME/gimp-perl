@@ -5,7 +5,6 @@ config.pl
 COPYING
 COPYING.Artistic
 COPYING.GNU
-enums.pl
 examples/animate_cells
 examples/billboard
 examples/blended2
@@ -67,7 +66,6 @@ examples/xachvision
 examples/yinyang
 extra.c
 extra.h
-gimpenums.c
 gppport.h
 Gimp/Compat.pm
 Gimp/Config.pm.in
@@ -77,17 +75,14 @@ Gimp/Fu.pm
 Gimp/Lib.pm
 Gimp/Lib.xs
 Gimp/Makefile.PL
-Gimp/Module.pm
 Gimp/OO.pod
 Gimp/Pixel.pod
 Gimp/Pod.pm
 Gimp/Util.pm
 Gimp.pm
 Gimp.xs
-insenums
 logo.xpm
 MAINTAINERS
-makeenums.pl
 Makefile.PL
 MANIFEST
 Net/Makefile.PL

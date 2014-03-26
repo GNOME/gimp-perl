@@ -1,6 +1,8 @@
 package Gimp::Constant;
 
 use Exporter 'import';
+use strict qw(vars);
+use vars qw($VERSION);
 
 BEGIN {
    $VERSION = 2.3001;
@@ -29,7 +31,7 @@ for my $class (Gimp->enums_get_type_names) {
     my $gname = $_;
     s#^GIMP_##;
     $sub2value{$_} = $gname2value{$gname};
-    push @PARAMS, $_ if $class eq GimpPDBArgType;
+    push @PARAMS, $_ if $class eq 'GimpPDBArgType';
   } keys %gname2value;
 }
 
