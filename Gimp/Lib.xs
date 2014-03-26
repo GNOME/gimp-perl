@@ -1340,26 +1340,20 @@ gimp_main(...)
 		    char *argv [10];
 		    int argc = 0;
 
-		    if (items == 0)
-		      {
-		        AV *av = perl_get_av ("ARGV", FALSE);
-
-		        argv [argc++] = SvPV_nolen (perl_get_sv ("0", FALSE));
-		        if (av && av_len (av) < 10-1)
-		          {
-		            while (argc-1 <= av_len (av))
-		              argv [argc] = SvPV_nolen (*av_fetch (av, argc-1, 0)),
-		              argc++;
-		          }
-		        else
-		          croak ("internal error (please report): too many arguments to main");
-		      }
-		    else
+		    if (items != 0)
 		      croak (__("arguments to main not yet supported!"));
+		    AV *av = perl_get_av ("ARGV", FALSE);
 
-	            gimp_is_initialized = 1;
+		    argv [argc++] = SvPV_nolen (perl_get_sv ("0", FALSE));
+		    if (!(av && av_len (av) < 10-1))
+		      croak ("internal error (please report): too many arguments to main");
+		    while (argc-1 <= av_len (av))
+		      argv [argc] = SvPV_nolen (*av_fetch (av, argc-1, 0)),
+		      argc++;
+
+		    gimp_is_initialized = 1;
 		    RETVAL = gimp_main (&PLUG_IN_INFO, argc, argv);
-	            gimp_is_initialized = 0;
+		    gimp_is_initialized = 0;
                     /*exit (0);*/ /*D*//* shit, some memory problem here, so just exit */
 		  }
 	OUTPUT:
@@ -1394,6 +1388,40 @@ gimp_micro_version()
 	RETVAL = gimp_micro_version;
 	OUTPUT:
 	RETVAL
+
+void
+gimp_enums_get_type_names()
+INIT:
+  gimp_enums_init ();
+  gint n_type_names;
+  const gchar **etn;
+  int i;
+PPCODE:
+  etn = gimp_enums_get_type_names (&n_type_names);
+  if (!etn) XSRETURN_EMPTY;
+  EXTEND(SP, n_type_names);
+  for (i = 0; i < n_type_names; i++) {
+    PUSHs(sv_2mortal(newSVpv(etn[i], 0)));
+  }
+
+# return list of pair => value, ...
+void
+gimp_enums_list_type(name)
+  const char *name
+INIT:
+  GType enum_type;
+  GEnumClass *enum_class;
+  GEnumValue *value;
+  HV *ret_hash;
+PPCODE:
+  if (!(enum_type = g_type_from_name (name)))
+    croak (__("gimp_enums_list_type(%s) invalid name"), name);
+  if (!(enum_class = g_type_class_peek (enum_type)))
+    croak (__("gimp_enums_list_type(%s) invalid class"), name);
+  for (value = enum_class->values; value->value_name; value++) {
+    XPUSHs(sv_2mortal(newSVpv(value->value_name,0)));
+    XPUSHs(sv_2mortal(newSViv(value->value)));
+  }
 
 # checks whether a gimp procedure exists
 int
@@ -2245,6 +2273,9 @@ gimp_pixel_rgn_data(...)
 #endif
 
 BOOT:
+#if (GLIB_MAJOR_VERSION < 2 || (GLIB_MAJOR_VERSION == 2 && GLIB_MINOR_VERSION < 36))
+	g_type_init();
+#endif
 	trace_file = PerlIO_stderr ();
 	g_log_set_handler(
 	  "LibGimp",

@@ -25,7 +25,7 @@ package Gimp::Net;
 # Aelem1\0elem2...
 # Rclass\0scalar-value
 
-BEGIN { warn "Loading ".__PACKAGE__ if $Gimp::verbose; }
+BEGIN { warn "$$-Loading ".__PACKAGE__ if $Gimp::verbose; }
 
 use strict 'vars';
 use vars qw($VERSION $trace_res);
@@ -81,7 +81,7 @@ sub command {
 
 sub import {
    my $pkg = shift;
-   warn "$pkg->import(@_)" if $Gimp::verbose;
+   warn "$$-$pkg->import(@_)" if $Gimp::verbose;
    return if @_;
    # overwrite some destroy functions
    *Gimp::Tile::DESTROY=
@@ -93,7 +93,7 @@ sub import {
 }
 
 sub gimp_call_procedure {
-   warn "Net::gimp_call_procedure[$trace_level](@_)" if $Gimp::verbose;
+   warn "$$-Net::gimp_call_procedure[$trace_level](@_)" if $Gimp::verbose;
    my $func = shift;
    unshift @_, $trace_level if $trace_level;
    my @response = command($trace_level ? "TRCE" : "EXEC", $func, @_);
@@ -143,7 +143,7 @@ my @gimp_gui_functions = qw(
 sub start_server {
    my $opt = shift;
    $opt = $Gimp::spawn_opts unless $opt;
-   print __"start_server \"$opt\"" if $Gimp::verbose;
+   warn __"$$-start_server($opt)" if $Gimp::verbose;
    croak __"unable to create socketpair for gimp communications: $!"
       unless ($server_fh, my $gimp_fh) =
 	 IO::Socket->socketpair(AF_UNIX, SOCK_STREAM, PF_UNSPEC);
@@ -161,15 +161,16 @@ sub start_server {
    unless ($Gimp::verbose) {
       open STDIN,"</dev/null";
       open STDOUT,">/dev/null";
-      open STDERR,">&1";
+      #open STDERR,">&1";
    }
    my @args;
-   my $flags = PS_FLAG_BATCH | ($Gimp::verbose ? PS_FLAG_QUIET : 0);
+   my $flags = PS_FLAG_BATCH | ($Gimp::verbose ? 0 : PS_FLAG_QUIET);
    my $args = join ' ',
      &Gimp::RUN_NONINTERACTIVE,
      $flags,
      fileno($gimp_fh),
      int($Gimp::verbose);
+   warn __"$$-extension-perl-server args='$args'" if $Gimp::verbose;
    push(@args,"--no-data") if $opt=~s/(^|:)no-?data//;
    push(@args,"-i") unless $opt=~s/(^|:)gui//;
    push(@args,"--verbose") if $Gimp::verbose;
@@ -217,7 +218,7 @@ sub try_connect {
 
 sub gimp_init {
    $Gimp::in_top=1;
-   warn "gimp_init(@_)" if $Gimp::verbose;
+   warn "$$-gimp_init(@_)" if $Gimp::verbose;
    if (@_) {
       $server_fh = try_connect ($_[0]);
    } elsif (defined($Gimp::host)) {
@@ -251,10 +252,11 @@ sub gimp_init {
 
    $initialized = 1;
    Gimp::_initialized_callback;
+   warn "$$-Finished gimp_init(@_)" if $Gimp::verbose;
 }
 
 sub gimp_end {
-   warn "gimp_end - gimp_pid=$gimp_pid" if $Gimp::verbose;
+   warn "$$-gimp_end - gimp_pid=$gimp_pid" if $Gimp::verbose;
    $initialized = 0;
    #close $server_fh if $server_fh;
    undef $server_fh;
@@ -262,7 +264,6 @@ sub gimp_end {
 }
 
 sub gimp_main {
-   gimp_init;
    no strict 'refs';
    $Gimp::in_top=0;
    eval { Gimp::callback("-net") };

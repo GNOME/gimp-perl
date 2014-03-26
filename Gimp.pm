@@ -18,165 +18,8 @@ BEGIN {
       require DynaLoader;
       @ISA = qw(DynaLoader);
       bootstrap Gimp $VERSION;
-   }
+   };
 }
-
-my @_param = qw(
-	PDB_BOUNDARY	PDB_CHANNEL	PDB_COLOR	PDB_DISPLAY	PDB_DRAWABLE
-	PDB_END		PDB_FLOAT	PDB_IMAGE	PDB_INT32	PDB_FLOATARRAY
-	PDB_INT16	PDB_PARASITE	PDB_STRING	PDB_PATH	PDB_INT16ARRAY
-	PDB_INT8	PDB_INT8ARRAY	PDB_LAYER	PDB_REGION	PDB_STRINGARRAY
-	PDB_SELECTION	PDB_STATUS	PDB_INT32ARRAY
-);
-
-# constants that, in some earlier version, were autoloaded
-my @_consts = (@_param,
-#ENUM_NAME#
-'NEGATIVE_CONVOL',       'ABSOLUTE_CONVOL',       'NORMAL_CONVOL',         'DODGE',                 
-'BURN',                  'PDB_SUCCESS',           'PDB_CANCEL',            'PDB_CALLING_ERROR',     
-'PDB_PASS_THROUGH',      'PDB_EXECUTION_ERROR',   'SHARPEN_CONVOLVE',      'BLUR_CONVOLVE',         
-'PAINT_INCREMENTAL',     'PAINT_CONSTANT',        'ORIENTATION_HORIZONTAL','ORIENTATION_UNKNOWN',   
-'ORIENTATION_VERTICAL',  'OFFSET_TRANSPARENT',    'OFFSET_BACKGROUND',     'GRADIENT_SPIRAL_CLOCKWISE',      
-'GRADIENT_CONICAL_ASYMMETRIC',    'GRADIENT_SPIRAL_ANTICLOCKWISE',  'GRADIENT_SHAPEBURST_DIMPLED',    'GRADIENT_CONICAL_SYMMETRIC',     
-'GRADIENT_BILINEAR',              'GRADIENT_LINEAR',                'GRADIENT_RADIAL',                'GRADIENT_SHAPEBURST_ANGULAR',    
-'GRADIENT_SHAPEBURST_SPHERICAL',  'GRADIENT_SQUARE',                'PDB_COLOR',             'PDB_END',               
-'PDB_LAYER',             'PDB_INT8ARRAY',         'PDB_PATH',              'PDB_INT16',             
-'PDB_FLOAT',             'PDB_DISPLAY',           'PDB_STRING',            'PDB_INT16ARRAY',        
-'PDB_IMAGE',             'PDB_INT32',             'PDB_SELECTION',         'PDB_STATUS',            
-'PDB_STRINGARRAY',       'PDB_CHANNEL',           'PDB_FLOATARRAY',        'PDB_INT32ARRAY',        
-'PDB_DRAWABLE',          'PDB_BOUNDARY',          'PDB_REGION',            'PDB_PARASITE',          
-'PDB_INT8',              'HISTOGRAM_BLUE',        'HISTOGRAM_VALUE',       'HISTOGRAM_GREEN',             
-'HISTOGRAM_ALPHA',       'HISTOGRAM_RED',         'SHADOWS',               'HIGHLIGHTS',            
-'MIDTONES',              'POINTS',                'PIXELS',                'STACK_TRACE_ALWAYS',    
-'STACK_TRACE_NEVER',     'STACK_TRACE_QUERY',     'GRAIN_EXTRACT_MODE',    'COLOR_ERASE_MODE',      
-'COLOR_MODE',            'LIGHTEN_ONLY_MODE',     'DIFFERENCE_MODE',       'DODGE_MODE',            
-'BEHIND_MODE',           'ADDITION_MODE',         'MULTIPLY_MODE',         'GRAIN_MERGE_MODE',      
-'SOFTLIGHT_MODE',        'HUE_MODE',              'SCREEN_MODE',           'BURN_MODE',             
-'NORMAL_MODE',           'OVERLAY_MODE',          'HARDLIGHT_MODE',        'DARKEN_ONLY_MODE',      
-'SUBTRACT_MODE',         'SATURATION_MODE',       'DISSOLVE_MODE',         'VALUE_MODE',            
-'DIVIDE_MODE',           'IMAGE_CLONE',           'PATTERN_CLONE',         'UNIT_PIXEL',            
-'UNIT_PICA',             'UNIT_END',              'UNIT_POINT',            'UNIT_MM',               
-'UNIT_INCH',             'RGB_IMAGE',             'INDEXEDA_IMAGE',        'INDEXED_IMAGE',         
-'GRAYA_IMAGE',           'RGBA_IMAGE',            'GRAY_IMAGE',            'MESSAGE_BOX',           
-'ERROR_CONSOLE',         'CONSOLE',               'BRUSH_SOFT',            'BRUSH_HARD',            
-'PLUGIN',                'TEMPORARY',             'EXTENSION',             'INTERNAL',              
-'INDEXED',               'GRAY',                  'RGB',                   'CYAN_HUES',             
-'ALL_HUES',              'BLUE_HUES',             'MAGENTA_HUES',          'GREEN_HUES',            
-'YELLOW_HUES',           'RED_HUES',              'WEB_PALETTE',           'REUSE_PALETTE',         
-'MONO_PALETTE',          'CUSTOM_PALETTE',        'MAKE_PALETTE',          'FSLOWBLEED_DITHER',     
-'NO_DITHER',             'FIXED_DITHER',          'FS_DITHER',             'PATTERN_BUCKET_FILL',   
-'FG_BUCKET_FILL',        'BG_BUCKET_FILL',        'INDEXED_CHANNEL',       'BLUE_CHANNEL',          
-'ALPHA_CHANNEL',         'GRAY_CHANNEL',          'RED_CHANNEL',           'GREEN_CHANNEL',         
-'RUN_NONINTERACTIVE',    'RUN_WITH_LAST_VALS',    'RUN_INTERACTIVE',       'REPEAT_NONE',           
-'REPEAT_TRIANGULAR',     'REPEAT_SAWTOOTH',       'MASK_DISCARD',          'MASK_APPLY',            
-'ADD_WHITE_MASK',        'ADD_SELECTION_MASK',    'ADD_ALPHA_TRANSFER_MASK', 'ADD_BLACK_MASK',        'ADD_ALPHA_MASK',        
-'ADD_COPY_MASK',         'TRANSPARENT_FILL',      'BACKGROUND_FILL',       'FOREGROUND_FILL',       
-'WHITE_FILL',            'PATTERN_FILL',          'CHANNEL_OP_SUBTRACT',   'CHANNEL_OP_REPLACE',    
-'CHANNEL_OP_INTERSECT',  'CHANNEL_OP_ADD',        'FLATTEN_IMAGE',         'EXPAND_AS_NECESSARY',   
-'CLIP_TO_BOTTOM_LAYER',  'CLIP_TO_IMAGE',         'CUSTOM_MODE',           'FG_TRANSPARENT_MODE',   
-'FG_BG_HSV_MODE',        'FG_BG_RGB_MODE',        
-#ENUM_NAME#
-	'PDB_CALLING_ERROR',		'PDB_EXECUTION_ERROR',		'PDB_PASS_THROUGH',
-        'PDB_SUCCESS',			'PARASITE_PERSISTENT',		'PARASITE_ATTACH_PARENT',
-        'PARASITE_PARENT_PERSISTENT',	'PARASITE_ATTACH_GRANDPARENT',	'PARASITE_GRANDPARENT_PERSISTENT',
-        'PARASITE_UNDOABLE',		'PARASITE_PARENT_UNDOABLE',	'PARASITE_GRANDPARENT_UNDOABLE',
-	'TRACE_NONE',	'TRACE_CALL',	'TRACE_TYPE',	'TRACE_NAME',	'TRACE_DESC',	'TRACE_ALL',
-	'COMPRESSION_NONE',		'COMPRESSION_LZW',		'COMPRESSION_PACKBITS',
-        'WRAP',				'SMEAR',			'BLACK',
-
-	'EXPORT_CAN_HANDLE_RGB',	'EXPORT_CAN_HANDLE_GRAY',	'EXPORT_CAN_HANDLE_INDEXED',
-        'EXPORT_CAN_HANDLE_BITMAP',     'EXPORT_CAN_HANDLE_ALPHA',	'EXPORT_CAN_HANDLE_LAYERS',	
-	'EXPORT_CAN_HANDLE_LAYERS_AS_ANIMATION', 'EXPORT_CAN_HANDLE_LAYER_MASKS', 'EXPORT_NEEDS_ALPHA',
-	'EXPORT_CANCEL',		'EXPORT_IGNORE',		'EXPORT_EXPORT', 
-	'ROTATE_90', 			'ROTATE_270',			'ROTATE_180',
-	'TRUE', 			'FALSE'
-);
-
-#ENUM_DEFS#
-sub NEGATIVE_CONVOL       (){ 2} sub ABSOLUTE_CONVOL       (){ 1} sub NORMAL_CONVOL         (){ 0}
-sub DODGE                 (){ 0} sub BURN                  (){ 1} sub PDB_SUCCESS           (){ 3}
-sub PDB_CANCEL            (){ 4} sub PDB_CALLING_ERROR     (){ 1} sub PDB_PASS_THROUGH      (){ 2}
-sub PDB_EXECUTION_ERROR   (){ 0} sub SHARPEN_CONVOLVE      (){ 1} sub BLUR_CONVOLVE         (){ 0}
-sub PAINT_INCREMENTAL     (){ 1} sub PAINT_CONSTANT        (){ 0}
-sub ORIENTATION_HORIZONTAL(){ 0} sub ORIENTATION_UNKNOWN   (){ 2} sub ORIENTATION_VERTICAL  (){ 1}
-sub OFFSET_TRANSPARENT    (){ 1} sub OFFSET_BACKGROUND     (){ 0} sub GRADIENT_SPIRAL_CLOCKWISE      (){ 9}
-sub GRADIENT_CONICAL_ASYMMETRIC    (){ 5} sub GRADIENT_SPIRAL_ANTICLOCKWISE  (){10} sub GRADIENT_SHAPEBURST_DIMPLED    (){ 8}
-sub GRADIENT_CONICAL_SYMMETRIC     (){ 4} sub GRADIENT_BILINEAR              (){ 1} sub GRADIENT_LINEAR                (){ 0}
-sub GRADIENT_RADIAL                (){ 2} sub GRADIENT_SHAPEBURST_ANGULAR    (){ 6} sub GRADIENT_SHAPEBURST_SPHERICAL  (){ 7}
-sub SQUARE                (){ 3} sub PDB_COLOR             (){10} sub PDB_END               (){22}
-sub PDB_LAYER             (){14} sub PDB_INT8ARRAY         (){ 7} sub PDB_PATH              (){19}
-sub PDB_INT16             (){ 1} sub PDB_FLOAT             (){ 3} sub PDB_DISPLAY           (){12}
-sub PDB_STRING            (){ 4} sub PDB_INT16ARRAY        (){ 6} sub PDB_IMAGE             (){13}
-sub PDB_INT32             (){ 0} sub PDB_SELECTION         (){17} sub PDB_STATUS            (){21}
-sub PDB_STRINGARRAY       (){ 9} sub PDB_CHANNEL           (){15} sub PDB_FLOATARRAY        (){ 8}
-sub PDB_INT32ARRAY        (){ 5} sub PDB_DRAWABLE          (){16} sub PDB_BOUNDARY          (){18}
-sub PDB_REGION            (){11} sub PDB_PARASITE          (){20} sub PDB_INT8              (){ 2}
-sub HISTOGRAM_BLUE        (){ 3} sub HISTOGRAM_VALUE       (){ 0} sub HISTOGRAM_GREEN       (){ 2}
-sub HISTOGRAM_ALPHA       (){ 4} sub HISTOGRAM_RED         (){ 1} sub SHADOWS               (){ 0}
-sub HIGHLIGHTS            (){ 2} sub MIDTONES              (){ 1} sub POINTS                (){ 1}
-sub PIXELS                (){ 0} sub STACK_TRACE_ALWAYS    (){ 2} sub STACK_TRACE_NEVER     (){ 0}
-sub STACK_TRACE_QUERY     (){ 1} sub GRAIN_EXTRACT_MODE    (){20} sub COLOR_ERASE_MODE      (){22}
-sub COLOR_MODE            (){13} sub LIGHTEN_ONLY_MODE     (){10} sub DIFFERENCE_MODE       (){ 6}
-sub DODGE_MODE            (){16} sub BEHIND_MODE           (){ 2} sub ADDITION_MODE         (){ 7}
-sub MULTIPLY_MODE         (){ 3} sub GRAIN_MERGE_MODE      (){21} sub SOFTLIGHT_MODE        (){19}
-sub HUE_MODE              (){11} sub SCREEN_MODE           (){ 4} sub BURN_MODE             (){17}
-sub NORMAL_MODE           (){ 0} sub OVERLAY_MODE          (){ 5} sub HARDLIGHT_MODE        (){18}
-sub DARKEN_ONLY_MODE      (){ 9} sub SUBTRACT_MODE         (){ 8} sub SATURATION_MODE       (){12}
-sub DISSOLVE_MODE         (){ 1} sub VALUE_MODE            (){14} sub DIVIDE_MODE           (){15}
-sub IMAGE_CLONE           (){ 0} sub PATTERN_CLONE         (){ 1} sub UNIT_PIXEL            (){ 0}
-sub UNIT_PICA             (){ 4} sub UNIT_END              (){ 5} sub UNIT_POINT            (){ 3}
-sub UNIT_MM               (){ 2} sub UNIT_INCH             (){ 1} sub RGB_IMAGE             (){ 0}
-sub INDEXEDA_IMAGE        (){ 5} sub INDEXED_IMAGE         (){ 4} sub GRAYA_IMAGE           (){ 3}
-sub RGBA_IMAGE            (){ 1} sub GRAY_IMAGE            (){ 2} sub MESSAGE_BOX           (){ 0}
-sub ERROR_CONSOLE         (){ 2} sub CONSOLE               (){ 1} sub BRUSH_SOFT            (){ 1}
-sub BRUSH_HARD            (){ 0} sub PLUGIN                (){ 1} sub TEMPORARY             (){ 3}
-sub EXTENSION             (){ 2} sub INTERNAL              (){ 0} sub INDEXED               (){ 2}
-sub GRAY                  (){ 1} sub RGB                   (){ 0} sub CYAN_HUES             (){ 4}
-sub ALL_HUES              (){ 0} sub BLUE_HUES             (){ 5} sub MAGENTA_HUES          (){ 6}
-sub GREEN_HUES            (){ 3} sub YELLOW_HUES           (){ 2} sub RED_HUES              (){ 1}
-sub WEB_PALETTE           (){ 2} sub REUSE_PALETTE         (){ 1} sub MONO_PALETTE          (){ 3}
-sub CUSTOM_PALETTE        (){ 4} sub MAKE_PALETTE          (){ 0} sub FSLOWBLEED_DITHER     (){ 2}
-sub NO_DITHER             (){ 0} sub FIXED_DITHER          (){ 3} sub FS_DITHER             (){ 1}
-sub PATTERN_BUCKET_FILL   (){ 2} sub FG_BUCKET_FILL        (){ 0} sub BG_BUCKET_FILL        (){ 1}
-sub INDEXED_CHANNEL       (){ 4} sub BLUE_CHANNEL          (){ 2} sub ALPHA_CHANNEL         (){ 5}
-sub GRAY_CHANNEL          (){ 3} sub RED_CHANNEL           (){ 0} sub GREEN_CHANNEL         (){ 1}
-sub RUN_NONINTERACTIVE    (){ 1} sub RUN_WITH_LAST_VALS    (){ 2} sub RUN_INTERACTIVE       (){ 0}
-sub REPEAT_NONE           (){ 0} sub REPEAT_TRIANGULAR     (){ 2} sub REPEAT_SAWTOOTH       (){ 1}
-sub MASK_DISCARD          (){ 1} sub MASK_APPLY            (){ 0} sub ADD_WHITE_MASK        (){ 0}
-sub ADD_ALPHA_TRANSFER_MASK (){3 }
-sub ADD_SELECTION_MASK    (){ 4} sub ADD_BLACK_MASK        (){ 1} sub ADD_ALPHA_MASK        (){ 2}
-sub ADD_COPY_MASK         (){ 5} sub TRANSPARENT_FILL      (){ 3} sub BACKGROUND_FILL       (){ 1}
-sub FOREGROUND_FILL       (){ 0} sub WHITE_FILL            (){ 2} sub NO_FILL               (){ 4}
-sub CHANNEL_OP_SUBTRACT   (){ 1} sub CHANNEL_OP_REPLACE    (){ 2} sub CHANNEL_OP_INTERSECT  (){ 3}
-sub CHANNEL_OP_ADD        (){ 0} sub FLATTEN_IMAGE         (){ 3} sub EXPAND_AS_NECESSARY   (){ 0}
-sub CLIP_TO_BOTTOM_LAYER  (){ 2} sub CLIP_TO_IMAGE         (){ 1} sub CUSTOM_MODE           (){ 3}
-sub FG_TRANSPARENT_MODE   (){ 2} sub FG_BG_HSV_MODE        (){ 1} sub FG_BG_RGB_MODE        (){ 0}
-sub ROTATE_90             (){ 0} sub ROTATE_270            (){ 2} sub ROTATE_180            (){ 1}
-#ENUM_DEFS#
-
-sub WRAP		(){ 0 }
-sub SMEAR		(){ 1 }
-sub BLACK		(){ 2 }
-
-# defined in Gimp.xs for some reason
-#sub EXPORT_CAN_HANDLE_RGB                   (){1}
-#sub EXPORT_CAN_HANDLE_GRAY                  (){2}
-#sub EXPORT_CAN_HANDLE_INDEXED               (){4}
-#sub EXPORT_CAN_HANDLE_BITMAP                (){8}
-#sub EXPORT_CAN_HANDLE_ALPHA	            (){16}
-#sub EXPORT_CAN_HANDLE_LAYERS	            (){32}
-#sub EXPORT_CAN_HANDLE_LAYERS_AS_ANIMATION   (){64}
-#sub EXPORT_CAN_HANDLE_LAYER_MASKS           (){128}
-#sub EXPORT_NEEDS_ALPHA                      (){256}
-	
-# file_tiff_*
-sub COMPRESSION_NONE		(){ 0 }
-sub COMPRESSION_LZW		(){ 1 }
-sub COMPRESSION_PACKBITS	(){ 2 }
-
-# True/False for PDB
-sub TRUE			(){ 1 }
-sub FALSE			(){ 0 }
 
 use Gimp::ColorDB;
 use Carp qw(croak);
@@ -185,19 +28,32 @@ my @_procs = ('main', '__', 'N_');
 #my @_default = (@_procs, ':consts' ,':_auto2');
 my @_default = (@_procs, ':consts');
 my @POLLUTE_CLASSES;
+my $net_init;
 
 # we really abuse the import facility..
 sub import($;@) {
    my $pkg = shift;
-   warn "$pkg->import(@_)" if $verbose;
+   warn "$$-$pkg->import(@_)" if $verbose;
    my $up = caller;
    my @export;
 
+   # make sure we can call GIMP functions - start net conn if required
+   map { $net_init = $1 if /net_init=(\S+)/; } @_;
+   if ($interface_type eq "net") {
+      map { *{"Gimp::$_"} = \&{"Gimp::Constant::$_"} }
+	 qw(RUN_INTERACTIVE RUN_NONINTERACTIVE);
+      Gimp::Net::gimp_init(grep {defined} $net_init);
+   }
+   warn "$$-Loading constants" if $verbose;
+   # now get constants from GIMP
+   require Gimp::Constant;
+   import Gimp::Constant;
+
    @_=@_default unless @_;
-   
+
    for(map { $_ eq ":DEFAULT" ? @_default : $_ } @_) {
       if ($_ eq ":auto") {
-         push(@export,@_consts,@_procs);
+         push @export,@Gimp::Constant::EXPORT,@_procs;
          *{"$up\::AUTOLOAD"} = sub {
             croak "Cannot call '$AUTOLOAD' at this time" unless initialized();
             my ($class,$name) = $AUTOLOAD =~ /^(.*)::(.*?)$/;
@@ -206,7 +62,7 @@ sub import($;@) {
             goto &$AUTOLOAD;
          };
       } elsif ($_ eq ":_auto2") {
-         push(@export,@_consts,@_procs);
+         push @export,@Gimp::Constant::EXPORT,@_procs;
          *{"$up\::AUTOLOAD"} = sub {
             warn __"$function: calling $AUTOLOAD without specifying the :auto import tag is deprecated!\n";
             croak __"Cannot call '$AUTOLOAD' at this time" unless initialized();
@@ -221,13 +77,15 @@ sub import($;@) {
 	  push @{"$class\::PREFIXES"}, @{"Gimp::$class\::PREFIXES"};
 	}
       } elsif ($_ eq ":consts") {
-         push(@export,@_consts);
+         push @export,@Gimp::Constant::EXPORT;
       } elsif ($_ eq ":param") {
-         push(@export,@_param);
+         push @export,@Gimp::Constant::PARAMS;
       } elsif (/^interface=(\S+)$/) {
          croak __"interface=... tag is no longer supported\n";
-      } elsif ($_=~/spawn_options=(\S+)/) {
+      } elsif (/spawn_options=(\S+)/) {
          $spawn_opts = $1;
+      } elsif (/net_init=(\S+)/) {
+	 # already used above, no-op
       } elsif ($_ ne "") {
          push(@export,$_);
       } elsif ($_ eq "") {
@@ -460,16 +318,17 @@ if ($interface_type=~/^lib$/i) {
 } else {
    croak __"interface '$interface_type' unsupported.";
 }
+warn "$$-Using interface '$interface_type'" if $Gimp::verbose;
 
 eval "require $interface_pkg" or croak $@;
 $interface_pkg->import;
+warn "$$-Finished loading '$interface_pkg'" if $Gimp::verbose;
 
 # create some common aliases
 for(qw(gimp_procedural_db_proc_exists gimp_call_procedure set_trace initialized)) {
    *$_ = \&{"$interface_pkg\::$_"};
 }
 
-*init  = \&{"$interface_pkg\::gimp_init"};
 *end   = \&{"$interface_pkg\::gimp_end"};
 *lock  = \&{"$interface_pkg\::lock"};
 *unlock= \&{"$interface_pkg\::unlock"};
@@ -486,7 +345,7 @@ sub ignore_functions(@) {
 
 sub AUTOLOAD {
   my ($class,$name) = $AUTOLOAD =~ /^(.*)::(.*?)$/;
-  warn "AUTOLOAD $AUTOLOAD(@_)" if $Gimp::verbose;
+  warn "$$-AUTOLOAD $AUTOLOAD(@_)" if $Gimp::verbose;
   for(@{"$class\::PREFIXES"}) {
     my $sub = $_.$name;
     if (exists $ignore_function{$sub}) {
@@ -512,10 +371,11 @@ sub AUTOLOAD {
       goto &$AUTOLOAD;
     } elsif (gimp_procedural_db_proc_exists($sub)) {
       *{$AUTOLOAD} = sub {
-	warn "gimp_call_procedure(@_)" if $Gimp::verbose;
+	warn "$$-gimp_call_procedure{0}(@_)" if $Gimp::verbose;
 	shift unless ref $_[0];
 	unshift @_, $sub;
 	#goto &gimp_call_procedure; # does not work, PERLBUG! #FIXME
+	warn "$$-gimp_call_procedure{1}(@_)" if $Gimp::verbose;
 	my @r = eval { gimp_call_procedure (@_) };
 	die $@ if $@; wantarray ? @r : $r[0];
       };
@@ -766,8 +626,8 @@ special handling. Currently they do not work when used over C<Gimp::Net>.
 
 =head1 OUTLINE OF A GIMP PLUG-IN
 
-All plug-ins (with the exception of those using C<Gimp::init>) I<must>
-contain a call to C<Gimp::main>.
+All plug-ins (running in "plugin mode") I<must> finish with a call to
+C<Gimp::main>.
 
 The return code should be immediately handed out to exit:
 
@@ -843,7 +703,7 @@ using OO-Syntax:
 
  Gimp->gimp_palette_set_foreground([20,5,7]);
  Gimp->palette_set_background("cornsilk");
- Palette->set_foreground('#1230f0');
+ Gimp::Palette->set_foreground('#1230f0');
 
 As you can see, you can also drop part of the name prefixes with this
 syntax, so its actually shorter to write and hopefully clearer to read.
@@ -880,20 +740,12 @@ which is too late for registering types.
 
 This function has not been well tested.
 
-=item Gimp::init([connection-argument]), Gimp::end()
+=item use Gimp qw(net_init=...);
 
-These is an alternative interface that replaces the call to Gimp::main
-and the net callback. At the moment it only works for the Net interface
-(L<Gimp::Net>), and not as a native plug-in. Here's an example:
-
- use Gimp;
- 
- Gimp::init;
- <do something with GIMP>
-
-The optional argument to init has the same format as the GIMP_HOST variable
-described in L<Gimp::Net>. Calling C<Gimp::end> is optional.  This is used
-in the process of testing the module ('make test').
+This is how to use Gimp-Perl in "net mode". Previous versions of this
+package required a call to Gimp::init. This is no longer necessary. The
+technical reason for this change is that when C<Gimp.pm> loads, it must
+connect to GIMP to load its constants, like PDB_INT32.
 
 =item Gimp::lock(), Gimp::unlock()
 
@@ -910,8 +762,8 @@ interface.
 Use the given rgb database instead of the default one. The format is
 the same as the one used by the X11 Consortiums rgb database (you might
 have a copy in /usr/lib/X11/rgb.txt). You can view the default database
-with C<perldoc -m Gimp>, at the end of the file (the default database is
-similar, but not identical to the X11 default rgb.txt)
+with C<perldoc -m Gimp::ColorDB>, at the end of the file (the default
+database is similar, but not identical to the X11 default rgb.txt)
 
 =item Gimp::initialized()
 
@@ -1025,8 +877,8 @@ has a section:
 
 SOME SYNTAX ALTERNATIVES
        $image = Gimp->image_new (width,height,type)
-       $image = new Image (width,height,type)
-       $image = image_new Display (width,height,type)
+       $image = new Gimp::Image (width,height,type)
+       $image = image_new Gimp::Display (width,height,type)
 
 =head1 DEBUGGING AIDS
 
@@ -1133,7 +985,7 @@ on input, either an array ref with 3 or 4 elements (i.e. [0.1,0.4,0.9]
 or [233,40,40]), a X11-like string ("#rrggbb") or a colour name
 ("papayawhip") (see set_rgb_db).
 
-=item DISPLAY, IMAGE, LAYER, CHANNEL, DRAWABLE, SELECTION, VECTORS
+=item DISPLAY, IMAGE, LAYER, CHANNEL, DRAWABLE, SELECTION, VECTORS, ITEM
 
 these will be mapped to corresponding objects (IMAGE => Gimp::Image). In
 trace output you will see small integers (the image/layer/etc..-ID)
@@ -1143,9 +995,10 @@ trace output you will see small integers (the image/layer/etc..-ID)
 represented as an array ref [name, flags, data], where name and data
 should be perl strings and flags is the numerical flag value.
 
-=item REGION, BOUNDARY, PATH, STATUS
+=item STATUS
 
-Not yet supported.
+Not yet supported, except implicitly - this is how exceptions (from
+"die") get returned in "net mode".
 
 =back
 

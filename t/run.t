@@ -1,14 +1,14 @@
 use strict;
-use Test::More tests => 15;
-#BEGIN { $Gimp::verbose = 1; }
-use Gimp qw(:auto);
+use Test::More;
+
+our ($dir, $DEBUG);
+BEGIN {
+#  $Gimp::verbose = 1;
+  $DEBUG = 0;
+  require 't/gimpsetup.pl';
+}
+use Gimp qw(:auto), "net_init=spawn/";
 #Gimp::set_trace(TRACE_ALL);
-
-our $dir;
-our $DEBUG = 0;
-require 't/gimpsetup.pl';
-
-Gimp::init("spawn/");
 
 ok((my $i = new Gimp::Image(10,10,RGB)), 'OO Syntax for new image');
 ok(

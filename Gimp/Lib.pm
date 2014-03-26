@@ -7,6 +7,7 @@ BEGIN {
    $VERSION = 2.3001;
    require XSLoader;
    XSLoader::load Gimp::Lib $VERSION;
+   warn "$$-Loading ".__PACKAGE__ if $Gimp::verbose;
 }
 
 use subs qw(
@@ -79,6 +80,8 @@ sub gimp_drawable_bounds {
    (@b[0,1],$b[2]-$b[0],$b[3]-$b[1]);
 }
 
+warn "$$-Finished loading ".__PACKAGE__ if $Gimp::verbose;
+
 1;
 __END__
 
@@ -92,8 +95,8 @@ Gimp::Lib - Interface to libgimp (as opposed to Gimp::Net)
 
 =head1 DESCRIPTION
 
-This is the package that interfaces to The Gimp via the libgimp interface,
-i.e. the normal interface to use with the Gimp. You don't normally use this
+This is the package that interfaces to GIMP via the libgimp interface,
+i.e. the normal interface to use with GIMP. You don't normally use this
 module directly, look at the documentation for the package "Gimp".
 
 =head1 AUTHOR

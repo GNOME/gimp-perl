@@ -1,18 +1,14 @@
 use strict;
 use Test::More;
-#BEGIN { $Gimp::verbose = 1; }
-use Gimp qw(:auto);
-#Gimp::set_trace(TRACE_ALL);
-use Config;
-
-our $dir;
-our $myplugins;
-our $DEBUG = 0;
-require 't/gimpsetup.pl';
-
-my $plugin = "$myplugins/test_perl_filter";
-write_plugin($DEBUG, $plugin, $Config{startperl}.
-  "\nBEGIN { \$Gimp::verbose = ".int($Gimp::verbose).'; }'.<<'EOF');
+our ($dir, $DEBUG, $myplugins);
+BEGIN {
+#  $Gimp::verbose = 1;
+  $DEBUG = 0;
+  require 't/gimpsetup.pl';
+  use Config;
+  my $plugin = "$myplugins/test_perl_filter";
+  write_plugin($DEBUG, $plugin, $Config{startperl}.
+    "\nBEGIN { \$Gimp::verbose = ".int($Gimp::verbose).'; }'.<<'EOF');
 
 use strict;
 use Gimp qw(:auto __ N_);
@@ -111,8 +107,9 @@ sub boilerplate_params {
 
 exit main;
 EOF
-
-Gimp::init("spawn/");
+}
+use Gimp qw(:auto), "net_init=spawn/";
+#Gimp::set_trace(TRACE_ALL);
 
 ok((my $i = Gimp::Image->new(10,10,RGB)), 'new image');
 ok(

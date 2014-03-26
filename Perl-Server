@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
+#BEGIN { $Gimp::verbose = 1; }
 use Gimp qw(__ N_);
 use Gimp::Net ();
 

@@ -1,14 +1,13 @@
 use strict;
 use Test::More;
-#BEGIN { $Gimp::verbose = 1; }
-use Gimp qw(:auto);
+our ($dir, $DEBUG);
+BEGIN {
+#  $Gimp::verbose = 1;
+  $DEBUG = 0;
+  require 't/gimpsetup.pl';
+}
+use Gimp qw(:auto), "net_init=spawn/";
 #Gimp::set_trace(TRACE_ALL);
-
-our $dir;
-our $DEBUG = 0;
-require 't/gimpsetup.pl';
-
-Gimp::init("spawn/");
 
 eval { Image->new(10,10,RGB); };
 ok($@, 'polluting version should fail');
