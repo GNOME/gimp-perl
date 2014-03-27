@@ -77,7 +77,7 @@ bugs
   * font_text with negative size? bug report #5523
   * gimp-perl list archives.. where and add this to the gimp.html page!
   * g_direct_equal and glin hash, kill in favour of way nicer perl hashes.
-  * ping-funktion für JENS.
+  * ping-funktion fÃ¼r JENS.
   * gtview_log (perlcc & helpfenster) erste zeile anzeigen + scrollbar
   * document on_xxx functions and register_callback
   * fix Gimp::Feature::missing => on_query-dir!
