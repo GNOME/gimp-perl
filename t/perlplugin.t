@@ -69,6 +69,26 @@ sub boilerplate_params {
 );
 
 &register(
+  "test_return_str_not_int",
+  boilerplate_params('param exception on return val', '<None>'),
+  [],
+  [
+    [ PF_INT16, "int", "Output int", ],
+  ],
+  sub { 'verbiage' }
+);
+
+&register(
+  "test_float_in",
+  boilerplate_params('in param float', '<None>'),
+  [
+    [ PF_FLOAT, "float", "Input float", ],
+  ],
+  [],
+  sub { 'verbiage' }
+);
+
+&register(
   "test_no_params",
   boilerplate_params('no params', '<None>'),
   [],
@@ -130,8 +150,13 @@ is_deeply(
 my $send_text = 'exception';
 eval { Gimp::Plugin->test_dies($send_text); };
 is($@, "$send_text\n", 'exception returned correctly');
-eval { is(Gimp::Plugin->test_pf_adjustment('text'), 'text', 'adj'); };
-like($@, qr/INT32/, 'pf_adjustment dies on non-INT32');
+eval { Gimp::Plugin->test_return_str_not_int; };
+like($@, qr/Expected a number/, 'exception handling on bad return value');
+eval { Gimp::Plugin->test_float_in('notfloat'); };
+like($@, qr/Expected a number/, 'exception handling on bad input value');
+ok(!Gimp::Plugin->test_float_in(0.75), 'float input');
+eval { Gimp::Plugin->test_pf_adjustment('text'); };
+like($@, qr/Expected a number/, 'pf_adjustment dies on non-INT32');
 is(Gimp::Plugin->test_pf_adjustment(17), 17, 'adj return');
 is(Gimp::Plugin->test_pf_adjustment(undef), 100, 'adj default');
 is(Gimp::Plugin->test_no_params, 1, 'no params');
