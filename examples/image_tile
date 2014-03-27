@@ -33,7 +33,7 @@ use Gimp::Fu;
 use Fcntl qw(O_RDWR O_CREAT O_TRUNC);
 use Gimp::Feature;
 BEGIN { eval "use DB_File";
-           $@ and Gimp::Feature::missing('Berkeley DB interface module') }
+	   $@ and Gimp::Feature::missing('Berkeley DB interface module') }
 # use strict;
 # use vars qw($DO_HSV $debug);
 
@@ -146,7 +146,7 @@ sub perl_fu_image_tile {
 	  if ($subtype != $type) {
 	    if ($type == RGB_IMAGE) {
 	      gimp_image_convert_rgb($img);
-            } elsif ($type == GRAY_IMAGE) {
+	    } elsif ($type == GRAY_IMAGE) {
 	      gimp_image_convert_grayscale($img);
 	    } elsif ($type == INDEXED_IMAGE) {
 	      gimp_image_convert_indexed($img,1,256);
@@ -238,7 +238,7 @@ sub perl_fu_image_tile {
 	  # Cell samples are stored as packed 3-byte values
 	  my($o1,$o2,$o3) = unpack 'CCC', $ocells[$xcell][$ycell];
 	  my($n1,$n2,$n3) = unpack 'CCC',
-	  	substr($tile_cache{$subfile},($xcell*$ycells+$ycell)*3,3);
+		substr($tile_cache{$subfile},($xcell*$ycells+$ycell)*3,3);
 	  # 2 methods of comparing: by RGB and by HSV. HSV seems to
 	  # give a more accurate map, as it stresses the matching of light
 	  # and darkness. We do some weighting of the HSV match so that

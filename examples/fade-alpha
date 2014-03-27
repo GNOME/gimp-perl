@@ -18,7 +18,7 @@ use strict 'vars';
 my ($direction, $cancelFlag);
 my ($plugin) = "plug_in_alpha_fade";
 
-# XPM's that I removed the $ and the @'s from (they get intrepreted in 
+# XPM's that I removed the $ and the @'s from (they get intrepreted in
 # strings, which makes for nasty problems).
 
 my @arr = (
@@ -784,26 +784,26 @@ my @arr = (
 ]);
 
 ###
-# Subroutines 
+# Subroutines
 ###
 sub do_fade
 {
   my ($image, $drawable) = @_;
   my (@bounds, $mask, $prevBack, $prevFore);
-  
+
   if (!$drawable->is_layer)
     {
       die "$plugin: Cannot operate on anything other than layers; Check that you don't have a channel or floating selection currently selected.";
     }
-    
+
   $image->undo_group_start;
   @bounds = $image->selection_bounds;
- 
+
   if (!$drawable->has_alpha)
     {
       $drawable->add_alpha;
     }
- 
+
   if ($drawable->get_mask)
     {
       $mask = $drawable->get_mask;
@@ -813,9 +813,9 @@ sub do_fade
       $mask = $drawable->create_mask(ADD_ALPHA_MASK);
       $drawable->add_mask($mask);
     }
-  
+
   Context->push();
-  
+
   Context->set_background([0.0,0.0,0.0,1.0]);
   Context->set_foreground([1.0,1.0,1.0,1.0]);
 
@@ -827,16 +827,16 @@ sub do_fade
   # Bounds Map
   # (1,2) (3,2)
   # (1,4) (3,4)
-  
+
   if ($direction==0)
     {
-      $mask->edit_blend(FG_BG_RGB_MODE, 
-                   NORMAL_MODE, 
-		   GRADIENT_LINEAR, 
+      $mask->edit_blend(FG_BG_RGB_MODE,
+                   NORMAL_MODE,
+		   GRADIENT_LINEAR,
 		   100.0,             # opacity
 		   0.0,               # offset
-                   REPEAT_NONE, 
-		   0,                 # reverse 
+                   REPEAT_NONE,
+		   0,                 # reverse
 		   0,                 # supersample
 		   1,                 # recursion levels
 		   0.1,               # supersample threshold
@@ -846,61 +846,61 @@ sub do_fade
     }
   elsif ($direction==1)
     {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0, 
+      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0,
                    REPEAT_NONE, 0, 0, 0, 1, 0,
 		   $bounds[3], ($bounds[2]+$bounds[4])/2,
 		   $bounds[1], ($bounds[2]+$bounds[4])/2);
-    
+
     }
   elsif ($direction==2)
     {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0, 
-                   REPEAT_NONE, 0, 0, 0, 1, 0, 
+      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0,
+                   REPEAT_NONE, 0, 0, 0, 1, 0,
 		   $bounds[3], $bounds[2],
 		   $bounds[1], $bounds[4]);
 
     }
   elsif ($direction==3)
     {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0, 
+      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0,
                    REPEAT_NONE, 0, 0, 0, 1, 0,
 		   ($bounds[3]+$bounds[1])/2, $bounds[4],
 		   ($bounds[3]+$bounds[1])/2, $bounds[2]);
     }
   elsif ($direction==4)
     {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_RADIAL, 100.0, 0.0, 
-                   REPEAT_NONE, 0, 0, 0, 1, 0, 
-		   ($bounds[1]+$bounds[3])/2, 
-		   ($bounds[2]+$bounds[4])/2, 
+      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_RADIAL, 100.0, 0.0,
+                   REPEAT_NONE, 0, 0, 0, 1, 0,
+		   ($bounds[1]+$bounds[3])/2,
+		   ($bounds[2]+$bounds[4])/2,
 		   ($bounds[3]+$bounds[1])/2, $bounds[4]);
 
     }
   elsif ($direction==5)
     {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0, 
-                   REPEAT_NONE, 0, 0, 0, 1, 0, 
+      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0,
+                   REPEAT_NONE, 0, 0, 0, 1, 0,
 		   ($bounds[3]+$bounds[1])/2, $bounds[2],
 		   ($bounds[3]+$bounds[1])/2, $bounds[4]);
     }
   elsif ($direction==6)
     {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0, 
-                   REPEAT_NONE, 0, 0, 0, 1, 0, 
+      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0,
+                   REPEAT_NONE, 0, 0, 0, 1, 0,
 		   $bounds[1], $bounds[4],
 		   $bounds[3], $bounds[2]);
     }
   elsif ($direction==7)
     {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0, 
-                   REPEAT_NONE, 0, 0, 0, 1, 0, 
+      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0,
+                   REPEAT_NONE, 0, 0, 0, 1, 0,
 		   $bounds[1], ($bounds[2]+$bounds[4])/2,
 		   $bounds[3], ($bounds[2]+$bounds[4])/2);
     }
   elsif ($direction==8)
     {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0, 
-                   REPEAT_NONE, 0, 0, 0, 1, 0, 
+      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0,
+                   REPEAT_NONE, 0, 0, 0, 1, 0,
 		   $bounds[1], $bounds[2],
 		   $bounds[3], $bounds[4]);
     }
@@ -908,12 +908,12 @@ sub do_fade
     {
       $drawable->remove_mask(MASK_APPLY);
     }
- 
-  Context->pop(); 
+
+  Context->pop();
   $image->undo_group_end;
 }
 
-sub btn_pressed 
+sub btn_pressed
 {
   my ($widget, $btnIndex) = @_;
   $direction = $btnIndex;
@@ -925,10 +925,10 @@ sub add_pixmap
   my @tar = @{$arr[$num]};
   my ($pixmap, $mask) = Gtk2::Gdk::Pixmap->colormap_create_from_xpm_d(undef,
                         $but->get_colormap,
-                        $but->style->bg('normal'), 
+                        $but->style->bg('normal'),
 			@{$arr[$num]});
   my ($pixmapId) = new_from_pixmap Gtk2::Image($pixmap, $mask);
-  
+
   $pixmapId->show;
   $but->add($pixmapId);
 }
@@ -937,16 +937,16 @@ sub okCbk
 {
   $cancelFlag = 0;
   Gtk2->main_quit;
-} 
+}
 
 sub create_window
-{ 
+{
   my ($window, $frm, $box1, $hbox, $hsep, $btnTable, $i, $j, $btn);
 
   $window = new Gtk2::Window('toplevel');
   $window->set_name("Alpha Fader");
   $window->set_wmclass("Gimp", "AlphaFader");
-  
+
   $window->signal_connect("destroy" => \&Gtk2::main_quit);
   $window->signal_connect("delete_event" => \&Gtk2::false);
 
@@ -962,7 +962,7 @@ sub create_window
   $btnTable = new Gtk2::Table(3,3,1);
   $btnTable->set_border_width(6);
   $frm->add($btnTable);
-  
+
   $btn = new Gtk2::RadioButton;
 
   for ($i=0;$i<3;$i++)
@@ -973,9 +973,9 @@ sub create_window
            $btn->set_mode(0);
 	   $btn->signal_connect("clicked", \&btn_pressed, $i*3+$j);
 	   $btn->show;
-	   $btnTable->attach_defaults($btn, $i, $i+1, $j, $j+1); 
+	   $btnTable->attach_defaults($btn, $i, $i+1, $j, $j+1);
 	   add_pixmap($window, $btn, $i*3+$j);
-	   
+
 	   if (Gimp->get_data($plugin) ne "")
 	     { # if run before, get last data
 	       if (Gimp->get_data($plugin) == $i*3+$j)
@@ -983,7 +983,7 @@ sub create_window
 	           $btn->clicked;
 	         }
 	     }
-	   else 
+	   else
 	     { # first run of plug-in, set first button
 	       if ($i==0 && $j==0)
 	         {
@@ -996,13 +996,13 @@ sub create_window
   $hsep = new Gtk2::HSeparator;
   $box1->pack_start($hsep, 0, 0, 0);
   $hsep->show;
- 
+
   $hbox = new Gtk2::HButtonBox;
   $hbox->set_border_width(2);
   $hbox->set_spacing(4);
   $box1->pack_start($hbox, 0, 0, 0);
   $hbox->show;
- 
+
   $btn = new Gtk2::Button "OK";
   $btn->can_default(1);
   $btn->signal_connect("clicked" => \&okCbk);
@@ -1015,25 +1015,25 @@ sub create_window
   $btn->signal_connect("clicked" => \&Gtk2::main_quit);
   $btn->show;
   $hbox->pack_start($btn, 0, 0, 0);
-  
+
   $btnTable->show;
   $box1->show;
   $window->show;
 }
 
-Gimp::on_run 
+Gimp::on_run
 {
   my ($interactive, $img, $drw);
   ($interactive, $img, $drw, $direction) = @_;
 
   $cancelFlag = 1;
   if ($interactive==1)
-    { 
+    {
        $cancelFlag = 0;
     }
   elsif ($interactive==2)
     {
-       $direction = Gimp->get_data($plugin); 
+       $direction = Gimp->get_data($plugin);
        $cancelFlag = 0;
     }
   else
@@ -1042,7 +1042,7 @@ Gimp::on_run
       create_window;
       main Gtk2;
     }
-    
+
   # Do the gimply stuff on it
   if (!$cancelFlag)
     {
@@ -1054,21 +1054,21 @@ Gimp::on_run
 
 Gimp::on_query {
 gimp_install_procedure(
-$plugin, 
-"Fade the alpha channel of a layer from one side to another", 
-"This was written as a slightly useful exercise,  
-mostly to learn Gtk's excellent perl interface.  It was  
-inspired by a mailing list question that asked how to do 
-exactly what this does, which is fade the alpha from one 
-side to another.", 
-"Seth Burgess", 
-"Seth Burgess", 
-"2000", 
-"<Image>/Layer/Transparency/Fade...", 
-"*", 
-PLUGIN,  
+$plugin,
+"Fade the alpha channel of a layer from one side to another",
+"This was written as a slightly useful exercise,
+mostly to learn Gtk's excellent perl interface.  It was
+inspired by a mailing list question that asked how to do
+exactly what this does, which is fade the alpha from one
+side to another.",
+"Seth Burgess",
+"Seth Burgess",
+"2000",
+"<Image>/Layer/Transparency/Fade...",
+"*",
+PLUGIN,
 [
- [PDB_INT32, "run_mode", "Interactive, [non-interactive"],  
+ [PDB_INT32, "run_mode", "Interactive, [non-interactive"],
  [PDB_IMAGE, "image", "Input image (unused)"],
  [PDB_DRAWABLE, "drawable", "Input drawable"],
  [PDB_INT32, "direction", "Direction to fade(0-8)"]
@@ -1080,7 +1080,7 @@ exit main;
 
 =head1 LICENSE
 
-Copyright Seth Burgess.  
+Copyright Seth Burgess.
 Distributed under the same terms as Gimp-Perl.
 
 =cut

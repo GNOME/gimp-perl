@@ -225,7 +225,7 @@ feature was missing.
 This is the function used when importing symbols from the module.
 
 =item missing(feature-description,[function-name])
-   
+
 Indicates that a generic feature (described by the first argument) is
 missing. A function name can further be specified. This function will log
 the given message and exit gracefully.

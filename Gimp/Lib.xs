@@ -127,8 +127,8 @@ static pdl *redim_pdl (pdl *p, int ndim, int newsize)
   sv_setiv (*av_fetch (dims, ndim, 0), newsize);
 
   PDL->affine_new (p, r, 0,
-                   sv_2mortal (newRV_noinc ((SV*)dims)),
-                   sv_2mortal (newRV_noinc ((SV*)dimincs)));
+		   sv_2mortal (newRV_noinc ((SV*)dims)),
+		   sv_2mortal (newRV_noinc ((SV*)dimincs)));
 
   return r;
 }
@@ -167,15 +167,15 @@ trace_init ()
 #if __STDC_VERSION__ > 199900
 #define trace_printf(...) \
 	do { \
-        	if (trace_file) PerlIO_printf (trace_file, __VA_ARGS__); \
+		if (trace_file) PerlIO_printf (trace_file, __VA_ARGS__); \
 		else		sv_catpvf (trace_var, __VA_ARGS__); \
-        } while(0)
+	} while(0)
 #elif __GNUC__
 #define trace_printf(frmt,args...) \
-        do { \
+	do { \
 		if (trace_file) PerlIO_printf (trace_file, frmt, ## args); \
 		else		sv_catpvf (trace_var, frmt, ## args); \
-        } while(0)
+	} while(0)
 #elif defined(__STDC__)
 
 /* sigh */
@@ -313,11 +313,11 @@ static SV *force_gdrawable (SV *drawable)
   if (!(sv_derived_from (drawable, PKG_GDRAWABLE)))
     {
       if (sv_derived_from (drawable, PKG_DRAWABLE)
-          || sv_derived_from (drawable, PKG_LAYER)
-          || sv_derived_from (drawable, PKG_CHANNEL))
-        drawable = sv_2mortal (new_gdrawable (SvIV (SvRV (drawable))));
+	  || sv_derived_from (drawable, PKG_LAYER)
+	  || sv_derived_from (drawable, PKG_CHANNEL))
+	drawable = sv_2mortal (new_gdrawable (SvIV (SvRV (drawable))));
       else
-        croak (__("argument is not of type %s"), PKG_GDRAWABLE);
+	croak (__("argument is not of type %s"), PKG_GDRAWABLE);
     }
 
   return drawable;
@@ -403,7 +403,7 @@ perl_paramdef_count (GimpParamDef *arg, int count)
     { \
       for (j = 0; j < args[index-1].data.d_int32; j++) \
 	trace_printf (frmt "%s", (ctype) args[index].data.datatype[j], \
-	              j < args[index-1].data.d_int32 - 1 ? ", " : ""); \
+		      j < args[index-1].data.d_int32 - 1 ? ", " : ""); \
     } \
   else \
     trace_printf (__("(UNINITIALIZED)")); \
@@ -431,12 +431,12 @@ dump_params (int nparams, GimpParam *args, GimpParamDef *params)
   for (i = 0; i < nparams; i++)
     {
       if ((trace & TRACE_TYPE) == TRACE_TYPE)
-        {
+	{
 	  if ((unsigned int)params[i].type < GIMP_PDB_END+1)
 	    trace_printf ("%s ", ptype[params[i].type]);
 	  else
 	    trace_printf ("T%d ", params[i].type);
-        }
+	}
 
       if ((trace & TRACE_NAME) == TRACE_NAME)
 	trace_printf ("%s=", params[i].name);
@@ -447,7 +447,7 @@ dump_params (int nparams, GimpParam *args, GimpParamDef *params)
 	  case GIMP_PDB_INT16:		trace_printf ("%d", args[i].data.d_int16); break;
 	  case GIMP_PDB_INT8:		trace_printf ("%d", (guint8) args[i].data.d_int8); break;
 	  case GIMP_PDB_FLOAT:		trace_printf ("%f", args[i].data.d_float); break;
-          case GIMP_PDB_STRING:		trace_printf ("\"%s\"", args[i].data.d_string ? args[i].data.d_string : "[null]"); break;
+	  case GIMP_PDB_STRING:		trace_printf ("\"%s\"", args[i].data.d_string ? args[i].data.d_string : "[null]"); break;
 	  case GIMP_PDB_DISPLAY:	trace_printf ("%d", args[i].data.d_display); break;
 	  case GIMP_PDB_IMAGE:		trace_printf ("%d", args[i].data.d_image); break;
 	  case GIMP_PDB_LAYER:		trace_printf ("%d", args[i].data.d_layer); break;
@@ -483,36 +483,36 @@ dump_params (int nparams, GimpParam *args, GimpParamDef *params)
 
 	  case GIMP_PDB_COLOR:
 	    trace_printf ("[%f,%f,%f,%f]",
-	                  args[i].data.d_color.r,
-	                  args[i].data.d_color.g,
-	                  args[i].data.d_color.b,
-                          args[i].data.d_color.a);
+			  args[i].data.d_color.r,
+			  args[i].data.d_color.g,
+			  args[i].data.d_color.b,
+			  args[i].data.d_color.a);
 	    break;
 
 	  case GIMP_PDB_PARASITE:
 	    {
 	      gint32 found = 0;
 
-              if (args[i].data.d_parasite.name)
-                {
-                 trace_printf ("[%s, ", args[i].data.d_parasite.name);
-                 if (args[i].data.d_parasite.flags & GIMP_PARASITE_PERSISTENT)
-                   {
-                     trace_printf ("GIMP_PARASITE_PERSISTENT");
-                     found |= GIMP_PARASITE_PERSISTENT;
-                   }
+	      if (args[i].data.d_parasite.name)
+		{
+		 trace_printf ("[%s, ", args[i].data.d_parasite.name);
+		 if (args[i].data.d_parasite.flags & GIMP_PARASITE_PERSISTENT)
+		   {
+		     trace_printf ("GIMP_PARASITE_PERSISTENT");
+		     found |= GIMP_PARASITE_PERSISTENT;
+		   }
 
-                 if (args[i].data.d_parasite.flags & ~found)
-                   {
-                     if (found)
-                       trace_printf ("|");
-                     trace_printf ("%d", args[i].data.d_parasite.flags & ~found);
-                   }
+		 if (args[i].data.d_parasite.flags & ~found)
+		   {
+		     if (found)
+		       trace_printf ("|");
+		     trace_printf ("%d", args[i].data.d_parasite.flags & ~found);
+		   }
 
-                 trace_printf (__(", %d bytes data]"), args[i].data.d_parasite.size);
-               }
-              else
-                trace_printf (__("[undefined]"));
+		 trace_printf (__(", %d bytes data]"), args[i].data.d_parasite.size);
+	       }
+	      else
+		trace_printf (__("[undefined]"));
 	    }
 	    break;
 
@@ -757,14 +757,14 @@ static int check_int (char *croak_str, SV *sv)
       char *p = SvPV_nolen (sv);
 
       if (*p
-          && *p != '0' && *p != '1' && *p != '2' && *p != '3' && *p != '4'
-          && *p != '5' && *p != '6' && *p != '7' && *p != '8' && *p != '9'
-          && *p != '-')
-        {
-          sprintf (croak_str, __("Expected an INT32 but got '%s'. Add '*1' if you really intend to pass in a string"), p);
-          check_for_typoe (croak_str, p);
-          return 0;
-        }
+	  && *p != '0' && *p != '1' && *p != '2' && *p != '3' && *p != '4'
+	  && *p != '5' && *p != '6' && *p != '7' && *p != '8' && *p != '9'
+	  && *p != '-')
+	{
+	  sprintf (croak_str, __("Expected an INT32 but got '%s'. Add '*1' if you really intend to pass in a string"), p);
+	  check_for_typoe (croak_str, p);
+	  return 0;
+	}
     }
   return 1;
 }
@@ -815,27 +815,27 @@ push_gimp_sv (const GimpParam *arg, int array_as_ref)
       case GIMP_PDB_VECTORS:
       case GIMP_PDB_STATUS:
 
-        {
-          int id;
+	{
+	  int id;
 
-          switch (arg->type) {
-            case GIMP_PDB_DISPLAY:	id = arg->data.d_display; break;
-            case GIMP_PDB_IMAGE:	id = arg->data.d_image; break;
-            case GIMP_PDB_LAYER:	id = arg->data.d_layer; break;
-            case GIMP_PDB_CHANNEL:	id = arg->data.d_channel; break;
-            case GIMP_PDB_DRAWABLE:	id = arg->data.d_drawable; break;
-            case GIMP_PDB_SELECTION:	id = arg->data.d_selection; break;
-            case GIMP_PDB_VECTORS:	id = arg->data.d_vectors; break;
-            case GIMP_PDB_STATUS:	id = arg->data.d_status; break;
-            default:			abort ();
-          }
+	  switch (arg->type) {
+	    case GIMP_PDB_DISPLAY:	id = arg->data.d_display; break;
+	    case GIMP_PDB_IMAGE:	id = arg->data.d_image; break;
+	    case GIMP_PDB_LAYER:	id = arg->data.d_layer; break;
+	    case GIMP_PDB_CHANNEL:	id = arg->data.d_channel; break;
+	    case GIMP_PDB_DRAWABLE:	id = arg->data.d_drawable; break;
+	    case GIMP_PDB_SELECTION:	id = arg->data.d_selection; break;
+	    case GIMP_PDB_VECTORS:	id = arg->data.d_vectors; break;
+	    case GIMP_PDB_STATUS:	id = arg->data.d_status; break;
+	    default:			abort ();
+	  }
 
-          if (id == -1)
-            PUSHs (newSVsv (&PL_sv_undef));
-          else
-            sv = newSViv (id);
-        }
-        break;
+	  if (id == -1)
+	    PUSHs (newSVsv (&PL_sv_undef));
+	  else
+	    sv = newSViv (id);
+	}
+	break;
 
       case GIMP_PDB_COLOR:
 	{
@@ -852,14 +852,14 @@ push_gimp_sv (const GimpParam *arg, int array_as_ref)
 	break;
 
       case GIMP_PDB_PARASITE:
-        if (arg->data.d_parasite.name)
-          {
-            AV *av = newAV ();
-            av_push (av, neuSVpv (arg->data.d_parasite.name));
-            av_push (av, newSViv (arg->data.d_parasite.flags));
-            av_push (av, newSVpv (arg->data.d_parasite.data, arg->data.d_parasite.size));
-            sv = (SV *)av;
-          }
+	if (arg->data.d_parasite.name)
+	  {
+	    AV *av = newAV ();
+	    av_push (av, neuSVpv (arg->data.d_parasite.name));
+	    av_push (av, newSViv (arg->data.d_parasite.flags));
+	    av_push (av, newSVpv (arg->data.d_parasite.data, arg->data.d_parasite.size));
+	    sv = (SV *)av;
+	  }
 
 	break;
 
@@ -938,8 +938,8 @@ convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
   switch (arg->type)
     {
       case GIMP_PDB_INT32:	check_int (croak_str, sv);
-	                        arg->data.d_int32 = SvIV(sv);
-         			arg->data.d_int32	= sv2gimp_extract_noref (SvIV, "INT32"); break;
+				arg->data.d_int32 = SvIV(sv);
+				arg->data.d_int32	= sv2gimp_extract_noref (SvIV, "INT32"); break;
       case GIMP_PDB_INT16:	arg->data.d_int16	= sv2gimp_extract_noref (SvIV, "INT16"); break;
       case GIMP_PDB_INT8:	arg->data.d_int8	= sv2gimp_extract_noref (SvIV, "INT8"); break;
       case GIMP_PDB_FLOAT:	arg->data.d_float	= sv2gimp_extract_noref (SvNV, "FLOAT"); break;
@@ -958,47 +958,47 @@ convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
       case GIMP_PDB_VECTORS:
       case GIMP_PDB_STATUS:
 
-        if (SvOK(sv))
-          switch (arg->type) {
-            case GIMP_PDB_ITEM:		arg->data.d_item	= unbless(sv, PKG_ITEM  , croak_str); break;
-            case GIMP_PDB_DISPLAY:	arg->data.d_display	= unbless(sv, PKG_DISPLAY  , croak_str); break;
-            case GIMP_PDB_LAYER:	arg->data.d_layer	= unbless(sv, PKG_ITEM  , croak_str); break;
-            case GIMP_PDB_CHANNEL:	arg->data.d_channel	= unbless(sv, PKG_ITEM  , croak_str); break;
-            case GIMP_PDB_DRAWABLE:	arg->data.d_drawable	= unbless(sv, PKG_ITEM  , croak_str); break;
-            case GIMP_PDB_VECTORS:	arg->data.d_vectors	= unbless(sv, PKG_ITEM  , croak_str); break;
-            case GIMP_PDB_STATUS:	arg->data.d_status	= sv2gimp_extract_noref (SvIV, "STATUS"); break;
-            case GIMP_PDB_IMAGE:
-              {
-                if (sv_derived_from (sv, PKG_ITEM))
-                  arg->data.d_image = gimp_item_get_image(
+	if (SvOK(sv))
+	  switch (arg->type) {
+	    case GIMP_PDB_ITEM:		arg->data.d_item	= unbless(sv, PKG_ITEM  , croak_str); break;
+	    case GIMP_PDB_DISPLAY:	arg->data.d_display	= unbless(sv, PKG_DISPLAY  , croak_str); break;
+	    case GIMP_PDB_LAYER:	arg->data.d_layer	= unbless(sv, PKG_ITEM  , croak_str); break;
+	    case GIMP_PDB_CHANNEL:	arg->data.d_channel	= unbless(sv, PKG_ITEM  , croak_str); break;
+	    case GIMP_PDB_DRAWABLE:	arg->data.d_drawable	= unbless(sv, PKG_ITEM  , croak_str); break;
+	    case GIMP_PDB_VECTORS:	arg->data.d_vectors	= unbless(sv, PKG_ITEM  , croak_str); break;
+	    case GIMP_PDB_STATUS:	arg->data.d_status	= sv2gimp_extract_noref (SvIV, "STATUS"); break;
+	    case GIMP_PDB_IMAGE:
+	      {
+		if (sv_derived_from (sv, PKG_ITEM))
+		  arg->data.d_image = gimp_item_get_image(
 		    unbless(sv, PKG_ITEM, croak_str)
 		  );
-                else if (sv_derived_from (sv, PKG_IMAGE) || !SvROK (sv)) {
+		else if (sv_derived_from (sv, PKG_IMAGE) || !SvROK (sv)) {
 		  arg->data.d_image = unbless(sv, PKG_IMAGE, croak_str);
 		  break;
 		} else
-                  strcpy (croak_str, __("argument incompatible with type IMAGE"));
+		  strcpy (croak_str, __("argument incompatible with type IMAGE"));
 
-                return 0;
-              }
+		return 0;
+	      }
 
-            default:
-              abort ();
-          }
-        else
-          switch (arg->type) {
-            case GIMP_PDB_ITEM:		arg->data.d_item	= -1; break;
-            case GIMP_PDB_DISPLAY:	arg->data.d_display	= -1; break;
-            case GIMP_PDB_LAYER:	arg->data.d_layer	= -1; break;
-            case GIMP_PDB_CHANNEL:	arg->data.d_channel	= -1; break;
-            case GIMP_PDB_DRAWABLE:	arg->data.d_drawable	= -1; break;
-            case GIMP_PDB_VECTORS:	arg->data.d_vectors	= -1; break;
-            case GIMP_PDB_STATUS:	arg->data.d_status	= -1; break;
-            case GIMP_PDB_IMAGE:	arg->data.d_image	= -1; return 0; break;
-            default:			abort ();
-          }
+	    default:
+	      abort ();
+	  }
+	else
+	  switch (arg->type) {
+	    case GIMP_PDB_ITEM:		arg->data.d_item	= -1; break;
+	    case GIMP_PDB_DISPLAY:	arg->data.d_display	= -1; break;
+	    case GIMP_PDB_LAYER:	arg->data.d_layer	= -1; break;
+	    case GIMP_PDB_CHANNEL:	arg->data.d_channel	= -1; break;
+	    case GIMP_PDB_DRAWABLE:	arg->data.d_drawable	= -1; break;
+	    case GIMP_PDB_VECTORS:	arg->data.d_vectors	= -1; break;
+	    case GIMP_PDB_STATUS:	arg->data.d_status	= -1; break;
+	    case GIMP_PDB_IMAGE:	arg->data.d_image	= -1; return 0; break;
+	    default:			abort ();
+	  }
 
-      	break;
+	break;
 
       case GIMP_PDB_COLOR:
 	canonicalize_colour (croak_str, sv, &arg->data.d_color);
@@ -1009,19 +1009,19 @@ convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
 	  {
 	    if (SvTYPE(SvRV(sv)) == SVt_PVAV)
 	      {
-	        AV *av = (AV *)SvRV(sv);
-	        if (av_len(av) == 2)
-	          {
-                    STRLEN size;
+		AV *av = (AV *)SvRV(sv);
+		if (av_len(av) == 2)
+		  {
+		    STRLEN size;
 
-	            arg->data.d_parasite.name  = SvPv(*av_fetch(av, 0, 0));
-	            arg->data.d_parasite.flags = SvIV(*av_fetch(av, 1, 0));
-	            arg->data.d_parasite.data  = SvPV(*av_fetch(av, 2, 0), size);
+		    arg->data.d_parasite.name  = SvPv(*av_fetch(av, 0, 0));
+		    arg->data.d_parasite.flags = SvIV(*av_fetch(av, 1, 0));
+		    arg->data.d_parasite.data  = SvPV(*av_fetch(av, 2, 0), size);
 
-                    arg->data.d_parasite.size = size;
-	          }
-	        else
-	          sprintf (croak_str, __("illegal parasite specification, expected three array members"));
+		    arg->data.d_parasite.size = size;
+		  }
+		else
+		  sprintf (croak_str, __("illegal parasite specification, expected three array members"));
 	      }
 	    else
 	      sprintf (croak_str, __("illegal parasite specification, arrayref expected"));
@@ -1129,10 +1129,10 @@ static void pii_query(void) { try_call ("-query"); }
 static void pii_quit (void) { try_call ("-quit" ); }
 
 static void pii_run(const gchar *name,
-                    gint nparams,
-                    const GimpParam *param,
-                    gint *xnreturn_vals,
-                    GimpParam **xreturn_vals)
+		    gint nparams,
+		    const GimpParam *param,
+		    gint *xnreturn_vals,
+		    GimpParam **xreturn_vals)
 {
   // static as need to leave allocated until finished with; freed on next entry
   static GimpParam *return_vals;
@@ -1296,18 +1296,18 @@ set_trace (var)
 
 		if (SvROK (sv) || SvTYPE (sv) == SVt_PVGV)
 		  {
-	            if (trace_var)
+		    if (trace_var)
 		      SvREFCNT_dec (trace_var), trace_var = 0;
 
 		    if (SvTYPE (sv) == SVt_PVGV) /* pray it's a filehandle!  */
 		      trace_file = IoOFP (GvIO (sv));
 		    else
 		      {
-		        trace_file = 0;
-		        sv = SvRV (sv);
-		        SvREFCNT_inc (sv);
-		        (void) SvUPGRADE (sv, SVt_PV);
-		        trace_var = sv;
+			trace_file = 0;
+			sv = SvRV (sv);
+			SvREFCNT_inc (sv);
+			(void) SvUPGRADE (sv, SVt_PV);
+			trace_var = sv;
 		      }
 		  }
 		else
@@ -1354,7 +1354,7 @@ gimp_main(...)
 		    gimp_is_initialized = 1;
 		    RETVAL = gimp_main (&PLUG_IN_INFO, argc, argv);
 		    gimp_is_initialized = 0;
-                    /*exit (0);*/ /*D*//* shit, some memory problem here, so just exit */
+		    /*exit (0);*/ /*D*//* shit, some memory problem here, so just exit */
 		  }
 	OUTPUT:
 	RETVAL
@@ -1370,21 +1370,21 @@ initialized()
 
 int
 gimp_major_version()
-   	CODE:
+	CODE:
 	RETVAL = gimp_major_version;
 	OUTPUT:
 	RETVAL
 
 int
 gimp_minor_version()
-   	CODE:
+	CODE:
 	RETVAL = gimp_minor_version;
 	OUTPUT:
 	RETVAL
 
 int
 gimp_micro_version()
-   	CODE:
+	CODE:
 	RETVAL = gimp_micro_version;
 	OUTPUT:
 	RETVAL
@@ -1476,7 +1476,7 @@ PPCODE:
 
 void
 gimp_call_procedure (proc_name, ...)
-  utf8_str 	proc_name
+  utf8_str	proc_name
 PPCODE:
 {
   char croak_str[MAX_STRING] = "";
@@ -1753,7 +1753,7 @@ gimp_get_data(id)
 		gimp_get_data (SvPV_nolen (id), SvGROW (data, dlen+1));
 		SvCUR_set (data, dlen);
 		*((char *)SvPV_nolen (data) + dlen) = 0;
-	        XPUSHs (sv_2mortal (data));
+		XPUSHs (sv_2mortal (data));
 	}
 
 gdouble
@@ -1775,11 +1775,11 @@ SV *
 gimp_personal_rc_file(basename)
 	char *	basename
 	CODE:
-        basename = gimp_personal_rc_file (basename);
-        RETVAL = sv_2mortal (newSVpv (basename, 0));
-        g_free (basename);
-        OUTPUT:
-        RETVAL
+	basename = gimp_personal_rc_file (basename);
+	RETVAL = sv_2mortal (newSVpv (basename, 0));
+	g_free (basename);
+	OUTPUT:
+	RETVAL
 
 guint
 gimp_tile_width()
@@ -1799,7 +1799,7 @@ SV *
 gimp_drawable_get(drawable_ID)
 	DRAWABLE	drawable_ID
 	CODE:
-        RETVAL = new_gdrawable (drawable_ID);
+	RETVAL = new_gdrawable (drawable_ID);
 	OUTPUT:
 	RETVAL
 
@@ -1817,7 +1817,7 @@ gimp_pixel_rgn_init(gdrawable, x, y, width, height, dirty, shadow)
 	int	dirty
 	int	shadow
 	CODE:
-        RETVAL = new_gpixelrgn (force_gdrawable (gdrawable),x,y,width,height,dirty,shadow);
+	RETVAL = new_gpixelrgn (force_gdrawable (gdrawable),x,y,width,height,dirty,shadow);
 	OUTPUT:
 	RETVAL
 
@@ -1834,24 +1834,24 @@ gimp_pixel_rgn_resize(pr, x, y, width, height)
 GimpPixelRgnIterator
 gimp_pixel_rgns_register(...)
 	CODE:
-        if (items == 1)
+	if (items == 1)
 	  RETVAL = gimp_pixel_rgns_register (1, old_pixelrgn (ST (0)));
-        else if (items == 2)
+	else if (items == 2)
 	  RETVAL = gimp_pixel_rgns_register (2, old_pixelrgn (ST (0)), old_pixelrgn (ST (1)));
-        else if (items == 3)
+	else if (items == 3)
 	  RETVAL = gimp_pixel_rgns_register (3, old_pixelrgn (ST (0)), old_pixelrgn (ST (1)), old_pixelrgn (ST (2)));
-        else
-          croak (__("gimp_pixel_rgns_register supports only 1, 2 or 3 arguments, upgrade to gimp-1.1 and report this error"));
-        OUTPUT:
-        RETVAL
+	else
+	  croak (__("gimp_pixel_rgns_register supports only 1, 2 or 3 arguments, upgrade to gimp-1.1 and report this error"));
+	OUTPUT:
+	RETVAL
 
 SV *
 gimp_pixel_rgns_process(pri_ptr)
 	GimpPixelRgnIterator	pri_ptr
-        CODE:
-        RETVAL = boolSV (gimp_pixel_rgns_process (pri_ptr));
-        OUTPUT:
-        RETVAL
+	CODE:
+	RETVAL = boolSV (gimp_pixel_rgns_process (pri_ptr));
+	OUTPUT:
+	RETVAL
 
 # struct accessor functions
 
@@ -1859,7 +1859,7 @@ guint
 gimp_gdrawable_width(gdrawable)
 	GimpDrawable *gdrawable
 	CODE:
-        RETVAL = gdrawable->width;
+	RETVAL = gdrawable->width;
 	OUTPUT:
 	RETVAL
 
@@ -1867,7 +1867,7 @@ guint
 gimp_gdrawable_height(gdrawable)
 	GimpDrawable *gdrawable
 	CODE:
-        RETVAL = gdrawable->height;
+	RETVAL = gdrawable->height;
 	OUTPUT:
 	RETVAL
 
@@ -1875,7 +1875,7 @@ guint
 gimp_gdrawable_ntile_rows(gdrawable)
 	GimpDrawable *gdrawable
 	CODE:
-        RETVAL = gdrawable->ntile_rows;
+	RETVAL = gdrawable->ntile_rows;
 	OUTPUT:
 	RETVAL
 
@@ -1883,7 +1883,7 @@ guint
 gimp_gdrawable_ntile_cols(gdrawable)
 	GimpDrawable *gdrawable
 	CODE:
-        RETVAL = gdrawable->ntile_cols;
+	RETVAL = gdrawable->ntile_cols;
 	OUTPUT:
 	RETVAL
 
@@ -1891,7 +1891,7 @@ guint
 gimp_gdrawable_bpp(gdrawable)
 	GimpDrawable *gdrawable
 	CODE:
-        RETVAL = gdrawable->bpp;
+	RETVAL = gdrawable->bpp;
 	OUTPUT:
 	RETVAL
 
@@ -1899,7 +1899,7 @@ gint32
 gimp_gdrawable_id(gdrawable)
 	GimpDrawable *gdrawable
 	CODE:
-        RETVAL = gdrawable->drawable_id;
+	RETVAL = gdrawable->drawable_id;
 	OUTPUT:
 	RETVAL
 
@@ -1907,7 +1907,7 @@ guint
 gimp_pixel_rgn_x(pr)
 	GimpPixelRgn *pr
 	CODE:
-        RETVAL = pr->x;
+	RETVAL = pr->x;
 	OUTPUT:
 	RETVAL
 
@@ -1915,7 +1915,7 @@ guint
 gimp_pixel_rgn_y(pr)
 	GimpPixelRgn *pr
 	CODE:
-        RETVAL = pr->y;
+	RETVAL = pr->y;
 	OUTPUT:
 	RETVAL
 
@@ -1923,7 +1923,7 @@ guint
 gimp_pixel_rgn_w(pr)
 	GimpPixelRgn *pr
 	CODE:
-        RETVAL = pr->w;
+	RETVAL = pr->w;
 	OUTPUT:
 	RETVAL
 
@@ -1931,7 +1931,7 @@ guint
 gimp_pixel_rgn_h(pr)
 	GimpPixelRgn *pr
 	CODE:
-        RETVAL = pr->h;
+	RETVAL = pr->h;
 	OUTPUT:
 	RETVAL
 
@@ -1939,7 +1939,7 @@ guint
 gimp_pixel_rgn_rowstride(pr)
 	GimpPixelRgn *pr
 	CODE:
-        RETVAL = pr->rowstride;
+	RETVAL = pr->rowstride;
 	OUTPUT:
 	RETVAL
 
@@ -1947,7 +1947,7 @@ guint
 gimp_pixel_rgn_bpp(pr)
 	GimpPixelRgn *pr
 	CODE:
-        RETVAL = pr->bpp;
+	RETVAL = pr->bpp;
 	OUTPUT:
 	RETVAL
 
@@ -1955,7 +1955,7 @@ guint
 gimp_pixel_rgn_shadow(pr)
 	GimpPixelRgn *pr
 	CODE:
-        RETVAL = pr->shadow;
+	RETVAL = pr->shadow;
 	OUTPUT:
 	RETVAL
 
@@ -1963,7 +1963,7 @@ gint32
 gimp_pixel_rgn_drawable(pr)
 	GimpPixelRgn *pr
 	CODE:
-        RETVAL = pr->drawable->drawable_id;
+	RETVAL = pr->drawable->drawable_id;
 	OUTPUT:
 	RETVAL
 
@@ -1971,7 +1971,7 @@ guint
 gimp_tile_ewidth(tile)
 	GimpTile *tile
 	CODE:
-        RETVAL = tile->ewidth;
+	RETVAL = tile->ewidth;
 	OUTPUT:
 	RETVAL
 
@@ -1979,7 +1979,7 @@ guint
 gimp_tile_eheight(tile)
 	GimpTile *tile
 	CODE:
-        RETVAL = tile->eheight;
+	RETVAL = tile->eheight;
 	OUTPUT:
 	RETVAL
 
@@ -1987,7 +1987,7 @@ guint
 gimp_tile_bpp(tile)
 	GimpTile *tile
 	CODE:
-        RETVAL = tile->bpp;
+	RETVAL = tile->bpp;
 	OUTPUT:
 	RETVAL
 
@@ -1995,7 +1995,7 @@ guint
 gimp_tile_shadow(tile)
 	GimpTile *tile
 	CODE:
-        RETVAL = tile->shadow;
+	RETVAL = tile->shadow;
 	OUTPUT:
 	RETVAL
 
@@ -2003,7 +2003,7 @@ guint
 gimp_tile_dirty(tile)
 	GimpTile *tile
 	CODE:
-        RETVAL = tile->dirty;
+	RETVAL = tile->dirty;
 	OUTPUT:
 	RETVAL
 
@@ -2011,7 +2011,7 @@ DRAWABLE
 gimp_tile_drawable(tile)
 	GimpTile *tile
 	CODE:
-        RETVAL = tile->drawable->drawable_id;
+	RETVAL = tile->drawable->drawable_id;
 	OUTPUT:
 	RETVAL
 
@@ -2022,7 +2022,7 @@ gimp_pixel_rgn_get_row2(pr, x, y, width)
 	int	y
 	int	width
 	CODE:
-        RETVAL = newSVn (width * pr->bpp);
+	RETVAL = newSVn (width * pr->bpp);
 	gimp_pixel_rgn_get_row (pr, (guchar *)SvPV_nolen(RETVAL), x, y, width);
 	OUTPUT:
 	RETVAL
@@ -2034,7 +2034,7 @@ gimp_pixel_rgn_get_col2(pr, x, y, height)
 	int	y
 	int	height
 	CODE:
-        RETVAL = newSVn (height * pr->bpp);
+	RETVAL = newSVn (height * pr->bpp);
 	gimp_pixel_rgn_get_col (pr, (guchar *)SvPV_nolen(RETVAL), x, y, height);
 	OUTPUT:
 	RETVAL
@@ -2047,7 +2047,7 @@ gimp_pixel_rgn_get_rect2(pr, x, y, width, height)
 	int	width
 	int	height
 	CODE:
-        RETVAL = newSVn (width * height * pr->bpp);
+	RETVAL = newSVn (width * height * pr->bpp);
 	gimp_pixel_rgn_get_rect (pr, (guchar *)SvPV_nolen(RETVAL), x, y, width, height);
 	OUTPUT:
 	RETVAL
@@ -2058,10 +2058,10 @@ gimp_pixel_rgn_set_rect2(pr, data, x, y, w=pr->w)
 	SV *	data
 	int	x
 	int	y
-        int	w
+	int	w
 	CODE:
 {
-        STRLEN dlen; guchar *dta = (guchar *)SvPV (data, dlen);
+	STRLEN dlen; guchar *dta = (guchar *)SvPV (data, dlen);
 	gimp_pixel_rgn_set_rect (pr, dta, x, y, w, dlen / (w*pr->bpp));
 }
 
@@ -2074,7 +2074,7 @@ gimp_drawable_get_tile(gdrawable, shadow, row, col)
 	gint	row
 	gint	col
 	CODE:
-        need_pdl ();
+	need_pdl ();
 	RETVAL = new_tile (gimp_drawable_get_tile (old_gdrawable (gdrawable), shadow, row, col), gdrawable);
 	OUTPUT:
 	RETVAL
@@ -2086,7 +2086,7 @@ gimp_drawable_get_tile2(gdrawable, shadow, x, y)
 	gint	x
 	gint	y
 	CODE:
-        need_pdl ();
+	need_pdl ();
 	RETVAL = new_tile (gimp_drawable_get_tile2 (old_gdrawable (gdrawable), shadow, x, y), gdrawable);
 	OUTPUT:
 	RETVAL
@@ -2097,7 +2097,7 @@ gimp_pixel_rgn_get_pixel(pr, x, y)
 	int	x
 	int	y
 	CODE:
-        RETVAL = new_pdl (0, 0, pr->bpp);
+	RETVAL = new_pdl (0, 0, pr->bpp);
 	gimp_pixel_rgn_get_pixel (pr, RETVAL->data, x, y);
 	OUTPUT:
 	RETVAL
@@ -2109,7 +2109,7 @@ gimp_pixel_rgn_get_row(pr, x, y, width)
 	int	y
 	int	width
 	CODE:
-        RETVAL = new_pdl (0, width, pr->bpp);
+	RETVAL = new_pdl (0, width, pr->bpp);
 	gimp_pixel_rgn_get_row (pr, RETVAL->data, x, y, width);
 	OUTPUT:
 	RETVAL
@@ -2121,7 +2121,7 @@ gimp_pixel_rgn_get_col(pr, x, y, height)
 	int	y
 	int	height
 	CODE:
-        RETVAL = new_pdl (height, 0, pr->bpp);
+	RETVAL = new_pdl (height, 0, pr->bpp);
 	gimp_pixel_rgn_get_col (pr, RETVAL->data, x, y, height);
 	OUTPUT:
 	RETVAL
@@ -2134,7 +2134,7 @@ gimp_pixel_rgn_get_rect(pr, x, y, width, height)
 	int	width
 	int	height
 	CODE:
-        RETVAL = new_pdl (height, width, pr->bpp);
+	RETVAL = new_pdl (height, width, pr->bpp);
 	gimp_pixel_rgn_get_rect (pr, RETVAL->data, x, y, width, height);
 	OUTPUT:
 	RETVAL
@@ -2146,7 +2146,7 @@ gimp_pixel_rgn_set_pixel(pr, pdl, x, y)
 	int	x
 	int	y
 	CODE:
-        old_pdl (&pdl, 0, pr->bpp);
+	old_pdl (&pdl, 0, pr->bpp);
 	gimp_pixel_rgn_set_pixel (pr, pdl->data, x, y);
 
 void
@@ -2156,7 +2156,7 @@ gimp_pixel_rgn_set_row(pr, pdl, x, y)
 	int	x
 	int	y
 	CODE:
-        old_pdl (&pdl, 1, pr->bpp);
+	old_pdl (&pdl, 1, pr->bpp);
 	gimp_pixel_rgn_set_row (pr, pdl->data, x, y, pdl->dims[pdl->ndims-1]);
 
 void
@@ -2166,7 +2166,7 @@ gimp_pixel_rgn_set_col(pr, pdl, x, y)
 	int	x
 	int	y
 	CODE:
-        old_pdl (&pdl, 1, pr->bpp);
+	old_pdl (&pdl, 1, pr->bpp);
 	gimp_pixel_rgn_set_col (pr, pdl->data, x, y, pdl->dims[pdl->ndims-1]);
 
 void
@@ -2176,53 +2176,53 @@ gimp_pixel_rgn_set_rect(pr, pdl, x, y)
 	int	x
 	int	y
 	CODE:
-        old_pdl (&pdl, 2, pr->bpp);
+	old_pdl (&pdl, 2, pr->bpp);
 	gimp_pixel_rgn_set_rect (pr, pdl->data, x, y, pdl->dims[pdl->ndims-2], pdl->dims[pdl->ndims-1]);
 
 pdl *
 gimp_pixel_rgn_data(pr,newdata=0)
 	GimpPixelRgn_PDL *	pr
-        pdl * newdata
+	pdl * newdata
 	CODE:
-        if (newdata)
+	if (newdata)
 	  {
-            guchar *src;
-            guchar *dst;
-            int y, stride;
+	    guchar *src;
+	    guchar *dst;
+	    int y, stride;
 
-            old_pdl (&newdata, 2, pr->bpp);
-            stride = pr->bpp * newdata->dims[newdata->ndims-2];
+	    old_pdl (&newdata, 2, pr->bpp);
+	    stride = pr->bpp * newdata->dims[newdata->ndims-2];
 
-            if ((int)pr->h != newdata->dims[newdata->ndims-1])
-              croak (__("pdl height != region height"));
+	    if ((int)pr->h != newdata->dims[newdata->ndims-1])
+	      croak (__("pdl height != region height"));
 
-            for (y   = 0, src = newdata->data, dst = pr->data;
-                 y < (int)pr->h;
-                 y++    , src += stride      , dst += pr->rowstride)
-              Copy (src, dst, stride, char);
+	    for (y   = 0, src = newdata->data, dst = pr->data;
+		 y < (int)pr->h;
+		 y++    , src += stride      , dst += pr->rowstride)
+	      Copy (src, dst, stride, char);
 
-            RETVAL = newdata;
-          }
-        else
-          {
-            pdl *p = PDL->new();
-            PDL_Indx dims[3];
+	    RETVAL = newdata;
+	  }
+	else
+	  {
+	    pdl *p = PDL->new();
+	    PDL_Indx dims[3];
 
-            dims[0] = pr->bpp;
-            dims[1] = pr->rowstride / pr->bpp;
-            dims[2] = pr->h;
+	    dims[0] = pr->bpp;
+	    dims[1] = pr->rowstride / pr->bpp;
+	    dims[2] = pr->h;
 
-            PDL->setdims (p, dims, 3);
-            p->datatype = PDL_B;
-            p->data = pr->data;
-            p->state |= PDL_DONTTOUCHDATA | PDL_ALLOCATED;
-            PDL->add_deletedata_magic(p, pixel_rgn_pdl_delete_data, 0);
+	    PDL->setdims (p, dims, 3);
+	    p->datatype = PDL_B;
+	    p->data = pr->data;
+	    p->state |= PDL_DONTTOUCHDATA | PDL_ALLOCATED;
+	    PDL->add_deletedata_magic(p, pixel_rgn_pdl_delete_data, 0);
 
-            if ((int)pr->w != dims[1])
-              p = redim_pdl (p, 1, pr->w);
+	    if ((int)pr->w != dims[1])
+	      p = redim_pdl (p, 1, pr->w);
 
-            RETVAL = p;
-          }
+	    RETVAL = p;
+	  }
 	OUTPUT:
 	RETVAL
 
@@ -2233,8 +2233,8 @@ SV *
 gimp_tile_get_data(tile)
 	GimpTile *	tile
 	CODE:
-        need_pdl ();
-        croak (__("gimp_tile_get_data is not yet implemented\n"));
+	need_pdl ();
+	croak (__("gimp_tile_get_data is not yet implemented\n"));
 	gimp_tile_ref (tile);
 	gimp_tile_unref (tile, 0);
 	OUTPUT:
@@ -2246,7 +2246,7 @@ gimp_tile_set_data(tile,data)
 	SV *	data
 	CODE:
 	data = data; // to suppress "unused var" warning
-        croak (__("gimp_tile_set_data is not yet implemented\n")); /*(void *)data;*/
+	croak (__("gimp_tile_set_data is not yet implemented\n")); /*(void *)data;*/
 	gimp_tile_ref_zero (tile);
 	gimp_tile_unref (tile, 1);
 
@@ -2255,20 +2255,20 @@ gimp_tile_set_data(tile,data)
 void
 gimp_pixel_rgn_data(...)
 	ALIAS:
-          gimp_drawable_get_tile	= 1
-          gimp_drawable_get_tile2	= 2
-          gimp_pixel_rgn_get_pixel	= 3
-          gimp_pixel_rgn_get_row	= 4
-          gimp_pixel_rgn_get_col	= 5
-          gimp_pixel_rgn_get_rect	= 6
-          gimp_pixel_rgn_set_pixel	= 7
-          gimp_pixel_rgn_set_row	= 8
-          gimp_pixel_rgn_set_col	= 9
-          gimp_pixel_rgn_set_rect	= 10
-          gimp_tile_get_data		= 11
-          gimp_tile_set_data		= 12
+	  gimp_drawable_get_tile	= 1
+	  gimp_drawable_get_tile2	= 2
+	  gimp_pixel_rgn_get_pixel	= 3
+	  gimp_pixel_rgn_get_row	= 4
+	  gimp_pixel_rgn_get_col	= 5
+	  gimp_pixel_rgn_get_rect	= 6
+	  gimp_pixel_rgn_set_pixel	= 7
+	  gimp_pixel_rgn_set_row	= 8
+	  gimp_pixel_rgn_set_col	= 9
+	  gimp_pixel_rgn_set_rect	= 10
+	  gimp_tile_get_data		= 11
+	  gimp_tile_set_data		= 12
 	CODE:
-        croak (__("This module was built without support for PDL."));
+	croak (__("This module was built without support for PDL."));
 
 #endif
 
@@ -2297,9 +2297,9 @@ gimp_patterns_get_pattern_data(name)
 		int nreturn_vals;
 
 		return_vals = gimp_run_procedure ("gimp_patterns_get_pattern_data",
-		                                  &nreturn_vals,
-		                                  GIMP_PDB_STRING, SvPV_nolen (name),
-		                                  GIMP_PDB_END);
+						  &nreturn_vals,
+						  GIMP_PDB_STRING, SvPV_nolen (name),
+						  GIMP_PDB_END);
 
 		if (nreturn_vals == 7
 		    && return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
@@ -2319,8 +2319,8 @@ gimp_patterns_get_pattern_data(name)
 void
 _gimp_progress_init (message)
 	utf8_str	message
-        CODE:
-        gimp_progress_init (message);
+	CODE:
+	gimp_progress_init (message);
 
 DISPLAY
 gimp_default_display()

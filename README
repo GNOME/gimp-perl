@@ -9,7 +9,7 @@ WARNING
 
        Current limitations:
 
-       Please report all problems       
+       Please report all problems
 
 SYNOPSIS
 
@@ -18,17 +18,17 @@ SYNOPSIS
        $img->add_layer($bg, 1);
        $img->edit_fill($bg);
        $img->display_new;
-       
+
        A complete & documented example script can be found at the end of
        this document (search for EXAMPLE).
 
 DOCUMENTATION
 
        Online documentation is largely outdated.  Much of the documentation at
-       http://www.goof.com/pcg/marc/gimp.html still applies.  The POD 
+       http://www.goof.com/pcg/marc/gimp.html still applies.  The POD
        information embedded in the modules is the latest available, though
        it isn't very updated either.
-       
+
 PREREQUISITES
 
        To install/use this perl extension, you need to have the following
@@ -63,7 +63,7 @@ PREREQUISITES
           manipulate pixel data (or to be able to run the example plug-ins
           that do pixel manipulation). PDL is available at any CPAN
           mirror, version 2.4 or higher is recommended. Without PDL,
-          some plug-ins do not work (they will not be installed), 
+          some plug-ins do not work (they will not be installed),
 	  and accessing raw image data is impossible.
 
 INSTALLATION
@@ -72,11 +72,11 @@ INSTALLATION
        test && make install. To get a listing of configuration options, enter:
 
        perl ./Makefile.PL --help
-       
+
        Simply using "perl Makefile.PL" should do the job on most systems,
        but watch out for warnings. If everything went fine, enter "make",
-       "make test, (su to appropriate level if you are installing system-wide), 
-       "make install".  
+       "make test, (su to appropriate level if you are installing system-wide),
+       "make install".
 
        After installation, these perl plug-ins should be visible from
        within the Gimp (and many, many more):
@@ -85,7 +85,7 @@ INSTALLATION
        <Image>/Filters/Artistic/Windify
        <Image>/Filters/Misc/Prepare for GIF
        <Image>/Filters/Misc/Webify
-       
+
 OVERWRITING INSTALL LOCATIONS (PREFIX)
 
        In the rare case that you want to install the gimp-perl modules
@@ -107,7 +107,7 @@ OVERWRITING INSTALL LOCATIONS (PREFIX)
 
           make prefix=`pwd`/debian/tmp/usr PREFIX=`pwd`/debian/tmp/usr \
                install
-       
+
        The lowercase prefix is used by the Gimp, the uppercase PREFIX is
        used by perl.  Rarely you also want to specifiy manpage directories
        etc.. you can also overwrite these (see "man ExtUtils::MakeMaker")
@@ -120,33 +120,33 @@ OVERWRITING INSTALL LOCATIONS (PREFIX)
 
 SUPPORT/MAILING LISTS/MORE INFO
 
-       The gimp-user and gimp-developer lists (see  
-       http://www.gimp.org/mail_lists.html) are currently the suggested 
+       The gimp-user and gimp-developer lists (see
+       http://www.gimp.org/mail_lists.html) are currently the suggested
        mailing lists.
 
        New releases will be announced to gimp-announce.
-       
+
        You can also upload your scripts to the gimp registry at
-       http://registry.gimp.org/.  
-       
-       If you think your script is of general intrest, please let 
-       <sjburges@gimp.org> know and it will be considered for 
-       inclusion in future Gimp module releases.  If you just want 
+       http://registry.gimp.org/.
+
+       If you think your script is of general intrest, please let
+       <sjburges@gimp.org> know and it will be considered for
+       inclusion in future Gimp module releases.  If you just want
        a link to your gimp-perl project, please mail <sjburges@gimp.org>
        also.
 
 BLURB
 
-       gimp-perl is an effort to make a usable, debuggable, and flexible 
+       gimp-perl is an effort to make a usable, debuggable, and flexible
        interface to GIMP through use of Perl.
 
 LICENSE
 
-       The gimp-perl module is available under the GNU Public License 
+       The gimp-perl module is available under the GNU Public License
        (see COPYING.GPL for details) and the Artistic License (see
        COPYING.Artistic for details). Many of the scripts in the example
        section follow these rules, but some of them have a different
-       licensing approach.  Each should have a licensing statement; please 
+       licensing approach.  Each should have a licensing statement; please
        consult individual plugin sources/POD for more info.
 
        (c)1998,1999 Marc Lehmann <pcg@goof.com>
@@ -174,7 +174,7 @@ register "gimp_fu_example_script",                      # fill in a function nam
          "20000321",                                    # the date this script was written (YYYYMMDD)
          N_"<Toolbox>/Xtns/Gimp::Fu Example...",        # the menu path - the 'N_' is for internationalization
          "RGB*, GRAYA",                                 # image types to accept (RGB, RGAB amnd GRAYA)
-         [ # one of each type of parameter here 
+         [ # one of each type of parameter here
          # argument type, switch name   , a short description           , default value, extra arguments
           [PF_SLIDER    , "width"       , "The image width"             , 360, [300, 500]],
           [PF_SPINNER   , "height"      , "The image height"            , 100, [100, 200]],

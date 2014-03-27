@@ -81,11 +81,11 @@ static void sv2net (int deobjectify, SV *s, SV *sv)
 
               SvREFCNT_inc(sv);
               (void)hv_store (object_cache, (char *)&object_id, sizeof(object_id), sv, 0);
-              
+
               sv_catpvf (s, "i%d:", object_id);
               return; /* well... */
             }
-        } 
+        }
       else
         sv_catpvn (s, "r", 1);
 
@@ -152,7 +152,7 @@ static SV *net2sv (int objectify, char **_s)
       case 'r':
         sv = newRV_noinc (net2sv (objectify, &s));
         break;
-        
+
       case 'b':
         sscanf (s, "%x:%n", &ui, &n); s += n;
         if (ui >= sizeof str)
@@ -222,7 +222,7 @@ args2net(deobjectify,...)
 
 void
 net2args(objectify,s)
-  	int	objectify
+	int	objectify
 	char *	s
         PPCODE:
 

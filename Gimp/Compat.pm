@@ -52,7 +52,7 @@ use Gimp ('croak', '__');
 
 # The following function is used to convert a xlfd to the array structure
 # used by the pre 1.2 functions gimp_text_ext() and gimp_text_get_extent_ext().
-	      
+
 sub xlfd_unpack {
     my $fontname = shift;
     my $size_overload = shift;
@@ -68,7 +68,7 @@ sub xlfd_unpack {
                  $set_width,
                    $dummy2,
                      $pixelsize,
-                       $pointsize, 
+                       $pointsize,
                          $spacing,
                            $registry,
                              $encoding
@@ -114,11 +114,11 @@ sub fun {
 
 fun 1,1,gimp_text_get_extents_fontname,sub {
    my($string, $xlfd_size, $xlfd_unit, $xlfd) = @_;
-   
+
    Gimp->text_get_extents_ext($string, @font_info,
                               xlfd_unpack($xlfd, $xlfd_size, $xlfd_unit));
 };
-	
+
 fun 1,1,gimp_text_fontname,sub {
    my $img = shift if $_[0]->isa('Gimp::Image');
    my ($drw, $x,$y, $string,$border,$antialias, $xlfd_size, $xlfd_unit, $xlfd) = @_;
@@ -131,7 +131,7 @@ fun 1,1,gimp_text_fontname,sub {
 
    push(@params, $drw, $x, $y, $string, $border, $antialias,
 	xlfd_unpack($xlfd, $xlfd_size, $xlfd_unit));
-   
+
    Gimp->text_ext(@params);
 };
 

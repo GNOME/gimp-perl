@@ -42,8 +42,8 @@ package      Gimp::Util;
 require      Exporter;
 @ISA       = qw(Exporter);
 @EXPORT    = qw(
-                layer_create 
-                text_draw 
+                layer_create
+                text_draw
                 image_create_text
                 layer_add_layer_as_mask
                );
@@ -109,7 +109,7 @@ sub layer_create {
   Gimp->drawable_fill ($layer,BACKGROUND_FILL);
   Gimp->image_add_layer($image, $layer, $pos);
   Gimp->palette_set_background ($tcol); # reset
-  $layer;  
+  $layer;
   }
 
 ##############################################################################
@@ -136,8 +136,8 @@ sub text_draw {
   Gimp->palette_set_foreground ($fgcolor);
   # Create a layer for the text.
   $text_layer = Gimp->text($image,-1,0,0,$text,10,1,$size,
-			    PIXELS,"*",$font,"*","*","*","*"); 
-    
+			    PIXELS,"*",$font,"*","*","*","*");
+
   # Do the fun stuff with the text.
   Gimp->layer_set_preserve_trans($text_layer, FALSE);
 
@@ -151,16 +151,16 @@ sub text_draw {
   else
     {
     }
-					  
+
   # add text to image
   Gimp->image_add_layer($image, $text_layer, $pos);
   # merge white and text
   Gimp->image_merge_visible_layers ($image,1);
-  # cleanup the left over layer (!) 
+  # cleanup the left over layer (!)
   Gimp->layer_delete($text_layer);
   $layer;
 }
-    
+
 ##############################################################################
 =pod
 
@@ -186,14 +186,14 @@ sub image_create_text {
   # create an image. We'll just set whatever size here because we want
   # to resize the image when we figure out how big the text is.
   $image = Gimp->image_new(64,64,RGB); # don't waste too much  resources ;-/
-    
+
   $tcol = Gimp->palette_get_foreground ();
   Gimp->palette_set_foreground ($fgcolor);
   # Create a layer for the text.
   $text_layer = Gimp->text($image,-1,0,0,$text,10,1,$size,
-                          PIXELS,"*",$font,"*","*","*","*","*","*"); 
+                          PIXELS,"*",$font,"*","*","*","*","*","*");
   Gimp->palette_set_foreground ($tcol);
-    
+
   Gimp->layer_set_preserve_trans($text_layer, FALSE);
 
   # Resize the image based on size of text.
@@ -222,9 +222,9 @@ sub layer_add_layer_as_mask {
   my ($image,$layer,$layer_mask) = @_;
   my $mask;
 
-  Gimp->selection_all ($image);  
-  $layer_mask->edit_copy ();  
-  Gimp->layer_add_alpha ($layer); 
+  Gimp->selection_all ($image);
+  $layer_mask->edit_copy ();
+  Gimp->layer_add_alpha ($layer);
   $mask = Gimp->layer_create_mask ($layer,0);
   $mask->edit_paste (0);
   Gimp->floating_sel_anchor(Gimp->image_floating_selection($image));

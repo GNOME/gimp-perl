@@ -9,7 +9,7 @@ Gimp::on_net {
 # properites that matter for running these things:
 #  layers required      (0 = makes new image)
 #  requires alpha        REQ_ALPHA = 0x1
-#  requires selection    REQ_SEL   = 0x2 
+#  requires selection    REQ_SEL   = 0x2
 #  requires guide        REQ_GUIDE = 0x4
 #  parameters            array of params
 
@@ -59,7 +59,7 @@ $testimage = "/home/seth/cvs/gimp-perl/examples/testimg1.JPG";
 ["mirror_split"           , 1, $REQ_NONE , [0] ],
 ["perlotine"              , 1, $REQ_GUIDE|$REQ_DIR, ['"DIR"','"foo.html"','"t"','"png"',0,'""',1,0] ],
 ["pixelgen"               , 0, $REQ_NONE , [$width,$height,RGB_IMAGE,q|'($x*$y*0.01)->slice("*$bpp")'|] ],
-["pixelmap"               , 1, $REQ_NONE , [q|'($x*$y*0.01)->slice("*$bpp")'|] ], 
+["pixelmap"               , 1, $REQ_NONE , [q|'($x*$y*0.01)->slice("*$bpp")'|] ],
 ["prep4gif"               , 2, $REQ_ALPHA, [64,1,0,1,255] ],
 ["random_art_1"           , 0, $REQ_NONE , [$width,$height,20,10,1,30,0] ],
 ["random_blends"          , 1, $REQ_NONE , [7] ],
@@ -78,7 +78,7 @@ $testimage = "/home/seth/cvs/gimp-perl/examples/testimg1.JPG";
 ["xach_shadows"           , 1, $REQ_NONE , [10] ],
 ["xachvision"             , 1, $REQ_NONE , [$color1,25] ],
 ["yinyang"                , 0, $REQ_NONE , [$width,$height,1,0,q|""|,q|""|,1] ],
-); 
+);
 
 foreach $test (@testbench)
 {
@@ -90,21 +90,21 @@ foreach $test (@testbench)
      $isfirstelem = 1;
      foreach $param (@{$test->[3]})
        {
-	 if ($isfirstelem) 
+	 if ($isfirstelem)
 	   { # for some reason I'm having to be explicit here...
 	      $isfirstelem = 0;
 	      $cmd = $cmd . "RUN_NONINTERACTIVE, ";
 	   }
-	 else 
+	 else
 	   { # insert a comma between list items
 	     $cmd = $cmd . ", ";
 	   }
 	 $cmd = $cmd . " " . $param;
-       }  
+       }
      $cmd = $cmd . ")\n";
      print $cmd;
      $img = eval $cmd;
-     # FIXME: returning an image is broken!  
+     # FIXME: returning an image is broken!
      warn $@ if $@;
     }
   elsif ($numlays == 1)
@@ -112,7 +112,7 @@ foreach $test (@testbench)
      $img = Gimp::file_load(RUN_NONINTERACTIVE, $testimage, $testimage);
      $drw = $img->get_active_drawable;
      Gimp::display_new($img);
-    
+
      if ($test->[2] & $REQ_ALPHA)
        {
           $drw->add_alpha;
@@ -120,8 +120,8 @@ foreach $test (@testbench)
           Gimp::gimp_selection_invert($img);
           Gimp::gimp_edit_cut($drw);
           Gimp::gimp_selection_none($img);
-       } 
-     if ($test->[2] & $REQ_SEL) 
+       }
+     if ($test->[2] & $REQ_SEL)
        {
           Gimp::gimp_rect_select($img, 0.2*$height,0.2*$width,0.6*$height,0.6*$width,CHANNEL_OP_REPLACE,0,0);
        }
@@ -141,17 +141,17 @@ foreach $test (@testbench)
        { $cmd = $cmd . "RUN_NONINTERACTIVE, \$img, \$drw"; }
      foreach $param (@{$test->[3]})
        {
-	 if ($isfirstelem) 
-	   { 
+	 if ($isfirstelem)
+	   {
 	      $isfirstelem = 0;
 	      $cmd = $cmd . "RUN_NONINTERACTIVE, \$img, \$drw, ";
 	   }
-	 else 
+	 else
 	   { # insert a comma between list items
 	     $cmd = $cmd . ", ";
 	   }
 	 $cmd = $cmd . " " . $param;
-       }  
+       }
      $cmd = $cmd . ")\n";
      print $cmd;
      eval $cmd;

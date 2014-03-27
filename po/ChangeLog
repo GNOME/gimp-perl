@@ -220,7 +220,7 @@ Wed May 31 13:38:18 CEST 2000  Stanislav Brabec  <utx@penguin.cz>
 2000-05-23  Kjartan Maraas  <kmaraas@gnu.org>
 
 	* no.po: Updated Norwegian translation.
-	
+
 2000-05-23  Sven Neumann  <sven@gimp.org>
 
 	* de.po: updated german translation
@@ -234,7 +234,7 @@ Mon May 22 11:54:43 CEST 2000  Stanislav Brabec  <utx@penguin.cz>
 	* cs.po: Updated translation.
 
 Fri May  5 21:49:29 CEST 2000  Marc Lehmann <pcg@goof.com>
-	
+
         * $alltarget was never set (have to have a look at the logs).
         Probably was responsible for the "gmo's don't build" problem.
 
@@ -283,7 +283,7 @@ Thu Mar 30 07:11:26 CEST 2000  Marc Lehmann <pcg@goof.com>
 
 Wed Mar  8 22:51:30 CET 2000  Sven Neumann <sven@gimp.org>
 
-	* fr.po: s/<Images>/<Image>/   
+	* fr.po: s/<Images>/<Image>/
 		 s/<Boite a utils>/<Toolbox>/
 
 2000-03-09  Shirasaki Yasuhiro  <yasuhiro@gnome.gr.jp>
@@ -366,7 +366,7 @@ Tue Jan 11 21:00:11 CET 2000  Stanislav Brabec  <utx@penguin.cz>
 	* cs.po: Updated translation.
 
 2000-01-08
-	* ru.po: Added Russian translation from 
+	* ru.po: Added Russian translation from
 	Valek Filippov <frob@df.ru>
 
 Fri Jan  7 19:26:06 CET 2000  Stanislav Brabec  <utx@penguin.cz>
@@ -376,7 +376,7 @@ Fri Jan  7 19:26:06 CET 2000  Stanislav Brabec  <utx@penguin.cz>
 1999-12-08  Kjartan Maraas  <kmaraas@online.no>
 
 	* no.po: Added Norwegian translation.
-	
+
 Tue Dec  7 15:16:03 CET 1999  Stanislav Brabec  <utx@penguin.cz>
 
 	* cs.po: Updated translation.

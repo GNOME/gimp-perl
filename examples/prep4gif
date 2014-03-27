@@ -115,7 +115,7 @@ exit main;
 
 =head1 LICENSE
 
-Copyright Seth Burgess.  
+Copyright Seth Burgess.
 Distributed under the same terms as Gimp-Perl.
 
 =cut

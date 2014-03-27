@@ -50,7 +50,7 @@ export_image(image_ID, drawable_ID, format_name, capabilities)
         gchar *	format_name
         gint	capabilities
         PREINIT:
-          gint32 image;       
+          gint32 image;
           gint32 drawable;
         CODE:
           image = SvIV (SvRV (image_ID));
@@ -179,7 +179,7 @@ GimpColorScale_own * gimp_color_scale_new (SV *unused_class, GtkOrientation orie
 	C_ARGS: orientation, channel
 
 void gimp_color_scale_set_channel (GimpColorScale *scale, GimpColorSelectorChannel channel)
-  
+
 void gimp_color_scale_set_color (GimpColorScale *scale, GimpRGB &rgb, GimpHSV &hsv)
 
 MODULE = Gimp::UI	PACKAGE = Gimp::UI::ColorSelect	PREFIX = gimp_color_select_
@@ -375,7 +375,7 @@ void gimp_size_entry_set_unit (GimpSizeEntry *gse, GimpUnit unit)
 
 void gimp_size_entry_grab_focus (GimpSizeEntry *gse)
 
-MODULE = Gimp::UI	PACKAGE = Gimp::UI::Stock 	PREFIX = gimp_stock_
+MODULE = Gimp::UI	PACKAGE = Gimp::UI::Stock	PREFIX = gimp_stock_
 
 BOOT:
 	gimp_stock_init();

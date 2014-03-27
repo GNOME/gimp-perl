@@ -1,23 +1,23 @@
-This file describes a few of the many scripts in the examples/ directory. 
+This file describes a few of the many scripts in the examples/ directory.
 
 Some links of interest have been added to the bottom as well.
 
 If you want to be added, drop me a note at <sjburges@gimp.org>.
 
 Each script will contain a licensing statement in it, describing how it may
-be distributed.  A handful are believed to be GPL, but the author hasn't 
+be distributed.  A handful are believed to be GPL, but the author hasn't
 been able to be contacted.
 
 Also, most scripts in the examples directory are not described or
 documented here. See their source for more info.
 
 example-fu.pl
-        An example Gimp::Fu script. This shows every widget Gimp::Fu 
+        An example Gimp::Fu script. This shows every widget Gimp::Fu
 	offers, but doesn't do much useful otherwise.
 
 example-oo.pl
 	A small nonsense extension just showing the object-oriented
-	pdb syntax. 
+	pdb syntax.
 
 example-net.pl
 	a small nonsense extension showing a bare-bones networked script.
@@ -26,7 +26,7 @@ webify.pl
 	a small plugin that flattens an image, makes the background
 	transparent, converts it to indexed and then crops it
 	to the right size. Useful to save small & transparent gifs
-	from a higher-quality source. It also features several 
+	from a higher-quality source. It also features several
 	Gimp::Fu UI-elements.
 
 windify.pl
@@ -42,7 +42,7 @@ gimp-make-img-map
 	images in order to create an index image."
 
 http://www.ualberta.ca/~cwant/gimp/postprocess.html
-	Using Gimp-Perl for animation post-processing; some very neat effects 
+	Using Gimp-Perl for animation post-processing; some very neat effects
 	produced here.
 
 http://bbgallery.sourceforge.net/

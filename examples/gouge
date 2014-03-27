@@ -49,7 +49,7 @@ register "blur_2x2",
          "Marc Lehmann <pcg\@goof.com>",
          "19990725",
        N_"<Image>/Filters/Blur/2x2 Blur",
-         "RGB*, GRAY*",	
+         "RGB*, GRAY*",
          [],
          sub {
    my($image,$drawable)=@_;
@@ -71,7 +71,7 @@ register "contrast_enhance_2x2",
          "Marc Lehmann <pcg\@goof.com>",
          "19990725",
          N_"<Image>/Filters/Enhance/2x2 Contrast Enhance",
-         "RGB*, GRAY*",	
+         "RGB*, GRAY*",
          [],
          sub {
    my($image,$drawable)=@_;
@@ -93,7 +93,7 @@ register "edge_detect_2x2",
          "Marc Lehmann <pcg\@goof.com>",
          "19990725",
          N_"<Image>/Filters/Edge-Detect/2x2 Edge Detect",
-         "RGB*, GRAY*",	
+         "RGB*, GRAY*",
          [],
          sub {
    my($image,$drawable)=@_;

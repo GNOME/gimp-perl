@@ -105,14 +105,14 @@ sub insert_eye {
 }
 
 # Register with The Gimp
-register("yinyang", 
+register("yinyang",
          "Render a stand-alone Yin/Yang image",
 	"Renders a black-and-white Yin/Yang symbol optionally
 	with \"eyes\" that may optionally be images.",
-	"Aaron Sherman", 
+	"Aaron Sherman",
 	"(c) 1998, Aaron Sherman",
-	"1999b", 
-	N_"<Image>/Filters/Render/Yin-Yang...", 
+	"1999b",
+	N_"<Image>/Filters/Render/Yin-Yang...",
 	undef,
 	[
 		[PF_INT32, "width", "Width", 256],

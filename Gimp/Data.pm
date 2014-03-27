@@ -40,7 +40,7 @@ sub FETCH {
    thaw eval { Gimp->parasite_find ($_[1])->data }
         || ($@ ? Gimp->get_data ($_[1]) : ());
 }
-     
+
 sub STORE {
    my $data = freeze $_[2];
    eval { Gimp->parasite_attach ([$_[1], Gimp::PARASITE_PERSISTENT, $data]) };
@@ -50,7 +50,7 @@ sub STORE {
 sub EXISTS {
    $_[0]->FETCH ? 1 : ();
 }
-     
+
 tie (%Gimp::Data, 'Gimp::Data');
 
 1;
@@ -63,7 +63,7 @@ Gimp::Data - Set and get state data.
 =head1 SYNOPSIS
 
   use Gimp::Data;
-  
+
   $Gimp::Data{'value1'} = "Hello";
   print $Gimp::Data{'value1'},", World!!\n";
 

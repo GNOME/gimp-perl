@@ -15,7 +15,7 @@ register "gimp_fu_example_script",			# fill in a function name
          "20000321",					# the date this script was written (YYYYMMDD)
          N_"<Toolbox>/Xtns/Gimp::Fu Example...",	# the menu path - the 'N_' is for internationalization
          "",						# image types to accept (RGB, RGAB and GRAYA)
-         [ # one of each type of parameter here 
+         [ # one of each type of parameter here
          # argument type, switch name	, a short description		, default value, extra arguments
           [PF_SLIDER	, "width"	, "The image width"		, 360, [300, 500]],
           [PF_SPINNER	, "height"	, "The image height"		, 100, [100, 200]],
@@ -40,7 +40,7 @@ register "gimp_fu_example_script",			# fill in a function name
 
    # set tracing, disable this to get rid of the debugging output
    Gimp::set_trace(TRACE_CALL);
-   
+
    # store current context, so that present settings aren't affected
    Context->push();
 
@@ -66,7 +66,7 @@ register "gimp_fu_example_script",			# fill in a function name
 
    # close the undo push group
    $img->undo_group_end;
-   
+
    # restore original context
    Context->pop();
 

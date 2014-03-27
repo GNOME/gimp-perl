@@ -63,7 +63,7 @@
 
 2007-12-07  Kevin Cozens  <kcozens@cvs.gnome.org>
 
-	* TODO: Added notes regarding some additional issues. 
+	* TODO: Added notes regarding some additional issues.
 
 	* scm2perl: Added support for caddr, cadddr, cdddr, and cddddr.
 
@@ -185,7 +185,7 @@
 	* examples/xachvision: s/Distrubuted/Distributed/
 
 2005-10-11  Seth Burgess <sjburges@gimp.org>
-	* examples/scratches: fixed problem if layersize!=imagesize 
+	* examples/scratches: fixed problem if layersize!=imagesize
 	that Carol pointed out.
 
 2005-10-11  Seth Burgess <sjburges@gimp.org>
@@ -216,30 +216,30 @@
 	* examples/testall: script to exercise other scripts (not
 	  yet complete, but good enough for below)
 	* examples/blowinout
-	* examples/bricks  
-	* examples/dust  
-	* examples/example-net  
-	* examples/glowing_steel  
-	* examples/goldenmean  
-	* examples/guides_to_selection  
-	* examples/innerbevel  
-	* examples/mirrorsplit  
-	* examples/perlotine  
-	* examples/repdup  
+	* examples/bricks
+	* examples/dust
+	* examples/example-net
+	* examples/glowing_steel
+	* examples/goldenmean
+	* examples/guides_to_selection
+	* examples/innerbevel
+	* examples/mirrorsplit
+	* examples/perlotine
+	* examples/repdup
 	* examples/scratches
 	* examples/selective_sharpen
 	* examples/tex-to-float
 	* examples/xachlego
 	* examples/xachshadow: a variety of fixes caught with testing
-	
+
 
 2005-09-14  Seth Burgess <sjburges@gimp.org>
-	* UI/UI.pm: Fixed up the various selection diaglogs; still has some 
-	  brokeness I suspect is on the gimp side, and is VERY slow on the 
+	* UI/UI.pm: Fixed up the various selection diaglogs; still has some
+	  brokeness I suspect is on the gimp side, and is VERY slow on the
 	  patterns.
 	* Gimp.pm: Some more pseudoclasses
 	* TODO: changed accordingly
-	* examples/map_to_gradient: fixed broken logic on gradient data 
+	* examples/map_to_gradient: fixed broken logic on gradient data
 	  getting; works again :)
 
 2005-09-13  Seth Burgess <sjburges@gimp.org>
@@ -262,7 +262,7 @@
 2005-09-08  Seth Burgess <sjburges@gimp.org>
 	* examples/mirrorsplit: undeprecated
 	* examples/blended2
-	* examples/innerbevel: check gimp version and use apporpriate API for 
+	* examples/innerbevel: check gimp version and use apporpriate API for
 	  set_preserve_trans/set_lock_alpha
 
 2005-09-07  Carol Spears <carol@gimp.org>
@@ -297,47 +297,47 @@
 	  instead of deprecated gimp_brushes_
 
 2005-09-06  Seth Burgess <sjburges@gimp.org>
-	* examples/fade-alpha 
-	* examples/dots: removed deprecated stuff, used Context        
+	* examples/fade-alpha
+	* examples/dots: removed deprecated stuff, used Context
 
 2005-09-06  Seth Burgess <sjburges@gimp.org>
-	* Makefile.PL: require ExtUtils::Depends too. 
+	* Makefile.PL: require ExtUtils::Depends too.
 
 2005-09-06  Seth Burgess <sjburges@gimp.org>
-	* Makefile.PL: require ExtUtils::PkgConfig in order to avoid it failing 
-	  in config.pl silently.  
+	* Makefile.PL: require ExtUtils::PkgConfig in order to avoid it failing
+	  in config.pl silently.
 
 2005-09-06  Seth Burgess <sjburges@gimp.org>
-	* Gimp.pm: add a Context pseudoclass.  Change first match for Layer 
-	  pseudoclass to be gimp_drawable_ instead of gimp_layer_, because 
+	* Gimp.pm: add a Context pseudoclass.  Change first match for Layer
+	  pseudoclass to be gimp_drawable_ instead of gimp_layer_, because
 	  gimp_layer_* is largely deprecated now.
 	* examples/billboard: use new Context pseudoclass, and other fix above.
 
 2005-09-06  Seth Burgess <sjburges@gimp.org>
 	* config.pl
-	* Makefile.PL: no longer use autoconf (configure) to determine things; 
+	* Makefile.PL: no longer use autoconf (configure) to determine things;
 	  use ExtUtils::PkgConfig and gimptool instead.
 
-	* Gimp/Lib.xs: have first parameter name checked for either "run_mode" 
-	  or "run-mode" when deciding to automagically set the 
-	  GIMP_RUN_NONINTERACTIVE (if not set otherwise).  Lets all the tests 
+	* Gimp/Lib.xs: have first parameter name checked for either "run_mode"
+	  or "run-mode" when deciding to automagically set the
+	  GIMP_RUN_NONINTERACTIVE (if not set otherwise).  Lets all the tests
 	  pass now!
 
 2005-05-12  Carol Spears <carol@gimp.org>
-	* examples/glowing_steel: changed deprecated pdb calls. 
-	* examples/glowing_steel: even though Procedure Browser reports mblur 
-	  needing only optional center_x and center_y FLOAT, it complains and 
-	  stops unless it gets them.  I fed 0,0 to the script. 
+	* examples/glowing_steel: changed deprecated pdb calls.
+	* examples/glowing_steel: even though Procedure Browser reports mblur
+	  needing only optional center_x and center_y FLOAT, it complains and
+	  stops unless it gets them.  I fed 0,0 to the script.
 
 2005-04-03  Carol Spears <carol@gimp.org>
-	* examples/burst: changed deprecated pdb calls. 
+	* examples/burst: changed deprecated pdb calls.
 	* examples/sethspin: changed deprecated pdb calls, including changing
-	  gimp-rotate to a much longer name that also wanted new information 
-	  and in a different order.  removed the -1 to the progress_init to 
-	  stop those pop-ups. 
+	  gimp-rotate to a much longer name that also wanted new information
+	  and in a different order.  removed the -1 to the progress_init to
+	  stop those pop-ups.
 
 2004-07-30  Seth Burgess <sjburges@gimp.org>
-	* Gimp/Lib.xs: fixup longstanding bug of not being able to 
+	* Gimp/Lib.xs: fixup longstanding bug of not being able to
 	               use RUN_NONINTERACTIVE
 	* t/run.t: reenabled the test that uses this
 
@@ -347,11 +347,11 @@
 	* Gimp/Fu.pm: bit of pod cleanup
 
 2004-06-28  Seth Burgess <sjburges@gimp.org>
-	* UI/UI.xs: fixed an XS error that shows up for GCC 2.95; 
+	* UI/UI.xs: fixed an XS error that shows up for GCC 2.95;
 	  shouldn't create a temp variable in CODE: - put it in PREINIT:
 	  Reported by Marc 'HE' Brockschmidt <he@debian.org>.
 	  Fixed a typo in GradientSelect.
-	
+
 	* examples/burst: s/undo_push/undo
 
 2004-04-17  Seth Burgess <sjburges@gimp.org>
@@ -365,23 +365,23 @@
 2004-05-15  Seth Burgess <sjburges@gimp.org>
 	* Made 2.0 release.
 
-	* Gimp.pm 
+	* Gimp.pm
 	* Changes: updated docs to reflect
 
 2004-05-15  Seth Burgess <sjburges@gimp.org>
 	* examples/fade-alpha: s/RADIAL/GRADIENT_RADIAL/ fixes bug #141444
-	* examples/selective_sharpen: change threshold to be zero based, fix 
-	  a bug if no selection was present. 
+	* examples/selective_sharpen: change threshold to be zero based, fix
+	  a bug if no selection was present.
 
 2004-05-15  Seth Burgess <sjburges@gimp.org>
-	* examples/selective_sharpen: use a curve suggested by tigert 
-	  to "Basically just darken the very dark noisy grays to black 
+	* examples/selective_sharpen: use a curve suggested by tigert
+	  to "Basically just darken the very dark noisy grays to black
 	  and boost everything else."
 
 2004-05-15  Seth Burgess <sjburges@gimp.org>
-	* examples/selective_sharpen: added new script based on tigert's 
+	* examples/selective_sharpen: added new script based on tigert's
 	  method.
-	* Makefile.PL: install it 
+	* Makefile.PL: install it
 	* MANIFEST: updated accordingly
 
 2004-05-15  Seth Burgess <sjburges@gimp.org>
@@ -396,7 +396,7 @@
 	* Makefile.PL: upped Gtk requirement to at least rev 1.0, removed
 	scm2scm from EXE_FILES, removed REC_DECENT warning.
 
-	* Gimp.pm: reordered docuemntation, so that canonicalize_colour 
+	* Gimp.pm: reordered docuemntation, so that canonicalize_colour
 	doesn't come first on CPAN listing for GIMP.
 
 2004-05-07  Seth Burgess <sjburges@gimp.org>
@@ -425,7 +425,7 @@
 
 	* Makefile.PL: removed reference to povray
 
-	* t/run.t: removed regex that wasn't matching; use 
+	* t/run.t: removed regex that wasn't matching; use
 	  --gimpplugindir instead.  'make test' should work for more people.
 
 	* examples/pixelmap: strip \n's from image title (prevent gui oddity)
@@ -434,18 +434,18 @@
 	* examples/animate_cells:  s/channel_ops_duplicate/image_duplicate/
 	* examples/billboard:  s/push_undo/undo/g
 	* examples/clear_alpha: s/push_undo/undo/g (broken still)
-	* examples/dataurl: Changed png to pass right # of parameters, changed 
-	some deprecated functions, fixed some sub's in Gimp.xs for the 
+	* examples/dataurl: Changed png to pass right # of parameters, changed
+	some deprecated functions, fixed some sub's in Gimp.xs for the
 	export functionality.
 	* examples/ditherize: s/push_undo/undo/g
-	* examples/example-fu: uncommented the now functional widgets for 
+	* examples/example-fu: uncommented the now functional widgets for
 	gradient, brush, texture.  Added a couple other comments.
 	* examples/example-net: commented
-	* examples/example-oo:  use Gimp qw(:auto) important! Also, 
+	* examples/example-oo:  use Gimp qw(:auto) important! Also,
 	register as a PLUGIN not an EXTENSION.  Works now!
-	* exmaples/fade-alpha: put in the <Image>/Layer/Transparency menu 
+	* exmaples/fade-alpha: put in the <Image>/Layer/Transparency menu
 	* examples/gouge: uncommented 2 registration strings.
-	* examples/guides_to_selection: reworded description, so it will 
+	* examples/guides_to_selection: reworded description, so it will
 	hopefully be a bit more obvious what it does.
 	* examples/iland: changed plug_in_rotate calls to work-around bug
 	of not being able to call with RUN_NONINTERACTIVE
@@ -453,12 +453,12 @@
 	can't edit yet.  Also fixed a Gtk2 problem (add_with_viewport).  I
 	can't get this to do anything useful.
 	* examples/scratches: s/VALUE_LUT/HISTOGRAM_VALUE/
-	
+
 	* Gimp.pm: previously neglected to rename VALUE_LUT in the subs; fixed.
 	Added some more EXPORT_CAN_HANDLE*.
-	* Gimp.xs: corresponding EXPORT_CAN_HANDLE* additions. 
-	
-	* examples/examples.TODO: updated accordingly + failures.  Now have 
+	* Gimp.xs: corresponding EXPORT_CAN_HANDLE* additions.
+
+	* examples/examples.TODO: updated accordingly + failures.  Now have
 	everything sorted into working and not working.
 
 2004-04-24  Seth Burgess <sjburges@gimp.org>
@@ -534,7 +534,7 @@
 	* examples/xachlego
 	* examples/xachshadow
 	* examples/xachvision
-	* examples/yinyang: added a LICENSING heading and filled out 
+	* examples/yinyang: added a LICENSING heading and filled out
 	to the best of my knowledge
 
 	* examples/examples.TODO: updated accordingly
@@ -574,36 +574,36 @@
 	* examples/tex-to-float: fixed, erased various debug output
 
 2004-3-28 Seth Burgess <sjburges@gimp.org>
-	* UI/Makefile.PL: removed pkg->add_define call, since its no longer in 
-	Extutils::Depends 0.20x.  Need to generate another release for this, 
-	since its a blocker for people installing (a somewhat-important step).   
+	* UI/Makefile.PL: removed pkg->add_define call, since its no longer in
+	Extutils::Depends 0.20x.  Need to generate another release for this,
+	since its a blocker for people installing (a somewhat-important step).
 2004-3-27 Seth Burgess <sjburges@gimp.org>
 	* GIMP.pm: updated enums
-	
-	* examples/blended2: fixed, updated enums, removed 
+
+	* examples/blended2: fixed, updated enums, removed
 	extraneous 'exit main'.
 	* examples/tex-to-float: moved to Render
 	* examples/translogo: moved to Web
 	* examples/webify: s/push_group/push/
 
-	* examples/fade-alpha 
-	* examples/innerbevel 
+	* examples/fade-alpha
+	* examples/innerbevel
 	* examples/randomart1: updated enums
 
 	* examples/examples.TODO: updated accordingly
 
 2004-3-22 Seth Burgess <sjburges@gimp.org>
 	* Makefile.PL: don't install known broken plugins
-	* TODO: split between Marc and Seth lists 
+	* TODO: split between Marc and Seth lists
 	* Gimp.pm: updated POD a bit to reflect a bit more reality
-	
+
 	* examples/fade-alpha: renamed registering to fade_alpha, fixed typos
-	* examples/frame_filter: moved to Filters/Generic/ 
+	* examples/frame_filter: moved to Filters/Generic/
 	* examples/pixelmap: moved to Filters/Generic/
 	* examples/examples.TODO: updated accordingly + can't use example-oo
 
 2004-3-21 Manish Singh <yosh@gimp.org>
-	* configure: Quick fix to make it build with current gimp. Real fix 
+	* configure: Quick fix to make it build with current gimp. Real fix
 	  is a lot more work, so punt for later.
 
 2004-3-20 Seth Burgess <sjburges@gimp.org>
@@ -614,33 +614,33 @@
 	* README: changed some typos; most things with gtk do work now; make
 	  test could be broken, probably needs some attention; removed linux
 	  plug (don't think its required any more).  Removed python reference.
-	
+
 	* Gimp/UI.pm: updated PF_TEXT for Gtk2 (stock buttons, sizing)
 	  Also re-enabled help.  Want to use Gtk2::Podviewer if available
 	  for the POD viewing portion, and fall back to Gimp::POD.
 	* Gimp/Fu.pm: corrected description of PF_TEXT
-	
+
 	* examples/examples.TODO: tested pixelmap.  It needs more docs, but
 	  works pretty well (uses PF_TEXT).
 
 2004-3-08 Seth Burgess <sjburges@gimp.org>
 	* Gimp.pm: removed debug code
-	
-	* UI/UI.pm: made Gimp::Fu dialogs much more similar to 
-	  script-fu in appearance.  Did away with "Previous" button, 
-	  at least temporarily.  Help button is currently commented 
-	  out, need to place it to right of blurb.  Removed FG/BG 
-	  buttons (dragging works, so shouldn't be needed.  Made 
+
+	* UI/UI.pm: made Gimp::Fu dialogs much more similar to
+	  script-fu in appearance.  Did away with "Previous" button,
+	  at least temporarily.  Help button is currently commented
+	  out, need to place it to right of blurb.  Removed FG/BG
+	  buttons (dragging works, so shouldn't be needed.  Made
 	  width adjustable, changed text/widget alignment.
 
-	* examples/glowing_steel: s/bucket_fill/edit_bucket_fill 
+	* examples/glowing_steel: s/bucket_fill/edit_bucket_fill
 	* examples/innerbevel: better defaults, better naming, removed debug
 	  code, more fudging.
 	* examples/warp-sharp: s/undo_push/undo/, added edge detect param
 	* examples/examples.TODO: updated accordingly
 
 2004-2-29 Seth Burgess <sjburges@gimp.org>
-	* Gimp.pm: change canonicalize_color to detect and fix 0-255=>0-1.0 
+	* Gimp.pm: change canonicalize_color to detect and fix 0-255=>0-1.0
 	  problems for a reference passed in.  Still has lousy error detection.
 	  Can hose up gimp's color selection pretty well.  Needs more testing.
 
@@ -655,15 +655,15 @@
 
 	* examples/dust: removed deprecated stuff
 	* examples/map_to_gradient: added param to get non-reversed gradient
-	* examples/mirrorsplit: changed algorithm to add a layer; can't flip 
+	* examples/mirrorsplit: changed algorithm to add a layer; can't flip
 	  without it being added now.  Changed deprecated stuff.
 	* examples/prep4gif: s/layer_set_visible/drawable_set_visible/
 
 	* examples/examples.TODO: changed accordingly.
 
 2004-2-25 Seth Burgess <sjburges@gimp.org>
-	* examples/bricks: brought up to date now that we have a pattern 
-	selector.  Still has some work that could be done, but 
+	* examples/bricks: brought up to date now that we have a pattern
+	selector.  Still has some work that could be done, but
 	functionality is restored.
 	* examples/examples.TODO: changed accordingly.
 
@@ -674,7 +674,7 @@
 	* UI/UI.pm: Gradients are back in!
 
 2004-2-22 Seth Burgess <sjburges@gimp.org>
-	* UI/basewidget.pm: still needs to compile and return a value (for now) 
+	* UI/basewidget.pm: still needs to compile and return a value (for now)
 	so stuff should work again.
 
 2004-2-21 Seth Burgess <sjburges@gimp.org>
@@ -692,7 +692,7 @@
 	* UI/UI.pm: Used Gtk2 to make PatternSelection work.  Stripped out the
 	basewidget stuff.  Found that you cannot use the "Subclass" of Gtk2
 	for implementing this, because of the dynamic loading (thanks muppet!).
-	Selection dialog is still pretty ugly at this point, but it should 
+	Selection dialog is still pretty ugly at this point, but it should
 	at least work.
 
 	* UI/basewidget.pm: removed contents of file
@@ -706,7 +706,7 @@
 	Changes to find which revision has which features).
 
 2003-12-28 Seth Burgess <sjburges@gimp.org>
-	* UI/UI.xs: add a call to gimp_stock_init() to UI startup, so we 
+	* UI/UI.xs: add a call to gimp_stock_init() to UI startup, so we
 	get the gimp-* stock icons.  I'm not sure this is the proper way to
 	do this, but it works... still not familiar enough with xs.
 
@@ -714,30 +714,30 @@
 	* examples/glowing_steel: changed color specifiers to be 0-1.0
 
 2003-12-24 Seth Burgess <sjburges@gimp.org>
-	
-	* UI/UI.pm: forgot this one.  
+
+	* UI/UI.pm: forgot this one.
 	Removed camel logo.  I don't want users to be aware of a difference.
 
 	s/get_name/drawable_get_name/
 	s/patterns_list/patterns_list("")/
 	s/gradients_get_list/gradients_get_list("")/
-	
+
 2003-12-24 Seth Burgess <sjburges@gimp.org>
 
 	* I'm taking over maintainence of gimp-perl for now, knowing little
-	about perl packages or some of the deeper magick in gimp-perl.  
+	about perl packages or some of the deeper magick in gimp-perl.
 	Any assistance is appreciated.
-	
+
 	* Changes: This file will now be in a gimp-like Changelog format,
-	that will record changes a little better than the previous method 
+	that will record changes a little better than the previous method
 	(see below).
 
-	* Gimp/Util.pm: s/->image/->get_image/, 
+	* Gimp/Util.pm: s/->image/->get_image/,
 	                s/set_visible/drawable_set_visible/
 	* Gimp/Lib.xs: s/drawable_image_id/drawable_get_image/
 	* Gimp/Feature.pm: removed Gtk package references, replaced with Gtk2
-	
-	* examples/examples.TODO: added.  Keep track of testing of 
+
+	* examples/examples.TODO: added.  Keep track of testing of
 	scripts and plans for their futures.
 
 	* examples/Create_Images
@@ -767,9 +767,9 @@
 	* examples/translogo
 	* examples/xachlego
 	* examples/xachshadow
-	* examples/xachvision 
-	* examples/yinyang: 
-	  removal of 'running under a shell' check; these are added at 
+	* examples/xachvision
+	* examples/yinyang:
+	  removal of 'running under a shell' check; these are added at
 	  installation-time, so were double-checked after install.
 
 	  s/gimp_image_active_drawable/gimp_image_get_active_drawable/
@@ -787,7 +787,7 @@
 
 	* examples/PDB: updated with a partial Gtk2 conversion; needs more
 	  work still.
-	* examples/dots: put in Render/Pattern/Dots instead of Render/Dots 
+	* examples/dots: put in Render/Pattern/Dots instead of Render/Dots
 	* examples/randomart1: removed last random selection, fixed colors
 	  to be within [0,0,0]-[1,1,1]
 	* examples/randomblends: fixed off-by-one error in loop

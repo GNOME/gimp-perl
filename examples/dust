@@ -79,13 +79,13 @@ register "dust",
    my ($w, $h) = ($image->width, $image->height);
 
    $image->undo_group_start;
-   
+
    Context->push();
    Context->set_foreground("white");
    Context->set_brush("Circle (01)");
    Context->set_opacity(50);
    # This will cause a PDB failure as of 9/7/05 CVS - can't set
-   # spacing on non-editable brush via PDB.  We should probably 
+   # spacing on non-editable brush via PDB.  We should probably
    # let this happen, so we can do via script what we can via the UI.
    # Brushes->set_spacing(Context->get_brush, 100);
    warn "Unable to set spacing due to missing PDB functionailty\n";
@@ -95,7 +95,7 @@ register "dust",
       $layer = $image->add_new_layer (0, TRANSPARENT_FILL, 1);
       $layer->set_mode (DIFFERENCE_MODE);
    }
-   
+
    for (1..($w*$h*$density)) {
       my ($x, $y) = (rand $w, rand $h);
       my $l = int($len + rand $len);
@@ -105,7 +105,7 @@ register "dust",
          push @c, $b += 5*(gen_rand-0.5);
          push @c, $b += 5*(gen_rand-0.5);
       }
-      
+
       $layer->paintbrush_default([map { $x+$c[$_], $y+$c[$_+$l] } 0..$l-1]);
    }
 

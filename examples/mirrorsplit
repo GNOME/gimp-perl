@@ -5,10 +5,10 @@ use Gimp::Fu;
 use Gimp::Util;
 use strict;
 #	Gimp::set_trace(TRACE_ALL);
-# 
-# <sjburges@gimp.org> 2/25/04: changed specifiers to explictly reference 
+#
+# <sjburges@gimp.org> 2/25/04: changed specifiers to explictly reference
 # the GIMP namespace, s/undo_push/undo/, now have to add layer to image in
-# order to flip it, or you get a PDB error.  So added, flipped, used, then 
+# order to flip it, or you get a PDB error.  So added, flipped, used, then
 # removed.
 
 register	"mirror_split",

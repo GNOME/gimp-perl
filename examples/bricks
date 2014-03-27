@@ -1,22 +1,22 @@
 #!/usr/bin/perl
 
-# [10/27/1999] v0.0.1 First version. 
- 
+# [10/27/1999] v0.0.1 First version.
+
 # (c) Copyright by Tels www.bloodgate.com 1999.
 
 # generate a brick texture for using in 3d games
 #
 # params: brick width/height, brick pattern, random light skew, border color
 #
-# 12/5/03: <sjburges@gimp.org> updated to use gimp_image_get_floating_sel, 
+# 12/5/03: <sjburges@gimp.org> updated to use gimp_image_get_floating_sel,
 # rather than gimp_image_floating_sel, gimp_undo_push/gimp_image_undo_push
 #
-# 25/2/04: <sjbkurges@gimp.org> changed color specifiers.  Reordered so that 
-# pasting happens after layer mask is attached to image.  Removed harmful 
-# gimp_layer_delete() calls. s/gimp_channel_ops_offset/gimp_drawable_offset/.  
+# 25/2/04: <sjbkurges@gimp.org> changed color specifiers.  Reordered so that
+# pasting happens after layer mask is attached to image.  Removed harmful
+# gimp_layer_delete() calls. s/gimp_channel_ops_offset/gimp_drawable_offset/.
 #
-# The plug-in is certainly incomplete, with unused parameters, artficial limiation 
-# on max/min size (which silently moves it to 256?). Doesn't save/restore current 
+# The plug-in is certainly incomplete, with unused parameters, artficial limiation
+# on max/min size (which silently moves it to 256?). Doesn't save/restore current
 # gimp pattern/colors before setting them.  Otherwise, it seems to work OK now :)
 
 use Gimp qw(:auto N_);
@@ -37,9 +37,9 @@ sub do_bricks {
     $layerpat = gimp_image_add_new_layer($image,0,0,0);
     gimp_selection_all($image);
     gimp_edit_bucket_fill($layerpat,2,0,100,0,0,1,1);
-    
+
     # make border lines
-    gimp_context_set_foreground ([1,1,1]); 
+    gimp_context_set_foreground ([1,1,1]);
     $layer = gimp_image_add_new_layer($image,0,0,0);
     gimp_drawable_fill($layer,3);
     my $w = 1; my $h = 1; my $j = 0; my $wo = 0;
@@ -64,7 +64,7 @@ sub do_bricks {
     gimp_image_undo_group_end($image);
     # make a copy of it for bump mapping
     gimp_selection_all($image);
-    $layer->edit_copy(); 
+    $layer->edit_copy();
     $border = gimp_image_add_new_layer($image,0,0,0);
     #print "$border\n";
     $border->edit_paste(0);
@@ -90,8 +90,8 @@ sub do_bricks {
         $r = int(rand ($skew) - ($skew / 1));
         if ($r != 0)
           {
-          gimp_context_set_foreground ("#ffffff") if ($r > 0); 
-          gimp_context_set_foreground ("#000000") if ($r < 0); 
+          gimp_context_set_foreground ("#ffffff") if ($r > 0);
+          gimp_context_set_foreground ("#000000") if ($r < 0);
           gimp_rect_select($image,$w+$wo+$bp,$h+$bp,$brickw,$brickh,2,0,0);
           gimp_edit_bucket_fill($layerpat,0,0,4*abs($r),0,0,1,1);
           # halves
@@ -110,10 +110,10 @@ sub do_bricks {
     gimp_context_set_background ($clr);
     $layerb = gimp_image_add_new_layer($image,1,BACKGROUND_FILL,0);
     gimp_selection_all($image);
-    if ($bp ne "") 
+    if ($bp ne "")
       {
       gimp_context_set_pattern($bp);
-      gimp_edit_bucket_fill($layerb,2,0,100,0,0,1,1); 
+      gimp_edit_bucket_fill($layerb,2,0,100,0,0,1,1);
       }
     $border->edit_copy();
     gimp_layer_add_alpha($layerb);
@@ -122,8 +122,8 @@ sub do_bricks {
     $mask->edit_paste(0);
     gimp_floating_sel_anchor(gimp_image_get_floating_sel($image));
     gimp_selection_none($image);
-    gimp_image_remove_layer ($border); 
-    gimp_image_remove_layer ($layer); 
+    gimp_image_remove_layer ($border);
+    gimp_image_remove_layer ($layer);
     gimp_layer_remove_mask ($layerb,0);
     gimp_drawable_offset ($layerpat,1,0,-1,-1);
     gimp_drawable_offset ($layerb,1,0,-1,-1);
@@ -133,15 +133,15 @@ sub do_bricks {
 }
 
 register
-        "do_bricks", 
+        "do_bricks",
         "Generate brick texture",
-        "Try it out", 
-        "Tels", 
-        "http://bloodgate.com", 
+        "Try it out",
+        "Tels",
+        "http://bloodgate.com",
         "10/26/1999a",
-        N_"<Image>/Filters/Render/Bricks...", 
+        N_"<Image>/Filters/Render/Bricks...",
         undef,
-        [ 
+        [
          [PF_PATTERN,  "background", "Brick pattern", "Leather"],
          [PF_STRING,  "highlight", "Second brick pattern for some highlightin (unused)", "unused yet"],
          [PF_STRING,  "borderpattern", "Border pattern (empty for none)", ""],
@@ -160,7 +160,7 @@ exit main();
 
 =head1 LICENSE
 
-Copyright Tels.  
+Copyright Tels.
 
 Licenced under the GNU Public License.
 

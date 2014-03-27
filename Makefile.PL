@@ -24,58 +24,58 @@ if ($ARGV[0] ne "--writemakefile") {
 }
 
 @otherdeps = qw(
-); 
+);
 
 # list of plugins using gtk directly (Gtk absolutely required)
 @gtk_pins =
    qw(
-     dataurl 
-     colorhtml 
+     dataurl
+     colorhtml
      fade-alpha
    );
 
 # list of standard plugins
 @pins =
    qw(
-      animate_cells 
-      blended2 blowinout bricks burst  
-      centerguide  
-      ditherize dots dust 
-      frame_filter frame_reshuffle 
+      animate_cells
+      blended2 blowinout bricks burst
+      centerguide
+      ditherize dots dust
+      frame_filter frame_reshuffle
       glowing_steel goldenmean guidegrid guides_to_selection
-      image_tile innerbevel  
-      layerfuncs mirrorsplit 
-      perlotine prep4gif 
-      repdup roundsel 
-      scratches sethspin stamps 
-      tex-to-float translogo 
-      randomart1 randomblends 
+      image_tile innerbevel
+      layerfuncs mirrorsplit
+      perlotine prep4gif
+      repdup roundsel
+      scratches sethspin stamps
+      tex-to-float translogo
+      randomart1 randomblends
       selective_sharpen
-      warp-sharp webify windify 
+      warp-sharp webify windify
       xachlego xachshadow xachvision
-      yinyang 
+      yinyang
    );
 # list of plugins using PDL
 
 @pdl_pins =
    qw(
-      gouge 
+      gouge
       redeye
-      pixelmap 
-      view3d 
-   );  
+      pixelmap
+      view3d
+   );
 
-# plugins that are useful code examples, but not even arguably useful 
+# plugins that are useful code examples, but not even arguably useful
 # gimp plugins due to silliness or duplication
 
-@uninstalled_pins = 
+@uninstalled_pins =
   qw(
      example-fu
      example-net
-     map_to_gradient 
+     map_to_gradient
   );
 
-# GTK isn't absolutely required, but for most people it is highly 
+# GTK isn't absolutely required, but for most people it is highly
 # desirable, so make a nice big notice saying so.
 
 eval "use Gtk2;"; $GTK = $@ eq "";
@@ -84,8 +84,8 @@ $GTK or print <<EOF;
 NOTICE:  unable to use the Perl-Gtk2 interface. Many features (like
          Gimp::Fu) rely on this extension. You can build without it (and
          many scripts will be disabled or run with reduced functionality
-         only), but it's better to install it.  If you do install it, 
-	 version 1.0 or higher is required; you can get it from 
+         only), but it's better to install it.  If you do install it,
+	 version 1.0 or higher is required; you can get it from
 	 http://gtk2-perl.sourceforge.net/ or any CPAN mirror.
 
 EOF
@@ -125,7 +125,7 @@ install ::
 
 install-po:
 	cd po && \$(MAKE) install
-        
+
 ".$install;
 }
 
@@ -233,9 +233,9 @@ WriteMakefile(
 	            SUFFIX	=> '.gz',
 	           },
     'PREREQ_PM'	=> {
-    		    Gtk2		=> 1.0,
-                    PDL			=> 0,
-    		    Data::Dumper	=> 2.0,
+		    Gtk2		=> 1.0,
+		    PDL			=> 0,
+		    Data::Dumper	=> 2.0,
 		    IO::All		=> 0,
 		   },
     META_MERGE => {

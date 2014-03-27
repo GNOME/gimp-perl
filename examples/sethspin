@@ -9,9 +9,9 @@ eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
 #       - Steinar H. Gunderson <sgunderson@bigfoot.com>
 
 
-# This one's all mine.  Well, its GPL/Artistic but I'm the author and creator. 
+# This one's all mine.  Well, its GPL/Artistic but I'm the author and creator.
 # You need gimp 1.1 or better for this; too much has changed, and I don't think
-# 1.0.x had a perspective PDB function anyway 
+# 1.0.x had a perspective PDB function anyway
 
 # Here's the working theory on this:
 #  There's a function called spinlayer which will spin from a spinlayer to a
@@ -20,11 +20,11 @@ eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
 #
 #  If the user wants to spin back, it will take 1/2 the layers otherwise required
 #  per call to the spin_layer, so that the number of total layers comes out the
-#  same.  
+#  same.
 #
 #  The main function makes a new image, copies the source and destination onto it
 #  with appropriate offsets, and passes this image with the bottom 2 layers to
-#  spin_layer.  At the end, remove the original 2 layers, since they won't be 
+#  spin_layer.  At the end, remove the original 2 layers, since they won't be
 #  needed, and add in some Layer comments for timing your gif.
 #
 ################################################################################
@@ -44,14 +44,14 @@ eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
 # 1.1 - Second (still ugly) release: Made the perspective setting actually do
 #       something
 # 1.2 - Used some of the convienence functions, and made things a little eaiser
-#       from the user's standpoint too.  Also moved it from the 
-#       Filters->Animations-> menu to Xtns->Animations.  I think its 
+#       from the user's standpoint too.  Also moved it from the
+#       Filters->Animations-> menu to Xtns->Animations.  I think its
 #       clearer whats going on this way.  It also works w/ any 2 layers now.
 # 1.5 - Some debugging by Steinar and myself to make it work again.
 # 1.6 - Moved some renaming into the main loop, more cleanups.
 # 1.7 - Fixed up set_name to drawable_set_name
 #
-# TODO: Clean it up; allow for other effects (skewing, ripples?) while spinning;        
+# TODO: Clean it up; allow for other effects (skewing, ripples?) while spinning;
 
 # Seth Burgess
 # <sjburges@gimp.org>
@@ -67,13 +67,13 @@ sub saw {  # a sawtooth function on PI
     if ($val < 3.14159/2.0) {
         return ($val/3.14159);
     } elsif ($val < 3.14159) {
-        return (-1+$val/3.14159); 
+        return (-1+$val/3.14159);
     } elsif ($val < 3.14159+3.14159/2.0) {
         return ($val/3.14159);
     } else {
-        return (-1+$val/3.14159); 
+        return (-1+$val/3.14159);
     }
-} 
+}
 
 sub spin_layer { # the function for actually spinning the layer
     my ($img, $spin, $dest, $numframes, $prp) = @_;
@@ -83,7 +83,7 @@ sub spin_layer { # the function for actually spinning the layer
        $frameno);  # The current frame
 
     # Now let's spin it!
-    $stepsize = 3.14159/$numframes; # in radians 
+    $stepsize = 3.14159/$numframes; # in radians
     $frameno = 0;
     for ($i=0; $i<=3.14159; $i+=$stepsize) {
         Gimp->progress_update ($i/3.14159);
@@ -98,7 +98,7 @@ sub spin_layer { # the function for actually spinning the layer
         $img->selection_all();
         @x = $img->selection_bounds();
         $img->selection_none();
- 
+
         # x[1],x[2]                  x[3],x[2]
         # x[1],x[4]                  x[3],x[4]
         my($y1, $y3);
@@ -108,10 +108,10 @@ sub spin_layer { # the function for actually spinning the layer
 	# height must be != 0
         $y3++ if ($y1 == $y3);
 
-        $floater = Gimp->gimp_drawable_transform_perspective_default($floater, 
-                       $x[1]+saw($i)*$prp*$framelay->width,$y1,  
+        $floater = Gimp->gimp_drawable_transform_perspective_default($floater,
+                       $x[1]+saw($i)*$prp*$framelay->width,$y1,
                        $x[3]-saw($i)*$prp*$framelay->width,$y1,
-                       $x[1]-saw($i)*$prp*$framelay->width,$y3,  
+                       $x[1]-saw($i)*$prp*$framelay->width,$y3,
                        $x[3]+saw($i)*$prp*$framelay->width,$y3,
                        0,1);
         $framelay->fill(1); # BG-IMAGE-FILL
@@ -146,7 +146,7 @@ register "seth_spin",
          ['gimp-1.1'],
          sub {
     my($src,$dest,$frames,$color,$perspective,$spinback,$indexed) = @_;
-    
+
     $oldbackground = Gimp->context_get_background();
     Gimp->context_set_background($color);
 
@@ -155,7 +155,7 @@ register "seth_spin",
     Gimp->progress_init(__"Seth Spin...");
 
     # Copy souce and destination to new image
-    
+
     $maxwide = ($src->width > $dest->width) ? $src->width : $dest->width;
     $maxhigh = ($src->height > $dest->height) ? $src->height: $dest->height;
 
@@ -184,13 +184,13 @@ register "seth_spin",
     }
 
     spin_layer($img, $spinlayer, $destlayer, $spinback ? $frames/2 : $frames, $perspective);
-   
-    # go back from destination to spinlayer if spinning back 
-    if ($spinback) { 
+
+    # go back from destination to spinlayer if spinning back
+    if ($spinback) {
 #        @layerlist = $img->get_layers();
         spin_layer($img, $destlayer, $spinlayer, $frames/2, $perspective);
-    }    
- 
+    }
+
     # remove the original 2 pasted layers
     $img->remove_layer($destlayer);
     $img->remove_layer($spinlayer);
@@ -203,12 +203,12 @@ register "seth_spin",
     if ($spinback) {
         $all_layers[$frames/2-1]->drawable_set_name(__"Spin Layer DEST (250ms)");
     }
-    $all_layers[$frames-1]->drawable_set_name(__"Spin Layer SRC (250ms)");  
+    $all_layers[$frames-1]->drawable_set_name(__"Spin Layer SRC (250ms)");
 
     # indexed conversion wants a display for some reason
-    if ($indexed) { 
-        $img->convert_indexed(1,MAKE_PALETTE,255,0,1,"buffy" ); 
-    } 
+    if ($indexed) {
+        $img->convert_indexed(1,MAKE_PALETTE,255,0,1,"buffy" );
+    }
 
     Gimp->context_set_background($oldbackground);
     return();
@@ -218,7 +218,7 @@ exit main;
 
 =head1 LICENSE
 
-Copyright Seth Burgess.  
+Copyright Seth Burgess.
 Distributed under the same terms as Gimp-Perl.
 
 =cut

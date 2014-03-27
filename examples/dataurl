@@ -38,7 +38,7 @@ register "file_dataurl_save",
    my($new_img,$new_drawable);
    my $max;
    my $export = Gimp::UI::export_image ($new_img=$img, $new_drawable=$drawable, "DATAURL",
-                                        $type==0 ? EXPORT_CAN_HANDLE_INDEXED|EXPORT_CAN_HANDLE_ALPHA 
+                                        $type==0 ? EXPORT_CAN_HANDLE_INDEXED|EXPORT_CAN_HANDLE_ALPHA
                                       : $type==1 ? EXPORT_CAN_HANDLE_RGB|EXPORT_CAN_HANDLE_GRAY
                                       : $type==2 ? EXPORT_CAN_HANDLE_RGB|EXPORT_CAN_HANDLE_GRAY|EXPORT_CAN_HANDLE_INDEXED
                                       :            0 );
@@ -125,7 +125,7 @@ Browser compatibility list (send more results to pcg@goof.com ;)
   Netscape 3.x	displays broken image icons
   Netscape 4.x	works on some configurations (communicator!),
                 not on others (navigator!)
-  Lynx 		displays the base64 code as text :(
+  Lynx		displays the base64 code as text :(
   MSIE 4	thousands of error messages in dialog boxes ;->
   MSIE 5	shows broken image icon
 
