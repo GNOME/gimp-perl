@@ -63,7 +63,7 @@ fully suffices to provide a professional interface and the
 ability to run this script from within GIMP and standalone
 from the commandline.
 
-Dov Grobgeld has written an excellent tutorial for Gimp-Perl. 
+Dov Grobgeld has written an excellent tutorial for Gimp-Perl.
 You can find it at C<http://www.gimp.org/tutorials/Basic_Perl/>.
 
 =head1 INTRODUCTION
@@ -369,7 +369,7 @@ Gimp::on_query {
          require Gimp::Feature;
          undef $menupath unless Gimp::Feature::present('gtk');
       }
-      
+
       Gimp->install_procedure(
 	$function,
 	$blurb,
@@ -606,7 +606,7 @@ anything (directory, link). It might not even exist at all.
 
 =item PF_TEXT
 
-Similar to PF_STRING, but the entry widget is much larger and has Load, 
+Similar to PF_STRING, but the entry widget is much larger and has Load,
 Save, and Edit (in external editor) buttons.
 
 =back
@@ -834,7 +834,7 @@ IMAGETYPE is one of GIF, JPG, JPEG, PNM or PNG, options include
  -Cn	use compression level n
  -E	Do not skip ancillary chunks (default)
  +E	Skip ancillary chunks
- 
+
  options for JPEG images
  -Qn	use quality "n" to save file (JPEG only)
  -S	do not smooth (default)
@@ -846,7 +846,7 @@ some examples:
  JPG:test.jpg		the same
  JPG-Q70:test.jpg	the same but force a quality of 70
  GIF-I-F:test.jpg	save a gif image(!) named test.jpg
- 			non-interlaced and without flattening
+			non-interlaced and without flattening
 
 =back
 
@@ -869,10 +869,10 @@ sub save_image($$) {
    $type=uc($1) if $path=~/\.([^.]+)$/;
    $type=uc($1) if s/^(GIF|JPG|JPEG|PNM|PNG)//i;
    while($_ ne "") {
-      $interlace=$1 eq "+", 	next if s/^([-+])[iI]//;
-      $flatten=$1 eq "+", 	next if s/^([-+])[fF]//;
+      $interlace=$1 eq "+",	next if s/^([-+])[iI]//;
+      $flatten=$1 eq "+",	next if s/^([-+])[fF]//;
       $noextra=$1 eq "+",	next if s/^([-+])[eE]//;
-      $smooth=$1 eq "+", 	next if s/^([-+])[sS]//;
+      $smooth=$1 eq "+",	next if s/^([-+])[sS]//;
       $quality=$1*0.01,		next if s/^-[qQ](\d+)//;
       $compress=$1,		next if s/^-[cC](\d+)//;
       $loop=$1 eq "+",		next if s/^([-+])[lL]//;

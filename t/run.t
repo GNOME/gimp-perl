@@ -18,7 +18,7 @@ ok(
 ok(!Gimp->image_insert_layer($l,0,0), 'Yet another OO syntax');
 is($l->get_name, "new layer", 'layer name');
 ok(
-  !$l->paintbrush(50,[1,1,2,2,5,3,7,4,2,8],PAINT_CONSTANT,0), 
+  !$l->paintbrush(50,[1,1,2,2,5,3,7,4,2,8],PAINT_CONSTANT,0),
   'some painting with variable length arrays, default value',
 );
 ok(

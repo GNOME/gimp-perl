@@ -25,12 +25,12 @@ use Gimp::Util;
 #   return();
 #};
 
-register "center_layer", "Center Layer", 
-         "Centers the current layer on the image", 
-         "Seth Burgess", "Seth Burgess <sjburges\@gimp.org>", 
+register "center_layer", "Center Layer",
+         "Centers the current layer on the image",
+         "Seth Burgess", "Seth Burgess <sjburges\@gimp.org>",
          "1.0", N_"<Image>/Layer/Center Layer", "*", [], sub {
 	($img, $layer) = @_;
-	$layer->set_offsets(($img->width  - $layer->width )/2, 
+	$layer->set_offsets(($img->width  - $layer->width )/2,
                         ($img->height - $layer->height)/2);
 	return();
 };
@@ -39,7 +39,7 @@ exit main;
 
 =head1 LICENSE
 
-Copyright Seth Burgess.  
+Copyright Seth Burgess.
 Distributed under the same terms as Gimp-Perl.
 
 =cut

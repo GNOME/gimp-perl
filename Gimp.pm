@@ -404,8 +404,8 @@ _pseudoclass qw(Item		), @item_prefixes;
 _pseudoclass qw(Layer		gimp_layer_ gimp_floating_sel_), @drawable_prefixes;
 _pseudoclass qw(Image		), @image_prefixes;
 _pseudoclass qw(Drawable	), @drawable_prefixes;
-_pseudoclass qw(Selection 	gimp_selection_);
-_pseudoclass qw(Vectors 	gimp_vectors_);
+_pseudoclass qw(Selection	gimp_selection_);
+_pseudoclass qw(Vectors		gimp_vectors_);
 _pseudoclass qw(Channel		gimp_channel_ gimp_selection_), @drawable_prefixes;
 _pseudoclass qw(Display		gimp_display_ gimp_);
 _pseudoclass qw(Plugin		), @plugin_prefixes;
@@ -459,7 +459,7 @@ sub name($)		{ $_[0]->[0] }
 sub flags($)		{ $_[0]->[1] }
 sub data($)		{ $_[0]->[2] }
 sub compare($$)		{ $_[0]->[0] eq $_[1]->[0] and
-			  $_[0]->[1] eq $_[1]->[1] and 
+			  $_[0]->[1] eq $_[1]->[1] and
 			  $_[0]->[2] eq $_[1]->[2] }
 sub new($$$$)		{ shift; [@_] }
 
@@ -479,7 +479,7 @@ This is a release of gimp-perl for gimp-2.8.  It is not compatible with
 version 2.6 or below of GIMP.
 
 This is mostly a reference manual. For a quick intro, look at
-L<Gimp::Fu>. 
+L<Gimp::Fu>.
 
 =head1 SYNOPSIS
 
@@ -496,7 +496,7 @@ available to your plug-in.
 =item :auto
 
 Import useful constants, like RGB, RUN_NONINTERACTIVE... as well as all
-libgimp and pdb functions automagically into the caller's namespace. 
+libgimp and pdb functions automagically into the caller's namespace.
 This will overwrite your AUTOLOAD function, if you have one. The AUTOLOAD
 function that gets installed must only be used in OO mode - either as
 an object or a class method call - the only exception is when the first
@@ -574,7 +574,7 @@ syntax, i.e. C<gimp_image_new(600,300,RGB)> is the same as C<new
 Image(600,300,RGB)>
 
 =item *
-Networked plug-ins look/behave the same as those running from within gimp.  
+Networked plug-ins look/behave the same as those running from within gimp.
 
 =item *
 Gimp::Fu will start GIMP for you, if it cannot connect to an existing
@@ -641,7 +641,7 @@ of C<Gimp::main>:
  exit main; # Gimp::Fu::main is exported by default when using Gimp::Fu
 
 This is similar to Gtk, Tk or similar modules, where you have to call the
-main eventloop. 
+main eventloop.
 
 Although you call C<exit> with the result of C<main>, the main function
 might not actually return. This depends on both the version of GIMP and
@@ -684,7 +684,7 @@ B<PDB> (the Procedural DataBase), and functions from B<libgimp> (the
 C-language interface library).
 
 You can get a listing and description of every PDB function by starting
-the B<DB Browser> extension in GIMP's B<Xtns> menu (but remember to change 
+the B<DB Browser> extension in GIMP's B<Xtns> menu (but remember to change
  "-" (dashes) to  "_" (underscores)).
 
 B<libgimp> functions can't be traced (and won't be traceable in the
@@ -720,7 +720,7 @@ not as Methods (C<Gimp-E<gt>>).
 
 =item main(), Gimp::main()
 
-Should be called immediately when perl is initialized. Arguments are not 
+Should be called immediately when perl is initialized. Arguments are not
 supported. Initializations can later be done in the init function.
 
 =item Gimp::gtk_init()
@@ -782,11 +782,11 @@ or a code reference (\&my_make).
 
 =item Gimp::canonicalize_colour/Gimp::canonicalize_color
 
-Take in a color specifier in a variety of different formats, and return 
-a valid gimp color specifier, consisting of 3 or 4 numbers in the range 
+Take in a color specifier in a variety of different formats, and return
+a valid gimp color specifier, consisting of 3 or 4 numbers in the range
 between 0 and 1.0.
 
-For example: 
+For example:
 
  $color = canonicalize_colour ("#ff00bb");
  $color = canonicalize_colour ([255,255,34]);
@@ -813,7 +813,7 @@ Mostly same as gimp_install_procedure from the C library. The
 parameters and return values for the functions are specified as an
 array ref containing either integers or array-refs with three elements,
 [PARAM_TYPE, \"NAME\", \"DESCRIPTION\"].
- 
+
 =item gimp_progress_init(message,[])
 
 Initializes a progress bar. In networked modules this is a no-op.
@@ -871,7 +871,7 @@ is described. See L<Gimp::OO> for details on using the object oriented
 syntax.  The 'gimpdoc' script will also return OO varients when functions
 are described.  For example:
 
-gimpdoc image_new 
+gimpdoc image_new
 
 has a section:
 
@@ -895,11 +895,11 @@ make sure to do so in a C<BEGIN> block.
 
 =item Gimp::set_trace (tracemask)
 
-Tracking down bugs in gimp scripts is difficult, due to a lack of 
-reasonable error messages.  Often, if anything goes wrong, you only get 
-an execution failure. 
+Tracking down bugs in gimp scripts is difficult, due to a lack of
+reasonable error messages.  Often, if anything goes wrong, you only get
+an execution failure.
 
-You can switch on tracing to see which parameters are used to call pdb 
+You can switch on tracing to see which parameters are used to call pdb
 functions, so you can at least see what was called to cause the error.
 
 This function is never exported, so you have to qualify it when calling.

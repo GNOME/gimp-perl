@@ -75,7 +75,7 @@ $parser = new Parse::RecDescent <<'EOA';
 {
 #   use re 'eval';
    $Parse::RecDescent::tokensep = '(?:\s*(?:(;[^\n]*\n))?)*';
-   
+
    my $indent = 0;
    my %sf2pf = (
       'SF-IMAGE'	=> 'PF_IMAGE,     ',
@@ -97,12 +97,12 @@ $parser = new Parse::RecDescent <<'EOA';
       FALSE		0
       #t		1
       #f		0
-      
+
       RGB		RGB_IMAGE
       RGBA		RGBA_IMAGE
 
       LINEAR		LINEAR_INTERPOLATION
-      
+
       NORMAL		NORMAL_MODE
       ADDITION		ADDITION_MODE
       MULTIPLY		MULTIPLY_MODE
@@ -122,7 +122,7 @@ $parser = new Parse::RecDescent <<'EOA';
       ALPHA_MASK	ADD_ALPHA_MASK
       BLACK_MASK	ADD_BLACK_MASK
       WHITE_MASK	ADD_WHITE_MASK
-      
+
       *pi*		3.14159265
    );
    my $constants = join("|",map {quotemeta} sort {length($b) <=> length($a)} keys %constant);
@@ -176,14 +176,14 @@ nth	=> 'sub nth {
    my $xskip;
 
    my $compat_fun = join("|",map {quotemeta} sort {length($b) <=> length($a)} keys %compat_fun);
-   
+
    sub func2perl {
       my($name)=@_;
       $name=~s/->/2/g;
       $name=~y/-*<>?!:\//_/;
       $name=~/^[A-Za-z_]/ ? $name : "_$name";
    }
-   
+
    sub sf2pf {
       my $name=lc $_[0];
       $name=~y/ -?!:<>\[]/__/d;
@@ -227,7 +227,7 @@ expr	: '(' e_if ')'
 	| ...!')' <error:unrecognized expression>
 
 cp_expr	: /car\b/   '(' ...pdbfun e_call ')'
-	
+
 	| e_begin
 	| e_list
 	| '=' expr 'TRUE'
@@ -247,9 +247,9 @@ cp_expr	: /car\b/   '(' ...pdbfun e_call ')'
 	| 'number->string' expr ...')'
 	| 'cons-array' gen["("] expr (gen[","] expr)(?) gen[",[])"]
 	| 'symbol-bound?' string '(' ident ')' gen["0"]
-	
+
 	| /aref\b/ expr gen["->["] expr gen["]"]
-	
+
 	| /$compat_fun/ { $::add_funcs{$compat_fun{$item[1]}}++ } <reject>
 	| /car\b/    gen["\@{"] expr gen["}[0]"]
 	| /cadr\b/   gen["\@{"] expr gen["}[1]"]
@@ -257,7 +257,7 @@ cp_expr	: /car\b/   '(' ...pdbfun e_call ')'
 	| /cadddr\b/ gen["\@{"] expr gen["}[3]"]
 	| 'null?' gen["!\@{"] expr gen["}"]
 	| /cons\b/  gen["["] expr gen[", "] expr gen["]"]
-	
+
 	| ...')' gen["[]"]
 	| '(' cp_expr ')'
 	| constant
@@ -335,7 +335,7 @@ e_call	: ( /script-fu-[A-Za-z_*][A-Za-z0-9-_*]*/
 	  | ident gen["$item[-1] ("]
 	  )
 	  (...!')'
-	  	expr (...!')' gen[", "] expr)(s?)
+		expr (...!')' gen[", "] expr)(s?)
 	  )[@arg](?)
 	  gen[")"]
 
@@ -384,7 +384,7 @@ c_while	: 'while' <commit>
 e_cond	: 'cond' <commit>
 	  cond
 
-cond	: '(' 
+cond	: '('
 	  ( /'?else\b/ expr ')'
 	  | expr gen[" ? "] expr incindent nl gen[": "] ')' decindent
 	    ( ...'(' cond | gen["die 'cond fell off the end'"] )
@@ -395,7 +395,7 @@ e_binop	: expr
 	     gen[" $arg[0] "]
 	     expr
 	  )[@arg](s?)
-	
+
 e_list	: 'list' gen["["] (expr (...!')' gen[", "] expr)(s?))(?) gen["]"]
 
 ident	: /[A-Za-z0-9-#_*!?<>=\/]+/ <reject:$item[1]!~/[A-Za-z]/>
@@ -429,10 +429,10 @@ print STDERR "done\n" unless $quiet;
 
 sub convert {
    my($in,$out)=@_;
-   
+
    open IN,"<$in\0"   or die "unable to open '$in' for reading: $!";
    open OUT,">$out\0" or die "unable to open '$out' for writing: $!";
-   
+
    print STDERR "header..." unless $quiet;
    print OUT <<EOA;
 #!/usr/bin/perl
@@ -455,7 +455,7 @@ EOA
 
 exit main;
 EOA
-   
+
    print STDERR "wrote($out)\n" unless $quiet;
 }
 

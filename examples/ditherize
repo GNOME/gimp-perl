@@ -22,19 +22,19 @@ my %imagetype2layertype = (
 );
 
 register "plug_in_ditherize",
-         "dithers current selection",
-         "This script takes the current selection and dithers it just like convert to indexed",
-         "Marc Lehmann",
-         "Marc Lehmann",
-         "1.2",
-         N_"<Image>/Filters/Noise/Ditherize...",
-         "RGB*, GRAY*",
-         [
-          [PF_RADIO,		"dither_type",	"The dither type (see gimp_image_convert_indexed)", 1,
-          					[none => 0, fs => 1, "fs/low-bleed" => 2, ordered => 3]],
-          [PF_SLIDER,		"colours",	"The number of colours to dither to", 10, [0, 256, 1, 1]],
-         ],
-         sub {
+	 "dithers current selection",
+	 "This script takes the current selection and dithers it just like convert to indexed",
+	 "Marc Lehmann",
+	 "Marc Lehmann",
+	 "1.2",
+	 N_"<Image>/Filters/Noise/Ditherize...",
+	 "RGB*, GRAY*",
+	 [
+	  [PF_RADIO,		"dither_type",	"The dither type (see gimp_image_convert_indexed)", 1,
+						[none => 0, fs => 1, "fs/low-bleed" => 2, ordered => 3]],
+	  [PF_SLIDER,		"colours",	"The number of colours to dither to", 10, [0, 256, 1, 1]],
+	 ],
+	 sub {
    my($image,$drawable,$dither,$colours)=@_;
 
 #   Gimp::set_trace(-1);
@@ -58,8 +58,8 @@ register "plug_in_ditherize",
    my $copy = new Gimp::Image($w, $h, $image->base_type);
    $copy->undo_disable;
    my $draw = new Gimp::Layer($copy, $w, $h,
-                        $imagetype2layertype{$image->base_type},
-                        "temporary layer", 100, NORMAL_MODE);
+			$imagetype2layertype{$image->base_type},
+			"temporary layer", 100, NORMAL_MODE);
    $copy->add_layer ($draw, 1);
    $draw->edit_paste(0)->anchor;
    $copy->convert_indexed ($dither, MAKE_PALETTE, $colours, 1, 1, "");

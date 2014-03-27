@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
     if 0; # not running under some shell
@@ -63,8 +63,8 @@ sub perl_fu_glowing_steel {
   gimp_image_add_layer($image, $backlayer, 1);
 
   if (gimp_version() gt "2.3")  # make work for 2.2 or 2.3
-    { gimp_layer_set_lock_alpha($textlayer, 1); } 
-  else 
+    { gimp_layer_set_lock_alpha($textlayer, 1); }
+  else
     { gimp_layer_set_lock_alpha($textlayer,1); }
 
   perl_fu_brushed_metal($image, $textlayer, 25, 135);
@@ -190,7 +190,7 @@ sub perl_fu_brushed_metal {
   gimp_layer_set_offsets($templ, $x1+$length, $y1+$length);
   my $target_select = gimp_selection_save($image);
   gimp_selection_none($image);
-  
+
   # Render the actual effect into our temporary layer
   plug_in_solid_noise($image, $templ, 0, 0, time(), 1, 1.5, 2.5);
 
@@ -338,7 +338,7 @@ register
 	"film \"Lost In Space\".",
   "Aaron Sherman", "Aaron Sherman (c)", "1999-06-14",
   N_"<Image>/Filters/Render/Logos/Glowing Steel",
-  
+
   undef,
   [
    [PF_STRING, "string", "string", "GET LOST"],

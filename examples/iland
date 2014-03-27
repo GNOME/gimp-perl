@@ -19,7 +19,7 @@ use PDL::LiteF;
 sub landscape {
 
 	my ($image, $drawable, $floor,$component, $delta,$elevation, $camerapos) = @_;
-	
+
 	#gimp_tile_cache_size(20000);
 	gimp_selection_none($image);
 	plug_in_rotate(RUN_NONINTERACTIVE, $image, -1, $camerapos, 1) if ($camerapos != 0);
@@ -36,7 +36,7 @@ sub landscape {
 	my $dest = new Gimp::PixelRgn ($newdrawable, 0,0,$width, $height,1,1);
 	Gimp->progress_init("Rendering...");
 	my $relord=$src->w/255;
-	
+
 	gimp_drawable_fill($newdrawable, 0);
 	$delta=1 if ($delta<1);
 	for (my $y=0; $y<$src->h; $y++){
@@ -44,12 +44,12 @@ sub landscape {
 		my $drow=$row&0;
 		$red=$row->slice($component);
 		$dred=$drow->slice(0);
-		$dgreen=$drow->slice(1);	
+		$dgreen=$drow->slice(1);
 		$dblue=$drow->slice(2);
 		for(my $x=0;$x<$src->w;$x++){
 			$r=at($red,0,$x);
 			if ($r>$floor){
-				my $remain=$r;	
+				my $remain=$r;
 				my $currentx=$width-$r*$relord+($x/$elevation);
 				#Apply elevation following the x offset in original picture
 				while ($remain>0 && $currentx<$src->w){
@@ -69,7 +69,7 @@ sub landscape {
 						set ($dblue,0,$currentx,$remain+200);
 					}
 					$remain-=$delta;
-					$currentx++;	
+					$currentx++;
 				}
 			}
 		}
@@ -100,18 +100,18 @@ sub landscape {
 register "intensitylandscape",
 	 "Generate an intensity based landscape",
 	 "Generate an alpha landscape based on intensity",
-	 "Fabian Frederick", 
+	 "Fabian Frederick",
 	 "(c) 2001 Fabian Frederick",
-	 "20010601", 
-	 N_"<Image>/Filters/Render/Intensity Landscape", 
+	 "20010601",
+	 N_"<Image>/Filters/Render/Intensity Landscape",
 	 "*",
 	 [
 		[PF_SLIDER, "floor", "Floor", 100, [0, 255]],
 		[PF_RADIO, "active_component", "Active Component", 0, [ Red => 0, Green => 1, Blue => 2]],
 		[PF_SLIDER, "delta", "delta color", 6, [0, 100]],
 		[PF_FLOAT, "elevation", "elevation argument should be 2 or 3", 2],
-		[PF_RADIO, "camera", "camera position", 0, [ Right => 0, Bottom => 3, Left => 2, Top => 1]] 
-		
+		[PF_RADIO, "camera", "camera position", 0, [ Right => 0, Bottom => 3, Left => 2, Top => 1]]
+
 	 ],
 	 \&landscape;
 exit main;

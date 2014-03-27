@@ -10,7 +10,7 @@ eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
 use Gimp;
 use Gimp::Fu;
 use Gimp::Util;
- 
+
 register "guide_to_selection",
          "Puts a selection mask around the guides",
          "Selects the area under the guides (1px wide)",
@@ -42,14 +42,14 @@ register "guide_to_selection",
       }
       $img->rect_select($x,$y,$w,$h,$operation,$feather,$radius);
       $operation = CHANNEL_OP_ADD if $operation == CHANNEL_OP_REPLACE;
-      
+
       $i = $img->find_next_guide($i);
-    }         
+    }
 
     ();
 };
 
-exit main;                                        
+exit main;
 
 =head1 LICENSE
 

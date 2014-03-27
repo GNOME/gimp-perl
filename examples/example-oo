@@ -9,7 +9,7 @@ use Gimp qw(:auto);
 # the extension that's called.
 sub plug_in_example_oo {
 
-# we use syntax tricks to make it seem like we're generating a new 
+# we use syntax tricks to make it seem like we're generating a new
 # object by calling 'new'.  This is fairly standard PERL OO magic.
 
 # instead of my $img=gimp_image_new(300,200,RGB)
@@ -21,23 +21,23 @@ sub plug_in_example_oo {
 # instead of gimp_display_new($img);
   new Gimp::Display($img);
 
-# For any of Image, Drawable, Layer, Palette, Edit, Gradients, Patterns, 
+# For any of Image, Drawable, Layer, Palette, Edit, Gradients, Patterns,
 # Progress, Channel, Selection, Display, Plugin, you can use a syntax
-# like Objtype->function, and it will be translated into 
+# like Objtype->function, and it will be translated into
 # gimp_objtype_function
 
 # instead of gimp_context_set_background() you can use
   Palette->set_background([200,200,100]);
 
 # Next, we have 2 examples of using the drawable or image as an object when
-# its the first parameter to the PDB call.  
+# its the first parameter to the PDB call.
 
 # image_add_layer($img,$bg,1);
   $img->add_layer($bg,1);
 #  gimp_drawable_fill ($bg,BACKGROUND_FILL);
   $bg->fill(BACKGROUND_FILL);
 
-# Finally, we have a plugin example.  Note that though the PDB defintion 
+# Finally, we have a plugin example.  Note that though the PDB defintion
 # specifies a run mode, image and drawable, we only specify a drawable.
 
 #  plug_in_blur(1,$img,$bg);
@@ -59,7 +59,7 @@ Gimp::on_query {
                                "<Toolbox>/Xtns/Perl Example Plug-in", # Menu
 			       undef, # Image types"
 			       PLUGIN, # Type
-      [ 
+      [
         [PDB_INT32, "run_mode", "Interactive, [non-interactive]"]
       ], # Params
       []); # Return values

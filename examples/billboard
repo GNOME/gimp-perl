@@ -1,16 +1,16 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 #TODO: figure out why adding a -w gives a bunch of "
-# Use of uninitialized value in subroutine entry at /usr/lib/perl/5.8/Gimp.pm 
+# Use of uninitialized value in subroutine entry at /usr/lib/perl/5.8/Gimp.pm
 # line 627." messages and fix it.
 
 # I'm hacking this on top of my sethspin script, so this is doing even more
 # stuff it wasn't really designed to do.  Hence if you thought sethspin was
-# a bit ugly, look at this one...       
+# a bit ugly, look at this one...
 
-# I think it was tigert that suggested this.  It turned out to be less 
+# I think it was tigert that suggested this.  It turned out to be less
 # complex than I orginally thought so I figured I'd give it a spin.
- 
+
 # Seth Burgess
 # <sjburges@gimp.org>
 
@@ -27,22 +27,22 @@ sub saw {  # a sawtooth function on PI
 		return ($val/3.14159) ;
 		}
 	elsif ($val < 3.14159) {
-		return (-1+$val/3.14159); 
+		return (-1+$val/3.14159);
 		}
 	elsif ($val < 3.14159+3.14159/2.0) {
 		return ($val/3.14159) ;
 		}
 	else {
-		return (-1+$val/3.14159); 
+		return (-1+$val/3.14159);
 		}
-	} 
+	}
 
 sub spin_layer { # the function for actually spinning the layer
 	my ($img, $spin, $dest, $numframes, $prp, $blinds) = @_;
     # Now lets spin it!
-	$stepsize = 3.14159/$numframes; # in radians 
+	$stepsize = 3.14159/$numframes; # in radians
 	for ($i=0; $i<=3.14159; $i+=$stepsize) {
-        	Gimp->progress_update ($i/3.14159);
+		Gimp->progress_update ($i/3.14159);
 		# create a new layer for spinning
 		$framelay = ($i < 3.14159/2.0) ?  $spin->copy(1) : $dest->copy(1);
 		$img->add_layer($framelay, 0);
@@ -54,17 +54,17 @@ sub spin_layer { # the function for actually spinning the layer
 			$img->rect_select(0, $j*$blindheight, $img->width, $blindheight, 2, 0, 0.13);
 			@x = $img->selection_bounds();
 			# x[1],x[2]                  x[3],x[2]
-	        # x[1],x[4]                  x[3],x[4]
+		# x[1],x[4]                  x[3],x[4]
 			$framelay->transform_perspective_default(
-		$x[1]+saw($i)*$prp*$framelay->width,$x[2]+$blindheight *sin($i)/2,  
+		$x[1]+saw($i)*$prp*$framelay->width,$x[2]+$blindheight *sin($i)/2,
 		$x[3]-saw($i)*$prp*$framelay->width,$x[2]+$blindheight *sin($i)/2,
-		$x[1]-saw($i)*$prp*$framelay->width,$x[4]-$blindheight *sin($i)/2,  
+		$x[1]-saw($i)*$prp*$framelay->width,$x[4]-$blindheight *sin($i)/2,
 		$x[3]+saw($i)*$prp*$framelay->width,$x[4]-$blindheight *sin($i)/2,
-                1, 1);  
+		1, 1);
 
-# Gimp Perspective Functionality has changed.  It used to create a floating 
+# Gimp Perspective Functionality has changed.  It used to create a floating
 # selection if there was a selection active already.  Now it only does that
-# in interactive - PDB makes it a new layer.  Fine by me, wish the docs had 
+# in interactive - PDB makes it a new layer.  Fine by me, wish the docs had
 # changed though.
 #			$floater->floating_sel_anchor;
 
@@ -73,7 +73,7 @@ sub spin_layer { # the function for actually spinning the layer
 		# I need to create another layer beind this spun one now
 		$backlayer = $framelay->layer_copy(0);
 		$img->add_layer($backlayer, 1);
-		$backlayer->fill(1); # BG-IMAGE-FILL 
+		$backlayer->fill(1); # BG-IMAGE-FILL
 	}
 	for ($i=0; $i<$numframes; $i++) {
 		@all_layers = $img->get_layers();
@@ -84,42 +84,42 @@ sub spin_layer { # the function for actually spinning the layer
 	$destfram = $all_layers[$numframes]->copy(0);
 	$img->add_layer($destfram,0);
 
-	# clean up my temporary layers	
+	# clean up my temporary layers
 	$img->remove_layer($all_layers[$numframes]);
 	$img->remove_layer($all_layers[$numframes+1]);
 }
 
 register "billboard",
-         "Billboard",
-         "Take one image.  Spin it about the horizontal axis, and end up with another image.  I made it for easy web buttons, mostly because somebody suggested to me.",
-         "Seth Burgess",
-         "Seth Burgess <sjburges\@gimp.org>",
-         "1.3",
-         N_"<Image>/Filters/Animation/Billboard...",
-         "*",
-         [
-          [PF_DRAWABLE, "source", "What drawable to spin from?"],
-          [PF_DRAWABLE, "destination","What drawable to spin to?"],
+	 "Billboard",
+	 "Take one image.  Spin it about the horizontal axis, and end up with another image.  I made it for easy web buttons, mostly because somebody suggested to me.",
+	 "Seth Burgess",
+	 "Seth Burgess <sjburges\@gimp.org>",
+	 "1.3",
+	 N_"<Image>/Filters/Animation/Billboard...",
+	 "*",
+	 [
+	  [PF_DRAWABLE, "source", "What drawable to spin from?"],
+	  [PF_DRAWABLE, "destination","What drawable to spin to?"],
 		  [PF_INT8, "frames", "How many frames to use?", 16],
 		  [PF_COLOR, "background", "What color to use for background if not transparent", [0,0,0]],
 		  [PF_SLIDER, "perspective", "How much perspective effect to get", 40, [0,255,5]],
 		  [PF_TOGGLE, "spin_back", "Also spin back?" , 0],
-          [PF_TOGGLE, "convert_indexed", "Convert to indexed?", 1],
+	  [PF_TOGGLE, "convert_indexed", "Convert to indexed?", 1],
 		  [PF_SPINNER, "billboard_slats", "Number of shades", 3, [1,50,1]],
-         ],
-         [],
-         ['gimp-1.1'],
-         sub {
+	 ],
+	 [],
+	 ['gimp-1.1'],
+	 sub {
    my($in_img,$src,$dest,$frames,$color,$psp,$spinback,$indexed, $shadenum) =@_;
 	$maxwide = ($src->width > $dest->width) ? $src->width : $dest->width;
 	$maxhigh = ($src->height > $dest->height) ? $src->height: $dest->height;
 	$img = gimp_image_new($maxwide, $maxhigh, RGB);
 
 
-	$tmpimglayer = $img->add_new_layer(0,3,1); 
+	$tmpimglayer = $img->add_new_layer(0,3,1);
 	$img->display_new;
-        Gimp->progress_init("Billboard...",-1);
-        Context->push();
+	Gimp->progress_init("Billboard...",-1);
+	Context->push();
 	Context->set_background($color);
 	$src->edit_copy();
 	$spinlayer = $tmpimglayer->edit_paste(1);
@@ -143,41 +143,41 @@ register "billboard",
 		}
 
 	spin_layer($img, $spinlayer, $destlayer, $spinback ? $frames/2 : $frames-1, $psp, $shadenum);
-	 $img->set_visible($img->add_new_layer(1),($img->get_layers)[0]); 
+	 $img->set_visible($img->add_new_layer(1),($img->get_layers)[0]);
 	 $img->merge_visible_layers(0);
-	
-	if ($spinback) { 
+
+	if ($spinback) {
 		@layerlist = $img->get_layers();
 		$img->add_layer($layerlist[$frames/2]->copy(0),0);
 		@layerlist = $img->get_layers();
 		spin_layer($img, $layerlist[1], $layerlist[0], $frames/2, $psp, $shadenum);
 		$img->remove_layer(($img->get_layers)[0]);
-		}	
-	
+		}
+
 	# unhide and name layers
 	@all_layers = $img->get_layers;
 	$img->set_visible(@all_layers);
 	for ($i=1; $i<=$frames ; $i++) {
 		$all_layers[$i-1]->set_name("Spin Layer $i (50ms)");
 		}
-	$all_layers[$frames-1]->set_name("Spin Layer SRC (250ms)");  
-	
+	$all_layers[$frames-1]->set_name("Spin Layer SRC (250ms)");
+
 	if ($spinback) {
-		$all_layers[$frames/2-1]->set_name("Spin Layer DEST (250ms)"); 
+		$all_layers[$frames/2-1]->set_name("Spin Layer DEST (250ms)");
 		}
 	else { $all_layers[0]->set_name("Spin Layer DEST (250ms)")}
-	
+
 
 	# indexed conversion wants a display for some reason
-	if ($indexed) { 
-           $img->convert_indexed(1,            # dither type = fs
-                                 MAKE_PALETTE, # palette type
-                                 255,          # number of colors 
-                                 0,            # don't dither transparency
-                                 1,            # (ignored)
-                                 "Custom"      # custom palette name 
-                                 );
-           } 
+	if ($indexed) {
+	   $img->convert_indexed(1,            # dither type = fs
+				 MAKE_PALETTE, # palette type
+				 255,          # number of colors
+				 0,            # don't dither transparency
+				 1,            # (ignored)
+				 "Custom"      # custom palette name
+				 );
+	   }
 
 	Context->pop();
 	gimp_displays_flush();
@@ -188,7 +188,7 @@ exit main;
 
 =head1 LICENSE
 
-Copyright Seth Burgess.  
+Copyright Seth Burgess.
 
 Distrubted under the same terms as Gimp-Perl.
 

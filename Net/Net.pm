@@ -230,16 +230,16 @@ sub gimp_init {
    }
    defined $server_fh or croak __"could not connect to the gimp server (make sure Perl-Server is running)";
    { my $fh = select $server_fh; $|=1; select $fh }
-   
+
    my @r = response;
-   
+
    die __"expected perl-server at other end of socket, got @r\n"
       unless $r[0] eq "PERL-SERVER";
    shift @r;
    die __"expected protocol version $PROTOCOL_VERSION, but server uses $r[0]\n"
       unless $r[0] eq $PROTOCOL_VERSION;
    shift @r;
-   
+
    for(@r) {
       if($_ eq "AUTH") {
          die __"server requests authorization, but no authorization available\n"
@@ -445,7 +445,7 @@ sub extension_perl_server {
 
   slog __"server version $Gimp::VERSION started".($auth ? __", authorization required" : "");
 
-  $SIG{PIPE}='IGNORE'; # may not work, since libgimp (eech) overwrites it.        
+  $SIG{PIPE}='IGNORE'; # may not work, since libgimp (eech) overwrites it.
   my($unix_path)=$DEFAULT_UNIX_DIR.$DEFAULT_UNIX_SOCK;
 
   if ($host ne "") {
@@ -583,12 +583,12 @@ and spawn/ for a private gimp instance. Examples are:
  yahoo.com:11100             # non-standard port
  tcp/yahoo.com               # make sure it uses tcp
  authorize@tcp/yahoo.com:123 # full-fledged specification
- 
+
  unix/tmp/unx                # use unix domain socket
  password@unix/tmp/test      # additionally use a password
- 
+
  authorize@                  # specify authorization only
- 
+
  spawn/                      # use a private gimp instance
  spawn/nodata                # pass --no-data switch
  spawn/gui                   # don't pass -n switch

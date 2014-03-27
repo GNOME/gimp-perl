@@ -18,28 +18,28 @@ sub read_text {
 }
 
 register "file_colorhtml_save",
-         "Saves the image as coloured html text",
-         "=pod",
-         "Marc Lehmann",
-         "Marc Lehmann <pcg\@goof.com>",
-         "1999-11-22",
-         "<Save>/COLORHTML",
-         "*",
-         [
-          [PF_RADIO,	"character_source", "where to take the characters from", 0,
-          		[sourcecode => 0, textfile => 1, filename => 2]],
-          [PF_FILE,	"characters",     "the filename to read or the characters to use", ""],
-          [PF_STRING,   "font_size",      "the html font size (1..7 or -7 .. +7)", 2],
-          [PF_BOOL,     "use_css",        "use CSS?", 1],
-          [PF_BOOL,	"compatible",     "html-4.0 compliancy?", 1],
-          [PF_BOOL,	"closetag",       "add closing tag?", 1],
-         ],
-         sub {
+	 "Saves the image as coloured html text",
+	 "=pod",
+	 "Marc Lehmann",
+	 "Marc Lehmann <pcg\@goof.com>",
+	 "1999-11-22",
+	 "<Save>/COLORHTML",
+	 "*",
+	 [
+	  [PF_RADIO,	"character_source", "where to take the characters from", 0,
+			[sourcecode => 0, textfile => 1, filename => 2]],
+	  [PF_FILE,	"characters",     "the filename to read or the characters to use", ""],
+	  [PF_STRING,   "font_size",      "the html font size (1..7 or -7 .. +7)", 2],
+	  [PF_BOOL,     "use_css",        "use CSS?", 1],
+	  [PF_BOOL,	"compatible",     "html-4.0 compliancy?", 1],
+	  [PF_BOOL,	"closetag",       "add closing tag?", 1],
+	 ],
+	 sub {
    my($img,$drawable,$filename,$filename2,$source,$text,$size,$css,$html40,$closetag) = @_;
    my($new_img,$new_drawable);
    my $max;
    my $export = Gimp::UI::export_image ($new_img=$img, $new_drawable=$drawable, "COLORHTML",
-                                        EXPORT_CAN_HANDLE_RGB);
+					EXPORT_CAN_HANDLE_RGB);
    die __"export failed" if $export == EXPORT_CANCEL;
    my ($w,$h) = ($new_drawable->width, $new_drawable->height);
    Gimp->tile_cache_ntiles($w / Gimp->tile_width + 1);
@@ -47,11 +47,11 @@ register "file_colorhtml_save",
    my $cssfile;
    if ($css) {
       if ($filename =~ /(.*)\.[^.]+$/) {
-         $cssfile = "$1.css"
+	 $cssfile = "$1.css"
       } elsif ($filename =~ /\.$/) {
-         $cssfile = "${filename}css"
+	 $cssfile = "${filename}css"
       } else {
-         $cssfile = "$filename.css"
+	 $cssfile = "$filename.css"
       }
       sysopen CSS,$cssfile,O_CREAT|O_TRUNC|O_WRONLY or die __"Unable to open '$cssfile' for writing: $!\n";
    }
@@ -108,24 +108,24 @@ HEADER
       my $pel = $region->get_row2 (0, $y, $w);
       push @chars,@data while @chars < $w;
       if ($css) {
-         $pel =~ s{(...)}{
-            "<span class=\"N".unpack("H*",$1)."\">".shift(@chars)."</span>"
-         }ges;
-         while ($pel =~ /"N([0-9a-fA-F]{6})"/g) {
-             my $color = $1;
-             print CSS "span.N$color { color: #$color; background-color: #000000; }\n" unless exists $colors{$color};
-             $colors{$color}++;
-         }
+	 $pel =~ s{(...)}{
+	    "<span class=\"N".unpack("H*",$1)."\">".shift(@chars)."</span>"
+	 }ges;
+	 while ($pel =~ /"N([0-9a-fA-F]{6})"/g) {
+	     my $color = $1;
+	     print CSS "span.N$color { color: #$color; background-color: #000000; }\n" unless exists $colors{$color};
+	     $colors{$color}++;
+	 }
       } elsif ($html40) {
-         $pel =~ s{(...)}{
-            "<font color=\"#".unpack("H*",$1)."\">".shift(@chars).$closetag;
-         }ges;
+	 $pel =~ s{(...)}{
+	    "<font color=\"#".unpack("H*",$1)."\">".shift(@chars).$closetag;
+	 }ges;
       } else {
-         $pel =~ s{(...)}{
-            "<font color=".unpack("H*",$1).">".shift(@chars).$closetag;
-         }ges;
+	 $pel =~ s{(...)}{
+	    "<font color=".unpack("H*",$1).">".shift(@chars).$closetag;
+	 }ges;
       }
-      
+
       print FILE $pel,"\n";
       update Progress $y/$h;
    }

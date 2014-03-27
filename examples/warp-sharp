@@ -67,7 +67,7 @@ sub warp_sharp  {
     $img->remove_layer($edge_layer);
     $img->remove_layer($x_displace_layer);
     $img->remove_layer($y_displace_layer);
-    $img->undo_group_end; 
+    $img->undo_group_end;
     gimp_displays_flush();
     return undef;
 }

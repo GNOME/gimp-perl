@@ -51,7 +51,7 @@ Remove unused(?) extra.[ch]
 this is mostly my personal worksheet and notepad, which may not be
 up-to-date and may not even be readable ;)
 
-Put module under LGPL? 
+Put module under LGPL?
 
 /usr/app/lib/perl5/Gtk.pm:107 (method call -> goto)
 
@@ -90,7 +90,7 @@ bugs
   * gimp-piddle must be written back automatically on destroy, if changed
   * gimp-tile set dirty automatically(!)
   * create gimpstyle.pod
-  
+
 important issues
 
   * gimp_default_display -> undef when not available.
@@ -119,4 +119,4 @@ long term issues and ideas
   * rewrite interact() in pure C, gets rid of most gtk dependencies.
   * default function parameters (with hash %defaults?)
   * gimp_text(text => "hallo", family => "engraver", size => 20);
- 
+

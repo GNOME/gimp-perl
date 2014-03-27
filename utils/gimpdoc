@@ -177,7 +177,7 @@ $author
 EOF
    *escape = sub {};
    *table_line = sub {
-      join("	",$_[0]." ",$_[1]." ","T{\n".$_[2]."\nT}")."\n"; 
+      join("	",$_[0]." ",$_[1]." ","T{\n".$_[2]."\nT}")."\n";
    }
 }
 
@@ -237,7 +237,7 @@ sub weight {
    }
    $w;
 }
-    
+
 sub gen_alternatives(\@$\@) {
    my @vals = @{+shift};
    my $name = shift;
@@ -257,7 +257,7 @@ sub gen_alternatives(\@$\@) {
             for my $class (qw(
                   Gimp Layer Image Drawable Selection Channel Display
                   Palette Plugin Gradients Edit Progress Region Tile
-                  PixelRgn GImpDrawable Patterns GimpParasite
+                  PixelRgn GimpDrawable Patterns GimpParasite Item Vectors
                )) {
                my @pre = @{$class."::PREFIXES"};
                prefix:
@@ -315,7 +315,7 @@ sub gen_desc {
    my @args = map [Gimp->procedural_db_proc_arg ($name, $_)],0..($nargs-1);
    my @vals = map [Gimp->procedural_db_proc_val ($name, $_)],0..($nvals-1);
    my $r;
-   
+
    my($vals,$args)=gen_va(@vals,@args);
 
    my($menu_path, $accelerator, $path, $image_types, $mtime) = @{$plugin_info{$name}};
