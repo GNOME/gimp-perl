@@ -745,12 +745,12 @@ static void check_for_typoe (char *croak_str, char *p)
   return;
 
 gotit:
-  sprintf (croak_str, __("Expected an INT32 but got '%s'. Maybe you meant '%s' instead and forgot to 'use strict'"), p, b);
+  sprintf (croak_str, __("Expected a number but got '%s'. Maybe you meant '%s' instead and forgot to 'use strict'"), p, b);
 }
 
 /* check for 'enumeration types', i.e. integer constants. do not allow
    string constants here, and check for common typoes. */
-static int check_int (char *croak_str, SV *sv)
+static int check_num (char *croak_str, SV *sv)
 {
   if (SvTYPE (sv) == SVt_PV && !SvIOKp(sv))
     {
@@ -761,7 +761,7 @@ static int check_int (char *croak_str, SV *sv)
 	  && *p != '5' && *p != '6' && *p != '7' && *p != '8' && *p != '9'
 	  && *p != '-')
 	{
-	  sprintf (croak_str, __("Expected an INT32 but got '%s'. Add '*1' if you really intend to pass in a string"), p);
+	  sprintf (croak_str, __("Expected a number but got '%s'. Add '*1' if you really intend to pass in a string."), p);
 	  check_for_typoe (croak_str, p);
 	  return 0;
 	}
@@ -924,10 +924,14 @@ push_gimp_sv (const GimpParam *arg, int array_as_ref)
     } \
 }
 
-#define sv2gimp_extract_noref(fun,str) \
-	fun(sv); \
+#define sv_croak_ref(sv, str) \
 	if (SvROK(sv)) \
 	  sprintf (croak_str, __("Unable to convert a reference to type '%s'"), str);
+#define sv_getnum(sv, func, lvalue, typestr) \
+	sv_croak_ref(sv, typestr); \
+	check_num(croak_str, sv); \
+	lvalue = func(sv);
+
 /*
  * convert a perl scalar into a GimpParam, return true if
  * the argument has been consumed.
@@ -937,15 +941,13 @@ convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
 {
   switch (arg->type)
     {
-      case GIMP_PDB_INT32:	check_int (croak_str, sv);
-				arg->data.d_int32 = SvIV(sv);
-				arg->data.d_int32	= sv2gimp_extract_noref (SvIV, "INT32"); break;
-      case GIMP_PDB_INT16:	arg->data.d_int16	= sv2gimp_extract_noref (SvIV, "INT16"); break;
-      case GIMP_PDB_INT8:	arg->data.d_int8	= sv2gimp_extract_noref (SvIV, "INT8"); break;
-      case GIMP_PDB_FLOAT:	arg->data.d_float	= sv2gimp_extract_noref (SvNV, "FLOAT"); break;
+      case GIMP_PDB_INT32: sv_getnum(sv, SvIV, arg->data.d_int32, "INT32"); break;
+      case GIMP_PDB_INT16: sv_getnum(sv, SvIV, arg->data.d_int16, "INT16"); break;
+      case GIMP_PDB_INT8: sv_getnum(sv, SvIV, arg->data.d_int8, "INT8"); break;
+      case GIMP_PDB_FLOAT: sv_getnum(sv, SvNV, arg->data.d_float, "FLOAT"); break;
       case GIMP_PDB_STRING: {
-	char *p = sv2gimp_extract_noref (SvPv, "STRING");
-	arg->data.d_string = g_strdup (p);
+	sv_croak_ref(sv, "STRING");
+	arg->data.d_string = g_strdup (SvPv(sv));
 	break;
       }
 
@@ -966,7 +968,7 @@ convert_sv2gimp (char *croak_str, GimpParam *arg, SV *sv)
 	    case GIMP_PDB_CHANNEL:	arg->data.d_channel	= unbless(sv, PKG_ITEM  , croak_str); break;
 	    case GIMP_PDB_DRAWABLE:	arg->data.d_drawable	= unbless(sv, PKG_ITEM  , croak_str); break;
 	    case GIMP_PDB_VECTORS:	arg->data.d_vectors	= unbless(sv, PKG_ITEM  , croak_str); break;
-	    case GIMP_PDB_STATUS:	arg->data.d_status	= sv2gimp_extract_noref (SvIV, "STATUS"); break;
+	    case GIMP_PDB_STATUS: sv_getnum(sv, SvIV, arg->data.d_status, "STATUS"); break;
 	    case GIMP_PDB_IMAGE:
 	      {
 		if (sv_derived_from (sv, PKG_ITEM))
@@ -1121,7 +1123,6 @@ static void simple_perl_call (char *function, char *arg1)
    LEAVE;
 }
 
-#define gimp_die_msg(msg) simple_perl_call ("Gimp::die_msg" , (msg))
 #define try_call(cb)      simple_perl_call ("Gimp::callback", (cb) )
 
 static void pii_init (void) { try_call ("-init" ); }
@@ -1160,6 +1161,8 @@ static void pii_run(const gchar *name,
     nreturn_vals = 0;
   }
 
+  // do this here as at BOOT causes error
+  gimp_plugin_set_pdb_error_handler (GIMP_PDB_ERROR_HANDLER_PLUGIN);
   if (
     gimp_procedural_db_proc_info (
       name, &proc_blurb, &proc_help, &proc_author,
@@ -1258,7 +1261,6 @@ static void pii_run(const gchar *name,
     return;
 
   error:
-  gimp_die_msg (err_msg);
 
   if (return_vals)
     destroy_params (return_vals, nreturn_vals);
@@ -1412,7 +1414,6 @@ INIT:
   GType enum_type;
   GEnumClass *enum_class;
   GEnumValue *value;
-  HV *ret_hash;
 PPCODE:
   if (!(enum_type = g_type_from_name (name)))
     croak (__("gimp_enums_list_type(%s) invalid name"), name);
@@ -1497,6 +1498,8 @@ PPCODE:
 
   if (!gimp_is_initialized)
     croak (__("gimp_call_procedure(%s,...) called without an active connection"), proc_name);
+  // do this here as at BOOT causes error
+  gimp_plugin_set_pdb_error_handler (GIMP_PDB_ERROR_HANDLER_PLUGIN);
 
   if (trace)
     trace_init ();
