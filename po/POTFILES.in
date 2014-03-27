@@ -1,7 +1,7 @@
 # Files from the Gimp-Perl distribution which have been
 # marked to allow runtime translation of messages
 
-Gimp/Compat.pm
+Gimp/ColorDB.pm
 Gimp/Fu.pm
 Gimp/Lib.xs
 Gimp/Util.pm
