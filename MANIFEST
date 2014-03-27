@@ -67,7 +67,6 @@ examples/yinyang
 extra.c
 extra.h
 gppport.h
-Gimp/Compat.pm
 Gimp/Config.pm.in
 Gimp/Data.pm
 Gimp/Feature.pm

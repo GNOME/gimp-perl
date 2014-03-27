@@ -1014,7 +1014,7 @@ Ed J (with oversight and guidance from Kevin Cozens) (2.3+)
 
 perl(1), gimp(1), L<Gimp::OO>, L<Gimp::Data>, L<Gimp::Pixel>,
 L<Gimp::Util>, L<Gimp::UI>, L<Gimp::Feature>, L<Gimp::Net>,
-L<Gimp::Compat>, L<Gimp::Config>, L<Gimp::Lib>, and  L<Gimp::Module> .
+L<Gimp::Config>, and L<Gimp::Lib>.
 
 =cut
 
