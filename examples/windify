@@ -11,7 +11,7 @@ eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
 #     since that's the colour expressly set, but didn't touch
 #   - adjusted the maths so inputs are in degrees
 
-# There's corruption on the edges of this in smear mode.  Yuck. 
+# There's corruption on the edges of this in smear mode.  Yuck.
 
 use Gimp qw(:auto N_ __);
 use Gimp::Fu;
@@ -29,9 +29,9 @@ sub windify {
 	gimp_context_set_background([128,128,128]);
 	my $windlayer = gimp_layer_new($out,$xsize,$ysize,RGB_IMAGE,"Windlayer",100,NORMAL_MODE);
 	gimp_drawable_fill($windlayer, 0);
-	gimp_image_add_layer($out,$windlayer,0);
+	gimp_image_insert_layer($out,$windlayer,0,0);
 	my $windlayercopy = gimp_layer_copy($windlayer, 1);
-	gimp_image_add_layer($out,$windlayercopy,0);
+	gimp_image_insert_layer($out,$windlayercopy,0,0);
 	plug_in_noisify($out,$windlayercopy,0,$density/255,
                                                 $density/255,
                                                 $density/255,1);
@@ -46,7 +46,7 @@ sub windify {
 	gimp_layer_set_mode($windlayercopy, 10); # Lighten Only
 	gimp_image_merge_visible_layers($out,0);
 
-# many thanks to Dov for this suggestion as a workaround to the 
+# many thanks to Dov for this suggestion as a workaround to the
 # gimp_image_merge_visible_layers bug
 
 	my $newlay = gimp_image_get_active_layer ($out);
@@ -61,7 +61,7 @@ sub windify {
 	gimp_image_delete ($out);
 	gimp_displays_flush();
         gimp_context_pop();
-	
+
 	undef;
 	}
 
@@ -86,7 +86,7 @@ exit main;
 
 =head1 LICENSE
 
-Copyright Seth Burgess.  
+Copyright Seth Burgess.
 Distributed under the same terms as Gimp-Perl.
 
 =cut
