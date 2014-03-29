@@ -50,7 +50,7 @@ register "plug_in_ditherize",
    my ($w,$h)=($x2-$x1,$y2-$y1);
 
    my $sel = $image->selection_save;
-   $image->rect_select($x1,$y1,$w,$h,CHANNEL_OP_REPLACE,0,0);
+   $image->select_rectangle(CHANNEL_OP_REPLACE,$x1,$y1,$w,$h);
    $drawable->edit_copy;
    $sel->selection_load;
    $sel->remove_channel;
@@ -60,7 +60,7 @@ register "plug_in_ditherize",
    my $draw = new Gimp::Layer($copy, $w, $h,
 			$imagetype2layertype{$image->base_type},
 			"temporary layer", 100, NORMAL_MODE);
-   $copy->add_layer ($draw, 1);
+   $copy->insert_layer ($draw, 0, 1);
    $draw->edit_paste(0)->anchor;
    $copy->convert_indexed ($dither, MAKE_PALETTE, $colours, 1, 1, "");
 

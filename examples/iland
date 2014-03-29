@@ -31,8 +31,8 @@ sub landscape {
 	my $src= new Gimp::PixelRgn ($drawable, 0,0,$width, $height, 0, 0);
 	my $newimage=gimp_image_new($src->w, $src->h, 0);
 	$layer=gimp_layer_new($newimage,$src->w, $src->h, RGB_IMAGE, "L1", 100, NORMAL_MODE);
-	gimp_image_add_layer($layer, -1);
-	$newdrawable=gimp_image_active_drawable($newimage);
+	gimp_image_insert_layer($layer, 0, -1);
+	$newdrawable=gimp_get_image_active_drawable($newimage);
 	my $dest = new Gimp::PixelRgn ($newdrawable, 0,0,$width, $height,1,1);
 	Gimp->progress_init("Rendering...");
 	my $relord=$src->w/255;

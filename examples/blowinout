@@ -36,7 +36,7 @@ sub blowinout {
     # It needs to have 2 layers
     my $dmlayer = gimp_layer_new($dm, $xsize, $ysize, GRAY_IMAGE, "newlayer",
         100, NORMAL_MODE);
-    gimp_image_add_layer($dm, $dmlayer, 0);
+    gimp_image_insert_layer($dm, $dmlayer, 0, 0);
 
     # Create the layers, one-by-one
     my $i = 1;
@@ -50,12 +50,12 @@ sub blowinout {
     plug_in_noisify($dm, $dmlayer, 0, 255, 255, 255, 0);
     gimp_levels($dmlayer, 0, 0, 255, 1.0, 128, 255);
     $drawable = gimp_layer_copy($drawable, 0);
-    gimp_image_add_layer($img, $drawable, -1);
+    gimp_image_insert_layer($img, $drawable, 0, -1);
     plug_in_displace($img, $drawable, $xdist, $ydist, 1, 1, $dmlayer,
         $dmlayer, 1);
     if ( $inmode == 1 )
     {
-        gimp_image_lower_layer($img, $drawable);
+        gimp_image_lower_item($img, $drawable);
     };
     for ( $i = 2; $i <= $nsteps; $i++ ) {
         $xdist = ($arithmode) ?
@@ -68,12 +68,12 @@ sub blowinout {
         plug_in_noisify($dm, $dmlayer, 0, 255, 255, 255, 0);
         gimp_levels($dmlayer, 0, 0, 255, 1.0, 128, 255);
         $drawable = gimp_layer_copy($drawable, 0);
-        gimp_image_add_layer($img, $drawable, -1);
+        gimp_image_insert_layer($img, $drawable, 0, -1);
         plug_in_displace($img, $drawable, $xdist, $ydist, 1, 1, $dmlayer,
             $dmlayer, 1);
         if ( $inmode == 1 )
         {
-            gimp_image_lower_layer($img, $drawable);
+            gimp_image_lower_item($img, $drawable);
         };
     }
 

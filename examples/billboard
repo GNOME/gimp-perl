@@ -45,13 +45,13 @@ sub spin_layer { # the function for actually spinning the layer
 		Gimp->progress_update ($i/3.14159);
 		# create a new layer for spinning
 		$framelay = ($i < 3.14159/2.0) ?  $spin->copy(1) : $dest->copy(1);
-		$img->add_layer($framelay, 0);
+		$img->insert_layer($framelay, 0, 0);
 		# spin it a step
 	# Here I need to make the proper selection, repeatedly if necessary
 	$blindheight = $img->height/$blinds;
 		for ($j=0; $j<$blinds; $j++) {
 			# select a section
-			$img->rect_select(0, $j*$blindheight, $img->width, $blindheight, 2, 0, 0.13);
+			$img->select_rectangle(2, 0, $j*$blindheight, $img->width, $blindheight);
 			@x = $img->selection_bounds();
 			# x[1],x[2]                  x[3],x[2]
 		# x[1],x[4]                  x[3],x[4]
@@ -70,9 +70,9 @@ sub spin_layer { # the function for actually spinning the layer
 
 		} # end for ($j=0;...
 
-		# I need to create another layer beind this spun one now
+		# I need to create another layer behind this spun one now
 		$backlayer = $framelay->layer_copy(0);
-		$img->add_layer($backlayer, 1);
+		$img->insert_layer($backlayer, 0, 1);
 		$backlayer->fill(1); # BG-IMAGE-FILL
 	}
 	for ($i=0; $i<$numframes; $i++) {
@@ -82,7 +82,7 @@ sub spin_layer { # the function for actually spinning the layer
 		}
 	@all_layers = $img->get_layers();
 	$destfram = $all_layers[$numframes]->copy(0);
-	$img->add_layer($destfram,0);
+	$img->insert_layer($destfram,0,0);
 
 	# clean up my temporary layers
 	$img->remove_layer($all_layers[$numframes]);
@@ -148,7 +148,7 @@ register "billboard",
 
 	if ($spinback) {
 		@layerlist = $img->get_layers();
-		$img->add_layer($layerlist[$frames/2]->copy(0),0);
+		$img->insert_layer($layerlist[$frames/2]->copy(0),0,0);
 		@layerlist = $img->get_layers();
 		spin_layer($img, $layerlist[1], $layerlist[0], $frames/2, $psp, $shadenum);
 		$img->remove_layer(($img->get_layers)[0]);

@@ -25,10 +25,10 @@ register "xachvision",
         Context->push();
 
 	$midlayer = $drawable->gimp_layer_copy(1);
-	$img->add_layer($midlayer, 0);
+	$img->insert_layer($midlayer, 0, 0);
 
 	$toplayer = $drawable->gimp_layer_copy(1);
-	$img->add_layer($toplayer, 0);
+	$img->insert_layer($toplayer, 0, 0);
 
 	Context->set_background($color);
 	$toplayer->edit_fill(BACKGROUND_FILL);

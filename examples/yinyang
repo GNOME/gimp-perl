@@ -27,7 +27,7 @@ sub yinyang {
     # Create new image
     my $img = gimp_image_new($width,$height,0);
     my $layer = gimp_layer_new($img,$width,$height,1,"Yin/Yang",100,0);
-    gimp_image_add_layer($img,$layer,0);
+    gimp_image_insert_layer($img,$layer,0,0);
     gimp_image_set_active_layer($img,$layer);
     my $draw = gimp_image_get_active_drawable($img);
     gimp_context_push();
@@ -38,16 +38,17 @@ sub yinyang {
     # Create the yin-yang shape
     #gimp_selection_invert($img);
     gimp_selection_none($img);
-    gimp_rect_select($img,0,0,$width/2,$height,0,0,0);
-    gimp_ellipse_select($img,$width/2-$width/4,0,$width/2,
-			int($height/2),0,$aa,0,0);
-    gimp_ellipse_select($img,$width/2-$width/4,$height/2,
-			$width/2, $height/2, 1, $aa, 0, 0);
+    gimp_image_select_rectangle($img,0,0,0,$width/2,$height);
+    gimp_context_set_antialias($aa);
+    gimp_image_select_ellipse($img,0,$width/2-$width/4,0,$width/2,
+			int($height/2));
+    gimp_image_select_ellipse($img,0,$width/2-$width/4,$height/2,
+			$width/2, $height/2);
     gimp_context_set_foreground([255,255,255]);
     gimp_edit_bucket_fill($draw,0,0,100,0,0,0,0);
 
     # Cut away all but the central circle
-    gimp_ellipse_select($img,0,0,$width,$height,2,$aa,0,0);
+    gimp_image_select_ellipse($img,2,0,0,$width,$height);
     gimp_selection_invert($img);
     gimp_edit_clear($draw);
 
@@ -88,7 +89,7 @@ sub insert_eye {
     my $draw = shift;
     my $aa = shift;
 
-    gimp_ellipse_select($img,$x,$y,$width,$height,2,$aa,0,0);
+    gimp_image_select_ellipse($img,2,$x,$y,$width,$height);
     gimp_context_set_foreground($color);
     if ($do_image) {
 	my $eye = gimp_file_load($file,$file);

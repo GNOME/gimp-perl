@@ -19,7 +19,7 @@ Gimp::on_net {
 # the is the same as $img = new Gimp::Image(600,300,RGB)
   $bg=$img->layer_new(30,20,RGB_IMAGE,"Background",100,NORMAL_MODE);
 # you have to add a layer after you create it
-  $bg->add_layer(1);
+  $bg->insert_layer(0,1);
 # Show it (this slows things down)
   new Gimp::Display($img);
 

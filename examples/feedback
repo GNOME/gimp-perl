@@ -30,7 +30,7 @@ register "feedback",
    for (; $repeat>0; $repeat--) {
 	 $drawable = $img->flatten;
 	 $copylayer = $drawable->copy(1);
-	 $img->add_layer($copylayer,0);
+	 $img->insert_layer($copylayer,0,0);
 	 $copylayer->scale($img->width - $offset, $img->height - $offset, 0);
 	}
 	$img->flatten;
