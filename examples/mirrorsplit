@@ -35,22 +35,22 @@ register	"mirror_split",
 		eval { $img->undo_group_start };
 
 		my $temp1 = gimp_layer_copy($layer, 1);
-                $img->add_layer($temp1,-1);
+                $img->insert_layer($temp1,0,-1);
 		if ($mirror == 0) {	# upper half
 			$temp1 = $temp1->transform_flip_simple(&Gimp::ORIENTATION_VERTICAL, 1, 0.0, 1);
-			gimp_rect_select($img, 0, $hspan, $w, $h - $hspan, &Gimp::CHANNEL_OP_REPLACE, 0, 0);
+			gimp_image_select_rectangle(&Gimp::CHANNEL_OP_REPLACE, $img, 0, $hspan, $w, $h - $hspan);
 		};
 		if ($mirror == 1) {	# lower half
 			$temp1 = $temp1->transform_flip_simple(&Gimp::ORIENTATION_VERTICAL, 1, 0.0, 1);
-			gimp_rect_select($img, 0, 0, $w, $hspan, &Gimp::CHANNEL_OP_REPLACE, 0, 0);
+			gimp_image_select_rectangle(&Gimp::CHANNEL_OP_REPLACE, $img, 0, 0, $w, $hspan);
 		};
 		if ($mirror == 2) {	# left half
 			$temp1 = $temp1->transform_flip_simple(&Gimp::ORIENTATION_HORIZONTAL, 1, 0.0, 1);
-			gimp_rect_select($img, $wspan, 0, $w - $wspan, $h, &Gimp::CHANNEL_OP_REPLACE, 0, 0);
+			gimp_image_select_rectangle(&Gimp::CHANNEL_OP_REPLACE, $img, $wspan, 0, $w - $wspan, $h);
 		};
 		if ($mirror == 3) {	# right half
 			$temp1 = $temp1->transform_flip_simple(&Gimp::ORIENTATION_HORIZONTAL, 1, 0.0, 1);
-			gimp_rect_select($img, 0, 0, $wspan, $h, &Gimp::CHANNEL_OP_REPLACE, 0, 0);
+			gimp_image_select_rectangle(&Gimp::CHANNEL_OP_REPLACE, $img, 0, 0, $wspan, $h);
 		};
 
 		gimp_edit_copy($temp1);

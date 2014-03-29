@@ -29,7 +29,7 @@ register "round_sel",
     gimp_levels($channel, 0, 123, 133, 1.0, 0, 255);
     gimp_selection_load($channel);
     gimp_image_remove_channel($img, $channel);
-    # gimp_channel_delete($channel);
+    # gimp_item_delete($channel);
 
     eval { $img->undo_group_end };
 

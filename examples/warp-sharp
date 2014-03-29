@@ -35,9 +35,9 @@ sub warp_sharp  {
     }
     $x_displace_layer->fill(1 + $version);
     $y_displace_layer->fill(1 + $version);
-    $img->add_layer($edge_layer,-1);
-    $img->add_layer($x_displace_layer,-1);
-    $img->add_layer($y_displace_layer,-1);
+    $img->insert_layer($edge_layer,0,-1);
+    $img->insert_layer($x_displace_layer,0,-1);
+    $img->insert_layer($y_displace_layer,0,-1);
 
 # added another parameter in edge detect plugin... I'm assuming it was
 # previously differential?
@@ -58,7 +58,7 @@ sub warp_sharp  {
 	$old_selection->gimp_selection_load;
 	$old_selection->remove_channel;
 	# will cause a crash:
-	# $old_selection->gimp_channel_delete;
+	# $old_selection->gimp_item_delete;
     }
 
     plug_in_displace($img,$drw, $displace_amount, $displace_amount, 1,1,

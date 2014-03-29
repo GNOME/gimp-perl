@@ -51,7 +51,7 @@ register	"layer_reorder",
                 # now re-order the layers
 		$img->undo_group_start;
                 for(@layers) {
-                   $img->raise_layer_to_top($_) unless $$_ == ${($img->get_layers)[0]};
+                   $img->raise_item_to_top($_) unless $$_ == ${($img->get_layers)[0]};
                 }
                 Gimp->displays_flush;
 		$img->undo_group_end;

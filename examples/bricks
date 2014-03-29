@@ -11,7 +11,7 @@
 # 12/5/03: <sjburges@gimp.org> updated to use gimp_image_get_floating_sel,
 # rather than gimp_image_floating_sel, gimp_undo_push/gimp_image_undo_push
 #
-# 25/2/04: <sjbkurges@gimp.org> changed color specifiers.  Reordered so that
+# 25/2/04: <sjburges@gimp.org> changed color specifiers.  Reordered so that
 # pasting happens after layer mask is attached to image.  Removed harmful
 # gimp_layer_delete() calls. s/gimp_channel_ops_offset/gimp_drawable_offset/.
 #
@@ -47,13 +47,13 @@ sub do_bricks {
     gimp_image_undo_group_start($image);
     while ($h < $imgh)
       {
-      gimp_rect_select($image,0,$h,$imgw,$bw,2,0,0);
+      gimp_image_select_rectangle($image,2,0,$h,$imgw,$bw);
       gimp_edit_bucket_fill($layer,0,0,100,0,0,0,0);
       $w = 1;
       $wo = 0; $wo = ($brickw / 2) if ($j == 1);
       while ($w < $imgw)
         {
-        gimp_rect_select($image,$w+$wo,$h,$bw,$brickh+1,2,0,0);
+        gimp_image_select_rectangle($image,2,$w+$wo,$h,$bw,$brickh+1);
         gimp_edit_bucket_fill($layer,0,0,100,0,0,1,1);
 #        print "$h $w\n";
         $w += $brickw;
@@ -92,12 +92,12 @@ sub do_bricks {
           {
           gimp_context_set_foreground ("#ffffff") if ($r > 0);
           gimp_context_set_foreground ("#000000") if ($r < 0);
-          gimp_rect_select($image,$w+$wo+$bp,$h+$bp,$brickw,$brickh,2,0,0);
+          gimp_image_select_rectangle($image,2,$w+$wo+$bp,$h+$bp,$brickw,$brickh);
           gimp_edit_bucket_fill($layerpat,0,0,4*abs($r),0,0,1,1);
           # halves
           if (($j == 1) && ($w+$wo+$brickw > $imgw))
             {
-            gimp_rect_select($image,0,$h+$bp,$brickw/2,$brickh,2,0,0);
+            gimp_image_select_rectangle($image,2,0,$h+$bp,$brickw/2,$brickh);
             gimp_edit_bucket_fill($layerpat,0,0,4*abs($r),0,0,1,1);
             }
           }

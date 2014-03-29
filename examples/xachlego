@@ -68,7 +68,7 @@ register "xach_blocks",
 # 2. in a new white layer, render a grid
 #           at the same resolution as the pixelize, then blur it.
 	$gridlayer = $img->layer_new($img->width, $img->height, RGBA_IMAGE, "Grid 1", 100, 0);
-	$img->add_layer($gridlayer,0);
+	$img->insert_layer($gridlayer,0,0);
 	$img->selection_all;
 	gimp_edit_clear($gridlayer);
 	gimp_context_set_background([255,255,255]);
@@ -93,7 +93,7 @@ register "xach_blocks",
 	$img->selection_all;
 	$cleangrid = $img->layer_new($img->width, $img->height,
                                  RGBA_IMAGE, "Grid 2", 100, 0);
-	$img->add_layer($cleangrid,0);
+	$img->insert_layer($cleangrid,0,0);
 	gimp_edit_fill($cleangrid, BACKGROUND_FILL);
 	$cleangrid->plug_in_grid(1, $blocksize, 0, [0,0,0], 255, 1, $blocksize, 0, [0,0,0], 255, 0, 0, 0, [0,0,0], 0);
 	gimp_selection_load($selection);

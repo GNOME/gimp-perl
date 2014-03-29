@@ -35,7 +35,8 @@ register "webify",
 
    if ($alpha) {
       $drawable->add_alpha;
-      $drawable->by_color_select($bg,$thresh,CHANNEL_OP_REPLACE,1,0,0,0);
+      gimp_context_set_sample_threshold($thresh);
+      $img->select_color(CHANNEL_OP_REPLACE,$drawable,$bg);
       $drawable->edit_cut if $img->selection_bounds;
    }
    Plugin->autocrop($drawable) if $autocrop;

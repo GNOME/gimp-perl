@@ -32,8 +32,8 @@ sub plug_in_example_oo {
 # Next, we have 2 examples of using the drawable or image as an object when
 # its the first parameter to the PDB call.
 
-# image_add_layer($img,$bg,1);
-  $img->add_layer($bg,1);
+# image_insert_layer($img,$bg,0,1);
+  $bg->insert_layer(0,1);
 #  gimp_drawable_fill ($bg,BACKGROUND_FILL);
   $bg->fill(BACKGROUND_FILL);
 

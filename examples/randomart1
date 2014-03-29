@@ -48,7 +48,7 @@ register "random_art_1",			# Funktionsname
 		   "Random Art #1",100,NORMAL_MODE);
 
    # Füge sie in das Bild ein
-   $image->add_layer($layer,0);
+   $image->insert_layer($layer,0,0);
 
    # Setze die Hintergrundfarben
    Context->set_background('white');
@@ -71,7 +71,8 @@ register "random_art_1",			# Funktionsname
       }
 
       # Selektiere die Region
-      $image->free_select (\@ecken, CHANNEL_OP_REPLACE, 1, 1, $feather);
+      gimp_context_set_feather($feather);
+      $image->select_polygon(CHANNEL_OP_REPLACE, \@ecken);
 
       # Wähle zufällig zwei Farben aus
       Context->set_foreground([rand(256)/256.0,rand(256)/256.0,rand(256)/256.0]);

@@ -57,8 +57,8 @@ register "dots",
 	      $y<$img->height+$size+$yspacing;
 	      $y+=$yspacing)
 	   {
-	     $img->ellipse_select($x-0.5*$size,$y-0.5*$size,
-				  $size,$size,CHANNEL_OP_ADD,1,0,0.0);
+	     $img->select_ellipse(CHANNEL_OP_ADD,$x-0.5*$size,$y-0.5*$size,
+				  $size,$size);
            }
       }
 
@@ -66,13 +66,13 @@ register "dots",
     Context->push();
 
     $opc = gimp_channel_new($img,$img->width,$img->height,"OPC", 50, [0,0,0]);
-    $img->add_channel($opc,0);
+    $img->insert_channel($opc,0,0);
     Context->set_foreground([($opacity/100.0)x3]);
     $opc->fill(FOREGROUND_FILL);
-    $opc->selection_combine(CHANNEL_OP_INTERSECT);
+    $img->select_item(CHANNEL_OP_INTERSECT, $opc);
 
 # And mask off with original selection
-    $selchannel->selection_combine(CHANNEL_OP_INTERSECT);
+    $img->select_item(CHANNEL_OP_INTERSECT, $selchannel);
 
 # Make the dots
     Context->set_foreground($dotcolor);
@@ -85,7 +85,7 @@ register "dots",
       }
     else
       {
-        $selchannel->selection_combine(CHANNEL_OP_REPLACE);
+	$img->select_item(CHANNEL_OP_REPLACE, $selchannel);
       }
 
     $img->remove_channel($selchannel);

@@ -49,7 +49,7 @@ sub prep {
 # Hide the bottom layer, so it doesn't get into the merge visible later.
 
 	my $bottomlayer = $layers[$#layers];
-	gimp_drawable_set_visible($bottomlayer, 0);
+	gimp_item_set_visible($bottomlayer, 0);
 	gimp_layer_add_alpha($bottomlayer);
 
 # NOTE TO PERL NEWBIES - 'my' variables should be declared in their outermost
@@ -69,11 +69,11 @@ sub prep {
 	gimp_threshold($layer_mask,$threshold,255);
 
 # Transfer layer mask to selection, and grow the selection
-	gimp_selection_layer_alpha($foreground);
+	gimp_image_select_item($out, CHANNEL_OP_REPLACE, $foreground);
 	gimp_selection_grow($out,$growth);
 
 # Apply this selection to the background
-	gimp_drawable_set_visible($bottomlayer, 1);
+	gimp_item_set_visible($bottomlayer, 1);
 	gimp_image_set_active_layer($out, $bottomlayer);
 	gimp_selection_invert($out);
 	gimp_edit_cut($bottomlayer);

@@ -90,9 +90,9 @@ sub spin_layer { # the function for actually spinning the layer
 
         # create a new layer for spinning
         $framelay = ($i < 3.14159/2.0) ? $spin->copy(1) : $dest->copy(1);
-        $img->add_layer($framelay, 0);
+        $img->insert_layer($framelay, 0, 0);
         $floater = $framelay->copy(1);
-        $img->add_layer($floater, 0);
+        $img->insert_layer($floater, 0, 0);
 
         # spin it a step
         $img->selection_all();
@@ -108,12 +108,12 @@ sub spin_layer { # the function for actually spinning the layer
 	# height must be != 0
         $y3++ if ($y1 == $y3);
 
-        $floater = Gimp->gimp_drawable_transform_perspective_default($floater,
+        $floater = $floater->transform_perspective(
                        $x[1]+saw($i)*$prp*$framelay->width,$y1,
                        $x[3]-saw($i)*$prp*$framelay->width,$y1,
                        $x[1]-saw($i)*$prp*$framelay->width,$y3,
                        $x[3]+saw($i)*$prp*$framelay->width,$y3,
-                       0,1);
+                       );
         $framelay->fill(1); # BG-IMAGE-FILL
 
 	# merge the two layers together before we continue
@@ -121,7 +121,7 @@ sub spin_layer { # the function for actually spinning the layer
         $framelay = $img->merge_visible_layers(0);
 
 	$frameno++;
-	$framelay->drawable_set_name("Spin Layer $frameno (50ms)");
+	$framelay->set_name("Spin Layer $frameno (50ms)");
     }
 }
 
@@ -201,9 +201,9 @@ register "seth_spin",
     $img->set_visible(@all_layers);
 
     if ($spinback) {
-        $all_layers[$frames/2-1]->drawable_set_name(__"Spin Layer DEST (250ms)");
+        $all_layers[$frames/2-1]->set_name(__"Spin Layer DEST (250ms)");
     }
-    $all_layers[$frames-1]->drawable_set_name(__"Spin Layer SRC (250ms)");
+    $all_layers[$frames-1]->set_name(__"Spin Layer SRC (250ms)");
 
     # indexed conversion wants a display for some reason
     if ($indexed) {

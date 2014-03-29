@@ -29,18 +29,18 @@ register	"triangle",
 		$h = $img->height();
 
 		if ($type == 0) {
-			@lista= [0, 0, $w, 0, 0, $h, 0, 0];
+			$lista= [0, 0, $w, 0, 0, $h, 0, 0];
 		};
 		if ($type == 1) {
-			@lista= [0, 0, 0, $h, $w, $h, 0, 0];
+			$lista= [0, 0, 0, $h, $w, $h, 0, 0];
 		};
 		if ($type == 2) {
-			@lista= [0, 0, $w, 0, $w, $h, 0, 0];
+			$lista= [0, 0, $w, 0, $w, $h, 0, 0];
 		};
 		if ($type == 3) {
-			@lista= [$w, 0, $w, $h, 0, $h, $w, 0];
+			$lista= [$w, 0, $w, $h, 0, $h, $w, 0];
 		};
-		$img->free_select(8, @lista, $mode, 0, 0, 0);
+		$img->select_polygon($mode, $lista);
 	};
 exit main;
 

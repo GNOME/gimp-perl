@@ -33,7 +33,7 @@ sub my_code {
 
     # 1) take the original photo, duplicate the layer
     $edge_layer = $original_layer->copy(1);
-    $img->add_layer($edge_layer,-1);
+    $img->insert_layer($edge_layer,0,-1);
 
     # 2) convert the copy to grayscale
     $edge_layer->desaturate;
@@ -56,7 +56,7 @@ sub my_code {
     my $selchan = $img->channel_new($img->width, $img->height, "sharpen_mask",
 		      100.0, [1.0,0,0]);
 
-    $img->add_channel($selchan, -1);
+    $img->insert_channel($selchan, 0, -1);
     $edge_layer->edit_copy;
     $selchan->edit_paste(1);
     $img->get_floating_sel->anchor;

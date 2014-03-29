@@ -116,14 +116,14 @@ foreach $test (@testbench)
      if ($test->[2] & $REQ_ALPHA)
        {
           $drw->add_alpha;
-          Gimp::gimp_rect_select($img, 0.1*$height,0.1*$width,0.8*$height,0.8*$width,CHANNEL_OP_REPLACE,0,0);
+          $img->select_rectangle(CHANNEL_OP_REPLACE,0.1*$height,0.1*$width,0.8*$height,0.8*$width);
           Gimp::gimp_selection_invert($img);
           Gimp::gimp_edit_cut($drw);
           Gimp::gimp_selection_none($img);
        }
      if ($test->[2] & $REQ_SEL)
        {
-          Gimp::gimp_rect_select($img, 0.2*$height,0.2*$width,0.6*$height,0.6*$width,CHANNEL_OP_REPLACE,0,0);
+          $img->select_rectangle(CHANNEL_OP_REPLACE,0.2*$height,0.2*$width,0.6*$height,0.6*$width);
        }
      if ($test->[2] & $REQ_GUIDE)
        {

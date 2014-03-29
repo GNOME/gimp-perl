@@ -40,7 +40,9 @@ register "guide_to_selection",
       } else {
          ($x,$y,$w,$h) = ($x,0,1,$H);
       }
-      $img->rect_select($x,$y,$w,$h,$operation,$feather,$radius);
+      gimp_context_set_feather($feather);
+      gimp_context_set_feather_radius($radius);
+      $img->select_rectangle($operation,$x,$y,$w,$h);
       $operation = CHANNEL_OP_ADD if $operation == CHANNEL_OP_REPLACE;
 
       $i = $img->find_next_guide($i);
