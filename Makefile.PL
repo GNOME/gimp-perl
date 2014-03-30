@@ -1,79 +1,9 @@
 require 5.008;
 
-use Config;
-require ExtUtils::PkgConfig;
-require ExtUtils::Depends;
-
 $|=1;
 
-if ($ARGV[0] ne "--writemakefile") {
-   # convert any prefix= to --prefix=
-   for(@ARGV) {
-      s/^prefix=/--prefix=/i;
-   }
-
-   # run the config.pl to setup enviornment
-   do './config.pl' or die $@;
-
-   # get compile/link args
-   $ENV{CC}=$Config{cc};
-   $ENV{LD}=$Config{ld};
-   $ENV{prefix}=$Config{prefix};
-   $ENV{PERL}=$Config{perlpath};
-   $ENV{MAKEFILE_PL}=$0;
-}
-
-@otherdeps = qw(
-);
-
-# list of plugins using gtk directly (Gtk absolutely required)
-@gtk_pins =
-   qw(
-     dataurl
-     colorhtml
-     fade-alpha
-   );
-
-# list of standard plugins
-@pins =
-   qw(
-      animate_cells
-      blended2 blowinout bricks burst
-      centerguide
-      ditherize dots dust
-      frame_filter frame_reshuffle
-      glowing_steel goldenmean guidegrid guides_to_selection
-      image_tile innerbevel
-      layerfuncs mirrorsplit
-      perlotine prep4gif
-      repdup roundsel
-      scratches sethspin stamps
-      tex-to-float translogo
-      randomart1 randomblends
-      selective_sharpen
-      warp-sharp webify windify
-      xachlego xachshadow xachvision
-      yinyang
-   );
-# list of plugins using PDL
-
-@pdl_pins =
-   qw(
-      gouge
-      redeye
-      pixelmap
-      view3d
-   );
-
-# plugins that are useful code examples, but not even arguably useful
-# gimp plugins due to silliness or duplication
-
-@uninstalled_pins =
-  qw(
-     example-fu
-     example-net
-     map_to_gradient
-  );
+# run the config.pl to setup environment
+do './config.pl' or die $@;
 
 # GTK isn't absolutely required, but for most people it is highly
 # desirable, so make a nice big notice saying so.
@@ -92,18 +22,14 @@ EOF
 
 use ExtUtils::MakeMaker;
 
-push @pins, @pdl_pins if $PDL;
-push @pins, @gtk_pins if $GTK;
-
-@INC = grep /^\//,@INC; # comment out as well?
-
 sub MY::install {
    my $self=shift;
    package MY;
    my $install = $self->SUPER::install(@_);
-   ($install =~ s/\b(un)?install\b/really-$1install/g) or return $install;
-   '
-install ::
+   <<'EOF' . $install;
+install :: install-writable
+
+install-writable ::
 	@for dir in \
 	   $(INSTALLPRIVLIB) \
 	   $(INSTALLARCHLIB) \
@@ -114,36 +40,14 @@ install ::
 	do \
 	   $(MKPATH) "$$dir"; \
 	   if test -d "$$dir" && test -w "$$dir" ; then : ; else \
-	      echo ; \
-	      echo "ERROR: installation directory \"$$dir\"" ; \
+	      echo "ERROR: installation directory $$dir" ; \
 	      echo "       is not writable, not installing gimp-perl" ; \
-	      echo ; \
-	      exit ; \
+	      exit 1 ; \
 	   fi ; \
-	done ; \
-	$(MAKE) really-install install-plugins'."
+	done ;
 
 install-po:
 	cd po && \$(MAKE) install
-
-".$install;
-}
-
-sub basename {
-  my $dest = shift;
-  $dest =~ s#.*/##;
-  $dest;
-}
-
-sub plugin_target {
-  my $plugin = shift;
-  my $dest = '$(INST_PLUGINS)/'.basename($plugin);
-  <<EOF;
-$dest : $plugin \$(FIRST_MAKEFILE) \$(INST_PLUGINS)\$(DFSEP).exists
-	\$(NOECHO) \$(RM_F) $dest
-	\$(CP) $plugin $dest
-	\$(FIXIN) $dest
-	-\$(NOECHO) \$(CHMOD) \$(PERM_RWX) $dest
 
 EOF
 }
@@ -152,7 +56,6 @@ sub MY::postamble {
    my $self=shift;
    my $GT = "$GIMPTOOL --install-admin-bin";
    my $UT = "$GIMPTOOL --uninstall-admin-bin";
-   my $GT2 = '';
    <<EOF;
 
 objclean :: clean
@@ -160,37 +63,11 @@ maintainer-clean :: realclean
 distclean :: realclean
 check :: test
 
-INST_PLUGINS = blib/plugins
-
-all ::
-
-\$(INST_PLUGINS)\$(DFSEP).exists :: Makefile.PL
-	\$(NOECHO) \$(MKPATH) \$(INST_PLUGINS)
-	\$(NOECHO) \$(CHMOD) \$(PERM_DIR) \$(INST_PLUGINS)
-	\$(NOECHO) \$(TOUCH) \$(INST_PLUGINS)\$(DFSEP).exists
-
-@{[
-join '', map { plugin_target($_) } 'Perl-Server', map { "examples/$_" } @pins
-]}
-
-all :: pure_plugins
-
-pure_plugins : @{[
-  map { "\$(INST_PLUGINS)/".basename($_) } 'Perl-Server', @pins
-]}
-
-install-plugins :: pure_plugins
-	cd \$(INST_PLUGINS) ; \\
-	for plugin in * ; do $GT \"\$\$plugin\" $GT2 ; done
-
-uninstall :: force_uninstall_from_\$(INSTALLDIRS)dirs
-	for plugin in Perl-Server @pins; do $UT $GT2\$\$plugin; done
-
 force_uninstall_from_perldirs ::
-	\$(PERL) -MExtUtils::Install -e 'uninstall(\$\$ARGV[0],1,0)' ".$self->catfile('$(PERL_ARCHLIB)','auto','$(FULLEXT)','.packlist')."
+	\$(PERL) -MExtUtils::Install -e 'uninstall(\$\$ARGV[0],1,0)' @{[$self->catfile('$(PERL_ARCHLIB)','auto','$(FULLEXT)','.packlist')]}
 
 force_uninstall_from_sitedirs ::
-	\$(PERL) -MExtUtils::Install -e 'uninstall(\$\$ARGV[0],1,0)' ".$self->catfile('$(SITEARCHEXP)','auto','$(FULLEXT)','.packlist')."
+	\$(PERL) -MExtUtils::Install -e 'uninstall(\$\$ARGV[0],1,0)' @{[$self->catfile('$(SITEARCHEXP)','auto','$(FULLEXT)','.packlist')]}
 
 # generate tags file
 tags: .
@@ -202,8 +79,6 @@ setver:
 
 EOF
 }
-
-@DIRS= qw/Gimp Net UI/;
 
 print "writing Gimp/Config.pm... ";
 {
@@ -248,7 +123,7 @@ WriteMakefile(
 		      },
 		    },
 		  },
-    'DIR'	=> [@DIRS],
+    'DIR'	=> [ qw/Gimp Net UI examples/ ],
     'NAME'	=> 'Gimp',
     'VERSION_FROM' => 'Gimp.pm',
     'INSTALLBIN'=> $bindir,
@@ -258,33 +133,5 @@ WriteMakefile(
     'EXE_FILES'	=> \@EXE_FILES,
     'macro'	=> \%cfg,
     'realclean'	=> { FILES => "config.status config.cache config.log config.h Gimp/Config.pm Makefile" },
-    'clean'	=> { FILES => "Makefile.old stamp-h" },
+    'clean'	=> { FILES => "Makefile.old stamp-h Gimp/Config.pm" },
 );
-
-print <<EOF;
-
-Hopefully, Gimp is now correctly configured. you can now enter "make",
-"make test" and "make install".
-
-EOF
-
-__END__
-# write an empty makefile (the last chance to stop)
-# and warn the user.
-sub emergency_stop {
-   print STDERR "WARNING: *** perl extension will not be built ($_[0]) ***\n\n";
-   open MAKEFILE,">Makefile" or die "unable to create Makefile: $!";
-   print MAKEFILE <<EOF;
-all install check:
-
-clean mostlyclean objclean:
-
-distclean maintainer-clean realclean clobber: clean
-	\$(RM_F) Makefile config.cache config.log
-        \$(RM_F) config.h config.status stamp-h Makefile.old Gimp/Config.pm
-        \$(RM_RF) test-dir inst-temp
-
-EOF
-   close MAKEFILE;
-   exit;
-}

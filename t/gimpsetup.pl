@@ -3,7 +3,7 @@
 #    use Test::*; # to make available ok()
 #    use Gimp qw(:auto);
 #    our $dir;
-#    our $myplugins; # if want to write_plugin to right place!
+#    our $blibplugins; # where plugins are built to - #! line correct
 # if encounters problems, does a die()
 
 use strict;
@@ -20,13 +20,12 @@ my $sysplugins = $cfg{gimpplugindir} . '/plug-ins';
 die "plugins dir: $!" unless -d $sysplugins;
 die "script-fu not executable: $!" unless-x "$sysplugins/script-fu";
 
-our $dir = File::Temp->newdir($DEBUG ? (CLEANUP => 0) : ());;#
-our $myplugins = "$dir/plug-ins";
+our $dir = File::Temp->newdir($DEBUG ? (CLEANUP => 0) : ());
+my $myplugins = "$dir/plug-ins";
+our $blibplugins = "blib/plugins";
 die "mkdir $myplugins: $!\n" unless mkdir $myplugins;
-my $perlserver = "$myplugins/Perl-Server";
-my $s = io("Perl-Server")->all or die "unable to read the Perl-Server: $!";
-$s =~ s/^(#!).*?(\n)/$Config{startperl}$2/;
-write_plugin($DEBUG, $perlserver, $s);
+my $s = io("$blibplugins/Perl-Server")->all or die "unable to read the Perl-Server: $!";
+write_plugin($DEBUG, 'Perl-Server', $s);
 map {
   die "symlink $_: $!" unless symlink("$sysplugins/$_", "$myplugins/$_");
 } qw(script-fu sharpen);
@@ -50,8 +49,11 @@ sub make_executable {
   die "chmod $newfile: $!\n" unless chmod 0700, $newfile;
 }
 
+# prepends $myplugins to filename
 sub write_plugin {
   my ($debug, $file, $text) = @_;
+  $file =~ s#.*/##;
+  $file = "$myplugins/$file";
   # trying to be windows- and unix-compat in how to make things executable
   # $file needs to have no extension on it
   my $wrapper = "$file-wrap";
