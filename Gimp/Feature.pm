@@ -82,7 +82,7 @@ sub present {
    } elsif ($_ eq "perl-5.6") {
       $] >= 5.006;
    } elsif ($_ eq "pdl") {
-      require Gimp::Config; $Gimp::Config{DEFINE1} =~ /HAVE_PDL/;
+      require Gimp::Config; $Gimp::Config{GIMP_CFLAGS} =~ /HAVE_PDL/;
    } elsif ($_ eq "gnome") {
       eval { require Gnome }; $@ eq "";
    } elsif ($_ eq "gtkxmhtml") {

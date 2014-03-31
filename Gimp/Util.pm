@@ -49,7 +49,8 @@ require      Exporter;
                );
 #@EXPORT_OK = qw();
 
-use Gimp;
+import Gimp;
+sub __ ($);
 
 $VERSION = 2.3001;
 
@@ -140,17 +141,6 @@ sub text_draw {
 
   # Do the fun stuff with the text.
   Gimp->layer_set_preserve_trans($text_layer, FALSE);
-
-  if ($resize == 0)
-    {
-    # Now figure out the size of $image
-    $width = Gimp->image_width($text_layer);
-    $height = Gimp->image_height($text_layer);
-    # and cut text layer
-    }
-  else
-    {
-    }
 
   # add text to image
   Gimp->image_add_layer($image, $text_layer, $pos);

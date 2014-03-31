@@ -1,14 +1,13 @@
 use strict;
 use Test::More;
-our ($dir, $DEBUG, $myplugins);
+our ($dir, $DEBUG);
 BEGIN {
 #  $Gimp::verbose = 1;
   $DEBUG = 0;
   require 't/gimpsetup.pl';
   use Config;
-  my $plugin = "$myplugins/test_perl_filter";
-  write_plugin($DEBUG, $plugin, $Config{startperl}.
-    "\nBEGIN { \$Gimp::verbose = ".int($Gimp::verbose).'; }'.<<'EOF');
+  write_plugin($DEBUG, "test_perl_filter", $Config{startperl}.
+    "\nBEGIN { \$Gimp::verbose = ".int($Gimp::verbose||0).'; }'.<<'EOF');
 
 use strict;
 use Gimp qw(:auto __ N_);
