@@ -1,33 +1,18 @@
 use ExtUtils::MakeMaker;
+use ExtUtils::Depends;
 
 do '../config.pl';
 
-sub MY::const_config {
-   my $self = shift;
-   $self->{LDLOADLIBS}="$GIMP_LIBS_NOUI $self->{LDLOADLIBS} $LIBS $INTLLIBS";
-   package MY;
-   $self->SUPER::const_config(@_);
-}
-
-sub MY::const_loadlibs {
-   my $self = shift;
-   if ($IN_GIMP) {
-      $self->{LD_RUN_PATH} = join (":",
-         $libdir,
-         split /:/,$self->{LD_RUN_PATH}
-      );
-   }
-   package MY;
-   $self->SUPER::const_loadlibs(@_);
-}
-
-$GIMP_INC_NOUI = "-I../../.. $GIMP_INC_NOUI" if $IN_GIMP;
+my $pkg = new ExtUtils::Depends Gimp;
+$pkg->set_inc($cfg{GIMP_CFLAGS});
+$pkg->set_libs("$cfg{GIMP_LIBS} $cfg{INTLLIBS}");
+$pkg->add_typemaps("$topdir/typemap", @{$cfg{pdl_typemaps}});
+$pkg->add_pm(map { ($_ => "\$(INST_LIB)/Gimp/$_") } glob '*.pm');
 
 WriteMakefile(
     'NAME'	=> 'Gimp::Lib',
     'VERSION_FROM' => '../Gimp.pm',
-    'INC'	=> "$INC1 $GIMP_INC_NOUI $CPPFLAGS $pdl_inc $CFLAGS",
-    'DEFINE'	=> "$DEFINE1 $DEFS",
-    'macro'	=> { libdir => $libdir, exec_prefix => $exec_prefix, prefix => $prefix },
-    'TYPEMAPS'	=> ["$topdir/typemap",@pdl_typemaps],
+    $pkg->get_makefile_vars,
+    NO_MYMETA	=> 1,
+    NO_META	=> 1,
 );
