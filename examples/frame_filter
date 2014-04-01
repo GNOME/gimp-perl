@@ -17,7 +17,6 @@ register	"layer_apply",
                  [PF_DRAWABLE,	"drawable2", "an optional extra drawable for use by the code"],
 		],
                 [],
-                ['gimp-1.1'],
 	sub {
 		my($image,$_drawable,$function,$d2) = @_;
 

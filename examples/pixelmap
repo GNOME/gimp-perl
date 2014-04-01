@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 
-use Gimp::Feature 'pdl';
-use Gimp 1.099;
+use Gimp;
 use Gimp::Fu;
 use Gimp::Util;
 use PDL;
@@ -70,7 +69,7 @@ register "pixelgen",
 	 "Marc Lehmann",
 	 "Marc Lehmann <pcg\@goof.com>",
 	 "19991115",
-	 N_"<Image>/Filters/Render/Pixelgenerator...",
+	 N_"<Image>/File/Create/Logos/Pixelgenerator...",
 	 undef,
 	 [
 	   [PF_SPINNER,		"width"		, "The width of the new image to generate",	512, [1, 4096, 1]],

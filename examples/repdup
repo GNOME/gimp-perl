@@ -36,7 +36,7 @@ register	"repdup",
 		for ($i = 0; $i < $repeats; $i++) {
 			$b[1] = $b[1] + $xoffset;
 			$b[2] = $b[2] + $yoffset;
-			gimp_image_select_rectangle(CHANNEL_OP_REPLACE, $img, $b[1], $b[2], $w, $h);
+			$img->select_rectangle(CHANNEL_OP_REPLACE, $b[1], $b[2], $w, $h);
 			$bit_bucket = gimp_edit_paste($layer, 0);
 			gimp_floating_sel_anchor($bit_bucket);
 			gimp_selection_none($img);

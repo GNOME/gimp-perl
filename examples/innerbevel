@@ -11,13 +11,15 @@
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 use Gimp::Util;
+#Gimp::set_trace(TRACE_ALL);
+#$Gimp::verbose = 1;
 
 N_"/Xtns/Render"; N_"/Xtns/Render/Logos"; # i18n workaround
 
 $defaultcolor1 = [124,10,18];
 $defaultcolor2 = [200,19,27];
 
-$path = N_"<Image>/Filters/Render/Logos/Inner Bevel...";
+$path = N_"<Image>/File/Create/Logos";
 $shortdesc = "Perform an inner bevel on text";
 $longdesc = "This uses tigert's inner bevel method on text, which can be found with his other excellent tutorials at http://tigert.gimp.org/";
 $date = "1999-03-23";
@@ -46,26 +48,15 @@ register $regname, $shortdesc, $longdesc, $authorname, $author, $date, $path, $i
    [PF_SLIDER, "depth_shape", "Determines the final shape", 7 , [0,64,32]],
    [PF_RADIO, "map", "The type of Map to use(0=Linear,1=Spherical,2=Sinusoidal)", 2, [Linear => 0, Spherical => 1, Sinusoidal => 2] ],
   ],[],
-  [
-   'gimp-1.1',
-  ], sub {
+  sub {
 
 my ($font, $text, $color1, $color2, $azimuth, $elevation, $depth, $maptype) = @_;
-my $gimpversion = Gimp->version;
-$gimpversion =~ m/^(\d)\.(\d)\.\d/;
-my $gimpmajor = $1;
-my $gimpminor = $2;
-my $api22 = 0; my $api23 = 0;
-
-if ($gimpmajor == 2 && $gimpminor == 2) { $api22 = 1; }
-elsif ($gimpmajor == 2 && $gimpminor >= 3) { $api23 = 1; }
-else {die "Don't know how to handle gimp version $gimpversion with this plugin!\n"};
 
 # -- step 1 --
-Context->push();
+Gimp::Context->push();
 
-Context->set_background($color1);
-Context->set_foreground($color2);
+Gimp::Context->set_background($color1);
+Gimp::Context->set_foreground($color2);
 
 @dims = gimp20_text_wh($text, $font);
 
@@ -77,26 +68,23 @@ $img = gimp_image_new($dims[0]+30, $dims[1]+10, RGB);
 # -- step 2 --
 $img->add_new_layer(0,TRANSPARENT_FILL);
 $img->text_fontname(-1, 10, 10, $text, 0, 1, (split / /,$font)[-1], PIXELS, $font);
-gimp_display_new($img);  # display the image early
+Gimp::Display->new($img);  # display the image early
 $layer = $img->merge_visible_layers(EXPAND_AS_NECESSARY);
 @pt1 = ($layer->width * 0.5 -1, 0);
 @pt2 = ($layer->width * 0.5 +1, $layer->height);
 # -- step 3 --
-if ($api22) { $layer->set_preserve_trans(1); }
-elsif ($api23) { $layer->set_lock_alpha(1); }
+$layer->set_lock_alpha(1);
 $layer->edit_blend(FG_BG_RGB_MODE, NORMAL_MODE, GRADIENT_LINEAR, 100, 0, REPEAT_NONE, 0, 0, 0, 3, 0.20, @pt1, @pt2);
 # -- step 4 --
 $layer2 = $layer->copy(0);     # Can you override these to have a default? (would be nice)
 $img->insert_layer($layer2, 0, 0);
 # -- step 5 --
-if ($api22) { $layer2->set_preserve_trans(1); }
-elsif ($api23) { $layer2->set_lock_alpha(1); }
+$layer2->set_lock_alpha(1);
 $img->selection_all;
-Context->set_background([1.0,1.0,1.0]);
+Gimp::Context->set_background([1.0,1.0,1.0]);
 $layer2->edit_fill(BACKGROUND_FILL);
 # -- step 6 --
-if ($api22) { $layer2->set_preserve_trans(0); }
-elsif ($api23) { $layer2->set_lock_alpha(0); }
+$layer2->set_lock_alpha(0);
 $layer2->gauss_rle(6,1,1);
 # -- step 7 --
 $layer->plug_in_bump_map($layer2, $azimuth, $elevation, $depth, 0,0,0,0,1,0,$maptype);
@@ -110,7 +98,7 @@ $layer2->translate(2, 3);
 $img->add_new_layer(2);
 $img->gimp_selection_none();
 
-Context->pop();
+Gimp::Context->pop();
 return();
 };
 

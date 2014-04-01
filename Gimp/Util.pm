@@ -39,8 +39,9 @@ The need to explicitly C<use Gimp::Util> will go away in the future.
 =cut
 
 package      Gimp::Util;
-require      Exporter;
-@ISA       = qw(Exporter);
+use Exporter 'import';
+use vars qw(@EXPORT $VERSION);
+use strict;
 @EXPORT    = qw(
                 layer_create
                 text_draw
@@ -50,6 +51,7 @@ require      Exporter;
 #@EXPORT_OK = qw();
 
 import Gimp;
+# manual "import" to shut perl -cw up
 sub __ ($);
 
 $VERSION = 2.3001;
@@ -102,12 +104,12 @@ sub layer_create {
   my $tcol; # scratch color
 
   # create a colored layer
-  $layer = Gimp->layer_new ($image,Gimp->image_width($image),
+  $layer = Gimp::Layer->new ($image,Gimp->image_width($image),
                            Gimp->image_height($image),
-                           RGB_IMAGE,$name,100,NORMAL_MODE);
+                           &RGB_IMAGE,$name,100,&NORMAL_MODE);
   $tcol = Gimp->palette_get_background ();
   Gimp->palette_set_background ($color);
-  Gimp->drawable_fill ($layer,BACKGROUND_FILL);
+  Gimp->drawable_fill ($layer,&BACKGROUND_FILL);
   Gimp->image_add_layer($image, $layer, $pos);
   Gimp->palette_set_background ($tcol); # reset
   $layer;
@@ -137,13 +139,13 @@ sub text_draw {
   Gimp->palette_set_foreground ($fgcolor);
   # Create a layer for the text.
   $text_layer = Gimp->text($image,-1,0,0,$text,10,1,$size,
-			    PIXELS,"*",$font,"*","*","*","*");
+			    &PIXELS,"*",$font,"*","*","*","*");
 
   # Do the fun stuff with the text.
-  Gimp->layer_set_preserve_trans($text_layer, FALSE);
+  Gimp->layer_set_preserve_trans($text_layer, &FALSE);
 
   # add text to image
-  Gimp->image_add_layer($image, $text_layer, $pos);
+  Gimp->image_add_layer($image, $text_layer, 0);
   # merge white and text
   Gimp->image_merge_visible_layers ($image,1);
   # cleanup the left over layer (!)
@@ -175,16 +177,16 @@ sub image_create_text {
 #  $font = "Helvetica" if ($font eq "");
   # create an image. We'll just set whatever size here because we want
   # to resize the image when we figure out how big the text is.
-  $image = Gimp->image_new(64,64,RGB); # don't waste too much  resources ;-/
+  $image = Gimp::Image->new(64,64,&RGB); # don't waste too much  resources ;-/
 
   $tcol = Gimp->palette_get_foreground ();
   Gimp->palette_set_foreground ($fgcolor);
   # Create a layer for the text.
   $text_layer = Gimp->text($image,-1,0,0,$text,10,1,$size,
-                          PIXELS,"*",$font,"*","*","*","*","*","*");
+                          &PIXELS,"*",$font,"*","*","*","*","*","*");
   Gimp->palette_set_foreground ($tcol);
 
-  Gimp->layer_set_preserve_trans($text_layer, FALSE);
+  Gimp->layer_set_preserve_trans($text_layer, &FALSE);
 
   # Resize the image based on size of text.
   Gimp->image_resize($image,Gimp->drawable_width($text_layer),
@@ -258,38 +260,31 @@ alpha.
 
 mark the given layers visible (invisible) and all others invisible (visible).
 
-=item C<gimp_layer_get_position $layer>
-
-return the position the layer has in the image layer stack.
-
-=item C<gimp_layer_set_position $layer,$new_index>
-
-moves the layer to a new position in the layer stack.
-
 =cut
+
 sub gimp_image_layertype {
    my($type,$alpha) = ($_[0]->base_type,$_[1]);
-   $type == RGB     ? $alpha ? RGBA_IMAGE     : RGB_IMAGE     :
-   $type == GRAY    ? $alpha ? GRAYA_IMAGE    : GRAY_IMAGE    :
-   $type == INDEXED ? $alpha ? INDEXEDA_IMAGE : INDEXED_IMAGE :
+   $type == &RGB     ? $alpha ? &RGBA_IMAGE     : &RGB_IMAGE     :
+   $type == &GRAY    ? $alpha ? &GRAYA_IMAGE    : &GRAY_IMAGE    :
+   $type == &INDEXED ? $alpha ? &INDEXEDA_IMAGE : &INDEXED_IMAGE :
    die;
 }
 
 sub gimp_layer2imagetype {
    my $type = shift;
-   $type == RGB_IMAGE		? RGB		:
-   $type == RGBA_IMAGE		? RGB		:
-   $type == GRAY_IMAGE		? GRAY		:
-   $type == GRAYA_IMAGE		? GRAY		:
-   $type == INDEXED_IMAGE	? INDEXED	:
-   $type == INDEXEDA_IMAGE	? INDEXED	:
+   $type == &RGB_IMAGE		? &RGB		:
+   $type == &RGBA_IMAGE		? &RGB		:
+   $type == &GRAY_IMAGE		? &GRAY		:
+   $type == &GRAYA_IMAGE	? &GRAY		:
+   $type == &INDEXED_IMAGE	? &INDEXED	:
+   $type == &INDEXEDA_IMAGE	? &INDEXED	:
    die;
 }
 
 sub gimp_image_add_new_layer {
    my ($image,$index,$filltype,$alpha)=@_;
-   my $layer = new Layer ($image, $image->width, $image->height, $image->layertype (defined $alpha ? $alpha : 1), join(":",(caller)[1,2]), 100, NORMAL_MODE);
-   $layer->fill (defined $filltype ? $filltype : BACKGROUND_FILL);
+   my $layer = new Gimp::Layer ($image, $image->width, $image->height, $image->layertype (defined $alpha ? $alpha : 1), join(":",(caller)[1,2]), 100, &NORMAL_MODE);
+   $layer->fill (defined $filltype ? $filltype : &BACKGROUND_FILL);
    $image->add_layer ($layer, $index*1);
    $layer;
 }
@@ -307,30 +302,6 @@ sub gimp_image_set_invisible {
    my %layers; @layers{map $$_,@_}=(1) x @_;
    for ($image->get_layers) {
       $_->drawable_set_visible (!$layers{$$_});
-   }
-}
-
-sub gimp_layer_get_position {
-   my $layer = shift;
-   my @layers = $layer->get_image->get_layers;
-   for (0..$#layers) {
-      # the my is necessary for broken perl (return $_ => undef)
-      return (my $index=$_) if ${$layers[$_]} == $$layer;
-   }
-   ();
-}
-
-sub gimp_layer_set_position {
-   my($layer,$new_pos)=@_;
-   $pos=$layer->get_position;
-   $layer->add_alpha;
-   while($pos>$new_pos) {
-      $layer->lower_layer;
-      $pos--;
-   }
-   while($pos<$new_pos) {
-      $layer->raise_layer;
-      $pos++;
    }
 }
 

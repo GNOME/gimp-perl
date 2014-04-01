@@ -82,7 +82,6 @@ fades from if you have Fade set\n",
    [PF_SPINNER, 'arc_angle', "How many degrees to arc through.", 360, [-360, 360, 1]]
   ],
   [],
-  [],
   sub {
     my($img,$layer, $shape, $fade_dir, $points,
        $inside_pixels, $outside_pixels, $start_angle, $arc_angle) =@_;

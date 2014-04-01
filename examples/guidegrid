@@ -38,7 +38,6 @@ register "guide_grid",
    [PF_TOGGLE, "remove_old_guides", "Remove existing guides?", 0],
   ],
   [],
-  ['gimp-1.1'],
   sub {
     my($img,$layer,$xspace, $yspace, $xoffset, $yoffset, $remove_old_guides) =@_;
 

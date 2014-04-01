@@ -811,6 +811,7 @@ push_gimp_sv (const GimpParam *arg, int array_as_ref)
       case GIMP_PDB_LAYER:
       case GIMP_PDB_CHANNEL:
       case GIMP_PDB_DRAWABLE:
+      case GIMP_PDB_ITEM:
       case GIMP_PDB_SELECTION:
       case GIMP_PDB_VECTORS:
       case GIMP_PDB_STATUS:
@@ -824,6 +825,7 @@ push_gimp_sv (const GimpParam *arg, int array_as_ref)
 	    case GIMP_PDB_LAYER:	id = arg->data.d_layer; break;
 	    case GIMP_PDB_CHANNEL:	id = arg->data.d_channel; break;
 	    case GIMP_PDB_DRAWABLE:	id = arg->data.d_drawable; break;
+	    case GIMP_PDB_ITEM:		id = arg->data.d_item; break;
 	    case GIMP_PDB_SELECTION:	id = arg->data.d_selection; break;
 	    case GIMP_PDB_VECTORS:	id = arg->data.d_vectors; break;
 	    case GIMP_PDB_STATUS:	id = arg->data.d_status; break;

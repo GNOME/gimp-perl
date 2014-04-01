@@ -23,7 +23,6 @@ register	"layer_reorder",
                  [PF_STRING,	"custom",	"the (optional) custom function to use, e.g. 'n-i' reverses the order"],
 		],
                 [],
-                ['gimp-1.1'],
 	sub {
 		my($img,$drawable,$function,$custom) = @_;
 

@@ -20,7 +20,7 @@ register "random_art_1",			# Funktionsname
 	 "Marc Lehmann",			# Autor
 	 "Marc Lehmann <pcg\@goof.com",		# Copyright
 	 "0.4",					# Version/Datum
-	 N_"<Image>/Filters/Render/Random Art #1...",	# Menüpfad
+	 N_"<Image>/File/Create/Logos/Random Art #1...",	# Menüpfad
 	 "",					# Bildtypen
 	 # Eingabeparameter
 	 # Typ		Name		Beschreibung		Wert
@@ -37,7 +37,7 @@ register "random_art_1",			# Funktionsname
 	 sub {					# Perl-Code
    # Die Parameter werden ganz "normal" übergeben:
    my ($w,$h,$num_poly,$edges,$revolutions,$feather,$super)=@_;
-   Context->push();
+   Gimp::Context->push();
 
    # Erzeuge ein neues Bild
    my $image = new Gimp::Image($w,$h,RGB);
@@ -51,7 +51,7 @@ register "random_art_1",			# Funktionsname
    $image->insert_layer($layer,0,0);
 
    # Setze die Hintergrundfarben
-   Context->set_background('white');
+   Gimp::Context->set_background('white');
 
    # ...und lösche die Ebene damit
    $layer->fill(BACKGROUND_FILL);
@@ -71,12 +71,12 @@ register "random_art_1",			# Funktionsname
       }
 
       # Selektiere die Region
-      gimp_context_set_feather($feather);
+      Gimp::Context->set_feather($feather);
       $image->select_polygon(CHANNEL_OP_REPLACE, \@ecken);
 
       # Wähle zufällig zwei Farben aus
-      Context->set_foreground([rand(256)/256.0,rand(256)/256.0,rand(256)/256.0]);
-      Context->set_background([rand(256)/256.0,rand(256)/256.0,rand(256)/256.0]);
+      Gimp::Context->set_foreground([rand(256)/256.0,rand(256)/256.0,rand(256)/256.0]);
+      Gimp::Context->set_background([rand(256)/256.0,rand(256)/256.0,rand(256)/256.0]);
 
       # Und erzeuge einen Farbverlauf über das Bild
       $layer->edit_blend (FG_BG_HSV_MODE,
@@ -99,7 +99,7 @@ register "random_art_1",			# Funktionsname
       $layer->offset (1,0,(rand(0.8)+0.1)*$w,(rand(0.8)+0.1)*$h);
    }
 
-   Context->pop();
+   Gimp::Context->pop();
 
    $image->selection_none;
    $image->undo_enable;

@@ -89,7 +89,6 @@ register
    [PF_SLIDER, "intensity", "Displace Intensity", 2.5, [0.1, 10, 0.1]]
   ],
   [],
-  ['gimp-1.1'],
   \&warp_sharp;
 
 

@@ -80,21 +80,16 @@ register "dust",
 
    $image->undo_group_start;
 
-   Context->push();
-   Context->set_foreground("white");
-   Context->set_brush("Circle (01)");
-   Context->set_opacity(50);
-   # This will cause a PDB failure as of 9/7/05 CVS - can't set
-   # spacing on non-editable brush via PDB.  We should probably
-   # let this happen, so we can do via script what we can via the UI.
-   # Brushes->set_spacing(Context->get_brush, 100);
-   warn "Unable to set spacing due to missing PDB functionailty\n";
-   Context->set_paint_mode(NORMAL_MODE);
+   Gimp::Context->push;
+   Gimp::Context->set_foreground("white");
+   my $brush = Gimp->brush_duplicate("Circle (01)");
+   Gimp::Context->set_brush($brush);
+   Gimp::Brushes->set_spacing($brush, 100);
+   Gimp::Context->set_opacity(50);
+   Gimp::Context->set_paint_mode(NORMAL_MODE);
 
-   if (1) {
-      $layer = $image->add_new_layer (0, TRANSPARENT_FILL, 1);
-      $layer->set_mode (DIFFERENCE_MODE);
-   }
+   $layer = $image->add_new_layer (0, TRANSPARENT_FILL, 1);
+   $layer->set_mode (DIFFERENCE_MODE);
 
    for (1..($w*$h*$density)) {
       my ($x, $y) = (rand $w, rand $h);
@@ -109,7 +104,7 @@ register "dust",
       $layer->paintbrush_default([map { $x+$c[$_], $y+$c[$_+$l] } 0..$l-1]);
    }
 
-   Context->pop();
+   Gimp::Context->pop;
 
    $image->undo_group_end;
 

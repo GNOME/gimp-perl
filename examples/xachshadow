@@ -41,13 +41,13 @@ register "xach_shadows",
    my($img,$drawable,$blocksize) =@_;
 
         eval { $img->undo_group_start };
-        Context->push();
+        Gimp::Context->push();
  #	$selection_flag = 0;
 	if (!$drawable->has_alpha) {
 		$drawable->add_alpha;
 		};
-        Context->set_foreground('white');
-        Context->set_background('black');
+        Gimp::Context->set_foreground('white');
+        Gimp::Context->set_background('black');
 # This only can be applied to an entire image right now..
 #	$selection = $img->selection_save;
     $img->selection_all;
@@ -61,7 +61,7 @@ register "xach_shadows",
 
 	$frontlayer = $shadowlayer->layer_copy(0);
 	$img->insert_layer($frontlayer,0,0);
-	Context->set_background([0,0,0]);
+	Gimp::Context->set_background([0,0,0]);
 	$shadowlayer->fill(BACKGROUND_FILL);
 	$checkmask->plug_in_gauss_iir(0.3*$blocksize, 1, 1);
 	$checkmask->offset (1, 0, 0.2*$blocksize, 0.2*$blocksize);
@@ -71,13 +71,13 @@ register "xach_shadows",
 	$img->insert_layer($gridlayer,0,0);
 	$img->selection_all;
 	gimp_edit_clear($gridlayer);
-	Context->set_background([255,255,255]);
+	Gimp::Context->set_background([255,255,255]);
 	gimp_edit_fill($gridlayer, BACKGROUND_FILL);
 	$gridlayer->plug_in_grid((1, $blocksize, 0, [0,0,0], 255) x 3);
 
 	gimp_layer_set_mode($gridlayer, 3);
 # Clean up stuff
-        Context->pop();
+        Gimp::Context->pop();
         $img->selection_none;
         eval { $img->undo_group_end };
 	gimp_displays_flush();

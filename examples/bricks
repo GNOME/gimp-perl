@@ -139,7 +139,7 @@ register
         "Tels",
         "http://bloodgate.com",
         "10/26/1999a",
-        N_"<Image>/Filters/Render/Bricks...",
+        N_"<Image>/File/Create/Patterns/Bricks...",
         undef,
         [
          [PF_PATTERN,  "background", "Brick pattern", "Leather"],

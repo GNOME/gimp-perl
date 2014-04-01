@@ -26,10 +26,12 @@ register "guide_to_selection",
           [PF_SPINNER,	"feather_radius","Radius for feather operation",	1, [0, 1000, 1e0]],
          ],
          [],
-         ['gimp-1.1'],
          sub {
     my($img, $drawable, $operation, $feather, $radius) = @_;
     my($W,$H) = ($img->width, $img->height);
+    Gimp::Context->push;
+    Gimp::Context->set_feather($feather);
+    Gimp::Context->set_feather_radius($radius, $radius);
 
     $i = $img->find_next_guide(0);
     while ($i) {
@@ -40,13 +42,12 @@ register "guide_to_selection",
       } else {
          ($x,$y,$w,$h) = ($x,0,1,$H);
       }
-      gimp_context_set_feather($feather);
-      gimp_context_set_feather_radius($radius);
       $img->select_rectangle($operation,$x,$y,$w,$h);
       $operation = CHANNEL_OP_ADD if $operation == CHANNEL_OP_REPLACE;
 
       $i = $img->find_next_guide($i);
     }
+    Gimp::Context->pop;
 
     ();
 };

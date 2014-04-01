@@ -5,8 +5,7 @@ eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
 
 # sent to me by Seth Burgess <sjburges@gimp.org>
 # small changes my Marc Lehmann <pcg@goof.com>
-# 2014/03/17 ported to GIMP 2.8.10 by Ed J - ported to Scheme (see end
-#   for Scheme script), changes back-ported to perl but not tested
+# 2014/03/17 ported to GIMP 2.8.10 by Ed J:
 #   - I think the fill with the foreground colour should be background
 #     since that's the colour expressly set, but didn't touch
 #   - adjusted the maths so inputs are in degrees
@@ -25,7 +24,6 @@ sub windify {
 	my $ysize = gimp_drawable_height($drawable);
 
 	my $out = gimp_image_new($xsize,$ysize,0);
-        #gimp_display_new($out); # if do this, image_delete will fail
 	gimp_context_set_background([128,128,128]);
 	my $windlayer = gimp_layer_new($out,$xsize,$ysize,RGB_IMAGE,"Windlayer",100,NORMAL_MODE);
 	gimp_drawable_fill($windlayer, 0);
@@ -57,7 +55,6 @@ sub windify {
                                           $distance*$ymult,
 					  1,1, $newlay,$newlay, $wrap);
         gimp_drawable_offset($drawable,1,0,$distance*$xmult,-$distance*$ymult);
-	gimp_image_remove_layer($out,$newlay);
 	gimp_image_delete ($out);
 	gimp_displays_flush();
         gimp_context_pop();
@@ -90,58 +87,3 @@ Copyright Seth Burgess.
 Distributed under the same terms as Gimp-Perl.
 
 =cut
-
-__END__
-; scheme version of above
-(define (script-fu-windify img drawable angle density distance wrap)
-  (let* (
-        (xsize (car (gimp-drawable-width drawable)))
-        (ysize (car (gimp-drawable-height drawable)))
-        (out 0)
-        (windlayer 0)
-        (windlayercopy 0)
-        (scaledensity (/ density 255))
-        (newlay 0)
-        (xmult (cos (* (/ angle 180) 3.14159)))
-        (ymult (sin (* (/ angle 180) 3.14159)))
-        )
-    (gimp-context-push)
-    (set! out (car (gimp-image-new xsize ysize RGB)))
-;    (gimp-display-new out)
-    (gimp-context-set-background '(128 128 128))
-    (set! windlayer (car (gimp-layer-new out xsize ysize RGB-IMAGE '"Windlayer" 100 NORMAL-MODE)))
-    (gimp-drawable-fill windlayer 0)
-    (gimp-image-add-layer out windlayer 0)
-    (set! windlayercopy (car (gimp-layer-copy windlayer 1)))
-    (gimp-image-add-layer out windlayercopy 0)
-    (plug-in-noisify 1 out windlayercopy 0 scaledensity scaledensity scaledensity 1)
-    (plug-in-mblur 1 out windlayercopy 0 15 angle (/ xsize 2) (/ ysize 2))
-    (gimp-layer-set-mode windlayercopy 10) ; Lighten Only
-    (gimp-image-merge-visible-layers out 0)
-    (set! newlay (car (gimp-image-get-active-layer out)))
-    (plug-in-displace 1 img drawable (* distance xmult) (* distance ymult) 1 1 newlay newlay wrap)
-    (gimp-drawable-offset drawable 1 0 (* distance xmult) (* -1 distance ymult))
-    (gimp-image-remove-layer out newlay)
-    (gimp-image-delete out)
-;(gimp-message (number->string xsize))
-    (gimp-displays-flush)
-    (gimp-context-pop)
-  )
-)
-
-(script-fu-register "script-fu-windify"
-  "Windify (GP)..."
-  "Add wind to an image"
-  "Seth Burgess"
-  "Seth Burgess <sjburges@gimp.org>"
-  "1998-09-14"
-  ""
-  SF-IMAGE "Image" 0
-  SF-DRAWABLE "Drawable" 0
-  SF-ADJUSTMENT "Wind Angle in degrees, 0 is right, increases anticlockwise" '(120 1 1000 1 10 0 1)
-  SF-ADJUSTMENT "How Much Is Blown" '(80 1 1000 1 10 0 1)
-  SF-ADJUSTMENT "How Far It's Blown"  '(30 1 1000 1 10 0 1)
-  SF-TOGGLE "Smear on Edges (or Wrap)" TRUE
-)
-
-(script-fu-menu-register "script-fu-windify" "<Image>/Filters")

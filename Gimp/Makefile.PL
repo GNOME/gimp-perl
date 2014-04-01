@@ -1,7 +1,7 @@
 use ExtUtils::MakeMaker;
 use ExtUtils::Depends;
 
-do '../config.pl';
+require '../config.pl';
 
 my $pkg = new ExtUtils::Depends Gimp;
 $pkg->set_inc($cfg{GIMP_CFLAGS});

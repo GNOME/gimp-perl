@@ -18,6 +18,7 @@ require '../config.pl';
   glowing_steel goldenmean guidegrid guides_to_selection
   image_tile innerbevel
   layerfuncs mirrorsplit
+  map_to_gradient
   perlotine prep4gif
   repdup roundsel
   scratches sethspin stamps
@@ -30,7 +31,6 @@ require '../config.pl';
   gouge
   redeye
   pixelmap
-  view3d
 );
 
 sub plugin_target {

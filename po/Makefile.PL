@@ -1,6 +1,6 @@
 use ExtUtils::MakeMaker;
 
-do '../config.pl';
+require '../config.pl';
 
 print "Portable message objects...";
 if ($MSGFMT =~ /./ && $MSGFMT ne "no") {

@@ -5,8 +5,7 @@
 
 # these are all simple 2x2 kernels, fast but relatively effective
 
-use Gimp::Feature 'pdl';
-use Gimp 1.098;
+use Gimp;
 use Gimp::Fu;
 use PDL::LiteF;
 
