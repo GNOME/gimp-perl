@@ -1,10 +1,9 @@
 #!/usr/bin/perl
 
-use Gimp::Feature qw(pdl);
-use PDL;
-BEGIN { eval "use PDL::Graphics::TriD"; $@ and Gimp::Feature::missing('PDL TriD (OpenGL) support') }
 use Gimp;
 use Gimp::Fu;
+use PDL;
+use PDL::Graphics::TriD;
 
 register
     'view3d',

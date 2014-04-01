@@ -44,7 +44,7 @@ sub prep {
 		}
 
 # Show the image early - this makes debugging a breeze
-	my $newdisplay = gimp_display_new($out);
+	my $newdisplay = Gimp::Display->new($out);
 
 # Hide the bottom layer, so it doesn't get into the merge visible later.
 
@@ -88,7 +88,7 @@ sub prep {
 		}
 
 # Show all the changes.
-	gimp_displays_flush();
+	Gimp->displays_flush();
 
 	();
 	}

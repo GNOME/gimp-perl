@@ -31,9 +31,7 @@
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 use Fcntl qw(O_RDWR O_CREAT O_TRUNC);
-use Gimp::Feature;
-BEGIN { eval "use DB_File";
-	   $@ and Gimp::Feature::missing('Berkeley DB interface module') }
+use DB_File;
 # use strict;
 # use vars qw($DO_HSV $debug);
 

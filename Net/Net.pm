@@ -132,14 +132,6 @@ sub set_trace {
    $old_level;
 }
 
-my @gimp_gui_functions = qw(
-   gimp_progress_init
-   gimp_progress_update
-   gimp_displays_flush
-   gimp_display_new
-   gimp_display_delete
-);
-
 sub start_server {
    my $opt = shift;
    $opt = $Gimp::spawn_opts unless $opt;
@@ -152,7 +144,7 @@ sub start_server {
    $gimp_pid = fork;
    croak __"unable to fork: $!" if $gimp_pid < 0;
    if ($gimp_pid > 0) {
-      Gimp::ignore_functions(@gimp_gui_functions) unless $opt=~s/(^|:)gui//;
+      Gimp::ignore_functions(@Gimp::GUI_FUNCTIONS) unless $opt=~s/(^|:)gui//;
       return $server_fh;
    }
    close $server_fh;

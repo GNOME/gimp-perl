@@ -13,21 +13,22 @@ sub plug_in_example_oo {
 # object by calling 'new'.  This is fairly standard PERL OO magic.
 
 # instead of my $img=gimp_image_new(300,200,RGB)
-  my $img=new Image(300,200,RGB);
+  my $img=new Gimp::Image(300,200,RGB);
 
 # instead of my $bg=gimp_layer_new($img, ...)
-  my $bg=new Layer($img,300,200,RGB_IMAGE,"Background",100,NORMAL_MODE);
+  my $bg=new Gimp::Layer($img,300,200,RGB_IMAGE,"Background",100,NORMAL_MODE);
 
 # instead of gimp_display_new($img);
   new Gimp::Display($img);
 
-# For any of Image, Drawable, Layer, Palette, Edit, Gradients, Patterns,
-# Progress, Channel, Selection, Display, Plugin, you can use a syntax
-# like Objtype->function, and it will be translated into
-# gimp_objtype_function
+# For any of Gimp::Image, Gimp::Drawable, Gimp::Layer, Gimp::Palette,
+# Gimp::Edit, Gimp::Gradients, Gimp::Patterns, Gimp::Progress,
+# Gimp::Channel, Gimp::Selection, Gimp::Display, Gimp::Plugin, you can
+# use a syntax like Gimp::Objtype->function, and it will be translated
+# into gimp_objtype_function
 
 # instead of gimp_context_set_background() you can use
-  Palette->set_background([200,200,100]);
+  Gimp::Palette->set_background([200,200,100]);
 
 # Next, we have 2 examples of using the drawable or image as an object when
 # its the first parameter to the PDB call.
@@ -73,4 +74,3 @@ Copyright Marc Lehman.
 Distributed under the same terms as Gimp-Perl.
 
 =cut
-

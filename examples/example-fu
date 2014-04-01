@@ -42,7 +42,7 @@ register "gimp_fu_example_script",			# fill in a function name
    Gimp::set_trace(TRACE_CALL);
 
    # store current context, so that present settings aren't affected
-   Context->push();
+   Gimp::Context->push();
 
    my $img = new Gimp::Image ($width, $height, RGB);
 
@@ -56,19 +56,19 @@ register "gimp_fu_example_script",			# fill in a function name
 
    # now a few syntax examples
 
-   Context->set_foreground($fg) unless $ignore;
-   Context->set_background($bg) unless $ignore;
+   Gimp::Context->set_foreground($fg) unless $ignore;
+   Gimp::Context->set_background($bg) unless $ignore;
 
    fill $l BACKGROUND_FILL;
    my $text_layer = $img->text_fontname(-1, 10, 10, $text, 5, 1, 10, PIXELS, $font);
 
-   Context->set_foreground("green");
+   Gimp::Context->set_foreground("green");
 
    # close the undo push group
    $img->undo_group_end;
 
    # restore original context
-   Context->pop();
+   Gimp::Context->pop();
 
    $img;	# return the image, or an empty list, i.e. ()
 };

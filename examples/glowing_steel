@@ -6,16 +6,16 @@ eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
 # A plug-in for GIMP for producing logos and other such nifty things
 # which appear to be made of steel and floating over a glowing cloud.
 # This plug-in also includes several filters and such for performing the
-# various stages of this logo (e.g. burshed steel, add glow, highlight edges).
+# various stages of this logo (e.g. brushed steel, add glow, highlight edges).
 #
 # Written in 1999 (c) by Aaron Sherman <ajs@ajs.com>.
-# This plugin may be distributed under the same terms as The Gimp itself.
-# See http://www.gimp.org/ for more information on The Gimp.
+# This plugin may be distributed under the same terms as Gimp itself.
+# See http://www.gimp.org/ for more information on Gimp.
 
 =head1 LICENSE
 
 Written in 1999 (c) by Aaron Sherman <ajs@ajs.com>.
-This plugin may be distributed under the same terms as The Gimp itself.
+This plugin may be distributed under the same terms as Gimp itself.
 
 =cut
 require 5.004;
@@ -121,12 +121,7 @@ sub perl_fu_add_glow {
   my $glow = gimp_layer_new($image, gimp_image_width($image),
 			    gimp_image_height($image), $type, "Glow layer",
 			    100, NORMAL_MODE);
-  my $lnum;
-  if (!defined($lnum = gimp_layer_get_position($drawable))) {
-    # Bug in Gimp::Util?
-    warn("add_glow: gimp_layer_get_position failed");
-    $lnum = 0;
-  }
+  my $lnum = $image->get_item_position($drawable);
   gimp_image_insert_layer($image, $glow, 0, $lnum);
 
   # Clear out the new layer
@@ -196,10 +191,7 @@ sub perl_fu_brushed_metal {
 
   gimp_brightness_contrast($templ, 50, 0);
   plug_in_noisify($image, $templ, 0, 0.3, 0.3, 0.3, 0);
-  if (gimp_version() gt "2.3")  # make work for 2.2 or 2.3
-    { plug_in_mblur($image, $templ, 0, $length, $angle, 0.0, 0.0, 1); }
-  else
-    { plug_in_mblur($image, $templ, 0, $length, $angle, 0.0, 0.0); }
+  plug_in_mblur($image, $templ, 0, $length, $angle, 0.0, 0.0);
 
 
   # Now put it into the target layer
@@ -249,12 +241,7 @@ sub perl_fu_highlight_edges {
   gimp_image_select_item($image, CHANNEL_OP_REPLACE, $drawable);
   my $white = gimp_layer_copy($drawable,0);
   my $black = gimp_layer_copy($drawable,0);
-  my $lnum;
-  if (!defined($lnum = gimp_layer_get_position($drawable))) {
-    # Bug in Gimp::Util?
-    warn("highlight_edges: gimp_layer_get_position failed");
-    $lnum = 0;
-  }
+  my $lnum = $image->get_item_position($drawable);
   gimp_image_insert_layer($image, $black, 0, $lnum);
   gimp_image_insert_layer($image, $white, 0, $lnum);
 
@@ -334,7 +321,7 @@ register
 	"a glowing surface. This effect was inspired by a poster for the ".
 	"film \"Lost In Space\".",
   "Aaron Sherman", "Aaron Sherman (c)", "1999-06-14",
-  N_"<Image>/Filters/Render/Logos/Glowing Steel",
+  N_"<Image>/File/Create/Logos/Glowing Steel",
 
   undef,
   [
@@ -479,4 +466,3 @@ TBD
 L<gimp>, L<perl>, L<Gimp>: the Gimp module for perl.
 
 =cut
-

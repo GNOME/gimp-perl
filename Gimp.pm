@@ -3,7 +3,7 @@ package Gimp;
 use strict 'vars';
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK $AUTOLOAD %EXPORT_TAGS @EXPORT_FAIL
             $interface_pkg $interface_type
-            @PREFIXES
+            @PREFIXES @GUI_FUNCTIONS
             $function $basename $spawn_opts
             $in_quit $in_run $in_net $in_init $in_query $no_SIG
             $help $verbose $host $in_top);
@@ -23,6 +23,14 @@ BEGIN {
 
 use Gimp::ColorDB;
 use Carp qw(croak);
+
+@GUI_FUNCTIONS = qw(
+   gimp_progress_init
+   gimp_progress_update
+   gimp_displays_flush
+   gimp_display_new
+   gimp_display_delete
+);
 
 my @_procs = ('main', '__', 'N_');
 #my @_default = (@_procs, ':consts' ,':_auto2');
@@ -138,7 +146,6 @@ sub wrap_text {
 
 $spawn_opts = "";
 
-# extra check for Gimp::Feature::import
 $in_query=0 unless defined $in_query;
 $in_top=$in_quit=$in_run=$in_net=$in_init=0;
 ($function)=$0=~/([^\/\\]+)$/;
@@ -1013,7 +1020,7 @@ Ed J (with oversight and guidance from Kevin Cozens) (2.3+)
 =head1 SEE ALSO
 
 perl(1), gimp(1), L<Gimp::OO>, L<Gimp::Data>, L<Gimp::Pixel>,
-L<Gimp::Util>, L<Gimp::UI>, L<Gimp::Feature>, L<Gimp::Net>,
+L<Gimp::Util>, L<Gimp::UI>, L<Gimp::Net>,
 L<Gimp::Config>, and L<Gimp::Lib>.
 
 =cut

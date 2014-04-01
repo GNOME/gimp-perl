@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 
-use Gimp::Feature 'pdl';
-use Gimp 1.1;
+use Gimp;
 use Gimp::Fu;
 use PDL::LiteF;
 

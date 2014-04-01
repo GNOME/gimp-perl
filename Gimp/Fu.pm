@@ -5,7 +5,10 @@ use Gimp::Data;
 use File::Basename;
 use strict;
 use Carp qw(croak);
-use vars qw($run_mode);
+use vars qw($run_mode @EXPORT);
+
+@EXPORT = qw($run_mode);
+#@EXPORT_OK = qw($run_mode save_image);
 
 use constant {
   PF_INT8 => Gimp::PDB_INT8,
@@ -53,8 +56,6 @@ Gimp::Fu - "easy to use" framework for Gimp scripts
 
   use Gimp;
   use Gimp::Fu;
-
-  (this module uses Gtk, so make sure it's correctly installed)
 
 =head1 DESCRIPTION
 
@@ -122,8 +123,6 @@ my @_params=qw(PF_INT8 PF_INT16 PF_INT32 PF_FLOAT PF_VALUE PF_STRING PF_COLOR
             PF_BRUSH PF_PATTERN PF_GRADIENT PF_RADIO PF_CUSTOM PF_FILE
             PF_TEXT);
 
-#@EXPORT_OK = qw($run_mode save_image);
-
 sub import {
    local $^W=0;
    my $up = caller;
@@ -190,17 +189,6 @@ sub interact {
 
    require Gimp::UI;
    goto &Gimp::UI::interact;
-}
-
-sub fu_feature_present($$) {
-   my ($feature,$function)=@_;
-   require Gimp::Feature;
-   if (Gimp::Feature::present($feature)) {
-      1;
-   } else {
-      Gimp::Feature::missing(Gimp::Feature::describe($feature),$function);
-      0;
-   }
 }
 
 sub this_script {
@@ -271,11 +259,7 @@ Gimp::on_net {
    my($interact)=1;
 
    my($perl_sub,$function,$blurb,$help,$author,$copyright,$date,
-      $menupath,$imagetypes,$params,$results,$features,$code,$type)=@$this;
-
-   for(@$features) {
-      return unless fu_feature_present($_, $function);
-   }
+      $menupath,$imagetypes,$params,$results,$code,$type)=@$this;
 
    # %map is a hash that associates (mangled) parameter names to parameter index
    @map{map mangle_key($_->[1]), @{$params}} = (0..$#{$params});
@@ -323,7 +307,7 @@ Gimp::on_query {
    script:
    for(@scripts) {
       my($perl_sub,$function,$blurb,$help,$author,$copyright,$date,
-         $menupath,$imagetypes,$params,$results,$features,$code,$type,
+         $menupath,$imagetypes,$params,$results,$code,$type,
          $defargs)=@$_;
 
       for (@$results) {
@@ -331,10 +315,6 @@ Gimp::on_query {
          if ($_ == &Gimp::PDB_IMAGE) {
             $_ = $image_retval;
          }
-      }
-
-      for(@$features) {
-         next script unless fu_feature_present($_,$function);
       }
 
       # guess the datatype. yeah!
@@ -362,12 +342,6 @@ Gimp::on_query {
          $_->[0]=datatype($_->[3],@{$_->[4]}) if $_->[0] == PF_SLIDER;
          $_->[0]=datatype($_->[3],@{$_->[4]}) if $_->[0] == PF_SPINNER;
          $_->[0]=datatype($_->[3],@{$_->[4]}) if $_->[0] == PF_ADJUSTMENT;
-      }
-
-      # Gtk not installed -> do not install menu entry
-      if (@$params > $defargs) {
-         require Gimp::Feature;
-         undef $menupath unless Gimp::Feature::present('gtk');
       }
 
       Gimp->install_procedure(
@@ -410,7 +384,6 @@ Gimp::on_query {
      [
        # like above, but for return values (optional)
      ],
-     ['feature1', 'feature2'...], # optionally check for features
      sub { code };
 
 =over 2
@@ -474,8 +447,9 @@ optional extra arguments describing some types like C<PF_SLIDER>.
 Each array element has the form C<[type, name, description, default_value,
 extra_args]>.
 
-<Image>-type plugins get two additional parameters, image (C<PF_IMAGE>) and
-drawable (C<PF_DRAWABLE>). Do not specify these yourself. Also, the
+<Image>-type plugins get two additional parameters, image (C<PF_IMAGE>)
+and drawable (C<PF_DRAWABLE>) B<if and only if> the menu path does not start
+C<E<lt>ImageE<gt>/File/Create>. Do not specify these yourself. Also, the
 C<run_mode> argument is never given to the script but its value can be
 accessed in the package-global C<$run_mode>. The B<name> is used in the
 dialog box as a hint. The B<description> will be used as a tooltip.
@@ -495,12 +469,6 @@ a C<PF_COLOR>.
 
 This is just like the parameter array except that it describes the return
 values. Specify the type and variable name only. This argument is optional.
-
-=item the features requirements
-
-See L<Gimp::Features> for a description of which features can be checked
-for. This argument is optional (but remember to specify an empty return
-value array, C<[]>, if you want to specify it).
 
 =item the code
 
@@ -640,16 +608,15 @@ sub register($$$$$$$$$;@) {
    no strict 'refs';
    my ($function, $blurb, $help, $author, $copyright, $date,
        $menupath, $imagetypes, $params) = splice @_, 0, 9;
-   my ($results, $features, $code, $type, $defargs);
+   my ($results, $code, $type, $defargs);
 
    $results  = (ref $_[0] eq "ARRAY") ? shift : [];
-   $features = (ref $_[0] eq "ARRAY") ? shift : [];
    $code = shift;
 
    for($menupath) {
       if (/^<Image>\//) {
          $type = &Gimp::PLUGIN;
-         unshift @$params, @image_params;
+         unshift @$params, @image_params unless m#^<Image>/File/Create#;
          $defargs = @image_params;
       } elsif (/^<Load>\//) {
          $type = &Gimp::PLUGIN;
@@ -693,6 +660,9 @@ sub register($$$$$$$$$;@) {
    my $perl_sub = sub {
       $run_mode = shift;	# global!
       my(@pre,@defaults,@lastvals,$input_image);
+
+      Gimp::ignore_functions(@Gimp::GUI_FUNCTIONS)
+	unless $run_mode == &Gimp::RUN_INTERACTIVE;
 
       # set default arguments
       for (0..$#{$params}) {
@@ -790,7 +760,7 @@ sub register($$$$$$$$$;@) {
 
    Gimp::register_callback($function,$perl_sub);
    push(@scripts,[$perl_sub,$function,$blurb,$help,$author,$copyright,$date,
-                  $menupath,$imagetypes,$params,$results,$features,$code,$type,
+                  $menupath,$imagetypes,$params,$results,$code,$type,
                   $defargs]);
 }
 

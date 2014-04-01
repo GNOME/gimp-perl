@@ -23,8 +23,9 @@ sub goldenmean {
 	$layer = gimp_layer_new($img, $width, $height, RGB_IMAGE, "Layer 1", 100, NORMAL_MODE);
 
 	gimp_image_insert_layer($layer, 0, -1);
-	Context->push();
+	Gimp::Context->push();
 	$layer->gimp_edit_fill(BACKGROUND_FILL);
+	Gimp::Context->pop();
 
 	return $img;
 }
@@ -35,7 +36,7 @@ register	"golden_mean",
 		"Claes G Lindblad <claesg\@algonet.se>",
 		"Claes G Lindblad <claesg\@algonet.se>",
 		"990328",
-		N_"<Image>/Filters/Render/Golden Mean...",
+		N_"<Image>/File/Create/Golden Mean...",
 		undef,
 	[
 	[PF_INT32, "short", "Shortest side", 233],

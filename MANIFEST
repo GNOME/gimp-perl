@@ -17,7 +17,6 @@ Gimp/ColorDB.pm
 Gimp/Config.pm.in
 Gimp/Constant.pm
 Gimp/Data.pm
-Gimp/Feature.pm
 Gimp/Fu.pm
 Gimp/Lib.pm
 Gimp/Lib.xs
@@ -97,7 +96,6 @@ examples/xachlego
 examples/xachshadow
 examples/xachvision
 examples/yinyang
-extra.c
 extra.h
 gppport.h
 logo.xpm

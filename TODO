@@ -1,122 +1,24 @@
-<Kevin's random notes>
-* Eliminate deprecation warnings in example scripts.
-* Review TODO list to see which issues still need to be addressed.
-* Get list of enums from GIMP instead of using a hard-coded list.
-* Make use of new GIMP font requester.
-* When a script is run from the command line which takes a PF_ADJUSTMENT, the
-  value passed to the script is the full list of arguments and not the default
-  value for the spinner or slider.
+Items as of 2014-03-31 (by Ed J)
+* Gimp/Lib.xs is huge, and not very XS-y - lots of it is manually
+  pushing GIMP data structures onto perl stack and vice versa. Figure
+  way to pass GIMP data back and forth directly via typemap system. May
+  involve a gimp-perl "wrapper" data structure that pairs an SV with its
+  GimpPDBArgType/GimpParamDef counterpart - Gimp::Lib::Data?
+* gimp-perl website: maybe just gimp.org/glossary entry - only needs
+  links to CPAN, bugzilla, git - make sure CPAN has all POD docs
+  - https://mail.gnome.org/mailman/listinfo/gimp-developer-list
+  - https://bugzilla.gnome.org/buglist.cgi?quicksearch=product:gimp-perl
+* Remove extra.[ch] - move into Gimp.xs?
+* Get gimp PDL objects working right over Gimp::Net - infrastructure is there
+  - gimp-tile set dirty automatically(!)
+* Document on_* and callback architecture
+* Restructure dirs so all libs under lib/ using ExtUtils::MakeMaker::BigHelper
+* http://search.cpan.org/dist/Glib-Object-Introspection/
+* Add a gtk2 gimp-perl console - cf http://registry.gimp.org/node/29348
+  - gimp/plug-ins/script-fu/script-fu-console.c
+* Test menupath <File> etc
 
-
-<Seth's random notes>
-Make a 2.2 release so I can tag it and start towards 2.4.  Critical items:
-* Cleanup unused stuff:
-  Remove Gimp/PDL.pm
-  Remove Module
-  Remove embed
-  Remove etc
-  Remove nolib
-  Remove examples/image_list
-  Remove or rewrite font_table - logic in it no longer applicable.
-* Fix the code so I don't get "
-Gtk-CRITICAL **: file gtktooltips.c: line 314 (gtk_tooltips_set_tip): assertion `GTK_IS_TOOLTIPS (tooltips)' failed at ..../Gimp/UI.pm line 821.
-" repeated when I use a color picker.
-
-Win32 port?
-
-Add a gtk2 gimp console.
-
-Reorganize Menues.
-
-Impprove documentation quality - feedback desired!
-
-HIGify dialogs as possible.
-
-A Compat12.pm for GIMP 1.2 compatibility (no way to convert xlfd stuff though).
-Done? (I fixed some xlfd stuff - kc)
-
-Generate a new web presence for Gimp-Perl, with a friendlier face to it.  Redo my scripts page, possibly expanding to cover all working scripts?  Regenerate documentation there.
-
-Add optional podviewer for help.  Add POD docs to all example scripts/documentation, to encourage good style.
-
-New mailing list; netcentral doesn't archive, rarely used.
-
-Figure out i18n some day.
-
-Determine what if anything is needed in the enums* in the root.  I expect I can remove all of this.
-
-Remove unused(?) extra.[ch]
-
-<Marc's previous stuff>
-this is mostly my personal worksheet and notepad, which may not be
-up-to-date and may not even be readable ;)
-
-Put module under LGPL?
-
-/usr/app/lib/perl5/Gtk.pm:107 (method call -> goto)
-
-gimpenv.c, gimpmodule.h, color_selector.h, color_display.h
-
-po/Makefile
-<Sven> schmorp: I think the makefile should have all (builds the pot-file and
-      calls msgfmt if po-files have changed),
-+update-po (merges all po-files), install, uninstall eventually
-
-API generalization
-   guide ->
-   gimp_desaturate -> drawable
-
-bugs
-  STIFTUNG, FOUNDATION etc.. => ask.
-  * URGENT: deinit might block... tis'is bad, but not close'ing is also bad
-  * --enable-perl-prefix, --with-perl=, --with-perl-cc=
-  * URGENT: podperl doesn't work.
-  * try to work around the redhat-undef $fh => no close problem.
-  * .pot file -> add to dist(???)
-  * damnit libintl crazy shit
-  * font_text with negative size? bug report #5523
-  * gimp-perl list archives.. where and add this to the gimp.html page!
-  * g_direct_equal and glin hash, kill in favour of way nicer perl hashes.
-  * ping-funktion für JENS.
-  * gtview_log (perlcc & helpfenster) erste zeile anzeigen + scrollbar
-  * document on_xxx functions and register_callback
-  * fix Gimp::Feature::missing => on_query-dir!
-  * on-query => remove gimp::fu parasite(?)
-[????]  * bricks requires disable for pattern(?)
-  * installation & Feature system (?)
-  * map_to_gradient does not work on GRAYA thingies. Argh.
-  * document Gimp::PDL and rect2, ...2 functions!
-  * Kommandozeilenmodus(!). (???)
-  * gimp-piddle must be written back automatically on destroy, if changed
-  * gimp-tile set dirty automatically(!)
-  * create gimpstyle.pod
-
-important issues
-
-  * gimp_default_display -> undef when not available.
-  * find_next_guide is a lousy interface. => just do num_guides
-  * constant names (RADIO) automatically into help strings!
-  * migrate BOOT: into INIT() (forgot why but important for B)
-  * gimp_progress_done, gimp_progress_close
-  * gimp_default_display (...) for libgimp
-  * Gimp::Module for modules (!)
-  * gimp for dummies (you don't understand this, harharhar!)
-  * PerlCC configurable options for Perl-Server startup, Gipm_host etc.
-  * implement CALLBACKS via the Perl-Server
-  * PF_COORDS (just as Light Effects/FlareFX)
-  * PF_PREVIEW(!)
-  * Gimp::IO (?)
-  * install scripts in share/
-  * vamp up homepage
-  * Gimp::ping
-  * allow plug-ins to register with only a drawable argument(!)
-  * gradient button
-  * default parameters at end(!)
-  * try to deduce default parameters
-
-long term issues and ideas
-
-  * rewrite interact() in pure C, gets rid of most gtk dependencies.
-  * default function parameters (with hash %defaults?)
-  * gimp_text(text => "hallo", family => "engraver", size => 20);
-
+Legacy notes from Seth Burgess:
+* Win32 port
+* Improve documentation quality - feedback desired!
+* Figure out i18n some day.

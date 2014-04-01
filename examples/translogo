@@ -10,7 +10,7 @@ use Gimp::Util;
 
 sub my_code {
 	my ($image, $drawable, $rad_tog, $pattern, $txt_col) = @_;
-	Context->push();
+	Gimp::Context->push();
 	$drawable->has_alpha or die __"You can't run this script without an ALPHA CHANNEL!!";
 	my $test = 0;
 	$test = $drawable->type_with_alpha;
@@ -31,7 +31,7 @@ sub my_code {
 	$img->resize($drawable->width,$drawable->height, 0, 0);
 	gimp_image_select_item($img, CHANNEL_OP_REPLACE, $layer);
 	gimp_selection_invert ($img);
-	Context->set_background ([255, 255, 255]);
+	Gimp::Context->set_background ([255, 255, 255]);
 	gimp_edit_fill ($layer, BACKGROUND_FILL);
 	gimp_selection_none ($img);
 	gimp_invert ($layer);
@@ -41,10 +41,10 @@ sub my_code {
 	$bump_lay->drawable_fill(BACKGROUND_FILL);
 	$img->insert_layer($bump_lay,0,0);
 	if ($rad_tog == 1) {
-		Context->set_pattern ($pattern);
+		Gimp::Context->set_pattern ($pattern);
 		gimp_edit_bucket_fill ($bump_lay, PATTERN_BUCKET_FILL, NORMAL_MODE, 100, 0, 0, 0, 0);
 	} else {
-		Context->set_background ($txt_col);
+		Gimp::Context->set_background ($txt_col);
 		gimp_edit_fill ($bump_lay, BACKGROUND_FILL);
 	}
 	plug_in_bump_map ($img, $bump_lay, $layer, 110.0, 45.0, 4, 0, 0, 0, 0, 1, 0, 0);

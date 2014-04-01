@@ -58,7 +58,7 @@ register "xach_blocks",
 		$img->selection_all;
 		$selection_flag = 1;
 		}
-        Context->push();
+        Gimp::Context->push();
 # Now the fun begins :)
 
 	$selection = $img->selection_save;
@@ -108,7 +108,7 @@ register "xach_blocks",
 	if ($selection_flag ==1) {
 		$img->selection_none;
 		}
-        Context->pop();
+        Gimp::Context->pop();
         eval { $img->undo_group_end };
 	return ();
 };

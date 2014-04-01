@@ -814,10 +814,10 @@ sub do_fade
       $drawable->add_mask($mask);
     }
 
-  Context->push();
+  Gimp::Context->push();
 
-  Context->set_background([0.0,0.0,0.0,1.0]);
-  Context->set_foreground([1.0,1.0,1.0,1.0]);
+  Gimp::Context->set_background([0.0,0.0,0.0,1.0]);
+  Gimp::Context->set_foreground([1.0,1.0,1.0,1.0]);
 
   # Direction Map
   # 0 3 6
@@ -909,7 +909,7 @@ sub do_fade
       $drawable->remove_mask(MASK_APPLY);
     }
 
-  Context->pop();
+  Gimp::Context->pop();
   $image->undo_group_end;
 }
 

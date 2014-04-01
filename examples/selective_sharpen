@@ -32,14 +32,14 @@ sub my_code {
     $img->selection_none;
 
     # 1) take the original photo, duplicate the layer
-    $edge_layer = $original_layer->copy(1);
+    $edge_layer = $original_layer->Gimp::Layer::copy(1);
     $img->insert_layer($edge_layer,0,-1);
 
     # 2) convert the copy to grayscale
     $edge_layer->desaturate;
 
     # 3) run edge detect to the gray layer (default works)
-    $edge_layer->edge(2.0, BLACK, SOBEL);
+    $edge_layer->edge(2.0, 3, 0);
 
     # 4) blur it slightly
     $edge_layer->gauss_iir2(3.0, 3.0);

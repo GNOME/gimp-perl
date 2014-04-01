@@ -26,6 +26,7 @@ register "webify",
          ],
          sub {
    my($img,$drawable,$new,$alpha,$bg,$thresh,$colours,$autocrop)=@_;
+   $thresh /= 255;
 
    $img = $img->duplicate if $new;
 
@@ -35,11 +36,11 @@ register "webify",
 
    if ($alpha) {
       $drawable->add_alpha;
-      gimp_context_set_sample_threshold($thresh);
+      Gimp::Context->set_sample_threshold($thresh);
       $img->select_color(CHANNEL_OP_REPLACE,$drawable,$bg);
       $drawable->edit_cut if $img->selection_bounds;
    }
-   Plugin->autocrop($drawable) if $autocrop;
+   Gimp::Plugin->autocrop($drawable) if $autocrop;
    $img->convert_indexed (2, 0, $colours, 0, 0, '') if $colours;
 
    eval { $img->undo_group_end };

@@ -14,7 +14,7 @@ use IO::All;
 our $DEBUG = 0 unless defined $DEBUG;
 
 our %cfg;
-require './config.pl';
+require 'config.pl';
 
 my $sysplugins = $cfg{gimpplugindir} . '/plug-ins';
 die "plugins dir: $!" unless -d $sysplugins;
@@ -26,9 +26,7 @@ our $blibplugins = "blib/plugins";
 die "mkdir $myplugins: $!\n" unless mkdir $myplugins;
 my $s = io("$blibplugins/Perl-Server")->all or die "unable to read the Perl-Server: $!";
 write_plugin($DEBUG, 'Perl-Server', $s);
-map {
-  die "symlink $_: $!" unless symlink("$sysplugins/$_", "$myplugins/$_");
-} qw(script-fu sharpen);
+map { symlink_sysplugin($_) } qw(script-fu sharpen);
 map { die "mkdir $dir/$_: $!" unless mkdir "$dir/$_"; }
   qw(palettes gradients patterns brushes dynamics);
 my %files = (
@@ -41,6 +39,12 @@ map { die "write $dir/$_: $!" unless io("$dir/$_")->print($files{$_}); }
 $ENV{GIMP2_DIRECTORY} = $dir;
 
 ok(1, 'gimp set up');
+
+sub symlink_sysplugin {
+  local $_ = shift;
+  s#.*/##;
+  die "symlink $_: $!" unless symlink "$sysplugins/$_", "$myplugins/$_";
+}
 
 sub make_executable {
   my $file = shift;
