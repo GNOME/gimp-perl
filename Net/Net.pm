@@ -162,7 +162,7 @@ sub start_server {
      $flags,
      fileno($gimp_fh),
      int($Gimp::verbose);
-   warn __"$$-extension-perl-server args='$args'" if $Gimp::verbose;
+   warn __"$$-plug-in-perl-server args='$args'" if $Gimp::verbose;
    push(@args,"--no-data") if $opt=~s/(^|:)no-?data//;
    push(@args,"-i") unless $opt=~s/(^|:)gui//;
    push(@args,"--verbose") if $Gimp::verbose;
@@ -175,7 +175,7 @@ sub start_server {
 	"--batch-interpreter",
 	"plug-in-script-fu-eval",
 	"-b",
-	"(if (defined? 'extension-perl-server) (extension-perl-server $args))",
+	"(if (defined? 'plug-in-perl-server) (plug-in-perl-server $args))",
 	"-b",
 	"(gimp-quit 0)";
    }
@@ -409,7 +409,7 @@ sub new_connection {
   $stats{fileno($fh)}=[0,time];
 }
 
-sub extension_perl_server {
+sub plug_in_perl_server {
   my $run_mode=$_[0];
   $ps_flags=$_[1];
   my $extra=$_[2];
@@ -546,7 +546,7 @@ Gimp::Net - Communication module for the gimp-perl server.
 =head1 DESCRIPTION
 
 For Gimp::Net (and thus commandline and remote scripts) to work, you
-first have to install the "Perl-Server" extension somewhere where Gimp
+first have to install the "Perl-Server" plugin somewhere where Gimp
 can find it (e.g in your .gimp/plug-ins/ directory). Usually this is
 done automatically while installing the Gimp extension. If you have a
 menu entry C<<Xtns>/Perl-Server> then it is probably installed.
