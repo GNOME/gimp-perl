@@ -4,11 +4,13 @@ Items as of 2014-03-31 (by Ed J)
   way to pass GIMP data back and forth directly via typemap system. May
   involve a gimp-perl "wrapper" data structure that pairs an SV with its
   GimpPDBArgType/GimpParamDef counterpart - Gimp::Lib::Data?
+* revisit this, replace script-fu with perl equiv:
+  --batch-interpreter plug-in-script-fu-eval '(plug-in-perl-server $args)'
+  model on gimpsrc/plug-ins/script-fu/script-fu.c (make PS be extension)
 * gimp-perl website: maybe just gimp.org/glossary entry - only needs
   links to CPAN, bugzilla, git - make sure CPAN has all POD docs
   - https://mail.gnome.org/mailman/listinfo/gimp-developer-list
   - https://bugzilla.gnome.org/buglist.cgi?quicksearch=product:gimp-perl
-* Remove extra.[ch] - move into Gimp.xs?
 * Get gimp PDL objects working right over Gimp::Net - infrastructure is there
   - gimp-tile set dirty automatically(!)
 * Document on_* and callback architecture
