@@ -25,7 +25,7 @@
 #define is_dynamic(sv)				\
 	(strEQ ((sv), "Gimp::Tile")		\
          || strEQ ((sv), "Gimp::PixelRgn")	\
-         || strEQ ((sv), "Gimp::GDrawable"))
+         || strEQ ((sv), "Gimp::GimpDrawable"))
 
 static HV *object_cache;
 static int object_id = 100;

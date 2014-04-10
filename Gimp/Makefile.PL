@@ -1,12 +1,13 @@
 use ExtUtils::MakeMaker;
 use ExtUtils::Depends;
+require PDL::Core::Dev;
 
 require '../config.pl';
 
 my $pkg = new ExtUtils::Depends Gimp;
-$pkg->set_inc($cfg{GIMP_CFLAGS});
+$pkg->set_inc($cfg{GIMP_CFLAGS}.' '.&PDL::Core::Dev::PDL_INCLUDE);
 $pkg->set_libs("$cfg{GIMP_LIBS} $cfg{INTLLIBS}");
-$pkg->add_typemaps("$topdir/typemap", @{$cfg{pdl_typemaps}});
+$pkg->add_typemaps("$topdir/typemap", &PDL::Core::Dev::PDL_TYPEMAP);
 $pkg->add_pm(map { ($_ => "\$(INST_LIB)/Gimp/$_") } glob '*.pm');
 
 WriteMakefile(

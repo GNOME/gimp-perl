@@ -298,8 +298,10 @@ Gimp::on_net {
    }
 
    # Go for it
-   $perl_sub->(($interact>0 ? &Gimp::RUN_FULLINTERACTIVE : &Gimp::RUN_NONINTERACTIVE),
-               @args);
+   $perl_sub->(
+      ($interact>0 ? &Gimp::RUN_FULLINTERACTIVE : &Gimp::RUN_NONINTERACTIVE),
+      @args
+   );
 };
 
 Gimp::on_query {
@@ -307,8 +309,7 @@ Gimp::on_query {
    script:
    for(@scripts) {
       my($perl_sub,$function,$blurb,$help,$author,$copyright,$date,
-         $menupath,$imagetypes,$params,$results,$code,$type,
-         $defargs)=@$_;
+         $menupath,$imagetypes,$params,$results,$code,$type)=@$_;
 
       for (@$results) {
          next if ref $_;
@@ -344,6 +345,7 @@ Gimp::on_query {
          $_->[0]=datatype($_->[3],@{$_->[4]}) if $_->[0] == PF_ADJUSTMENT;
       }
 
+      warn "$$-Gimp::Fu gimp_install_procedure params (@$params)" if $Gimp::verbose;
       Gimp->install_procedure(
 	$function,
 	$blurb,
@@ -425,17 +427,53 @@ I recommend ISO format (yyyymmdd or yyyy-mm-dd). Default value is "=pod(DATE)".
 
 =item menu path
 
-The menu entry GIMP should create. It should start either with <Image>, if
-you want an entry in the image menu (the one that opens when right-clicking
-an image), <Toolbox>/Xtns for the Xtns menu, or <None> if the script does
-not need to have a menu entry.
+The menu entry GIMP should create. B<Note> this is different from
+Script-Fu, which asks only for which B<menu> in which to place the entry,
+using the second argument to (its equivalent of) C<register> as the actual
+label; here, you spell out the B<full> menu entry including label name.
+
+It should start with one of the following:
+
+=over 2
+
+=item <Image>/*/Plugin-menu-label
+
+If the plugin works on or produces an image.
+
+If the "image types" argument (see below) is defined and non-zero-length,
+L<Gimp::Fu> will supply a C<PF_IMAGE> and C<PF_DRAWABLE> as the first
+two parameters to the plugin. If the plugin is intending to create
+an image rather than to work on an existing one, make sure you supply
+C<undef> or C<""> as the "image types".
+
+In any case, the plugin will be installed in the specified menu location;
+almost always under C<File/Create> or C<Filters>.
+
+=item <Save>/FILETYPE
+
+If the script is an export-handler. Make sure you also have something like:
+
+ Gimp::on_query {
+   Gimp->register_save_handler("file_filetype_save", "filetype", "");
+ };
+
+=item <Toolbox>/Xtns/Label
+
+This will place the plugin in a special section (as of GIMP 2.8) of the
+"Filters" menu. This type of plugin will also not have the image and
+drawable passed, nor will it require it.
+
+=item <None>
+
+If the script does not need to have a menu entry.
+
+=back
 
 =item image types
 
 The types of images your script will accept. Examples are "RGB", "RGB*",
 "GRAY, RGB" etc... Most scripts will want to use "*", meaning "any type".
-For scripts registering under <Toolbox>/Xtns the script should use the
-empty string "".
+Either C<undef> or "" will mean "none".
 
 =item the parameter array
 
@@ -448,11 +486,12 @@ Each array element has the form C<[type, name, description, default_value,
 extra_args]>.
 
 <Image>-type plugins get two additional parameters, image (C<PF_IMAGE>)
-and drawable (C<PF_DRAWABLE>) B<if and only if> the menu path does not start
-C<E<lt>ImageE<gt>/File/Create>. Do not specify these yourself. Also, the
-C<run_mode> argument is never given to the script but its value can be
-accessed in the package-global C<$run_mode>. The B<name> is used in the
-dialog box as a hint. The B<description> will be used as a tooltip.
+and drawable (C<PF_DRAWABLE>) B<if and only if> the "image types"
+are defined and non-zero-length. Do not specify these yourself - see
+the C<menupath> entry above. Also, the C<run_mode> argument is never
+given to the script but its value can be accessed in the package-global
+C<$Gimp::Fu::run_mode>. The B<name> is used in the dialog box as a hint. The
+B<description> will be used as a tooltip.
 
 See the section PARAMETER TYPES for the supported types.
 
@@ -608,36 +647,33 @@ sub register($$$$$$$$$;@) {
    no strict 'refs';
    my ($function, $blurb, $help, $author, $copyright, $date,
        $menupath, $imagetypes, $params) = splice @_, 0, 9;
-   my ($results, $code, $type, $defargs);
+   my ($results, $code, $type);
 
    $results  = (ref $_[0] eq "ARRAY") ? shift : [];
    $code = shift;
 
-   for($menupath) {
-      if (/^<Image>\//) {
-         $type = &Gimp::PLUGIN;
-         unshift @$params, @image_params unless m#^<Image>/File/Create#;
-         $defargs = @image_params;
-      } elsif (/^<Load>\//) {
-         $type = &Gimp::PLUGIN;
-         unshift @$params, @load_params;
-         unshift @$results, @load_retvals;
-         $defargs = @load_params;
-      } elsif (/^<Save>\//) {
-         $type = &Gimp::PLUGIN;
-         unshift @$params, @save_params;
-         $defargs = @save_params;
-      } elsif (/^<Toolbox>\//) {
-         $type = &Gimp::PLUGIN;
-         $defargs = 0;
-      } elsif (/^<None>/) {
-         $type = &Gimp::PLUGIN;
-         $defargs = 0;
-      } else {
-         die __"menupath _must_ start with <Image>, <Toolbox>, <Load>, <Save> or <None>!";
+   if ($menupath =~ /^<Image>\//) {
+      $type = &Gimp::PLUGIN;
+      if (defined $imagetypes and length $imagetypes) {
+	 unshift @$params, @image_params;
       }
+   } elsif ($menupath =~ /^<Load>\//) {
+      $type = &Gimp::PLUGIN;
+      unshift @$params, @load_params;
+      unshift @$results, @load_retvals;
+   } elsif ($menupath =~ /^<Save>\//) {
+      $type = &Gimp::PLUGIN;
+      unshift @$params, @save_params;
+   } elsif ($menupath =~ m#^<Toolbox>/Xtns/#) {
+      $type = &Gimp::PLUGIN;
+      undef $imagetypes;
+   } elsif ($menupath =~ /^<None>/) {
+      $type = &Gimp::PLUGIN;
+      undef $menupath;
+      undef $imagetypes;
+   } else {
+      die __"menupath _must_ start with <Image>, <Load>, <Save>, <Toolbox>/Xtns/, or <None>!";
    }
-   undef $menupath if $menupath eq "<None>";#d#
 
    @_==0 or die __"register called with too many or wrong arguments\n";
 
@@ -662,7 +698,8 @@ sub register($$$$$$$$$;@) {
       my(@pre,@defaults,@lastvals,$input_image);
 
       Gimp::ignore_functions(@Gimp::GUI_FUNCTIONS)
-	unless $run_mode == &Gimp::RUN_INTERACTIVE;
+	 unless $run_mode == &Gimp::RUN_INTERACTIVE or
+	        $run_mode == &Gimp::RUN_FULLINTERACTIVE;
 
       # set default arguments
       for (0..$#{$params}) {
@@ -674,34 +711,39 @@ sub register($$$$$$$$$;@) {
 
       for($menupath) {
          if (/^<Image>\//) {
-            @_ >= 2 or die __"<Image> plug-in called without both image and drawable arguments!\n";
-            @pre = (shift,shift);
-         } elsif (/^<Toolbox>\// or !defined $menupath) {
-            # valid ;)
+	    if (defined $imagetypes and length $imagetypes) {
+	       @_ >= 2 or die __"<Image> plug-in called without both image and drawable arguments!\n";
+	       @pre = (shift,shift);
+	    }
          } elsif (/^<Load>\//) {
             @_ >= 2 or die __"<Load> plug-in called without the 3 standard arguments!\n";
             @pre = (shift,shift);
          } elsif (/^<Save>\//) {
             @_ >= 4 or die __"<Save> plug-in called without the 5 standard arguments!\n";
             @pre = (shift,shift,shift,shift);
+	 } elsif (m#^<Toolbox>/Xtns/#) {
+	    # no-op
          } elsif (defined $_) {
-            die __"menupath _must_ start with <Image>, <Toolbox>, <Load>, <Save> or <None>!";
+	    die __"menupath _must_ start with <Image>, <Load>, <Save>, <Toolbox>/Xtns/, or <None>!";
          }
       }
+      warn "perlsub: rm=$run_mode" if $Gimp::verbose;
       if ($run_mode == &Gimp::RUN_INTERACTIVE
           || $run_mode == &Gimp::RUN_WITH_LAST_VALS) {
          my $fudata = $Gimp::Data{"$function/_fu_data"};
+	 if ($Gimp::verbose) {
+	    require Data::Dumper;
+	    warn "$$-retrieved fudata: ", Data::Dumper::Dumper($fudata);
+	 }
 
          if ($run_mode == &Gimp::RUN_WITH_LAST_VALS && $fudata) {
             @_ = @$fudata;
          } else {
             if (@_) {
                # prevent the standard arguments from showing up in interact
-               my @hide = splice @$params, 0, scalar@pre;
+               my @hide = splice @$params, 0, scalar @pre;
 
                my $res;
-               local $^W=0; # perl -w is braindamaged
-               # gimp is braindamaged, is doesn't deliver useful values!!
                ($res,@_)=interact($function,$blurb,$help,$params,@{$fudata});
                return unless $res;
 
@@ -723,9 +765,13 @@ sub register($$$$$$$$$;@) {
       $input_image = $_[0]   if ref $_[0]   eq "Gimp::Image";
       $input_image = $pre[0] if ref $pre[0] eq "Gimp::Image";
 
+      if ($Gimp::verbose) {
+	 require Data::Dumper;
+	 warn "$$-storing fudata: ", Data::Dumper::Dumper(\@_);
+      }
       $Gimp::Data{"$function/_fu_data"}=[@_];
 
-      print $function,"(",join(",",(@pre,@_)),")\n" if $Gimp::verbose;
+      print "$$-Gimp::Fu-generated sub: $function(",join(",",(@pre,@_)),")\n" if $Gimp::verbose;
 
       Gimp::set_trace ($old_trace);
       my @retvals = $code->(@pre,@_);
@@ -760,8 +806,7 @@ sub register($$$$$$$$$;@) {
 
    Gimp::register_callback($function,$perl_sub);
    push(@scripts,[$perl_sub,$function,$blurb,$help,$author,$copyright,$date,
-                  $menupath,$imagetypes,$params,$results,$code,$type,
-                  $defargs]);
+                  $menupath,$imagetypes,$params,$results,$code,$type]);
 }
 
 =cut

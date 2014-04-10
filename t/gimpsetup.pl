@@ -10,15 +10,13 @@ use strict;
 use Config;
 use File::Temp;
 use IO::All;
+require Gimp::Config;
 
 our $DEBUG = 0 unless defined $DEBUG;
 
-our %cfg;
-require 'config.pl';
-
-my $sysplugins = $cfg{gimpplugindir} . '/plug-ins';
+my $sysplugins = $Gimp::Config{gimpplugindir} . '/plug-ins';
 die "plugins dir: $!" unless -d $sysplugins;
-die "script-fu not executable: $!" unless-x "$sysplugins/script-fu";
+die "script-fu not executable: $!" unless -x "$sysplugins/script-fu";
 
 our $dir = File::Temp->newdir($DEBUG ? (CLEANUP => 0) : ());
 my $myplugins = "$dir/plug-ins";

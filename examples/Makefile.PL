@@ -8,6 +8,8 @@ require '../config.pl';
 @pins = qw(
   Perl-Server
   dataurl
+  dialogtest
+  exceptiontest
   colorhtml
   fade-alpha
   animate_cells
@@ -16,13 +18,13 @@ require '../config.pl';
   ditherize dots dust
   frame_filter frame_reshuffle
   glowing_steel goldenmean guidegrid guides_to_selection
-  image_tile innerbevel
+  innerbevel
   layerfuncs mirrorsplit
   map_to_gradient
   perlotine prep4gif
   repdup roundsel
   scratches sethspin stamps
-  tex-to-float translogo
+  translogo
   randomart1 randomblends
   selective_sharpen
   warp-sharp webify windify
@@ -37,7 +39,7 @@ sub plugin_target {
   my $plugin = shift;
   my $dest = '$(INST_PLUGINS)/'.basename($plugin);
   <<EOF;
-$dest : $plugin \$(FIRST_MAKEFILE) \$(INST_PLUGINS)\$(DFSEP).exists
+$dest : $plugin \$(INST_PLUGINS)\$(DFSEP).exists
 	\$(NOECHO) \$(RM_F) $dest
 	\$(CP) $plugin $dest
 	\$(FIXIN) $dest

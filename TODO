@@ -12,8 +12,6 @@ Items as of 2014-03-31 (by Ed J)
   - https://mail.gnome.org/mailman/listinfo/gimp-developer-list
   - https://bugzilla.gnome.org/buglist.cgi?quicksearch=product:gimp-perl
 * Get gimp PDL objects working right over Gimp::Net - infrastructure is there
-  - gimp-tile set dirty automatically(!)
-* Document on_* and callback architecture
 * Restructure dirs so all libs under lib/ using ExtUtils::MakeMaker::BigHelper
 * http://search.cpan.org/dist/Glib-Object-Introspection/
 * Add a gtk2 gimp-perl console - cf http://registry.gimp.org/node/29348
