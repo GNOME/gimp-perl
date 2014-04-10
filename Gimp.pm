@@ -428,7 +428,7 @@ push @Gimp::Channel::ISA, qw(Gimp::Drawable);
 push @Gimp::Layer::ISA, qw(Gimp::Drawable);
 
 # "C"-Classes
-_pseudoclass qw(GimpDrawable	gimp_drawable_);
+_pseudoclass qw(GimpDrawable	gimp_gdrawable_);
 _pseudoclass qw(PixelRgn	gimp_pixel_rgn_);
 _pseudoclass qw(Tile		gimp_tile_);
 
@@ -442,19 +442,16 @@ _pseudoclass qw(Gradients	gimp_gradients_);
 _pseudoclass qw(Patterns	gimp_patterns_);
 _pseudoclass qw(Pattern	        gimp_pattern_);
 
-package Gimp::Tile;
-
-unshift (@Tile::ISA, "Gimp::Tile");
-
+{
 package Gimp::PixelRgn;
-
-push(@PixelRgn::ISA, "Gimp::PixelRgn");
 
 sub new($$$$$$$$) {
    shift;
-   init Gimp::PixelRgn(@_);
+   Gimp::PixelRgn->init(@_);
+}
 }
 
+{
 package Gimp::Parasite;
 
 sub is_type($$)		{ $_[0]->[0] eq $_[1] }
@@ -469,13 +466,16 @@ sub compare($$)		{ $_[0]->[0] eq $_[1]->[0] and
 			  $_[0]->[1] eq $_[1]->[1] and
 			  $_[0]->[2] eq $_[1]->[2] }
 sub new($$$$)		{ shift; [@_] }
+}
 
+{
 package Gimp::run_mode;
 
 # I guess I now use almost every perl feature available ;)
 
 use overload fallback => 1,
              '0+'     => sub { ${$_[0]} };
+}
 
 =head1 NAME
 
@@ -578,7 +578,7 @@ most objects.
 =item *
 Use either a plain pdb (scheme-like) interface or an object-oriented
 syntax, i.e. C<gimp_image_new(600,300,RGB)> is the same as C<new
-Image(600,300,RGB)>
+Gimp::Image(600,300,RGB)>
 
 =item *
 Networked plug-ins look/behave the same as those running from within gimp.
@@ -588,8 +588,9 @@ Gimp::Fu will start GIMP for you, if it cannot connect to an existing
 GIMP process.
 
 =item *
-You can access the pixel-data functions using piddles (see L<PDL>) giving
-the same level of control as a C plug-in, with a data language wrapper.
+You can access the pixel-data functions using piddles (see
+L<Gimp::PixelRgn>) giving the same level of control as a C plug-in,
+with a data language wrapper.
 
 =item *
 Over 50 example scripts to give you a good starting point, or use as is.
@@ -628,7 +629,7 @@ The architecture may be visualised like this:
 
 This has certain consequences; native GIMP objects like images and layers
 obviously persist between Perl method calls, but C<libgimp> entities such
-as C<GimpDrawable>, with the perl interface C<Gimp::PixelRgn>, require
+as C<GimpDrawable>, with the perl interface L<Gimp::PixelRgn>, require
 special handling. Currently they do not work when used over C<Gimp::Net>.
 
 =head1 OUTLINE OF A GIMP PLUG-IN
@@ -694,7 +695,7 @@ You can get a listing and description of every PDB function by starting
 the B<DB Browser> extension in GIMP's B<Xtns> menu (but remember to change
  "-" (dashes) to  "_" (underscores)).
 
-B<libgimp> functions can't be traced (and won't be traceable in the
+C<libgimp> functions can't be traced (and won't be traceable in the
 foreseeable future).
 
 To call pdb functions (or equivalent libgimp functions), just treat them like
@@ -713,7 +714,7 @@ using OO-Syntax:
  Gimp::Palette->set_foreground('#1230f0');
 
 As you can see, you can also drop part of the name prefixes with this
-syntax, so its actually shorter to write and hopefully clearer to read.
+syntax, so it's actually shorter to write and hopefully clearer to read.
 
 =head1 SPECIAL FUNCTIONS
 
@@ -752,7 +753,7 @@ This function has not been well tested.
 This is how to use Gimp-Perl in "net mode". Previous versions of this
 package required a call to Gimp::init. This is no longer necessary. The
 technical reason for this change is that when C<Gimp.pm> loads, it must
-connect to GIMP to load its constants, like PDB_INT32.
+connect to GIMP to load its constants, like C<PDB_INT32>.
 
 =item Gimp::lock(), Gimp::unlock()
 
@@ -784,24 +785,25 @@ calling a perl subroutine of the same name as the GIMP function.
 
 The first argument is the name of a registered gimp function that you want
 to overwrite ('perl_fu_make_something'), and the second argument can be
-either a name of the corresponding perl sub ('Elsewhere::make_something')
-or a code reference (\&my_make).
+either a name of the corresponding perl sub (C<'Elsewhere::make_something'>)
+or a code reference (C<\&my_make>).
 
 =item Gimp::canonicalize_colour/Gimp::canonicalize_color
 
 Take in a color specifier in a variety of different formats, and return
-a valid gimp color specifier, consisting of 3 or 4 numbers in the range
-between 0 and 1.0.
+a valid GIMP color specifier (a C<GimpRGB>), consisting of 3 or 4 numbers
+in the range between 0 and 1.0.
 
 For example:
 
- $color = canonicalize_colour ("#ff00bb");
- $color = canonicalize_colour ([255,255,34]);
- $color = canonicalize_colour ([255,255,34,255]);
- $color = canonicalize_colour ([1.0,1.0,0.32]);
- $color = canonicalize_colour ('red');
+ $color = canonicalize_colour ("#ff00bb"); # html format
+ $color = canonicalize_colour ([255,255,34]); # RGB
+ $color = canonicalize_colour ([255,255,34,255]); # RGBA
+ $color = canonicalize_colour ([1.0,1.0,0.32]); # actual GimpRGB
+ $color = canonicalize_colour ('red'); # uses the color database
 
-Note that bounds checking is excessively lax; this assumes relatively good input
+Note that bounds checking is somewhat lax; this assumes relatively
+good input.
 
 =back
 
@@ -836,7 +838,7 @@ are documented in L<Gimp::Pixel>, to keep this manual page short.
 
 =item gimp_call_procedure(procname, arguments...)
 
-This function is actually used to implement the fancy stuff. Its your basic
+This function is actually used to implement the fancy stuff. It's your basic
 interface to the PDB. Every function call is eventually done through his
 function, i.e.:
 
@@ -898,7 +900,10 @@ How to debug your scripts:
 If set to true, will make Gimp say what it's doing on STDOUT. It will
 also stop L<Gimp::Net>'s normal behaviour of the server-side closing
 STDIN, STDOUT and STDERR. If you want it to be set during loading Gimp.pm,
-make sure to do so in a C<BEGIN> block.
+make sure to do so in a prior C<BEGIN> block:
+
+ BEGIN { $Gimp::verbose = 1; }
+ use Gimp;
 
 =item Gimp::set_trace (tracemask)
 

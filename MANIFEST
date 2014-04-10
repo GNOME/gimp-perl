@@ -46,6 +46,7 @@ examples/burst
 examples/centerguide
 examples/colorhtml
 examples/dataurl
+examples/dialogtest
 examples/ditherize
 examples/dots
 examples/dust
@@ -142,10 +143,10 @@ t/import.t
 t/perlplugin.t
 t/loadlib.t
 t/load.t
+t/pdl.t
 t/run.t
 t/supplied.t
 typemap
-typemap.pdl
 utils/embedxpm
 utils/gimpdoc
 utils/scm2perl

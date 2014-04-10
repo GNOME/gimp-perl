@@ -16,8 +16,8 @@ sub iterate {
 
    my @bounds = $drawable->bounds;
    my @off = $drawable->offsets;
-   $bounds[2]-- if $bounds[0]+$bounds[2] >= ($drawable->offsets)[0]+$drawable->width;
-   $bounds[3]-- if $bounds[1]+$bounds[3] >= ($drawable->offsets)[1]+$drawable->height;
+   $bounds[2]-- if $bounds[0]+$bounds[2] >= $off[0]+$drawable->width;
+   $bounds[3]-- if $bounds[1]+$bounds[3] >= $off[1]+$drawable->height;
    {
       my $src = new Gimp::PixelRgn ($drawable,@bounds[0,1],$bounds[2]+1,$bounds[3]+1,0,0);
       my $dst = new Gimp::PixelRgn ($drawable,@bounds,1,1);

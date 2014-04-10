@@ -1,0 +1,30 @@
+#!/usr/local/bin/perl -w
+
+use strict;
+use Gimp qw(:auto __ N_);
+use Gimp::Fu;
+#BEGIN { $Gimp::verbose = 1; }
+#Gimp::set_trace(TRACE_ALL);
+
+sub boilerplate_params {
+  my ($testing, $menuloc) = @_;
+  (
+    ("exercise gimp-perl filter testing $testing") x 2,
+    ("boilerplate id") x 2,
+    "20140310",
+    N_$menuloc,
+    "*",
+  );
+}
+
+&register(
+  "test_exception",
+  boilerplate_params(
+    'exceptions',
+    '<Toolbox>/Xtns/Perl/Test/Exception',
+  ),
+  [],
+  sub { die "I DIED\n" }
+);
+
+exit main;

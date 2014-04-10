@@ -21,7 +21,7 @@ my %imagetype2layertype = (
    INDEXED,	INDEXED_IMAGE,
 );
 
-register "plug_in_ditherize",
+register "ditherize",
 	 "dithers current selection",
 	 "This script takes the current selection and dithers it just like convert to indexed",
 	 "Marc Lehmann",

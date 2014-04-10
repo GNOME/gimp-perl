@@ -5,10 +5,8 @@
 
 #include <libgimp/gimp.h>
 
-#if HAVE_PDL
 #define PDL_clean_namespace
 #include <pdlcore.h>
-#endif
 
 /* various functions allocate static buffers, STILL.  */
 #define MAX_STRING 4096
@@ -51,8 +49,6 @@
 #define PKG_ANY		((char *)0)
 
 static int trace = TRACE_NONE;
-
-#if HAVE_PDL
 
 typedef GimpPixelRgn GimpPixelRgn_PDL;
 
@@ -132,8 +128,6 @@ static pdl *redim_pdl (pdl *p, int ndim, int newsize)
 
   return r;
 }
-
-#endif
 
 /* set when it's safe to call gimp functions.  */
 static int gimp_is_initialized = 0;
@@ -351,9 +345,7 @@ static GimpPixelRgn *old_pixelrgn (SV *sv)
 
 static GimpPixelRgn *old_pixelrgn_pdl (SV *sv)
 {
-#if HAVE_PDL
   need_pdl ();
-#endif
   return old_pixelrgn (sv);
 }
 
@@ -1613,11 +1605,9 @@ PPCODE:
       sprintf (croak_str, "%s: %s", proc_name, gimp_get_pdb_error ());
     if (trace & TRACE_CALL) {
       trace_printf ("(");
-      if ((trace & TRACE_DESC) == TRACE_DESC)
-	trace_printf ("\n\t");
+      if ((trace & TRACE_DESC) == TRACE_DESC) trace_printf ("\n\t");
       trace_printf (__("EXCEPTION: \"%s\""), croak_str);
-      if ((trace & TRACE_DESC) == TRACE_DESC)
-	trace_printf ("\n\t");
+      if ((trace & TRACE_DESC) == TRACE_DESC) trace_printf ("\n\t");
       trace_printf (")\n");
     }
     goto error;
@@ -1737,10 +1727,7 @@ gimp_set_data(id, data)
 	CODE:
 	{
 		STRLEN dlen;
-		void *dta;
-
-		dta = SvPV (data, dlen);
-
+		void *dta = SvPV (data, dlen);
 		gimp_set_data (SvPV_nolen (id), dta, dlen);
 	}
 
@@ -1809,8 +1796,10 @@ gimp_drawable_get(drawable_ID)
 	RETVAL
 
 void
-gimp_drawable_flush(drawable)
-	GimpDrawable *	drawable
+gimp_gdrawable_flush(gdrawable)
+	GimpDrawable *	gdrawable
+	CODE:
+	gimp_drawable_flush(gdrawable);
 
 SV *
 gimp_pixel_rgn_init(gdrawable, x, y, width, height, dirty, shadow)
@@ -2070,10 +2059,8 @@ gimp_pixel_rgn_set_rect2(pr, data, x, y, w=pr->w)
 	gimp_pixel_rgn_set_rect (pr, dta, x, y, w, dlen / (w*pr->bpp));
 }
 
-#if HAVE_PDL
-
 SV *
-gimp_drawable_get_tile(gdrawable, shadow, row, col)
+gimp_gdrawable_get_tile(gdrawable, shadow, row, col)
 	SV *	gdrawable
 	gint	shadow
 	gint	row
@@ -2085,7 +2072,7 @@ gimp_drawable_get_tile(gdrawable, shadow, row, col)
 	RETVAL
 
 SV *
-gimp_drawable_get_tile2(gdrawable, shadow, x, y)
+gimp_gdrawable_get_tile2(gdrawable, shadow, x, y)
 	SV *	gdrawable
 	gint	shadow
 	gint	x
@@ -2254,28 +2241,6 @@ gimp_tile_set_data(tile,data)
 	croak (__("gimp_tile_set_data is not yet implemented\n")); /*(void *)data;*/
 	gimp_tile_ref_zero (tile);
 	gimp_tile_unref (tile, 1);
-
-#else
-
-void
-gimp_pixel_rgn_data(...)
-	ALIAS:
-	  gimp_drawable_get_tile	= 1
-	  gimp_drawable_get_tile2	= 2
-	  gimp_pixel_rgn_get_pixel	= 3
-	  gimp_pixel_rgn_get_row	= 4
-	  gimp_pixel_rgn_get_col	= 5
-	  gimp_pixel_rgn_get_rect	= 6
-	  gimp_pixel_rgn_set_pixel	= 7
-	  gimp_pixel_rgn_set_row	= 8
-	  gimp_pixel_rgn_set_col	= 9
-	  gimp_pixel_rgn_set_rect	= 10
-	  gimp_tile_get_data		= 11
-	  gimp_tile_set_data		= 12
-	CODE:
-	croak (__("This module was built without support for PDL."));
-
-#endif
 
 BOOT:
 #if (GLIB_MAJOR_VERSION < 2 || (GLIB_MAJOR_VERSION == 2 && GLIB_MINOR_VERSION < 36))

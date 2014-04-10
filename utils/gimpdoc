@@ -54,9 +54,9 @@ for (@ARGV) {
          &PDB_PARASITE		=> 'PARASITE',
 
          &PDB_STATUS		=> 'STATUS',
-         &PDB_REGION		=> 'REGION',
-         &PDB_BOUNDARY		=> 'BOUNDARY',
-         &PDB_PATH		=> 'PATH',
+         &PDB_ITEM		=> 'ITEM',
+         &PDB_COLORARRAY	=> 'COLORARRAY',
+         &PDB_VECTORS		=> 'VECTORS',
 );
 
 sub type2str {

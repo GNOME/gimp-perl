@@ -74,7 +74,7 @@ sub warp_sharp  {
 
 
 register
-  "plug_in_warp_sharp",
+  "warp_sharp",
   "Sharpen the current drawable",
   "Sharpen the current drawable by squeezing unsharp edges. Algorithm described by Joern Loviscach in c't 22/1999, p 236.",
   "Simon Budig <simon\@gimp.org>, Peter Daum <gator\@cs.tu-berlin.de>",

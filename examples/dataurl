@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
 
 eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
     if 0; # not running under some shell
@@ -19,85 +19,75 @@ sub encode_base64($) {
     $res;
 }
 
-register "file_dataurl_save",
-         "Saves the image as many small tiles using data:-urls",
-         "=pod",
-         "Marc Lehmann",
-         "Marc Lehmann <pcg\@goof.com>",
-         "1999-11-20",
-         "<Save>/DATAURL",
-         "*",
-         [
-          [PF_SPINNER,	"tile_x",	"tile width",	32, [0, 8192, 1, 10]],
-          [PF_SPINNER,	"tile_y",	"tile height",	32, [0, 8192, 1, 10]],
-          [PF_RADIO,	"filetype",	"underlying file type", 0,
-                        [GIF => 0, JFIF => 1, PNG => 2]],
-         ],
-         sub {
-   my($img,$drawable,$filename,$filename2,$tx,$ty,$type) = @_;
-   my($new_img,$new_drawable);
-   my $max;
-   my $export = Gimp::UI::export_image ($new_img=$img, $new_drawable=$drawable, "DATAURL",
-                                        $type==0 ? EXPORT_CAN_HANDLE_INDEXED|EXPORT_CAN_HANDLE_ALPHA
-                                      : $type==1 ? EXPORT_CAN_HANDLE_RGB|EXPORT_CAN_HANDLE_GRAY
-                                      : $type==2 ? EXPORT_CAN_HANDLE_RGB|EXPORT_CAN_HANDLE_GRAY|EXPORT_CAN_HANDLE_INDEXED
-                                      :            0 );
-   die __"export failed" if $export == EXPORT_CANCEL;
-
-   my ($w,$h) = ($new_drawable->width, $new_drawable->height);
-
-   my $tmp = Gimp->temp_name(".img~");
-
-   sysopen FILE,$filename,O_CREAT|O_TRUNC|O_WRONLY or die __"Unable to open '$filename' for writing: $!\n";
-
-   print FILE "<html><body>\n";
-
-   init Progress __"Saving '$filename' as DATAURL...";
-
-   my $media = $type==0 ? "gif"
-             : $type==1 ? "jpeg"
-             : $type==2 ? "png"
-             :            "";
-
-   print FILE "<table width=$w cellspacing=0 cellpadding=0 border=0>";
-   for(my $y=0; $y<$h; $y+=$ty) {
-      my $wy = $h-$y < $ty ? $h-$y : $ty;
-      print FILE "<tr>";
-      for(my $x=0; $x<$w; $x+=$tx) {
-         my $wx = $w-$x < $tx ? $w-$x : $tx;
-
-         my $img = $new_img->duplicate;
-         $img->crop($wx,$wy,$x,$y);
-         ($img->get_layers)[0]->file_gif_save  (($tmp)x2, 0, 0, 0, 0)                   if $type==0;
-         ($img->get_layers)[0]->file_jpeg_save (($tmp)x2, 0.7, 0, 1, 0, "", 0, 1, 0, 0) if $type==1;
-         ($img->get_layers)[0]->file_png_save  (($tmp)x2, 0, 7, 0, 0, 0, 0, 0)          if $type==2;
-         $img->delete;
-
-         my $data = do {
-            local(*TEMP,$/);
-            open TEMP, "<$tmp" or die __"Unable to read temporary image tile $tmp: $!";
-            <TEMP>;
-         };
-         unlink $tmp;
-
-         $url = "data:image/$media;base64,".(encode_base64 $data);
-         $max = length($url) if length($url) > $max;
-
-         print FILE "<td><img src=\"", $url, "\">";
-
-         update Progress (($y*$w+$x*$ty)/($w*$h));
+register
+   "file_dataurl_save",
+   "Saves the image as many small tiles using data:-urls",
+   "=pod",
+   "Marc Lehmann",
+   "Marc Lehmann <pcg\@goof.com>",
+   "1999-11-20",
+   "<Save>/DATAURL",
+   "*",
+   [
+    [PF_SPINNER,	"tile_x",	"tile width",	32, [0, 8192, 1, 10]],
+    [PF_SPINNER,	"tile_y",	"tile height",	32, [0, 8192, 1, 10]],
+    [PF_RADIO,	"filetype",	"underlying file type", 0,
+		  [GIF => 0, JFIF => 1, PNG => 2]],
+   ],
+   sub {
+      my($img,$drawable,$filename,$filename2,$tx,$ty,$type) = @_;
+      my($new_img,$new_drawable);
+      my $max;
+      my $export = Gimp::UI::export_image(
+	 $new_img=$img, $new_drawable=$drawable,
+	 "DATAURL",
+	 $type==0 ? EXPORT_CAN_HANDLE_INDEXED|EXPORT_CAN_HANDLE_ALPHA
+	 : $type==1 ? EXPORT_CAN_HANDLE_RGB|EXPORT_CAN_HANDLE_GRAY
+	 : $type==2 ? EXPORT_CAN_HANDLE_RGB|EXPORT_CAN_HANDLE_GRAY|EXPORT_CAN_HANDLE_INDEXED
+	 : 0
+      );
+      die __"export failed" if $export == EXPORT_CANCEL;
+      my ($w,$h) = ($new_drawable->width, $new_drawable->height);
+      my $tmp = Gimp->temp_name(".img~");
+      local *FILE;
+      sysopen FILE,$filename,O_CREAT|O_TRUNC|O_WRONLY or die __"Unable to open '$filename' for writing: $!\n";
+      print FILE "<html><body>\n";
+      Gimp::Progress->init(__"Saving '$filename' as DATAURL...");
+      my $media = $type==0 ? "gif"
+		: $type==1 ? "jpeg"
+		: $type==2 ? "png"
+		:            "";
+      print FILE "<table width=$w cellspacing=0 cellpadding=0 border=0>";
+      for (my $y=0; $y<$h; $y+=$ty) {
+	 my $wy = $h-$y < $ty ? $h-$y : $ty;
+	 print FILE "<tr>";
+	 for(my $x=0; $x<$w; $x+=$tx) {
+	    my $wx = $w-$x < $tx ? $w-$x : $tx;
+	    my $img = $new_img->duplicate;
+	    $img->crop($wx,$wy,$x,$y);
+	    ($img->get_layers)[0]->file_gif_save  (($tmp)x2, 0, 0, 0, 0)                   if $type==0;
+	    ($img->get_layers)[0]->file_jpeg_save (($tmp)x2, 0.7, 0, 1, 0, "", 0, 1, 0, 0) if $type==1;
+	    ($img->get_layers)[0]->file_png_save  (($tmp)x2, 0, 7, 0, 0, 0, 0, 0)          if $type==2;
+	    $img->delete;
+	    my $data = do {
+	       local(*TEMP,$/);
+	       open TEMP, "<$tmp" or die __"Unable to read temporary image tile $tmp: $!";
+	       <TEMP>;
+	    };
+	    unlink $tmp;
+	    $url = "data:image/$media;base64,".(encode_base64 $data);
+	    $max = length($url) if length($url) > $max;
+	    print FILE "<td><img src=\"", $url, "\">";
+	    Gimp::Progress->update(($y*$w+$x*$ty)/($w*$h));
+	 }
       }
-   }
-
-   print FILE "</table>\n";
-   print FILE "</html>\n";
-   close FILE;
-
-   warn __"url size is too large ($max > 1024)\n" if $max > 1024;
-
-   $new_img->delete if $export == EXPORT_EXPORT;
-   ();
-};
+      print FILE "</table>\n";
+      print FILE "</html>\n";
+      close FILE;
+      warn __"url size is too large ($max > 1024)\n" if $max > 1024;
+      $new_img->delete if $export == EXPORT_EXPORT;
+      ();
+   };
 
 Gimp::on_query {
    Gimp->register_save_handler("file_dataurl_save", "dataurl", "");
@@ -111,7 +101,7 @@ After reading rfc2397, which describes the C<data:> url scheme, I got the
 idea of embedding a normal image into a html document, without resorting
 to external files.
 
-This is acomplished by embedding small tiles of the image directly
+This is accomplished by embedding small tiles of the image directly
 into data:-urls. Since attribute values are by default limited to 1024
 bytes this limits the size of a tile to approximately 34x34 pixels (gif
 compression).

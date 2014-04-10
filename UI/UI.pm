@@ -440,6 +440,7 @@ sub _instrument {
 }
 
 sub interact($$$$@) {
+   warn __PACKAGE__ . "::interact(@_)" if $Gimp::verbose;
    my $function = shift;
    my $blurb = shift;
    my $help = shift;
@@ -525,7 +526,7 @@ sub interact($$$$@) {
            push @setvals, sub { $b->set_font($_[0]) };
            push @getvals, sub { $b->get_font };
            set_tip $t $b,$desc;
-	   _instrument($b);
+#	   _instrument($b);
 
 if (0) {
            my $fs = new Gtk2::FontSelectionDialog sprintf __"Font Selection Dialog (%s)", $desc;
@@ -583,7 +584,7 @@ if (0) {
            push @setvals, sub { $b->set_color (defined $_[0] ? Gimp::canonicalize_color $_[0] : [0.8,0.6,0.1]) };
            push @getvals, sub { $b->get_color };
            set_tip $t $b,$desc;
-	   _instrument($b);
+#	   _instrument($b);
 
 #           my $c = new Gtk2::Button __"FG";
 #           signal_connect $c clicked => sub {

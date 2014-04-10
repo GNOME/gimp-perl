@@ -3,84 +3,81 @@
 use Gimp;
 use Gimp::Fu;
 use Gimp::UI;
-use Fcntl;
+use IO::All;
 my %replace = (
-   "&" => "&amp;",
-   "<" => "&lt;",
-   ">" => "&gt;",
+  "&" => "&amp;",
+  "<" => "&lt;",
+  ">" => "&gt;",
 );
-# read some file, make text out of it
-sub read_text {
-   my $fh = shift;
-   local $/;
-   my $data = <$fh>;
-   $data;
-}
 
-register "file_colorhtml_save",
-	 "Saves the image as coloured html text",
-	 "=pod",
-	 "Marc Lehmann",
-	 "Marc Lehmann <pcg\@goof.com>",
-	 "1999-11-22",
-	 "<Save>/COLORHTML",
-	 "*",
-	 [
-	  [PF_RADIO,	"character_source", "where to take the characters from", 0,
-			[sourcecode => 0, textfile => 1, filename => 2]],
-	  [PF_FILE,	"characters",     "the filename to read or the characters to use", ""],
-	  [PF_STRING,   "font_size",      "the html font size (1..7 or -7 .. +7)", 2],
-	  [PF_BOOL,     "use_css",        "use CSS?", 1],
-	  [PF_BOOL,	"compatible",     "html-4.0 compliancy?", 1],
-	  [PF_BOOL,	"closetag",       "add closing tag?", 1],
-	 ],
-	 sub {
-   my($img,$drawable,$filename,$filename2,$source,$text,$size,$css,$html40,$closetag) = @_;
-   my($new_img,$new_drawable);
-   my $max;
-   my $export = Gimp::UI::export_image ($new_img=$img, $new_drawable=$drawable, "COLORHTML",
-					EXPORT_CAN_HANDLE_RGB);
-   die __"export failed" if $export == EXPORT_CANCEL;
-   my ($w,$h) = ($new_drawable->width, $new_drawable->height);
-   Gimp->tile_cache_ntiles($w / Gimp->tile_width + 1);
-   sysopen FILE,$filename,O_CREAT|O_TRUNC|O_WRONLY or die __"Unable to open '$filename' for writing: $!\n";
-   my $cssfile;
-   if ($css) {
+register
+  "file_colorhtml_save",
+  "Saves the image as coloured html text",
+  "=pod",
+  "Marc Lehmann",
+  "Marc Lehmann <pcg\@goof.com>",
+  "1999-11-22",
+  "<Save>/COLORHTML",
+  "*",
+  [
+    [PF_RADIO,	"character_source", "where to take the characters from", 0,
+		  [sourcecode => 0, textfile => 1, textblock => 2]],
+    [
+      PF_FILE,	"characters",
+      "the filename to read or the characters to use", ""
+    ],
+    [PF_STRING, "font_size", "the html font size (1..7 or -7 .. +7)", 2],
+    [PF_BOOL, "use_css", "use CSS?", 1],
+    [PF_BOOL, "compatible", "html-4.0 compliance?", 1],
+    [PF_BOOL, "closetag", "add closing tag?", 1],
+  ],
+  sub {
+    my($img,$drawable,$filename,$filename2,$source,$text,$size,$css,$html40,$closetag) = @_;
+    my($new_img,$new_drawable);
+    my $export = Gimp::UI::export_image(
+      $new_img=$img,
+      $new_drawable=$drawable,
+      "COLORHTML",
+      EXPORT_CAN_HANDLE_RGB
+    );
+    die __"Export cancelled" if $export == EXPORT_CANCEL;
+    my ($w,$h) = ($new_drawable->width, $new_drawable->height);
+    Gimp->tile_cache_ntiles($w / Gimp->tile_width + 1);
+    my $io = io($filename) or die __"write '$filename': $!\n";
+    my ($cssfile, $cssio);
+    if ($css) {
       if ($filename =~ /(.*)\.[^.]+$/) {
-	 $cssfile = "$1.css"
+	$cssfile = "$1.css"
       } elsif ($filename =~ /\.$/) {
-	 $cssfile = "${filename}css"
+	$cssfile = "${filename}css"
       } else {
-	 $cssfile = "$filename.css"
+	$cssfile = "$filename.css"
       }
-      sysopen CSS,$cssfile,O_CREAT|O_TRUNC|O_WRONLY or die __"Unable to open '$cssfile' for writing: $!\n";
-   }
-   my $data;
-   if ($source == 0) {
+      $cssio = io($cssfile) or die __"write '$cssfile': $!\n";
+    }
+    my $data;
+    if ($source == 0) {
       seek DATA, 0, 0;
-      $data = read_text DATA;
-   } elsif ($source == 1) {
-      local *FILE;
-      open FILE, "<$text" or die "$text: $!\n";
-      $data = read_text FILE;
-   } elsif ($source == 2) {
+      local $/;
+      $data = <DATA>;
+    } elsif ($source == 1) {
+      $data = io($text)->all or die "$text: $!\n";
+    } elsif ($source == 2) {
       $data = $text;
-   }
-   my @data;
-   $data =~ y/\x21-\x7f//cd;
-   @data = split //, $data;
-   for (@data) {
-      s/([&<>])/$replace{$1}/e;
-   }
-   @data = ("X") x 80 unless @data;
-   my @chars;
-   my $region = $new_drawable->pixel_rgn (0, 0, $w, $h, 0, 0);
-   init Progress __"Saving '$filename' as COLORHTML...";
-   $closetag = $closetag ? "</font>" : "";
-   if ($css) {
+    }
+    my @data;
+    $data =~ y/\x21-\x7f//cd;
+    @data = split //, $data;
+    for (@data) { s/([&<>])/$replace{$1}/e; }
+    @data = ("X") x 80 unless @data;
+    my @chars;
+    my $region = $new_drawable->get->pixel_rgn(0, 0, $w, $h, 0, 0);
+    Gimp::Progress->init(__"Saving '$filename' as COLORHTML...");
+    $closetag = $closetag ? "</font>" : "";
+    if ($css) {
       my $file = $cssfile;
       $file = $1 if ($cssfile =~ m@/([^/]+)$@);
-      print FILE <<HEADER;
+      $io->print(<<HEADER);
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -91,20 +88,21 @@ register "file_colorhtml_save",
 <body><pre>
 HEADER
      $size = 8 + ($size - 2) * 2;
-     print CSS <<HEADER;
+     $cssio->print(<<HEADER);
 body {
-   width: 100%;
-   font-weight: bold;
-   font-family: Courier, "Courier New", "Andale Mono", Monaco, monospace;
-   font-size: ${size}px;
-   background-color: #000000;
-   color: #ffffff;
+width: 100%;
+font-weight: bold;
+font-family: Courier, "Courier New", "Andale Mono", Monaco, monospace;
+font-size: ${size}px;
+background-color: #000000;
+color: #ffffff;
+}
 HEADER
-   } else {
-      print FILE "<html><body bgcolor=black>\n<font size=\"$size\"><pre>\n";
-   }
-   my %colors;
-   for (my $y = 0; $y < $h; $y++) {
+    } else {
+      $io->print("<html><body bgcolor=black>\n<font size=\"$size\"><pre>\n");
+    }
+    my %colors;
+    for (my $y = 0; $y < $h; $y++) {
       my $pel = $region->get_row2 (0, $y, $w);
       push @chars,@data while @chars < $w;
       if ($css) {
@@ -113,7 +111,7 @@ HEADER
 	 }ges;
 	 while ($pel =~ /"N([0-9a-fA-F]{6})"/g) {
 	     my $color = $1;
-	     print CSS "span.N$color { color: #$color; background-color: #000000; }\n" unless exists $colors{$color};
+	     $cssio->print("span.N$color { color: #$color; background-color: #000000; }\n") unless exists $colors{$color};
 	     $colors{$color}++;
 	 }
       } elsif ($html40) {
@@ -126,13 +124,13 @@ HEADER
 	 }ges;
       }
 
-      print FILE $pel,"\n";
-      update Progress $y/$h;
-   }
-   print FILE "</pre>\n</html>\n";
-   $new_img->delete if $export == EXPORT_EXPORT;
-   ();
-};
+      $io->print($pel,"\n");
+      Gimp::Progress->update($y/$h);
+    }
+    $io->print("</pre>\n</html>\n");
+    $new_img->delete if $export == EXPORT_EXPORT;
+    ();
+  };
 
 Gimp::on_query {
    Gimp->register_save_handler("file_colorhtml_save", "colorhtml", "");
