@@ -37,7 +37,6 @@ register "scratches",
           [PF_SPINNER	, "smoothness"	, "The scratch smoothness"	,  15, [  0, 400]],
           [PF_SPINNER	, "length"	, "The scratch length"		,  10, [  0, 400]],
          ],
-         [],
          sub {
    my ($image,$drawable,$anglex,$angley,$gamma,$length,$width) = @_;
 
@@ -57,7 +56,7 @@ register "scratches",
 
    $image->undo_group_end;
 
-   $image;
+   ();
 };
 
 exit main;

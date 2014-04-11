@@ -64,7 +64,7 @@ sub my_code {
 	gimp_image_select_color ($img, CHANNEL_OP_ADD, $new, [255, 255, 255]);
 	gimp_edit_clear ($new);
 	gimp_selection_none ($img);
-	return ($img);
+	return;
 }
 $help=<<EOF.$help;
 This script aims to produce a transparent logo in an indexed image

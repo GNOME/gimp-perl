@@ -20,7 +20,7 @@ register "gimp_fu_example_script",			# fill in a function name
           [PF_SLIDER	, "width"	, "The image width"		, 360, [300, 500]],
           [PF_SPINNER	, "height"	, "The image height"		, 100, [100, 200]],
           [PF_STRING	, "text"	, "The Message"			, "example text"],
-          [PF_INT	, "bordersize"	, "The bordersize"		, 10],
+          [PF_INT32	, "bordersize"	, "The bordersize"		, 10],
           [PF_FLOAT	, "borderwidth"	, "The borderwidth"		, 1/5],
           [PF_FONT	, "font"	, "The Font Family"		],
           [PF_COLOUR	, "text_colour"	, "The (foreground) text colour", [10,10,10]],

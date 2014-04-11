@@ -38,7 +38,7 @@ sub stamps {
 
 # here, at last, comes the clever part! :-)
 	$layer->offset(1, 0, -($diameter / 2), -($diameter / 2));
-	return $img;
+	return;
 }
 
 register	"stamps",

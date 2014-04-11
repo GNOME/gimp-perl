@@ -24,6 +24,7 @@ register "webify",
           [PF_INT32,	"colors",	"how many colours to use (0 = don't convert to indexed)", 32],
           [PF_BOOL,	"autocrop",	"autocrop at end?", 1],
          ],
+	 [ [PF_IMAGE, 'image', 'Output image', 0] ],
          sub {
    my($img,$drawable,$new,$alpha,$bg,$thresh,$colours,$autocrop)=@_;
    $thresh /= 255;
@@ -45,7 +46,7 @@ register "webify",
 
    eval { $img->undo_group_end };
 
-   $new ? ($img->clean_all, $img) : ();
+   $new ? ($img->clean_all, $img) : ($img);
 };
 
 exit main;

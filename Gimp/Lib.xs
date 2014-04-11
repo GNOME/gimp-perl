@@ -1234,15 +1234,27 @@ static void pii_run(const gchar *name,
 	// if one above is an array, this will be count, already set
 	// by convert_sv2gimp (and no perl-stack var supplied) so skip
 	continue;
+      if (--count < 0) {
+	err_msg = g_strdup_printf(
+	  __("function '%s' got back too few return values; expected %d"),
+	  name,
+	  nreturn_vals - 1
+	);
+	goto error;
+      }
       convert_sv2gimp (errmsg, return_vals + i, POPs);
-      --count;
       if (errmsg [0]) {
 	err_msg = g_strdup (errmsg);
 	goto error;
       }
     }
 
-    while (count) { count--; (void) POPs; }
+    if (count) err_msg = g_strdup_printf(
+      __("function '%s' got back %d too many return values; expected %d"),
+      name,
+      count,
+      nreturn_vals - 1
+    );
   }
 
   gimp_destroy_paramdefs (return_defs, nreturn_vals - 1);

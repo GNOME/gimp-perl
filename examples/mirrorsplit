@@ -64,7 +64,7 @@ sub {
   gimp_selection_none($img);
 
   eval { $img->undo_group_end };
-  return $img;
+  return;
 };
 exit main;
 

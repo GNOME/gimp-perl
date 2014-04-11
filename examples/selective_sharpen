@@ -73,7 +73,7 @@ sub my_code {
     $img->remove_layer($edge_layer);
 
     $img->undo_group_end;
-    undef;
+    ();
 }
 
 register "selective_sharpen",
