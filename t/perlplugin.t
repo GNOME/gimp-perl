@@ -84,7 +84,37 @@ sub boilerplate_params {
     [ PF_FLOAT, "float", "Input float", ],
   ],
   [],
-  sub { 'verbiage' }
+  sub { }
+);
+
+&register(
+  "test_return_image",
+  boilerplate_params('return image', '<None>'),
+  [],
+  [
+    [ PF_IMAGE, "image", "Output image", ],
+  ],
+  sub { 1 }
+);
+
+&register(
+  "test_return_toomany",
+  boilerplate_params('return toomany', '<None>'),
+  [],
+  [
+    [ PF_IMAGE, "image", "Output image", ],
+  ],
+  sub { (1, 2) }
+);
+
+&register(
+  "test_return_toofew",
+  boilerplate_params('return toofew', '<None>'),
+  [],
+  [
+    [ PF_IMAGE, "image", "Output image", ],
+  ],
+  sub { }
 );
 
 &register(
@@ -109,17 +139,17 @@ sub boilerplate_params {
     my $tl = $i->text_layer_new("hi", "Arial", 8, 3);
     $i->insert_layer($tl, 0, 0);
     $tl->set_name($text);
-    return $i;
+    return;
   }
 );
 
 &register(
   "test_dialogs",
-  boilerplate_params('filter', '<None>'),
+  boilerplate_params('dialogs', '<None>'),
   [
     [ PF_COLOR, "colour", "Image colour", [255, 127, 0], ],
     [ PF_FONT, "font", "Font", 'Arial', ],
-    [ PF_INT, "size", "Size", 100],
+    [ PF_INT32, "size", "Size", 100],
   ],
   sub { }
 );
@@ -164,6 +194,11 @@ is_deeply(
   [ [1, 2], [3, 4] ],
   'return array'
 );
+is(ref(Gimp::Plugin->test_return_image), 'Gimp::Image', 'image ref');
+eval { Gimp::Plugin->test_return_toomany; };
+like($@, qr/too many/, 'too many return values is error');
+eval { Gimp::Plugin->test_return_toofew; };
+like($@, qr/too few/, 'too few return values is error');
 # if enable next line, brings up script dialog
 # color one works, font doesn't - speculate is due to being in "batch mode"
 #Gimp::Plugin->test_dialogs(RUN_INTERACTIVE, [0,0,0], "Arial", 150, );

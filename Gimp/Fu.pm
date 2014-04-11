@@ -93,9 +93,9 @@ a starting point for your experiments)
 sub Gimp::RUN_FULLINTERACTIVE (){ Gimp::RUN_INTERACTIVE+100 };	# you don't want to know
 
 my %pf_type2string = (
-         &PF_INT8	=> 'integer (0-255)',
-         &PF_INT16	=> 'integer (0-32767)',
-         &PF_INT32	=> 'integer (0-4294967295)',
+         &PF_INT8	=> 'integer (8-bit)',
+         &PF_INT16	=> 'integer (16-bit)',
+         &PF_INT32	=> 'integer (32-bit)',
          &PF_FLOAT	=> 'number',
          &PF_STRING	=> 'string',
          &PF_BRUSH	=> 'string',

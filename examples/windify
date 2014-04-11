@@ -1,8 +1,5 @@
 #!/usr/bin/perl
 
-eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-
 # sent to me by Seth Burgess <sjburges@gimp.org>
 # small changes my Marc Lehmann <pcg@goof.com>
 # 2014/03/17 ported to GIMP 2.8.10 by Ed J:
@@ -59,7 +56,7 @@ sub windify {
 	gimp_displays_flush();
         gimp_context_pop();
 
-	undef;
+	();
 	}
 
 register

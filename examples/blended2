@@ -102,7 +102,7 @@ sub my_innerbevel {
 		$img->flatten;
 	}
 #	gimp_display_new ($img);
-	$img;
+	();
 }
 $help=<<EOF.$help;
 This script will produce a nice blended beveled logo from your alpha
