@@ -228,17 +228,6 @@ sub layer_add_layer_as_mask {
 # all functions below are by Marc Lehmann
 =pod
 
-=item C<gimp_text_wh $text,$fontname>
-
-returns the width and height of the "$text" of the given font (XLFD format)
-
-=cut
-sub gimp_text_wh {
-   (Gimp->text_get_extents_fontname($_[0],xlfd_size $_[1],$_[1]))[0,1];
-}
-
-=pod
-
 =item C<gimp_image_layertype $alpha>
 
 returns the corresponding layer type for an image, alpha controls wether the layer type

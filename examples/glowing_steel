@@ -1,8 +1,5 @@
 #!/usr/bin/perl
 
-eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-
 # A plug-in for GIMP for producing logos and other such nifty things
 # which appear to be made of steel and floating over a glowing cloud.
 # This plug-in also includes several filters and such for performing the
@@ -44,9 +41,6 @@ sub perl_fu_glowing_steel {
   my $antialias = shift;
 
   # Gimp::set_trace(TRACE_ALL);
-
-  ($size, $units) = xlfd_size($font) if $size < 1;
-  die("glowing_steel: No font size given or inferable") if $size < 1;
 
   gimp_context_push();
 
@@ -272,7 +266,7 @@ sub perl_fu_highlight_edges {
 register
   "highlight_edges",
   "Frame an alpha layer with black and white edges",
-  "Use this pluggin to highlight the edges of an alpha layer and make ".
+  "Highlight the edges of an alpha layer and make ".
 	"it appear to have height. Not quite the same as a beveled edge, ".
 	"this is a somewhat more subtle technique.",
   "Aaron Sherman", "Aaron Sherman (c)", "1999-06-14",
@@ -286,7 +280,7 @@ register
 register
   "brushed_metal",
   "Create a brushed metal surface effect",
-  "Use this pluggin to make a surface (selected area) look like ".
+  "Make a surface (selected area) look like ".
 	"brushed metal (kind of like steel).",
   "Aaron Sherman", "Aaron Sherman (c)", "1999-06-14",
   N_"<Image>/Filters/Render/Pattern/Brushed Metal...",
@@ -302,7 +296,7 @@ register
 register
   "add_glow",
   "Add a glow behind an alpha layer",
-  "Use this pluggin to add a glowing layer behind an existing layer. This ".
+  "Add a glowing layer behind an existing layer. This ".
 	"is very different from drop shadows, as the glow will extend out ".
 	"in the given radius from all edges of the layer.",
   "Aaron Sherman", "Aaron Sherman (c)", "1999-06-14",
@@ -317,7 +311,7 @@ register
 register
   "glowing_steel",
   "Render metal surface over glowing background",
-  "Use this pluggin to create the effect of a metalic surface over ".
+  "Create the effect of a metallic surface over ".
 	"a glowing surface. This effect was inspired by a poster for the ".
 	"film \"Lost In Space\".",
   "Aaron Sherman", "Aaron Sherman (c)", "1999-06-14",
@@ -327,7 +321,7 @@ register
   [
    [PF_STRING, "string", "string", "GET LOST"],
    # The font in the poster was like "cobalt extended"
-   [PF_FONT, "font", "Font", "Bitstream Charter Bold 72"],
+   [PF_FONT, "font", "Font", "Bitstream Charter Bold"],
    [PF_SPINNER, "size", "Size", 100, [0, 3000, 1]],
    [PF_COLOR, "glow_color", "Color", [1.0, 0.8157, 0]],
    [PF_COLOR, "background", "Color", [0x00, 0x00, 0x00]],
@@ -344,7 +338,7 @@ __END__
 
 =head1 NAME
 
-glowing_steel - A logo plugin for the Gimp
+glowing_steel - A logo plugin for GIMP
 
 =head1 SYNOPSIS
 
@@ -360,7 +354,7 @@ style that combines the I<Brushed Metal> effect with the I<Highlight Edges>
 and I<Add Glow> effects. The text is surfaced with brushed metal, and
 highlighted, and the glow is added in the background.
 
-This plug-in also includes the effects listed above as separete tools
+This plug-in also includes the effects listed above as separate tools
 which may be used independant of creating a logo. These tools are:
 
 =over 5

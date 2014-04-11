@@ -1,14 +1,16 @@
 package Gimp::Fu;
 
-use Gimp ('croak', '__');
 use Gimp::Data;
 use File::Basename;
 use strict;
-use Carp qw(croak);
+use Carp qw(croak carp);
 use vars qw($run_mode @EXPORT);
 
 @EXPORT = qw($run_mode);
 #@EXPORT_OK = qw($run_mode save_image);
+
+# manual import
+sub __ ($) { goto &Gimp::__ }
 
 use constant {
   PF_INT8 => Gimp::PDB_INT8,
@@ -91,16 +93,16 @@ a starting point for your experiments)
 sub Gimp::RUN_FULLINTERACTIVE (){ Gimp::RUN_INTERACTIVE+100 };	# you don't want to know
 
 my %pf_type2string = (
-         &PF_INT8	=> 'small integer',
-         &PF_INT16	=> 'medium integer',
-         &PF_INT32	=> 'integer',
-         &PF_FLOAT	=> 'value',
+         &PF_INT8	=> 'integer (0-255)',
+         &PF_INT16	=> 'integer (0-32767)',
+         &PF_INT32	=> 'integer (0-4294967295)',
+         &PF_FLOAT	=> 'number',
          &PF_STRING	=> 'string',
          &PF_BRUSH	=> 'string',
          &PF_GRADIENT	=> 'string',
          &PF_PATTERN	=> 'string',
          &PF_COLOR	=> 'colour',
-         &PF_FONT	=> 'XLFD',
+         &PF_FONT	=> 'font',
          &PF_TOGGLE	=> 'boolean',
          &PF_SLIDER	=> 'integer',
          &PF_SPINNER	=> 'integer',
@@ -139,17 +141,17 @@ sub import {
 }
 
 # Some Standard Arguments
-my @image_params = ([&Gimp::PDB_IMAGE		, "image",	"The image to work on"],
-                    [&Gimp::PDB_DRAWABLE	, "drawable",	"The drawable to work on"]);
+my @image_params = ([&Gimp::PDB_IMAGE, "image", "The image to work on"],
+                    [&Gimp::PDB_DRAWABLE, "drawable", "The drawable to work on"]);
 
-my @load_params  = ([&Gimp::PDB_STRING	, "filename",	"The name of the file"],
-                    [&Gimp::PDB_STRING	, "raw_filename","The name of the file"]);
+my @load_params  = ([&Gimp::PDB_STRING, "filename", "The name of the file"],
+                    [&Gimp::PDB_STRING, "raw_filename", "The name of the file"]);
 
 my @save_params  = (@image_params, @load_params);
 
-my @load_retvals = ([&Gimp::PDB_IMAGE		, "image",	"Output image"]);
+my @load_retvals = ([&Gimp::PDB_IMAGE, "image", "Output image"]);
 
-my $image_retval = [&Gimp::PDB_IMAGE		, "image",	"The resulting image"];
+my $image_retval = [&Gimp::PDB_IMAGE, "image", "The resulting image"];
 
 # expand all the pod directives in string (currently they are only removed)
 sub expand_podsections() {
@@ -175,24 +177,12 @@ sub expand_podsections() {
 my $old_trace;
 
 sub interact {
-   eval { require Gtk2 };
-
-   if ($@) {
-      my @res = map {
-         die __"the gtk perl module is required to run\nthis plug-in in interactive mode\n" unless defined $_->[3];
-         $_->[3];
-      } @{ $_[3] };
-      Gimp::logger(message => __"the gtk perl module is required to open a dialog\nwindow, running with default values",
-                   fatal => 1, function => $_[0]);
-      return (1,@res);
-   }
-
    require Gimp::UI;
    goto &Gimp::UI::interact;
 }
 
 sub this_script {
-   return $scripts[0] unless $#scripts;
+   return $scripts[0] if @scripts == 1;
    # well, not-so-easy-day today
    require File::Basename;
    my $exe = File::Basename::basename($0);
@@ -256,7 +246,8 @@ Gimp::on_net {
    no strict 'refs';
    my $this = this_script;
    my(%map,@args);
-   my($interact)=1;
+   my $interact = 1;
+   $outputfile = undef;
 
    my($perl_sub,$function,$blurb,$help,$author,$copyright,$date,
       $menupath,$imagetypes,$params,$results,$code,$type)=@$this;
@@ -506,8 +497,20 @@ a C<PF_COLOR>.
 
 =item the return values
 
-This is just like the parameter array except that it describes the return
-values. Specify the type and variable name only. This argument is optional.
+This is just like the parameter array except that it describes the
+return values. Specify the type and variable name only. This argument is
+optional. If you wish your plugin to return an image, you must specify
+that, e.g.:
+
+  use Gimp;
+  use Gimp::Fu;
+  register
+     'function_name', "help", "blurb", "author", "copyright", "2014-04-11",
+     "<Image>/Filters/Render/Do Something...",
+     "*",
+     [ [PF_INT32, "input", "Input value", 1] ],
+     [ [PF_IMAGE, "output image", "Output image", 1] ],
+     sub { Gimp::Image->new($_[0], $_[0], RGB) };
 
 =item the code
 
@@ -515,10 +518,17 @@ This is either an anonymous sub declaration (C<sub { your code here; }>, or a
 coderef, which is called when the script is run. Arguments (including the
 image and drawable for <Image> plug-ins) are supplied automatically.
 
-It is good practise to return an image, if the script creates one, or
-C<undef>, since the return value is interpreted by Gimp::Fu (like displaying
-the image or writing it to disk). If your script creates multiple pictures,
-return an array.
+You must make sure your plugin returns the correct types of value, or none:
+
+ sub {
+   # no return parameters were specified
+   ();
+ };
+
+If you want to display images, you must have your script do that
+(and call C<Gimp-E<gt>displays_flush> at the end). C<Gimp::Fu> plugins
+will thereby be good GIMP "citizens", able to fit in with plugins/filters
+written in other languages.
 
 =back
 
@@ -545,12 +555,12 @@ A gimp image.
 
 =item PF_DRAWABLE
 
-A gimp drawable (image, channel or layer).
+A gimp drawable (channel or layer).
 
 =item PF_TOGGLE, PF_BOOL
 
-A boolean value (anything Perl would accept as true or false). The description
-will be used for the toggle-button label!
+A boolean value (anything Perl would accept as true or false). The
+description will be used for the toggle-button label.
 
 =item PF_SLIDER
 
@@ -924,7 +934,13 @@ sub print_switches {
    for(@{$this->[9]}) {
       my $type=$pf_type2string{$_->[0]};
       my $key=mangle_key($_->[1]);
-      printf "           -%-25s %s%s\n","$key $type",$_->[2],defined $_->[3] ? " [$_->[3]]" : "";
+      my $default_text = defined $_->[3]
+	  ? " [".(ref $_->[3] eq 'ARRAY' ? "[@{$_->[3]}]" : $_->[3])."]"
+	  : "";
+      printf "           -%-25s %s%s\n",
+	"$key $type",
+	$_->[2],
+	$default_text;
    }
 }
 
