@@ -2,6 +2,7 @@ package Gimp::UI;
 
 use Gimp ('__');
 use Gimp::Fu;
+use Gtk2;
 use base 'DynaLoader';
 
 no warnings "all";
@@ -18,7 +19,7 @@ Gimp::UI - interface to libgimpui, and more!
 
 The libgimpwidgets api has improved considerably in 1.4 (mostly due to
 it being based on gobjects), but the resulting widgets still are not
-full-featured gobjects, so a lot of manual workaround is neccessary. Most
+full-featured gobjects, so a lot of manual workaround is necessary. Most
 of the API has been converted.
 
 =over 4
@@ -38,24 +39,17 @@ of the API has been converted.
 
 # <sjburges@gimp.org> removed the camel logo from scripts
 
-$VERSION = 2.3001;
-
-if (eval { require Gtk2; import Gtk2 (); 1 }) {
-   local $/;
-
-   require XSLoader;
-   XSLoader::load Gimp::UI $VERSION;
-
-   eval <DATA>;
-   die $@ if $@;
-   close DATA;
+BEGIN {
+   $VERSION = 2.3001;
+   eval {
+      require XSLoader;
+      XSLoader::load Gimp::UI $VERSION;
+   } or do {
+      require DynaLoader;
+      @ISA = qw(DynaLoader);
+      bootstrap Gimp::UI $VERSION;
+   };
 }
-
-1;
-
-# All Gtk-dependent functions are put below
-__DATA__
-#line 58 "..../Gimp/UI.pm"
 
 # shows the properties of a glib object
 #d# just to debug
@@ -896,3 +890,5 @@ Marc Lehmann <pcg@goof.com>, Seth Burgess <sjburges@gimp.org>
 perl(1), L<Gimp>.
 
 =cut
+
+1;

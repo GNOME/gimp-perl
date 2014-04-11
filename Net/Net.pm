@@ -31,11 +31,12 @@ use strict 'vars';
 use vars qw($VERSION $trace_res);
 use subs qw(gimp_call_procedure);
 use base qw(DynaLoader);
-
 use IO::Socket;
-
 use Carp 'croak';
 use Fcntl qw(F_SETFD);
+
+$VERSION = 2.3001;
+bootstrap Gimp::Net $VERSION;
 
 use constant {
   PS_FLAG_QUIET => 1 << 0, # do not output messages
@@ -44,10 +45,6 @@ use constant {
 
 my $PROTOCOL_VERSION = 4; # protocol version
 my ($server_fh, $gimp_pid, $trace_level, $auth);
-
-require DynaLoader;
-$VERSION = 2.3001;
-bootstrap Gimp::Net $VERSION;
 
 my $DEFAULT_TCP_PORT  = 10009;
 my $DEFAULT_UNIX_DIR  = "/tmp/gimp-perl-serv-uid-$>/";
@@ -155,21 +152,20 @@ sub start_server {
       open STDOUT,">/dev/null";
       #open STDERR,">&1";
    }
-   my @args;
    my $flags = PS_FLAG_BATCH | ($Gimp::verbose ? 0 : PS_FLAG_QUIET);
    my $args = join ' ',
      &Gimp::RUN_NONINTERACTIVE,
      $flags,
      fileno($gimp_fh),
      int($Gimp::verbose);
-   warn __"$$-plug-in-perl-server args='$args'" if $Gimp::verbose;
-   push(@args,"--no-data") if $opt=~s/(^|:)no-?data//;
-   push(@args,"-i") unless $opt=~s/(^|:)gui//;
-   push(@args,"--verbose") if $Gimp::verbose;
+   my @args;
+   push @args,"--no-data" if $opt=~s/(^|:)no-?data//;
+   push @args,"-i" unless $opt=~s/(^|:)gui//;
+   push @args,"--verbose" if $Gimp::verbose;
+   warn __"$$-plug-in-perl-server args='$args' \@args(@args)" if $Gimp::verbose;
    { # block to suppress warning
    exec $Gimp::Config{GIMP},
 	"--no-splash",
-	#"never",
 	"--console-messages",
 	@args,
 	"--batch-interpreter",
@@ -184,6 +180,7 @@ sub start_server {
 
 sub try_connect {
    local $_=$_[0];
+   warn "$$-".__PACKAGE__."::try_connect(@_)" if $Gimp::verbose;
    my $fh;
    $auth = s/^(.*)\@// ? $1 : "";	# get authorization
    if ($_ eq "") {
@@ -552,7 +549,8 @@ done automatically while installing the Gimp extension. If you have a
 menu entry C<<Xtns>/Perl-Server> then it is probably installed.
 
 The Perl-Server can either be started from the C<<Xtns>> menu in Gimp,
-or automatically when a perl script can't find a running Perl-Server.
+or automatically when a perl script can't find a running Perl-Server,
+in which case it will start up its own copy of GIMP.
 
 When started from within GIMP, the Perl-Server will create a unix
 domain socket to which local clients can connect. If an authorization

@@ -1721,6 +1721,16 @@ gimp_lib_quit()
 	gimp_quit ();
 
 void
+gimp_extension_process(timeout)
+  guint timeout
+
+void
+gimp_extension_enable()
+
+void
+gimp_extension_ack()
+
+void
 gimp_set_data(id, data)
 	SV *	id
 	SV *	data;

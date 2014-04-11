@@ -6,7 +6,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK $AUTOLOAD %EXPORT_TAGS @EXPORT_FAIL
             @PREFIXES @GUI_FUNCTIONS
             $function $basename $spawn_opts
             $in_quit $in_run $in_net $in_init $in_query $no_SIG
-            $help $verbose $host $in_top);
+            $host $in_top);
 use subs qw(init end lock unlock);
 
 BEGIN {
@@ -38,24 +38,26 @@ my @_default = (@_procs, ':consts');
 my @POLLUTE_CLASSES;
 my $net_init;
 
-# we really abuse the import facility..
 sub import($;@) {
    my $pkg = shift;
-   warn "$$-$pkg->import(@_)" if $verbose;
+   warn "$$-$pkg->import(@_)" if $Gimp::verbose;
    my $up = caller;
    my @export;
 
    # make sure we can call GIMP functions - start net conn if required
    map { $net_init = $1 if /net_init=(\S+)/; } @_;
-   if ($interface_type eq "net") {
+   if ($interface_type eq "net" and not &Gimp::Net::initialized) {
       map { *{"Gimp::$_"} = \&{"Gimp::Constant::$_"} }
 	 qw(RUN_INTERACTIVE RUN_NONINTERACTIVE);
       Gimp::Net::gimp_init(grep {defined} $net_init);
    }
-   warn "$$-Loading constants" if $verbose;
-   # now get constants from GIMP
+   # do this here as not guaranteed access to GIMP before
    require Gimp::Constant;
-   import Gimp::Constant;
+   if (not defined &{$Gimp::Constant::EXPORT[-1]}) {
+     warn "$$-Loading constants" if $Gimp::verbose;
+     # now get constants from GIMP
+     import Gimp::Constant;
+   }
 
    @_=@_default unless @_;
 
@@ -150,8 +152,8 @@ $in_query=0 unless defined $in_query;
 $in_top=$in_quit=$in_run=$in_net=$in_init=0;
 ($function)=$0=~/([^\/\\]+)$/;
 
-$verbose=0 unless defined $verbose;
-# $verbose=1;
+$Gimp::verbose=0 unless defined $Gimp::verbose;
+# $Gimp::verbose=1;
 
 $interface_type = "net";
 if (@ARGV) {
@@ -162,7 +164,7 @@ if (@ARGV) {
       while(@ARGV) {
          $_=shift(@ARGV);
          if (/^-h$|^--?help$|^-\?$/) {
-            $help=1;
+            $Gimp::help=1;
             print __<<EOF;
 Usage: $0 [gimp-args..] [interface-args..] [script-args..]
            gimp-arguments are
@@ -173,7 +175,7 @@ Usage: $0 [gimp-args..] [interface-args..] [script-args..]
                                       (for more info, see Gimp::Net(3))
 EOF
          } elsif (/^-v$|^--verbose$/) {
-            $verbose++;
+            $Gimp::verbose++;
          } elsif (/^--host$|^--tcp$/) {
             $host=shift(@ARGV);
          } else {
@@ -217,7 +219,7 @@ sub logger {
    $args{function} = ""                   unless defined $args{function};
    $args{fatal}    = 1                    unless defined $args{fatal};
    push(@log,[$basename,@args{'function','message','fatal'}]);
-   print STDERR format_msg($log[-1]),"\n" if !($in_query || $in_init || $in_quit) || $verbose;
+   print STDERR format_msg($log[-1]),"\n" if !($in_query || $in_init || $in_quit) || $Gimp::verbose;
    _initialized_callback if initialized();
 }
 
@@ -413,7 +415,7 @@ _pseudoclass qw(Image		), @image_prefixes;
 _pseudoclass qw(Drawable	), @drawable_prefixes;
 _pseudoclass qw(Selection	gimp_selection_);
 _pseudoclass qw(Vectors		gimp_vectors_);
-_pseudoclass qw(Channel		gimp_channel_ gimp_selection_), @drawable_prefixes;
+_pseudoclass qw(Channel		gimp_channel_), @drawable_prefixes;
 _pseudoclass qw(Display		gimp_display_ gimp_);
 _pseudoclass qw(Plugin		), @plugin_prefixes;
 _pseudoclass qw(Gradient	gimp_gradient_);
@@ -438,7 +440,6 @@ _pseudoclass qw(Context         gimp_context_);
 _pseudoclass qw(Brushes		gimp_brush_ gimp_brushes_);
 _pseudoclass qw(Brush		gimp_brush_);
 _pseudoclass qw(Edit		gimp_edit_);
-_pseudoclass qw(Gradients	gimp_gradients_);
 _pseudoclass qw(Patterns	gimp_patterns_);
 _pseudoclass qw(Pattern	        gimp_pattern_);
 
@@ -466,15 +467,6 @@ sub compare($$)		{ $_[0]->[0] eq $_[1]->[0] and
 			  $_[0]->[1] eq $_[1]->[1] and
 			  $_[0]->[2] eq $_[1]->[2] }
 sub new($$$$)		{ shift; [@_] }
-}
-
-{
-package Gimp::run_mode;
-
-# I guess I now use almost every perl feature available ;)
-
-use overload fallback => 1,
-             '0+'     => sub { ${$_[0]} };
 }
 
 =head1 NAME
@@ -576,9 +568,10 @@ Access to GIMP's Procedural Database (pdb) for manipulation of
 most objects.
 
 =item *
-Use either a plain pdb (scheme-like) interface or an object-oriented
-syntax, i.e. C<gimp_image_new(600,300,RGB)> is the same as C<new
-Gimp::Image(600,300,RGB)>
+Use either a plain pdb (scheme-like but with perl OO
+class method) interface or a fully object-oriented syntax,
+i.e. C<Gimp-E<gt>image_new(600,300,RGB)> is the same as C<new
+Gimp::Image(600,300,RGB)>.
 
 =item *
 Networked plug-ins look/behave the same as those running from within gimp.
@@ -617,11 +610,11 @@ arguments.
 =head2 From outside GIMP
 
 The script will use C<Gimp> as above, and use Gimp functions as it
-wishes. Behind the scenes, GIMP has running a perl plugin (as described
-above) that is constantly running, and waits for connections from
-perl scripts. Your script, when it uses GIMP procedures (and Gimp-Perl
-functions), will actually be communicating with the perl server running
-under GIMP.
+wishes. If you are using GIMP interactively, you need to run the Perl
+server (under "Filters/Perl" to allow your script to connect. Otherwise,
+the script will start its own GIMP, in "batch mode".  Either way,
+your script, when it uses GIMP procedures (and Gimp-Perl functions),
+will actually be communicating with the perl server running under GIMP.
 
 The architecture may be visualised like this:
 
@@ -668,7 +661,7 @@ done automatically.
 
 Do any activities that must be performed at Gimp startup, when the
 procedure is queried.  Should typically have at least one call to
-gimp_install_procedure.
+Gimp->install_procedure.
 
 =item Gimp::on_net
 
@@ -677,13 +670,54 @@ running it standalone).
 
 =item Gimp::on_lib
 
-Run only when called interactively from within Gimp.
+Run only when called from within Gimp.
 
 =item Gimp::on_run
 
 Run when anything calls it (network or lib).
 
 =back
+
+=head1 OUTLINE OF A GIMP EXTENSION
+
+A GIMP extension is a special type of plugin. Once started, it stays
+running all the time. Typically during its run-initialisation (not on
+query) it will install temporary procedures.
+
+If it has no parameters, then rather than being run when called, either
+from a menu or a scripting interface, it is run at GIMP startup.
+
+A working, albeit trivial, example is provided in
+examples/example-extension. A summarised example:
+
+  use Gimp;
+  Gimp::register_callback extension_gp_test => sub {
+    # do some relevant initialisation here
+    Gimp->install_temp_proc(
+      "perl_fu_temp_demo", "help", "blurb", "id", "id", "2014-04-11",
+      "<Toolbox>/Xtns/Perl/Test/Temp Proc demo", undef,
+      &Gimp::TEMPORARY,
+      [ [ &Gimp::PDB_INT32, 'run_mode', 'Run-mode', 0 ], ],
+      [],
+    );
+    Gimp->extension_ack;
+    while (1) {
+      Gimp->extension_process(0);
+    }
+  };
+  Gimp::register_callback perl_fu_temp_demo => sub {
+    my ($run_mode) = @_;
+    # here could bring up UI if $run_mode == RUN_INTERACTIVE
+  };
+  Gimp::on_query {
+     Gimp->install_procedure(
+	"extension_gp_test", "help", "blurb", "id", "id", "2014-04-11",
+	undef, undef,
+	&Gimp::EXTENSION,
+	[], [],
+     );
+  };
+  exit Gimp::main;
 
 =head1 CALLING GIMP FUNCTIONS
 
@@ -703,13 +737,13 @@ normal perl (this requires the use of the C<:auto> import tag - see
 the import C<:auto> note for non-OO limitation; see below for another
 possibility!):
 
- gimp_palette_set_foreground([20,5,7]);
- gimp_palette_set_background("cornsilk");
+ Gimp->palette_set_foreground([20,5,7]);
+ Gimp->palette_set_background("cornsilk");
 
 If you don't use the C<:auto> import tag, you can call all Gimp functions
 using OO-Syntax:
 
- Gimp->gimp_palette_set_foreground([20,5,7]);
+ Gimp->palette_set_foreground([20,5,7]);
  Gimp->palette_set_background("cornsilk");
  Gimp::Palette->set_foreground('#1230f0');
 
@@ -776,7 +810,7 @@ database is similar, but not identical to the X11 default rgb.txt)
 =item Gimp::initialized()
 
 this function returns true whenever it is safe to call gimp functions. This is
-usually only the case after gimp_main or gimp_init have been called.
+usually only the case after gimp_main has been called.
 
 =item Gimp::register_callback(gimp_function_name, perl_function)
 
@@ -816,25 +850,25 @@ or C<$object-E<gt>>).
 
 =over 4
 
-=item gimp_install_procedure(name, blurb, help, author, copyright, date, menu_path, image_types, type, [params], [return_vals])
+=item Gimp->install_procedure(name, blurb, help, author, copyright, date, menu_path, image_types, type, [params], [return_vals])
 
 Mostly same as gimp_install_procedure from the C library. The
 parameters and return values for the functions are specified as an
 array ref containing either integers or array-refs with three elements,
 [PARAM_TYPE, \"NAME\", \"DESCRIPTION\"].
 
-=item gimp_progress_init(message,[])
+=item Gimp::Progress->init(message,[])
 
 Initializes a progress bar. In networked modules this is a no-op.
 
-=item gimp_progress_update(percentage)
+=item Gimp::Progress->update(percentage)
 
 Updates the progress bar. No-op in networked modules.
 
 =item gimp_tile_*, gimp_pixel_rgn_*, gimp_drawable_get
 
 With these functions you can access the raw pixel data of drawables. They
-are documented in L<Gimp::Pixel>, to keep this manual page short.
+are documented in L<Gimp::PixelRgn>, to keep this manual page short.
 
 =item gimp_call_procedure(procname, arguments...)
 
@@ -861,7 +895,7 @@ integers>, rather than blessed objects.
 
 Returns an array (x,y,w,h) containing the upper left corner and the
 size of currently selected parts of the drawable, just as needed by
-PixelRgn->new and similar functions.
+Gimp::PixelRgn->new and similar functions.
 
 =item server_eval(string)
 
@@ -1024,9 +1058,8 @@ Ed J (with oversight and guidance from Kevin Cozens) (2.3+)
 
 =head1 SEE ALSO
 
-perl(1), gimp(1), L<Gimp::OO>, L<Gimp::Data>, L<Gimp::Pixel>,
-L<Gimp::Util>, L<Gimp::UI>, L<Gimp::Net>,
-L<Gimp::Config>, and L<Gimp::Lib>.
+perl(1), gimp(1), L<Gimp::OO>, L<Gimp::Data>, L<Gimp::PixelRgn>,
+L<Gimp::Util>, L<Gimp::UI>, L<Gimp::Config>, L<Gimp::Net>, and L<Gimp::Lib>.
 
 =cut
 

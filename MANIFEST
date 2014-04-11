@@ -22,7 +22,7 @@ Gimp/Lib.pm
 Gimp/Lib.xs
 Gimp/Makefile.PL
 Gimp/OO.pod
-Gimp/Pixel.pod
+Gimp/PixelRgn.pod
 Gimp/Pod.pm
 Gimp/Util.pm
 Gimp.pm
@@ -50,6 +50,7 @@ examples/dialogtest
 examples/ditherize
 examples/dots
 examples/dust
+examples/example-extension
 examples/example-fu
 examples/example-net
 examples/example-oo
@@ -140,10 +141,10 @@ po/zh_CN.po
 po/zh_TW.po
 pxgettext
 t/import.t
-t/perlplugin.t
 t/loadlib.t
 t/load.t
 t/pdl.t
+t/perlplugin.t
 t/run.t
 t/supplied.t
 typemap

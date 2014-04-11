@@ -1,48 +1,21 @@
 #!/usr/local/bin/perl -w
 
 use strict;
+#BEGIN { $Gimp::verbose = 1; }
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
-#BEGIN { $Gimp::verbose = 1; }
 #Gimp::set_trace(TRACE_ALL);
 
-sub boilerplate_params {
-  my ($testing, $menuloc) = @_;
-  (
-    ("exercise gimp-perl filter testing $testing") x 2,
-    ("boilerplate id") x 2,
-    "20140310",
-    N_$menuloc,
-    "*",
-  );
-}
-
-if (0) {
 &register(
-  "test_dialogs2",
-  boilerplate_params(
-    'menu entries',
-    '<Image>/Filters/Perl/Dialog Test',
-  ),
+  "test_dialogs", 'help', 'blurb', 'id', 'id', '20140411',
+  N_ '<Toolbox>/Xtns/Perl/Test/Dialog', undef,
   [
     [ PF_COLOR, "colour", "Image colour", [255, 127, 0], ],
     [ PF_FONT, "font", "Font", 'Arial', ],
-    [ PF_INT, "size", "Size", 100],
-  ],
-  sub { }
-);
-}
-
-&register(
-  "test_dialogs",
-  boilerplate_params(
-    'dialogs',
-    '<Toolbox>/Xtns/Perl/Test/Dialog',
-  ),
-  [
-    [ PF_COLOR, "colour", "Image colour", [255, 127, 0], ],
-    [ PF_FONT, "font", "Font", 'Arial', ],
-    [ PF_INT, "size", "Size", 100],
+    [ PF_INT8, "int8", "Int8", 100],
+    [ PF_INT16, "int16", "Int16", 100],
+    [ PF_INT32, "int32", "Int32", 100],
+    [ PF_FLOAT, "float", "FLOAT", 100],
   ],
   sub { }
 );
