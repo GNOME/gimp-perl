@@ -17,7 +17,7 @@ die "Need GIMP version at least 2.8.0\n" unless $gimpbinname >= 2.8;
 %cfg = (
   GIMP => expand($gimppath . "gimp-" . $gimpbinname),
   GIMPTOOL => $gimptool,
-  gimpplugindir => $plugindir,
+  gimpplugindir => "$plugindir/plug-ins",
   GIMP_LIBS => exp_topdir($pluginlibs),
   GIMP_LIBS_NOUI => exp_topdir($gimpcfg{"libs"}),
   GIMP_CFLAGS => " -I$topdir -Ddatadir=\"\\\"".expand($datadir).'\\"" '

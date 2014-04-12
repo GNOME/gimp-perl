@@ -46,7 +46,6 @@ use constant {
 
 use constant {
   PF_BOOL => PF_TOGGLE,
-  PF_INT => PF_INT32,
   PF_VALUE => PF_STRING,
 };
 
@@ -121,7 +120,7 @@ my @scripts;
 
 my @_params=qw(PF_INT8 PF_INT16 PF_INT32 PF_FLOAT PF_VALUE PF_STRING PF_COLOR
             PF_COLOUR PF_TOGGLE PF_IMAGE PF_DRAWABLE PF_FONT PF_LAYER
-            PF_CHANNEL PF_BOOL PF_SLIDER PF_INT PF_SPINNER PF_ADJUSTMENT
+            PF_CHANNEL PF_BOOL PF_SLIDER PF_SPINNER PF_ADJUSTMENT
             PF_BRUSH PF_PATTERN PF_GRADIENT PF_RADIO PF_CUSTOM PF_FILE
             PF_TEXT);
 
@@ -536,18 +535,27 @@ written in other languages.
 
 =over 2
 
-=item PF_INT8, PF_INT16, PF_INT32, PF_INT, PF_FLOAT, PF_STRING, PF_VALUE
+=item PF_INT8, PF_INT16, PF_INT32
 
-Are all mapped to a string entry, since perl doesn't really distinguish
-between all these datatypes. The reason they exist is to help other scripts
-(possibly written in other languages! Really!). It's nice to be able to
-specify a float as 13.45 instead of "13.45" in C! C<PF_VALUE> is synonymous
-to C<PF_STRING>, and <PF_INT> is synonymous to <PF_INT32>.
+All mapped to sliders with suitable min/max.
+
+=item PF_FLOAT, PF_VALUE
+
+For C<PF_FLOAT> (or C<PF_VALUE>, a synonym), you should probably use a
+C<PF_ADJUSTMENT> with suitable values.
+
+=item PF_STRING
+
+A string.
 
 =item PF_COLOR, PF_COLOUR
 
 Will accept a colour argument. In dialogs, a colour preview will be created
-which will open a colour selection box when clicked.
+which will open a colour selection box when clicked. The default value
+needs to be a suitable Gimp-Perl colour; see L<Gimp::canonicalize_colour>.
+
+ [ PF_COLOR, 'colour', 'Input colour', 'white' ],
+ [ PF_COLOR, 'colour2', 'Input colour 2', [ 255, 128, 0 ] ],
 
 =item PF_IMAGE
 
@@ -948,11 +956,12 @@ sub main {
    $old_trace = Gimp::set_trace (0);
    if ($Gimp::help) {
       my $this=this_script;
-      print __"       interface-arguments are
-           -o | --output <filespec>   write image to disk, don't display
+      print __<<EOF;
+       interface-arguments are
+           -o | --output <filespec>   write image to disk
            -i | --interact            let the user edit the values first
        script-arguments are
-";
+EOF
       print_switches ($this);
    } else {
       Gimp::main;

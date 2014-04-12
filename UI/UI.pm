@@ -496,20 +496,23 @@ sub interact($$$$@) {
            $extra=[@x];
         }
 
+        if ($type == PF_INT8) {
+	   $type = PF_SLIDER;
+	   $extra = [ 0, 255, 1 ];
+	}
+
+	if ($type == PF_INT16 || $type == PF_INT32) {
+	   $type = PF_SPINNER;
+	   my $max = ($type == PF_INT16 ? 1 << 15 : 1 << 31);
+	   $extra = [ -$max, $max - 1, 1 ];
+	}
+
         $value=$default unless defined $value;
         # massage label text a small bit (works only for english)
         $label="$name: ";
         $label =~ y/_/ /; $label =~ s/^(\w)/\U$1/g;
 
-#TODO: While mapping all to one is nifty programming, it makes for a lousy
-# interface.  Sure would be nice to have dialog elements that reflected
-# the type a bit better (spinbuttons/range checking for integral for instance).
-
-        if ($type == PF_INT8		# perl just maps
-        || $type == PF_INT16		# all this crap
-        || $type == PF_INT32		# into the scalar
-        || $type == PF_FLOAT		# domain.
-        || $type == PF_STRING) {	# I love it
+        if ($type == PF_FLOAT || $type == PF_STRING) {
            &new_PF_STRING;
 
         } elsif ($type == PF_FONT) {
