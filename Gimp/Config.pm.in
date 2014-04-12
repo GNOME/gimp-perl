@@ -14,7 +14,7 @@ C<$Gimp::Config{KEY}>. Some important keys are:
   IN_GIMP	=> true when gimp-perl was part of the Gimp distribution.
   GIMP		=> the path of the gimp executable
   GIMPTOOL	=> the path of the gimptool executable
-  gimpplugindir	=> the gimp plug-in directory (without the /plug-ins-suffix)
+  gimpplugindir	=> the actual gimp plug-in directory
 
 =head1 SEE ALSO
 

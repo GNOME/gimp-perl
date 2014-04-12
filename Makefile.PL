@@ -4,7 +4,7 @@ use Data::Dumper qw(Dumper);
 use ExtUtils::MakeMaker;
 use IO::All;
 
-require 'config.pl';
+require './config.pl';
 
 sub MY::postamble {
    my $self=shift;

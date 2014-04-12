@@ -14,7 +14,7 @@ require Gimp::Config;
 
 our $DEBUG = 0 unless defined $DEBUG;
 
-my $sysplugins = $Gimp::Config{gimpplugindir} . '/plug-ins';
+my $sysplugins = $Gimp::Config{gimpplugindir};
 die "plugins dir: $!" unless -d $sysplugins;
 die "script-fu not executable: $!" unless -x "$sysplugins/script-fu";
 

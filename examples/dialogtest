@@ -16,6 +16,7 @@ use Gimp::Fu;
     [ PF_INT16, "int16", "Int16", 100],
     [ PF_INT32, "int32", "Int32", 100],
     [ PF_FLOAT, "float", "FLOAT", 100],
+    [ PF_STRING, "string", "string", 'text'],
   ],
   sub { }
 );

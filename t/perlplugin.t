@@ -143,17 +143,6 @@ sub boilerplate_params {
   }
 );
 
-&register(
-  "test_dialogs",
-  boilerplate_params('dialogs', '<None>'),
-  [
-    [ PF_COLOR, "colour", "Image colour", [255, 127, 0], ],
-    [ PF_FONT, "font", "Font", 'Arial', ],
-    [ PF_INT32, "size", "Size", 100],
-  ],
-  sub { }
-);
-
 exit main;
 EOF
 }

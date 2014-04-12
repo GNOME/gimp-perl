@@ -35,7 +35,18 @@ require '../config.pl';
   pixelmap
 );
 
-sub plugin_target {
+sub install_plugin_target {
+  my $plugin = shift;
+  my $src = '$(INST_PLUGINS)/'.basename($plugin);
+  my $dest = '$(GIMP_PLUGINS)/'.basename($plugin);
+  <<EOF;
+$dest : $src
+	\$(NOECHO) $cfg{GIMPTOOL} --install-admin-bin "$src"
+
+EOF
+}
+
+sub build_plugin_target {
   my $plugin = shift;
   my $dest = '$(INST_PLUGINS)/'.basename($plugin);
   <<EOF;
@@ -50,18 +61,20 @@ EOF
 
 sub MY::postamble {
    my $self=shift;
-   my $GT = "$cfg{GIMPTOOL} --install-admin-bin";
    my $UT = "$cfg{GIMPTOOL} --uninstall-admin-bin";
    <<EOF;
 
 INST_PLUGINS = ../blib/plugins
+GIMP_PLUGINS = $cfg{gimpplugindir}
 
 \$(INST_PLUGINS)\$(DFSEP).exists :: Makefile.PL
 	\$(NOECHO) \$(MKPATH) \$(INST_PLUGINS)
 	\$(NOECHO) \$(CHMOD) \$(PERM_DIR) \$(INST_PLUGINS)
 	\$(NOECHO) \$(TOUCH) \$(INST_PLUGINS)\$(DFSEP).exists
 
-@{[ join '', map { plugin_target($_) } @pins ]}
+@{[ join '', map { build_plugin_target($_) } @pins ]}
+
+@{[ join '', map { install_plugin_target($_) } @pins ]}
 
 install :: install-plugins
 
@@ -69,8 +82,7 @@ pure_all :: pure_plugins
 
 pure_plugins : @{[ map { "\$(INST_PLUGINS)/".basename($_) } @pins ]}
 
-install-plugins :: pure_plugins
-	cd \$(INST_PLUGINS) ; for p in * ; do $GT "\$\$p" ; done
+install-plugins : @{[ map { "\$(GIMP_PLUGINS)/".basename($_) } @pins ]}
 
 uninstall ::
 	cd \$(INST_PLUGINS); for plugin in *; do $UT "\$\$plugin"; done
