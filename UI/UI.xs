@@ -25,7 +25,7 @@
 #include <libgimpwidgets/gimpwidgets.h>
 #include <libgimpbase/gimpbasetypes.h>
 
-#include "extra.h"
+#include "gimp-perl.h"
 
 static void
 sv_color3 (SV *sv, gdouble *e, gdouble *f, gdouble *g, gdouble *a)

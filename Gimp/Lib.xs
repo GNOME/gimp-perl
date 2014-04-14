@@ -27,7 +27,7 @@
 # undef dirty
 #endif
 
-#include "extra.h"
+#include "gimp-perl.h"
 
 #define GIMP_PKG	"Gimp::"	/* the package name */
 
