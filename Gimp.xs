@@ -27,7 +27,7 @@
 # include <signal.h>
 #endif
 
-#include "extra.h"
+#include "gimp-perl.h"
 
 MODULE = Gimp	PACKAGE = Gimp
 

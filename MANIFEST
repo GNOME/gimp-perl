@@ -1,6 +1,5 @@
 AUTHORS
 ChangeLog
-Changes
 COPYING
 COPYING.Artistic
 COPYING.GNU
@@ -9,7 +8,6 @@ MAINTAINERS
 MANIFEST
 MYMETA.json
 MYMETA.yml
-NEWS
 README
 README.win32
 TODO
@@ -97,9 +95,8 @@ examples/xachlego
 examples/xachshadow
 examples/xachvision
 examples/yinyang
-extra.h
+gimp-perl.h
 gppport.h
-logo.xpm
 perl-intl.h
 po/ca.po
 po/ChangeLog
