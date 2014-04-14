@@ -228,7 +228,7 @@ __END__
 
 =head1 NAME
 
-Gallery Maker
+gallery - Gallery Maker
 
 =head1 SYNOPSIS
 
@@ -236,8 +236,16 @@ Gallery Maker
 
 =head1 DESCRIPTION
 
-Gallery Maker is a Gimp plugin.It generates an HTML file from all pictures it finds in a designed path.A thumbnail is generated from each picture with a desired global scale or X or Y fixed...This tool will hopefully help batch conversions from photo albums for instance as you can add copyright notice on source picture but also adjust brightness/contrast or give polar rotations ....
-Convention used here is the following : All pictures converted is c<name> ....Relative thumbnail is m<name>
+Gallery Maker is a Gimp plugin.It generates an HTML file from all pictures
+it finds in a designed path.A thumbnail is generated from each picture
+with a desired global scale or X or Y fixed...This tool will hopefully
+help batch conversions from photo albums for instance as you can add
+copyright notice on source picture but also adjust brightness/contrast
+or give polar rotations ....
+
+Convention used here is the following : All pictures converted is c<name>.
+Relative thumbnail is m<name>.
+
 Note : This plugin only processes JPG pictures.
 
 =head1 AUTHOR
@@ -248,6 +256,3 @@ Written by Fabian Frederick <fabian.frederick@gmx.fr>, (c) 2001
 
 Copyright Fabian Frederick.
 This plugin may be distributed under the same terms as The Gimp itself.
-
-=cut
-

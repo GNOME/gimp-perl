@@ -4,10 +4,10 @@ use Gimp::Data;
 use File::Basename;
 use strict;
 use Carp qw(croak carp);
-use vars qw($run_mode @EXPORT);
-
-@EXPORT = qw($run_mode);
-#@EXPORT_OK = qw($run_mode save_image);
+use vars qw($run_mode @EXPORT_OK @EXPORT %EXPORT_TAGS);
+use base 'Exporter';
+use FindBin qw($RealBin $RealScript);
+use File::stat;
 
 # manual import
 sub __ ($) { goto &Gimp::__ }
@@ -18,139 +18,102 @@ use constant {
   PF_INT32 => Gimp::PDB_INT32,
   PF_FLOAT => Gimp::PDB_FLOAT,
   PF_STRING => Gimp::PDB_STRING,
+  PF_INT32ARRAY => Gimp::PDB_INT32ARRAY,
+  PF_INT16ARRAY => Gimp::PDB_INT16ARRAY,
+  PF_INT8ARRAY => Gimp::PDB_INT8ARRAY,
+  PF_FLOATARRAY => Gimp::PDB_FLOATARRAY,
+  PF_STRINGARRAY => Gimp::PDB_STRINGARRAY,
   PF_COLOR => Gimp::PDB_COLOR,
-  PF_COLOUR => Gimp::PDB_COLOR,
+  PF_ITEM => Gimp::PDB_ITEM,
   PF_IMAGE => Gimp::PDB_IMAGE,
   PF_LAYER => Gimp::PDB_LAYER,
   PF_CHANNEL => Gimp::PDB_CHANNEL,
   PF_DRAWABLE => Gimp::PDB_DRAWABLE,
+  PF_COLORARRAY => Gimp::PDB_COLORARRAY,
+  PF_VECTORS => Gimp::PDB_VECTORS,
+  PF_PARASITE => Gimp::PDB_PARASITE,
+  PF_TOGGLE => Gimp::PDB_END + 1,
+  PF_SLIDER => Gimp::PDB_END + 2,
+  PF_FONT => Gimp::PDB_END + 3,
+  PF_SPINNER => Gimp::PDB_END + 4,
+  PF_ADJUSTMENT => Gimp::PDB_END + 5,
+  PF_BRUSH => Gimp::PDB_END + 6,
+  PF_PATTERN => Gimp::PDB_END + 7,
+  PF_GRADIENT => Gimp::PDB_END + 8,
+  PF_RADIO => Gimp::PDB_END + 9,
+  PF_CUSTOM => Gimp::PDB_END + 10,
+  PF_FILE => Gimp::PDB_END + 11,
+  PF_TEXT => Gimp::PDB_END + 12,
+  RUN_FULLINTERACTIVE => Gimp::RUN_INTERACTIVE+100, # you don't want to know
 };
-
-# if put => Gimp::PDB_END below, fails - probable perl bug (5.18.1)
-use constant PDB_END => Gimp::PDB_END();
-
-use constant {
-  PF_TOGGLE => PDB_END + 1,
-  PF_SLIDER => PDB_END + 2,
-  PF_FONT => PDB_END + 3,
-  PF_SPINNER => PDB_END + 4,
-  PF_ADJUSTMENT => PDB_END + 5,
-  PF_BRUSH => PDB_END() + 6,
-  PF_PATTERN => PDB_END + 7,
-  PF_GRADIENT => PDB_END + 8,
-  PF_RADIO => PDB_END + 9,
-  PF_CUSTOM => PDB_END + 10,
-  PF_FILE => PDB_END + 11,
-  PF_TEXT => PDB_END + 12,
-};
-
 use constant {
   PF_BOOL => PF_TOGGLE,
   PF_VALUE => PF_STRING,
+  PF_COLOUR => Gimp::PDB_COLOR,
 };
 
-=head1 NAME
-
-Gimp::Fu - "easy to use" framework for Gimp scripts
-
-=head1 SYNOPSIS
-
-  use Gimp;
-  use Gimp::Fu;
-
-=head1 DESCRIPTION
-
-Currently, there are only three functions in this module. This
-fully suffices to provide a professional interface and the
-ability to run this script from within GIMP and standalone
-from the commandline.
-
-Dov Grobgeld has written an excellent tutorial for Gimp-Perl.
-You can find it at C<http://www.gimp.org/tutorials/Basic_Perl/>.
-
-=head1 INTRODUCTION
-
-In general, a Gimp::Fu script looks like this:
-
-   #!/path/to/your/perl
-
-   use Gimp;
-   use Gimp::Fu;
-
-   register <many arguments>, sub {
-      your code;
-   }
-
-   exit main;
-
-(This distribution comes with example scripts. One is
-C<examples/example-fu.pl>, which is a small Gimp::Fu-script you can take as
-a starting point for your experiments)
-
-=cut
-
-sub Gimp::RUN_FULLINTERACTIVE (){ Gimp::RUN_INTERACTIVE+100 };	# you don't want to know
-
-my %pf_type2string = (
-         &PF_INT8	=> 'integer (8-bit)',
-         &PF_INT16	=> 'integer (16-bit)',
-         &PF_INT32	=> 'integer (32-bit)',
-         &PF_FLOAT	=> 'number',
-         &PF_STRING	=> 'string',
-         &PF_BRUSH	=> 'string',
-         &PF_GRADIENT	=> 'string',
-         &PF_PATTERN	=> 'string',
-         &PF_COLOR	=> 'colour',
-         &PF_FONT	=> 'font',
-         &PF_TOGGLE	=> 'boolean',
-         &PF_SLIDER	=> 'integer',
-         &PF_SPINNER	=> 'integer',
-         &PF_ADJUSTMENT	=> 'integer',
-         &PF_RADIO	=> 'string',
-         &PF_CUSTOM	=> 'string',
-         &PF_FILE	=> 'string',
-         &PF_TEXT	=> 'string',
-         &PF_IMAGE	=> 'image',
-         &PF_LAYER	=> 'layer',
-         &PF_CHANNEL	=> 'channel',
-         &PF_DRAWABLE	=> 'drawable',
+# key is text, bit in array-ref is number!
+# [ int, human-readable-description, GIMP-data-type-if>PDB_END-or-infer ]
+my %pfname2info = (
+   PF_INT8		=> [ PF_INT8, 'integer (8-bit)', ],
+   PF_INT16		=> [ PF_INT16, 'integer (16-bit)', ],
+   PF_INT32		=> [ PF_INT32, 'integer (32-bit)', ],
+   PF_FLOAT		=> [ PF_FLOAT, 'number', ],
+   PF_STRING		=> [ PF_STRING, 'string', ],
+   PF_INT32ARRAY	=> [ PF_INT32ARRAY, 'list of integers (32-bit)' ],
+   PF_INT16ARRAY	=> [ PF_INT16ARRAY, 'list of integers (16-bit)' ],
+   PF_INT8ARRAY		=> [ PF_INT8ARRAY, 'list of integers (8-bit)' ],
+   PF_FLOATARRAY	=> [ PF_FLOATARRAY, 'list of numbers' ],
+   PF_STRINGARRAY	=> [ PF_STRINGARRAY, 'list of strings' ],
+   PF_COLOR		=> [ PF_COLOR, 'colour', ],
+   PF_ITEM		=> [ PF_ITEM, 'item' ],
+   PF_IMAGE		=> [ PF_IMAGE, 'image', ],
+   PF_LAYER		=> [ PF_LAYER, 'layer', ],
+   PF_CHANNEL		=> [ PF_CHANNEL, 'channel', ],
+   PF_DRAWABLE		=> [ PF_DRAWABLE, 'drawable', ],
+   PF_COLORARRAY	=> [ PF_COLORARRAY, 'list of colours' ],
+   PF_VECTORS		=> [ PF_VECTORS, 'vectors' ],
+   PF_PARASITE		=> [ PF_PARASITE, 'parasite' ],
+   PF_BRUSH		=> [ PF_BRUSH, 'brush', Gimp::PDB_STRING, ],
+   PF_GRADIENT		=> [ PF_GRADIENT, 'gradient', Gimp::PDB_STRING, ],
+   PF_PATTERN		=> [ PF_PATTERN, 'pattern', Gimp::PDB_STRING, ],
+   PF_FONT		=> [ PF_FONT, 'font', Gimp::PDB_STRING, ],
+   PF_TOGGLE		=> [ PF_TOGGLE, 'boolean', Gimp::PDB_INT8, ],
+   PF_SLIDER		=> [ PF_SLIDER, 'number', Gimp::PDB_FLOAT, ],
+   PF_SPINNER		=> [ PF_SPINNER, 'integer', Gimp::PDB_INT32, ],
+   PF_ADJUSTMENT	=> [ PF_ADJUSTMENT, 'number', Gimp::PDB_FLOAT, ],
+   PF_RADIO		=> [ PF_RADIO, 'data', ],
+   PF_CUSTOM		=> [ PF_CUSTOM, 'string', Gimp::PDB_STRING, ],
+   PF_FILE		=> [ PF_FILE, 'filename', Gimp::PDB_STRING, ],
+   PF_TEXT		=> [ PF_TEXT, 'string', Gimp::PDB_STRING, ],
 );
+$pfname2info{PF_COLOUR} = $pfname2info{PF_COLOR};
+$pfname2info{PF_BOOL} = $pfname2info{PF_TOGGLE};
+$pfname2info{PF_VALUE} = $pfname2info{PF_FLOAT};
+my %pf2info = map {
+   my $v = $pfname2info{$_}; ($v->[0] => [ @$v[1,2] ])
+} keys %pfname2info;
+
+@EXPORT_OK = qw($run_mode save_image);
+%EXPORT_TAGS = (
+   params => [ keys %pfname2info ]
+);
+@EXPORT = (qw(register main), @{$EXPORT_TAGS{params}});
 
 my @scripts;
 
-my @_params=qw(PF_INT8 PF_INT16 PF_INT32 PF_FLOAT PF_VALUE PF_STRING PF_COLOR
-            PF_COLOUR PF_TOGGLE PF_IMAGE PF_DRAWABLE PF_FONT PF_LAYER
-            PF_CHANNEL PF_BOOL PF_SLIDER PF_SPINNER PF_ADJUSTMENT
-            PF_BRUSH PF_PATTERN PF_GRADIENT PF_RADIO PF_CUSTOM PF_FILE
-            PF_TEXT);
-
-sub import {
-   local $^W=0;
-   my $up = caller;
-   shift;
-   @_ = (qw(register main),@_params) unless @_;
-   for (@_) {
-      if ($_ eq ":params") {
-         push (@_, @_params);
-      } else {
-	 no strict 'refs';
-         *{"${up}::$_"} = \&$_;
-      }
-   }
-}
-
 # Some Standard Arguments
-my @image_params = ([&Gimp::PDB_IMAGE, "image", "The image to work on"],
-                    [&Gimp::PDB_DRAWABLE, "drawable", "The drawable to work on"]);
+my @image_params = ([Gimp::PDB_IMAGE, "image", "The image to work on"],
+                    [Gimp::PDB_DRAWABLE, "drawable", "The drawable to work on"]);
 
-my @load_params  = ([&Gimp::PDB_STRING, "filename", "The name of the file"],
-                    [&Gimp::PDB_STRING, "raw_filename", "The name of the file"]);
+my @load_params  = ([Gimp::PDB_STRING, "filename", "The name of the file"],
+                    [Gimp::PDB_STRING, "raw_filename", "The name of the file"]);
 
 my @save_params  = (@image_params, @load_params);
 
-my @load_retvals = ([&Gimp::PDB_IMAGE, "image", "Output image"]);
+my @load_retvals = ([Gimp::PDB_IMAGE, "image", "Output image"]);
 
-my $image_retval = [&Gimp::PDB_IMAGE, "image", "The resulting image"];
+my $image_retval = [Gimp::PDB_IMAGE, "image", "The resulting image"];
 
 # expand all the pod directives in string (currently they are only removed)
 sub expand_podsections() {
@@ -199,33 +162,21 @@ my $latest_image;
 
 sub string2pf($$) {
    my ($s, $type, $name, $desc) = ($_[0], @{$_[1]});
-   if($type == PF_STRING
-      || $type == PF_FONT
-      || $type == PF_PATTERN
-      || $type == PF_BRUSH
-      || $type == PF_CUSTOM
-      || $type == PF_FILE
-      || $type == PF_TEXT
-      || $type == PF_RADIO	# for now! #d#
-      || $type == PF_GRADIENT) {
+   if($pf2info{$type}->[0] eq 'string') {
       $s;
-   } elsif($type == PF_INT8
-           || $type==PF_INT16
-           || $type==PF_INT32
-           || $type==PF_SLIDER
-           || $type==PF_SPINNER
-           || $type==PF_ADJUSTMENT) {
+   } elsif($pf2info{$type}->[0] =~ /integer/) {
       die __"$s: not an integer\n" unless $s==int($s);
       $s*1;
-   } elsif($type == PF_FLOAT) {
-      $s*1;
+   } elsif($pf2info{$type}->[0] eq 'number') {
+      die __"$s: not a number\n" unless $s==1.0*$s;
+      $s*1.0;
    } elsif($type == PF_COLOUR) {
       $s=Gimp::canonicalize_colour($s);
-   } elsif($type == PF_TOGGLE) {
+   } elsif($pf2info{$type}->[0] eq 'boolean') {
       $s?1:0;
    #} elsif($type == PF_IMAGE) {
    } else {
-      die __"conversion from string to type $pf_type2string{$type} is not yet implemented\n";
+      die __"conversion from string to type $pf2info{$type}->[0] is not yet implemented\n";
    }
 }
 
@@ -289,7 +240,7 @@ Gimp::on_net {
 
    # Go for it
    $perl_sub->(
-      ($interact>0 ? &Gimp::RUN_FULLINTERACTIVE : &Gimp::RUN_NONINTERACTIVE),
+      ($interact>0 ? RUN_FULLINTERACTIVE : Gimp::RUN_NONINTERACTIVE),
       @args
    );
 };
@@ -303,36 +254,23 @@ Gimp::on_query {
 
       for (@$results) {
          next if ref $_;
-         if ($_ == &Gimp::PDB_IMAGE) {
+         if ($_ == Gimp::PDB_IMAGE) {
             $_ = $image_retval;
          }
       }
 
-      # guess the datatype. yeah!
       sub datatype(@) {
+	 warn __PACKAGE__."datatype(@_)" if $Gimp::verbose;
          for(@_) {
             return Gimp::PDB_STRING unless /^([+-]?)(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?$/; # perlfaq4
             return Gimp::PDB_FLOAT  unless /^[+-]?\d+$/; # again
          }
          return Gimp::PDB_INT32;
       }
-      sub odd_values(@) {
-         my %x = @_; values %x;
-      }
 
       for(@$params) {
-         $_->[0]=Gimp::PDB_INT32	if $_->[0] == PF_TOGGLE;
-         $_->[0]=Gimp::PDB_STRING	if $_->[0] == PF_FONT;
-         $_->[0]=Gimp::PDB_STRING	if $_->[0] == PF_BRUSH;
-         $_->[0]=Gimp::PDB_STRING	if $_->[0] == PF_PATTERN;
-         $_->[0]=Gimp::PDB_STRING	if $_->[0] == PF_GRADIENT;
-         $_->[0]=Gimp::PDB_STRING	if $_->[0] == PF_CUSTOM;
-         $_->[0]=Gimp::PDB_STRING	if $_->[0] == PF_FILE;
-         $_->[0]=Gimp::PDB_STRING	if $_->[0] == PF_TEXT;
-         $_->[0]=datatype(odd_values(@{$_->[4]})) if $_->[0] == PF_RADIO;
-         $_->[0]=datatype($_->[3],@{$_->[4]}) if $_->[0] == PF_SLIDER;
-         $_->[0]=datatype($_->[3],@{$_->[4]}) if $_->[0] == PF_SPINNER;
-         $_->[0]=datatype($_->[3],@{$_->[4]}) if $_->[0] == PF_ADJUSTMENT;
+	 next if $_->[0] < Gimp::PDB_END;
+	 $_->[0] = $pf2info{$_->[0]}->[1] // datatype(values %{+{@{$_->[4]}}});
       }
 
       warn "$$-Gimp::Fu gimp_install_procedure params (@$params)" if $Gimp::verbose;
@@ -357,7 +295,298 @@ Gimp::on_query {
    }
 };
 
-=cut
+sub register($$$$$$$$$;@) {
+   no strict 'refs';
+   my ($function, $blurb, $help, $author, $copyright, $date,
+       $menupath, $imagetypes, $params) = splice @_, 0, 9;
+   my ($results, $code, $type);
+
+   $results  = (ref $_[0] eq "ARRAY") ? shift : [];
+   $code = shift;
+
+   if ($menupath =~ /^<Image>\//) {
+      $type = Gimp::PLUGIN;
+      if (defined $imagetypes and length $imagetypes) {
+	 unshift @$params, @image_params;
+      }
+   } elsif ($menupath =~ /^<Load>\//) {
+      $type = Gimp::PLUGIN;
+      unshift @$params, @load_params;
+      unshift @$results, @load_retvals;
+   } elsif ($menupath =~ /^<Save>\//) {
+      $type = Gimp::PLUGIN;
+      unshift @$params, @save_params;
+   } elsif ($menupath =~ m#^<Toolbox>/Xtns/#) {
+      $type = Gimp::PLUGIN;
+      undef $imagetypes;
+   } elsif ($menupath =~ /^<None>/) {
+      $type = Gimp::PLUGIN;
+      undef $menupath;
+      undef $imagetypes;
+   } else {
+      die __"menupath _must_ start with <Image>, <Load>, <Save>, <Toolbox>/Xtns/, or <None>!";
+   }
+
+   @_==0 or die __"register called with too many or wrong arguments\n";
+
+   for my $p (@$params,@$results) {
+      next unless ref $p;
+      croak __"$function: argument/return value '$p->[1]' has illegal type '$p->[0]'"
+	unless int($p->[0]) eq $p->[0];
+      carp(__"$function: argument name '$p->[1]' contains illegal characters, only 0-9, a-z and _ allowed")
+	unless $p->[1]=~/^[0-9a-z_]+$/;
+   }
+
+   $function="perl_fu_".$function unless $function =~ /^(?:perl_fu_|extension_|plug_in_|file_)/ || $function =~ s/^\+//;
+
+   $function=~/^[0-9a-z_]+(-ALT)?$/ or carp(__"$function: function name contains unusual characters, good style is to use only 0-9, a-z and _");
+
+   Gimp::logger message => __"function name contains dashes instead of underscores",
+                function => $function, fatal => 0
+      if $function =~ y/-//;
+
+   my $perl_sub = sub {
+      $run_mode = shift;	# global!
+      my(@pre,@defaults,@lastvals,$input_image);
+
+      Gimp::ignore_functions(@Gimp::GUI_FUNCTIONS)
+	 unless $run_mode == Gimp::RUN_INTERACTIVE or
+	        $run_mode == RUN_FULLINTERACTIVE;
+
+      # set default arguments
+      for (0..$#{$params}) {
+         next if defined $_[$_];
+         my $default = $params->[$_]->[3];
+         $default = $default->[0] if $params->[$_]->[0] == PF_ADJUSTMENT;
+         $_[$_] = $default;
+      }
+
+      for($menupath) {
+         if (/^<Image>\//) {
+	    if (defined $imagetypes and length $imagetypes) {
+	       @_ >= 2 or die __"<Image> plug-in called without both image and drawable arguments!\n";
+	       @pre = (shift,shift);
+	    }
+         } elsif (/^<Load>\//) {
+            @_ >= 2 or die __"<Load> plug-in called without the 3 standard arguments!\n";
+            @pre = (shift,shift);
+         } elsif (/^<Save>\//) {
+            @_ >= 4 or die __"<Save> plug-in called without the 5 standard arguments!\n";
+            @pre = (shift,shift,shift,shift);
+	 } elsif (m#^<Toolbox>/Xtns/#) {
+	    # no-op
+         } elsif (defined $_) {
+	    die __"menupath _must_ start with <Image>, <Load>, <Save>, <Toolbox>/Xtns/, or <None>!";
+         }
+      }
+      warn "perlsub: rm=$run_mode" if $Gimp::verbose;
+      if ($run_mode == Gimp::RUN_INTERACTIVE
+          || $run_mode == Gimp::RUN_WITH_LAST_VALS) {
+         my $fudata = $Gimp::Data{"$function/_fu_data"};
+	 if ($fudata) {
+	    my $data_savetime = shift @$fudata;
+	    my $script_savetime = stat("$RealBin/$RealScript")->mtime;
+	    undef $fudata if $script_savetime > $data_savetime;
+	 }
+	 if ($Gimp::verbose) {
+	    require Data::Dumper;
+	    warn "$$-retrieved fudata: ", Data::Dumper::Dumper($fudata);
+	 }
+
+         if ($run_mode == Gimp::RUN_WITH_LAST_VALS && $fudata) {
+            @_ = @$fudata;
+         } else {
+            if (@_) {
+               # prevent the standard arguments from showing up in interact
+               my @hide = splice @$params, 0, scalar @pre;
+
+               my $res;
+               ($res,@_)=interact($function,$blurb,$help,$params,@{$fudata});
+               return (undef) x @$results unless $res;
+
+               unshift @$params, @hide;
+            }
+         }
+      } elsif ($run_mode == RUN_FULLINTERACTIVE) {
+         if (@_) {
+            my($res);
+            ($res,@_)=interact($function,$blurb,$help,$params,@pre,@_);
+            undef @pre;
+            return (undef) x @$results unless $res; # right AMOUNT of nothing
+         }
+      } elsif ($run_mode == Gimp::RUN_NONINTERACTIVE) {
+         # nop
+      } else {
+         die __"run_mode must be INTERACTIVE, NONINTERACTIVE or RUN_WITH_LAST_VALS\n";
+      }
+      $input_image = $_[0]   if ref $_[0]   eq "Gimp::Image";
+      $input_image = $pre[0] if ref $pre[0] eq "Gimp::Image";
+
+      if ($Gimp::verbose) {
+	 require Data::Dumper;
+	 warn "$$-storing fudata: ", Data::Dumper::Dumper(\@_);
+      }
+      $Gimp::Data{"$function/_fu_data"}=[time, @_];
+
+      print "$$-Gimp::Fu-generated sub: $function(",join(",",(@pre,@_)),")\n" if $Gimp::verbose;
+
+      Gimp::set_trace ($old_trace);
+      my @retvals = $code->(@pre,@_);
+      $old_trace = Gimp::set_trace (0);
+
+      if ($outputfile and $menupath !~ /^<Load>\//) {
+	 my @images = grep { defined $_ and ref $_ eq "Gimp::Image" } @retvals;
+	 if (@images) {
+	    for my $i (0..$#images) {
+	       my $path = sprintf $outputfile, $i;
+	       if (@images > 1 and $path eq $outputfile) {
+		  $path=~s/\.(?=[^.]*$)/$i./; # insert number before last dot
+	       }
+	       save_image($images[$i],$path);
+	       $images[$i]->delete;
+	    }
+	 } elsif ($input_image) {
+	    save_image($input_image, sprintf $outputfile, 0);
+	 } else {
+	    die "$0: outputfile specified but plugin returned no image and no input image\n";
+	 }
+      }
+
+      Gimp::set_trace ($old_trace);
+      wantarray ? @retvals : $retvals[0];
+   };
+
+   Gimp::register_callback($function,$perl_sub);
+   push(@scripts,[$perl_sub,$function,$blurb,$help,$author,$copyright,$date,
+                  $menupath,$imagetypes,$params,$results,$code,$type]);
+}
+
+sub save_image($$) {
+   my($img,$path)=@_;
+   print "saving image $path\n" if $Gimp::verbose;
+   my($flatten,$type);
+
+   my $interlace=0;
+   my $quality=0.75;
+   my $smooth=0;
+   my $compress=7;
+   my $loop=0;
+   my $delay=0;
+   my $dispose=0;
+   my $noextra=0;
+
+   $_=$path=~s/^([^:]+):// ? $1 : "";
+   $type=uc($1) if $path=~/\.([^.]+)$/;
+   $type=uc($1) if s/^(GIF|JPG|JPEG|PNM|PNG)//i;
+   while($_ ne "") {
+      $interlace=$1 eq "+",	next if s/^([-+])[iI]//;
+      $flatten=$1 eq "+",	next if s/^([-+])[fF]//;
+      $noextra=$1 eq "+",	next if s/^([-+])[eE]//;
+      $smooth=$1 eq "+",	next if s/^([-+])[sS]//;
+      $quality=$1*0.01,		next if s/^-[qQ](\d+)//;
+      $compress=$1,		next if s/^-[cC](\d+)//;
+      $loop=$1 eq "+",		next if s/^([-+])[lL]//;
+      $delay=$1,		next if s/^-[dD](\d+)//;
+      $dispose=$1,		next if s/^-[pP](\d+)//;
+      croak __"$_: unknown/illegal file-save option";
+   }
+   $flatten=(()=$img->get_layers)>1 unless defined $flatten;
+
+   $img->flatten if $flatten;
+
+   # always save the active layer
+   my $layer = $img->get_active_layer;
+
+   if ($type eq "JPG" or $type eq "JPEG") {
+      eval { $layer->file_jpeg_save($path,$path,$quality,$smooth,1) };
+      $layer->file_jpeg_save($path,$path,$quality,$smooth,1,$interlace,"",0,1,0,0) if $@;
+   } elsif ($type eq "GIF") {
+      unless ($layer->is_indexed) {
+         eval { $img->convert_indexed(1,256) };
+         $img->convert_indexed(2,Gimp::MAKE_PALETTE,256,1,1,"") if $@;
+      }
+      $layer->file_gif_save($path,$path,$interlace,$loop,$delay,$dispose);
+   } elsif ($type eq "PNG") {
+      $layer->file_png_save($path,$path,$interlace,$compress,(!$noextra) x 5);
+   } elsif ($type eq "PNM") {
+      $layer->file_pnm_save($path,$path,1);
+   } else {
+      $layer->gimp_file_save($path,$path);
+   }
+}
+
+# provide some clues ;)
+sub print_switches {
+   my($this)=@_;
+   for(@{$this->[9]}) {
+      my $type=$pf2info{$_->[0]}->[0];
+      my $key=mangle_key($_->[1]);
+      my $default_text = defined $_->[3]
+	  ? " [".(ref $_->[3] eq 'ARRAY' ? "[@{$_->[3]}]" : $_->[3])."]"
+	  : "";
+      printf "           -%-25s %s%s\n",
+	"$key $type",
+	$_->[2],
+	$default_text;
+   }
+}
+
+sub main {
+   $old_trace = Gimp::set_trace (0);
+   if ($Gimp::help) {
+      my $this=this_script;
+      print __<<EOF;
+       interface-arguments are
+           -o | --output <filespec>   write image to disk
+           -i | --interact            let the user edit the values first
+       script-arguments are
+EOF
+      print_switches ($this);
+   } else {
+      Gimp::main;
+   }
+}
+
+1;
+__END__
+
+=head1 NAME
+
+Gimp::Fu - "easy to use" framework for Gimp scripts
+
+=head1 SYNOPSIS
+
+  use Gimp;
+  use Gimp::Fu;
+
+=head1 DESCRIPTION
+
+Currently, there are only three functions in this module. This
+fully suffices to provide a professional interface and the
+ability to run this script from within GIMP and standalone
+from the command line.
+
+Dov Grobgeld has written an excellent tutorial for Gimp-Perl.
+You can find it at C<http://www.gimp.org/tutorials/Basic_Perl/>.
+
+=head1 INTRODUCTION
+
+In general, a Gimp::Fu script looks like this:
+
+   #!/path/to/your/perl
+
+   use Gimp;
+   use Gimp::Fu;
+
+   register <many arguments>, sub {
+      your code;
+   }
+
+   exit main;
+
+(This distribution comes with example scripts. One is
+C<examples/example-fu.pl>, which is a small Gimp::Fu-script you can take as
+a starting point for your experiments)
 
 =head2 THE REGISTER FUNCTION
 
@@ -537,7 +766,7 @@ written in other languages.
 
 =item PF_INT8, PF_INT16, PF_INT32
 
-All mapped to sliders with suitable min/max.
+All mapped to sliders or spinners with suitable min/max.
 
 =item PF_FLOAT, PF_VALUE
 
@@ -572,10 +801,11 @@ description will be used for the toggle-button label.
 
 =item PF_SLIDER
 
-Uses a horizontal scale. To set the range and stepsize, append an array ref
-(see Gtk::Adjustment for an explanation) C<[range_min, range_max, step_size,
-page_increment, page_size]> as "extra argument" to the description array.
-Default values will be substitued for missing entries, like in:
+Uses a horizontal scale. To set the range and stepsize, append an
+array ref (see L<Gtk2::Adjustment> for an explanation) C<[range_min,
+range_max, step_size, page_increment, page_size]> as "extra argument"
+to the description array.  Default values will be substitued for missing
+entries, like in:
 
  [PF_SLIDER, "alpha value", "the alpha value", 100, [0, 255, 1] ]
 
@@ -588,7 +818,7 @@ scale.
 
 In addition to a default value, an extra argument describing the various
 options I<must> be provided. That extra argument must be a reference
-to an array filled with C<Option-Name => Option-Value> pairs. Gimp::Fu
+to an array filled with C<Option-Name =E<gt> Option-Value> pairs. Gimp::Fu
 will then generate a horizontal frame with radio buttons, one for each
 alternative. For example:
 
@@ -622,7 +852,7 @@ C<gettor> is a function that should return the current value of the widget.
 
 While the values can be of any type (as long as it fits into a scalar),
 you should be prepared to get a string when the script is started from the
-commandline or via the PDB.
+command line or via the PDB.
 
 =item PF_FILE
 
@@ -658,176 +888,6 @@ documentation. If the named section is not found (or is empty, as in
 Most of the mentioned arguments have default values (see THE REGISTER
 FUNCTION) that are used when the arguments are undefined, making the
 register call itself much shorter.
-
-=cut
-
-sub register($$$$$$$$$;@) {
-   no strict 'refs';
-   my ($function, $blurb, $help, $author, $copyright, $date,
-       $menupath, $imagetypes, $params) = splice @_, 0, 9;
-   my ($results, $code, $type);
-
-   $results  = (ref $_[0] eq "ARRAY") ? shift : [];
-   $code = shift;
-
-   if ($menupath =~ /^<Image>\//) {
-      $type = &Gimp::PLUGIN;
-      if (defined $imagetypes and length $imagetypes) {
-	 unshift @$params, @image_params;
-      }
-   } elsif ($menupath =~ /^<Load>\//) {
-      $type = &Gimp::PLUGIN;
-      unshift @$params, @load_params;
-      unshift @$results, @load_retvals;
-   } elsif ($menupath =~ /^<Save>\//) {
-      $type = &Gimp::PLUGIN;
-      unshift @$params, @save_params;
-   } elsif ($menupath =~ m#^<Toolbox>/Xtns/#) {
-      $type = &Gimp::PLUGIN;
-      undef $imagetypes;
-   } elsif ($menupath =~ /^<None>/) {
-      $type = &Gimp::PLUGIN;
-      undef $menupath;
-      undef $imagetypes;
-   } else {
-      die __"menupath _must_ start with <Image>, <Load>, <Save>, <Toolbox>/Xtns/, or <None>!";
-   }
-
-   @_==0 or die __"register called with too many or wrong arguments\n";
-
-   for my $p (@$params,@$results) {
-      next unless ref $p;
-      croak __"$function: argument/return value '$p->[1]' has illegal type '$p->[0]'"
-	unless int($p->[0]) eq $p->[0];
-      carp(__"$function: argument name '$p->[1]' contains illegal characters, only 0-9, a-z and _ allowed")
-	unless $p->[1]=~/^[0-9a-z_]+$/;
-   }
-
-   $function="perl_fu_".$function unless $function =~ /^(?:perl_fu_|extension_|plug_in_|file_)/ || $function =~ s/^\+//;
-
-   $function=~/^[0-9a-z_]+(-ALT)?$/ or carp(__"$function: function name contains unusual characters, good style is to use only 0-9, a-z and _");
-
-   Gimp::logger message => __"function name contains dashes instead of underscores",
-                function => $function, fatal => 0
-      if $function =~ y/-//;
-
-   my $perl_sub = sub {
-      $run_mode = shift;	# global!
-      my(@pre,@defaults,@lastvals,$input_image);
-
-      Gimp::ignore_functions(@Gimp::GUI_FUNCTIONS)
-	 unless $run_mode == &Gimp::RUN_INTERACTIVE or
-	        $run_mode == &Gimp::RUN_FULLINTERACTIVE;
-
-      # set default arguments
-      for (0..$#{$params}) {
-         next if defined $_[$_];
-         my $default = $params->[$_]->[3];
-         $default = $default->[0] if $params->[$_]->[0] == PF_ADJUSTMENT;
-         $_[$_] = $default;
-      }
-
-      for($menupath) {
-         if (/^<Image>\//) {
-	    if (defined $imagetypes and length $imagetypes) {
-	       @_ >= 2 or die __"<Image> plug-in called without both image and drawable arguments!\n";
-	       @pre = (shift,shift);
-	    }
-         } elsif (/^<Load>\//) {
-            @_ >= 2 or die __"<Load> plug-in called without the 3 standard arguments!\n";
-            @pre = (shift,shift);
-         } elsif (/^<Save>\//) {
-            @_ >= 4 or die __"<Save> plug-in called without the 5 standard arguments!\n";
-            @pre = (shift,shift,shift,shift);
-	 } elsif (m#^<Toolbox>/Xtns/#) {
-	    # no-op
-         } elsif (defined $_) {
-	    die __"menupath _must_ start with <Image>, <Load>, <Save>, <Toolbox>/Xtns/, or <None>!";
-         }
-      }
-      warn "perlsub: rm=$run_mode" if $Gimp::verbose;
-      if ($run_mode == &Gimp::RUN_INTERACTIVE
-          || $run_mode == &Gimp::RUN_WITH_LAST_VALS) {
-         my $fudata = $Gimp::Data{"$function/_fu_data"};
-	 if ($Gimp::verbose) {
-	    require Data::Dumper;
-	    warn "$$-retrieved fudata: ", Data::Dumper::Dumper($fudata);
-	 }
-
-         if ($run_mode == &Gimp::RUN_WITH_LAST_VALS && $fudata) {
-            @_ = @$fudata;
-         } else {
-            if (@_) {
-               # prevent the standard arguments from showing up in interact
-               my @hide = splice @$params, 0, scalar @pre;
-
-               my $res;
-               ($res,@_)=interact($function,$blurb,$help,$params,@{$fudata});
-               return unless $res;
-
-               unshift @$params, @hide;
-            }
-         }
-      } elsif ($run_mode == &Gimp::RUN_FULLINTERACTIVE) {
-         if (@_) {
-            my($res);
-            ($res,@_)=interact($function,$blurb,$help,$params,@pre,@_);
-            undef @pre;
-            return unless $res;
-         }
-      } elsif ($run_mode == &Gimp::RUN_NONINTERACTIVE) {
-         # nop
-      } else {
-         die __"run_mode must be INTERACTIVE, NONINTERACTIVE or RUN_WITH_LAST_VALS\n";
-      }
-      $input_image = $_[0]   if ref $_[0]   eq "Gimp::Image";
-      $input_image = $pre[0] if ref $pre[0] eq "Gimp::Image";
-
-      if ($Gimp::verbose) {
-	 require Data::Dumper;
-	 warn "$$-storing fudata: ", Data::Dumper::Dumper(\@_);
-      }
-      $Gimp::Data{"$function/_fu_data"}=[@_];
-
-      print "$$-Gimp::Fu-generated sub: $function(",join(",",(@pre,@_)),")\n" if $Gimp::verbose;
-
-      Gimp::set_trace ($old_trace);
-      my @retvals = $code->(@pre,@_);
-      $old_trace = Gimp::set_trace (0);
-
-      if ($menupath !~ /^<Load>\//) {
-         if (@retvals) {
-            for my $i (0..$#retvals) {
-               my $img = $retvals[$i];
-               next unless defined $img;
-               if (ref $img eq "Gimp::Image") {
-                  if ($outputfile) {
-                     my $path = sprintf $outputfile,$i;
-                     if ($#retvals and $path eq $outputfile) {
-                        $path=~s/\.(?=[^.]*$)/$i./; # insert image number before last dot
-                     }
-                     print "saving image $path\n" if $Gimp::verbose;
-                     save_image($img,$path);
-                     $img->delete;
-                  } elsif ($run_mode != &Gimp::RUN_NONINTERACTIVE) {
-                     $img->display_new unless $input_image && $$img == $$input_image;
-                  }
-               }
-            }
-         }
-         Gimp->displays_flush;
-      }
-
-      Gimp::set_trace ($old_trace);
-      wantarray ? @retvals : $retvals[0];
-   };
-
-   Gimp::register_callback($function,$perl_sub);
-   push(@scripts,[$perl_sub,$function,$blurb,$help,$author,$copyright,$date,
-                  $menupath,$imagetypes,$params,$results,$code,$type]);
-}
-
-=cut
 
 =head2 MISC. FUNCTIONS
 
@@ -881,96 +941,6 @@ some examples:
 
 =back
 
-=cut
-
-sub save_image($$) {
-   my($img,$path)=@_;
-   my($flatten,$type);
-
-   my $interlace=0;
-   my $quality=0.75;
-   my $smooth=0;
-   my $compress=7;
-   my $loop=0;
-   my $delay=0;
-   my $dispose=0;
-   my $noextra=0;
-
-   $_=$path=~s/^([^:]+):// ? $1 : "";
-   $type=uc($1) if $path=~/\.([^.]+)$/;
-   $type=uc($1) if s/^(GIF|JPG|JPEG|PNM|PNG)//i;
-   while($_ ne "") {
-      $interlace=$1 eq "+",	next if s/^([-+])[iI]//;
-      $flatten=$1 eq "+",	next if s/^([-+])[fF]//;
-      $noextra=$1 eq "+",	next if s/^([-+])[eE]//;
-      $smooth=$1 eq "+",	next if s/^([-+])[sS]//;
-      $quality=$1*0.01,		next if s/^-[qQ](\d+)//;
-      $compress=$1,		next if s/^-[cC](\d+)//;
-      $loop=$1 eq "+",		next if s/^([-+])[lL]//;
-      $delay=$1,		next if s/^-[dD](\d+)//;
-      $dispose=$1,		next if s/^-[pP](\d+)//;
-      croak __"$_: unknown/illegal file-save option";
-   }
-   $flatten=(()=$img->get_layers)>1 unless defined $flatten;
-
-   $img->flatten if $flatten;
-
-   # always save the active layer
-   my $layer = $img->get_active_layer;
-
-   if ($type eq "JPG" or $type eq "JPEG") {
-      eval { $layer->file_jpeg_save($path,$path,$quality,$smooth,1) };
-      $layer->file_jpeg_save($path,$path,$quality,$smooth,1,$interlace,"",0,1,0,0) if $@;
-   } elsif ($type eq "GIF") {
-      unless ($layer->is_indexed) {
-         eval { $img->convert_indexed(1,256) };
-         $img->convert_indexed(2,&Gimp::MAKE_PALETTE,256,1,1,"") if $@;
-      }
-      $layer->file_gif_save($path,$path,$interlace,$loop,$delay,$dispose);
-   } elsif ($type eq "PNG") {
-      $layer->file_png_save($path,$path,$interlace,$compress,(!$noextra) x 5);
-   } elsif ($type eq "PNM") {
-      $layer->file_pnm_save($path,$path,1);
-   } else {
-      $layer->gimp_file_save($path,$path);
-   }
-}
-
-# provide some clues ;)
-sub print_switches {
-   my($this)=@_;
-   for(@{$this->[9]}) {
-      my $type=$pf_type2string{$_->[0]};
-      my $key=mangle_key($_->[1]);
-      my $default_text = defined $_->[3]
-	  ? " [".(ref $_->[3] eq 'ARRAY' ? "[@{$_->[3]}]" : $_->[3])."]"
-	  : "";
-      printf "           -%-25s %s%s\n",
-	"$key $type",
-	$_->[2],
-	$default_text;
-   }
-}
-
-sub main {
-   $old_trace = Gimp::set_trace (0);
-   if ($Gimp::help) {
-      my $this=this_script;
-      print __<<EOF;
-       interface-arguments are
-           -o | --output <filespec>   write image to disk
-           -i | --interact            let the user edit the values first
-       script-arguments are
-EOF
-      print_switches ($this);
-   } else {
-      Gimp::main;
-   }
-}
-
-1;
-__END__
-
 =head1 AUTHOR
 
 Marc Lehmann <pcg@goof.com>
@@ -978,5 +948,3 @@ Marc Lehmann <pcg@goof.com>
 =head1 SEE ALSO
 
 perl(1), L<Gimp>.
-
-=cut

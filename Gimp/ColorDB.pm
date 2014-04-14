@@ -31,11 +31,9 @@ sub canonicalize_colour {
       my @loc_col = @{$_[0]};
       @loc_col = map {$_ = ($_>1) ? $_/255.0 : $_} @loc_col;
       return [@loc_col];
-   } elsif (
-      $_[0] =~ /^#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/
-   ) {
+   } elsif ($_[0] =~ /^#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/) {
       # convert hex specfier of #xxyyzz
-      return [ map { eval "0x$_/255.0" } ($1, $2, $3) ];
+      return [ map { hex($_)/255.0 } ($1, $2, $3) ];
    } else {
       unless (%rgb_db) {
          if ($rgb_db_path) {

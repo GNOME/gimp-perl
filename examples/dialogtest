@@ -2,7 +2,7 @@
 
 use strict;
 #BEGIN { $Gimp::verbose = 1; }
-use Gimp qw(:auto __ N_);
+use Gimp;
 use Gimp::Fu;
 #Gimp::set_trace(TRACE_ALL);
 
