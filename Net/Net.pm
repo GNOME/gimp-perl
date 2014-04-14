@@ -240,7 +240,6 @@ sub gimp_init {
    }
 
    $initialized = 1;
-   Gimp::_initialized_callback;
    warn "$$-Finished gimp_init(@_)" if $Gimp::verbose;
 }
 
@@ -258,7 +257,7 @@ sub gimp_main {
    eval { Gimp::callback("-net") };
    if($@ && $@ ne "IGNORE THIS MESSAGE\n") {
       chomp(my $exception = $@);
-      Gimp::logger(message => $exception, fatal => 1, function => 'DIE');
+      warn "$0 exception: $exception\n";
       gimp_end;
       -1;
    } else {

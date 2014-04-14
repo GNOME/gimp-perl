@@ -14,13 +14,8 @@ Items as of 2014-03-31 (by Ed J)
 * Add a gtk2 gimp-perl console - cf http://registry.gimp.org/node/29348
   - gimp/plug-ins/script-fu/script-fu-console.c
 * Test menupath <File> etc
-* "IGNORE THIS MESSAGE" - $in_top - what??
-* die causes "Server-Warning" with duplicate exception message when
-  Gimp::Fu in net mode dies. Gimp::_initialized_callback is sending
-  @log to gimp_message and appending to 'gimp-perl-log' - don't see what
-  benefit to either of those. Suspect _icb, logger, and PS flags are
-  obsolete - replace with verbose
-* set_trace may also be obsolete
+* "IGNORE THIS MESSAGE" - $in_top - whole quiet_die probably needs to go too
+* PS flags are obsolete - replace with verbose - set_trace may also be obsolete
 
 Legacy notes from Seth Burgess:
 * Win32 port

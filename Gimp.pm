@@ -185,47 +185,6 @@ EOF
    }
 }
 
-# section on logging
-
-my @log;
-
-sub format_msg {
-   $_=shift;
-   "$_->[0]: $_->[2] ".($_->[1] ? "($_->[1])":"");
-}
-
-sub _initialized_callback {
-   if (@log) {
-      my $oldtrace = set_trace(0);
-      unless ($in_net || $in_query || $in_quit || $in_init) {
-         for(@log) {
-            Gimp->message(format_msg($_)) if $_->[3];
-         }
-      }
-      Gimp->_gimp_append_data ('gimp-perl-log', map join("\1",@$_)."\0",@log);
-      @log=();
-      set_trace($oldtrace);
-   }
-}
-
-# message
-# function
-# fatal
-sub logger {
-   my %args = @_;
-   $args{message}  = "unknown message"    unless defined $args{message};
-   $args{function} = $function            unless defined $args{function};
-   $args{function} = ""                   unless defined $args{function};
-   $args{fatal}    = 1                    unless defined $args{fatal};
-   push(@log,[$basename,@args{'function','message','fatal'}]);
-   print STDERR format_msg($log[-1]),"\n" if !($in_query || $in_init || $in_quit) || $Gimp::verbose;
-   _initialized_callback if initialized();
-}
-
-sub die_msg {
-   logger(message => substr($_[0],0,-1), fatal => 1, function => 'ERROR');
-}
-
 # section on error-handling
 
 # this needs to be improved
@@ -236,18 +195,10 @@ sub quiet_die {
 unless($no_SIG) {
    $SIG{__DIE__} = sub {
       unless ($^S || !defined $^S || $in_quit) {
-         die_msg $_[0];
+         warn $_[0];
          initialized() ? &quiet_die : exit quiet_main();
       } else {
          die $_[0];
-      }
-   };
-
-   $SIG{__WARN__} = sub {
-      unless ($in_quit) {
-         warn $_[0];
-      } else {
-         logger(message => substr($_[0],0,-1), fatal => 0, function => __"WARNING");
       }
    };
 }
@@ -266,9 +217,8 @@ sub callback {
   if ($type eq "-run") {
     local $function = shift;
     local $in_run = 1;
-    _initialized_callback;
     @cb = cbchain(qw(run lib), $function);
-    die_msg __"required callback 'run' not found\n" unless @cb;
+    die __"required callback 'run' not found\n" unless @cb;
     # returning list of last func's return values
     my @retvals;
     for (@cb) {
@@ -277,9 +227,8 @@ sub callback {
     @retvals;
   } elsif ($type eq "-net") {
     local $in_net = 1;
-    _initialized_callback;
     @cb = cbchain(qw(run net), $function);
-    die_msg __"required callback 'net' not found\n" unless @cb;
+    die __"required callback 'net' not found\n" unless @cb;
     # returning list of last func's return values
     my @retvals;
     for (@cb) {
@@ -288,9 +237,8 @@ sub callback {
     @retvals;
   } elsif ($type eq "-query") {
     local $in_query = 1;
-    _initialized_callback;
     @cb = cbchain(qw(query));
-    die_msg __"required callback 'query' not found\n" unless @cb;
+    die __"required callback 'query' not found\n" unless @cb;
     for (@cb) { &$_ }
   } elsif ($type eq "-quit") {
     local $in_quit = 1;
