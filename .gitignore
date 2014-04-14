@@ -9,6 +9,7 @@ Makefile
 Makefile.old
 Gimp.c
 Gimp/Config.pm
+Gimp/IFiles.pm
 Gimp/Lib.c
 Net/Net.c
 UI/UI.c
