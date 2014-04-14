@@ -22,7 +22,5 @@ L<Gimp>.
 
 =cut
 
-%Gimp::Config = (
-#CFG#);
-
+#CFG#
 1;

@@ -27,13 +27,13 @@ EOF
 }
 
 my $cfg = io("Gimp/Config.pm.in")->all or die "Gimp/Config.pm.in: $!\n";
-$Data::Dumper::Terse = 1; $Data::Dumper::Indent = 0;
-$cfg =~ s/#CFG#/join "", map { "  $_ => ".Dumper($cfg{$_}).",\n" } keys %cfg/e;
+$cfg =~ s/#CFG#/Data::Dumper->Dump([\%cfg], ['*Gimp::Config'])/e;
 io("Gimp/Config.pm")->print($cfg) or die "Gimp/Config.pm: $!\n";
 
 my $pkg = new ExtUtils::Depends Gimp, Gtk2;
 $pkg->set_inc($cfg{GIMP_CFLAGS});
 $pkg->add_pm(map { ($_ => "\$(INST_LIB)/$_") } qw(Gimp.pm));
+$pkg->save_config('Gimp/IFiles.pm');
 
 WriteMakefile(
   'dist'	=> {

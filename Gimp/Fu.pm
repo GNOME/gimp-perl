@@ -515,9 +515,16 @@ sub save_image($$) {
    }
 }
 
-# provide some clues ;)
-sub print_switches {
-   my($this)=@_;
+sub main {
+   $old_trace = Gimp::set_trace (0);
+   return Gimp::main unless $Gimp::help;
+   my $this=this_script;
+   print __<<EOF;
+       interface-arguments are
+           -o | --output <filespec>   write image to disk
+           -i | --interact            let the user edit the values first
+       script-arguments are
+EOF
    for(@{$this->[9]}) {
       my $type=$pf2info{$_->[0]}->[0];
       my $key=mangle_key($_->[1]);
@@ -528,22 +535,6 @@ sub print_switches {
 	"$key $type",
 	$_->[2],
 	$default_text;
-   }
-}
-
-sub main {
-   $old_trace = Gimp::set_trace (0);
-   if ($Gimp::help) {
-      my $this=this_script;
-      print __<<EOF;
-       interface-arguments are
-           -o | --output <filespec>   write image to disk
-           -i | --interact            let the user edit the values first
-       script-arguments are
-EOF
-      print_switches ($this);
-   } else {
-      Gimp::main;
    }
 }
 
