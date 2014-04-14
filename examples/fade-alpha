@@ -1076,7 +1076,7 @@ PLUGIN,
 []);
 };
 
-exit main;
+exit Gimp::main;
 
 =head1 LICENSE
 

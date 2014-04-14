@@ -32,7 +32,7 @@ use Carp qw(croak);
    gimp_display_delete
 );
 
-my @_procs = ('main', '__', 'N_');
+my @_procs = ('__', 'N_');
 #my @_default = (@_procs, ':consts' ,':_auto2');
 my @_default = (@_procs, ':consts');
 my @POLLUTE_CLASSES;
@@ -168,7 +168,6 @@ if (@ARGV) {
             print __<<EOF;
 Usage: $0 [gimp-args..] [interface-args..] [script-args..]
            gimp-arguments are
-           -gimp <anything>           used internally only
            -h | -help | --help | -?   print some help
            -v | --verbose             be more verbose in what you do
            --host|--tcp HOST[:PORT]   connect to HOST (optionally using PORT)
@@ -535,7 +534,7 @@ The default set (see below).
 
 =back
 
-The default (unless '' is specified) is C<'main', ':consts', '__'>.
+The default (unless '' is specified) is C<':consts', 'N_', '__'>.
 (C<'__'> is used for i18n purposes).
 
 =head1 GETTING STARTED
@@ -632,7 +631,7 @@ C<Gimp::main>.
 
 The return code should be immediately handed out to exit:
 
- exit main;		# Gimp::main is exported by default.
+ exit Gimp::main;
 
 Before the call to C<Gimp::main>, I<no> other PDB function must be called.
 
@@ -760,7 +759,7 @@ not as Methods (C<Gimp-E<gt>>).
 
 =over 4
 
-=item main(), Gimp::main()
+=item Gimp::main()
 
 Should be called immediately when perl is initialized. Arguments are not
 supported. Initializations can later be done in the init function.

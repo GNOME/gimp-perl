@@ -176,7 +176,6 @@ ok(!Gimp::Plugin->test_float_in(0.75), 'float input');
 eval { Gimp::Plugin->test_pf_adjustment('text'); };
 like($@, qr/Expected a number/, 'pf_adjustment dies on non-INT32');
 is(Gimp::Plugin->test_pf_adjustment(17), 17, 'adj return');
-is(Gimp::Plugin->test_pf_adjustment(undef), 100, 'adj default');
 is(Gimp::Plugin->test_no_params, 1, 'no params');
 is_deeply(
   [ Gimp::Plugin->test_return_int32array ],

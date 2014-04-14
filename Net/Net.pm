@@ -257,7 +257,8 @@ sub gimp_main {
    $Gimp::in_top=0;
    eval { Gimp::callback("-net") };
    if($@ && $@ ne "IGNORE THIS MESSAGE\n") {
-      Gimp::logger(message => substr($@,0,-1), fatal => 1, function => 'DIE');
+      chomp(my $exception = $@);
+      Gimp::logger(message => $exception, fatal => 1, function => 'DIE');
       gimp_end;
       -1;
    } else {
@@ -296,7 +297,7 @@ my $exclusive = 0;
 
 sub slog {
   return if $ps_flags & &PS_FLAG_QUIET;
-  print time(),": ",@_,"\n";
+  print localtime.": ",@_,"\n";
 }
 
 sub reply { my $fh = shift; senddata $fh, args2net(0, @_); }

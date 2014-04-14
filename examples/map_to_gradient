@@ -38,7 +38,7 @@ register "map_to_gradient",
    $grad = $grad->slice('0:-2') unless $alpha;
    $grad = togrey($grad)->dummy(0) unless $drawable->is_rgb;
 
-   my $depth = ($grad->dims)[0]; # precalculcate
+   my $depth = ($grad->dims)[0]; # precalculate
    $grad = $grad->xchg(0,1); # this form is later needed in index, so do it now
 
    my @bounds = $drawable->bounds;

@@ -4,9 +4,6 @@ Items as of 2014-03-31 (by Ed J)
   way to pass GIMP data back and forth directly via typemap system. May
   involve a gimp-perl "wrapper" data structure that pairs an SV with its
   GimpPDBArgType/GimpParamDef counterpart - Gimp::Lib::Data?
-* revisit this, replace script-fu with perl equiv:
-  --batch-interpreter plug-in-script-fu-eval '(plug-in-perl-server $args)'
-  model on gimpsrc/plug-ins/script-fu/script-fu.c (make PS be extension)
 * gimp-perl website: maybe just gimp.org/glossary entry - only needs
   links to CPAN, bugzilla, git - make sure CPAN has all POD docs
   - https://mail.gnome.org/mailman/listinfo/gimp-developer-list
@@ -17,6 +14,13 @@ Items as of 2014-03-31 (by Ed J)
 * Add a gtk2 gimp-perl console - cf http://registry.gimp.org/node/29348
   - gimp/plug-ins/script-fu/script-fu-console.c
 * Test menupath <File> etc
+* "IGNORE THIS MESSAGE" - $in_top - what??
+* die causes "Server-Warning" with duplicate exception message when
+  Gimp::Fu in net mode dies. Gimp::_initialized_callback is sending
+  @log to gimp_message and appending to 'gimp-perl-log' - don't see what
+  benefit to either of those. Suspect _icb, logger, and PS flags are
+  obsolete - replace with verbose
+* set_trace may also be obsolete
 
 Legacy notes from Seth Burgess:
 * Win32 port

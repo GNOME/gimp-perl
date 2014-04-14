@@ -37,6 +37,6 @@ for my $class (Gimp->enums_get_type_names) {
 
 @EXPORT = (@INXS, keys %sub2value);
 
-map { my $sub = $_; *{$sub} = sub { $sub2value{$sub} }; } keys %sub2value;
+map { my $sub = $_; *{$sub} = sub () { $sub2value{$sub} }; } keys %sub2value;
 
 1;
