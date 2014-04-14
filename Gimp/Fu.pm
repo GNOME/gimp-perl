@@ -290,8 +290,6 @@ Gimp::on_query {
 	],
 	$results,
       );
-
-      Gimp::logger(message => 'OK', function => $function, fatal => 0);
    }
 };
 
@@ -341,8 +339,7 @@ sub register($$$$$$$$$;@) {
 
    $function=~/^[0-9a-z_]+(-ALT)?$/ or carp(__"$function: function name contains unusual characters, good style is to use only 0-9, a-z and _");
 
-   Gimp::logger message => __"function name contains dashes instead of underscores",
-                function => $function, fatal => 0
+   carp __"function name contains dashes instead of underscores\n"
       if $function =~ y/-//;
 
    my $perl_sub = sub {

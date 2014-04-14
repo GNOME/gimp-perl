@@ -63,6 +63,6 @@ WriteMakefile(
   'VERSION_FROM' => 'Gimp.pm',
   'EXE_FILES' => [ map { "utils/$_" } qw(gimpdoc xcftopnm embedxpm scm2perl) ],
   'realclean'	=> { FILES => "Makefile" },
-  'clean'	=> { FILES => "Makefile.old stamp-h Gimp/Config.pm" },
+  'clean'	=> { FILES => "Makefile.old stamp-h Gimp/Config.pm Gimp/IFiles.pm" },
   $pkg->get_makefile_vars,
 );
