@@ -195,15 +195,14 @@ sub mangle_key {
 Gimp::on_net {
    no strict 'refs';
    my $this = this_script;
-   my(%map,@args);
+   my(%mangleparam2index,@args);
    my $interact = 1;
    $outputfile = undef;
 
    my($perl_sub,$function,$blurb,$help,$author,$copyright,$date,
       $menupath,$imagetypes,$params,$results,$code,$type)=@$this;
 
-   # %map is a hash that associates (mangled) parameter names to parameter index
-   @map{map mangle_key($_->[1]), @{$params}} = (0..$#{$params});
+   @mangleparam2index{map mangle_key($_->[1]), @$params} = (0..$#{$params});
 
    # Parse the command line
    while(defined($_=shift @ARGV)) {
@@ -217,7 +216,7 @@ Gimp::on_net {
 	   exit 0;
 	 } else {
            my $arg=shift @ARGV;
-	   my $idx=$map{$1};
+	   my $idx=$mangleparam2index{$1};
 	   die __"$_: illegal switch, try $0 --help\n" unless defined($idx);
 	   $args[$idx]=string2pf($arg,$params->[$idx]);
 	   $interact--;
@@ -232,10 +231,10 @@ Gimp::on_net {
 
    # Fill in default arguments
    foreach my $i (0..@$params-1) {
-       next if defined $args[$i];
-       my $entry = $params->[$i];
-       $args[$i] = $entry->[3];             # Default value
-       die __"parameter '$entry->[1]' is not optional\n" unless defined $args[$i] || $interact>0;
+      next if defined $args[$i];
+      my $entry = $params->[$i];
+      $args[$i] = $entry->[3];             # Default value
+      die __"parameter '$entry->[1]' is not optional\n" unless defined $args[$i] || $interact>0;
    }
 
    # Go for it
@@ -244,6 +243,15 @@ Gimp::on_net {
       @args
    );
 };
+
+sub datatype(@) {
+   warn __PACKAGE__."::datatype(@_)" if $Gimp::verbose;
+   for(@_) {
+      return Gimp::PDB_STRING unless /^([+-]?)(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?$/; # perlfaq4
+      return Gimp::PDB_FLOAT  unless /^[+-]?\d+$/; # again
+   }
+   return Gimp::PDB_INT32;
+}
 
 Gimp::on_query {
    expand_podsections;
@@ -257,15 +265,6 @@ Gimp::on_query {
          if ($_ == Gimp::PDB_IMAGE) {
             $_ = $image_retval;
          }
-      }
-
-      sub datatype(@) {
-	 warn __PACKAGE__."datatype(@_)" if $Gimp::verbose;
-         for(@_) {
-            return Gimp::PDB_STRING unless /^([+-]?)(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?$/; # perlfaq4
-            return Gimp::PDB_FLOAT  unless /^[+-]?\d+$/; # again
-         }
-         return Gimp::PDB_INT32;
       }
 
       for(@$params) {
@@ -427,9 +426,7 @@ sub register($$$$$$$$$;@) {
 
       print "$$-Gimp::Fu-generated sub: $function(",join(",",(@pre,@_)),")\n" if $Gimp::verbose;
 
-      Gimp::set_trace ($old_trace);
       my @retvals = $code->(@pre,@_);
-      $old_trace = Gimp::set_trace (0);
 
       if ($outputfile and $menupath !~ /^<Load>\//) {
 	 my @images = grep { defined $_ and ref $_ eq "Gimp::Image" } @retvals;
@@ -449,7 +446,6 @@ sub register($$$$$$$$$;@) {
 	 }
       }
 
-      Gimp::set_trace ($old_trace);
       wantarray ? @retvals : $retvals[0];
    };
 
@@ -513,7 +509,6 @@ sub save_image($$) {
 }
 
 sub main {
-   $old_trace = Gimp::set_trace (0);
    return Gimp::main unless $Gimp::help;
    my $this=this_script;
    print __<<EOF;
