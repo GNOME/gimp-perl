@@ -53,6 +53,7 @@ examples/example-fu
 examples/example-net
 examples/example-oo
 examples/examples.TODO
+examples/exceptiontest
 examples/fade-alpha
 examples/feedback
 examples/frame_filter
@@ -137,6 +138,8 @@ po/vi.po
 po/zh_CN.po
 po/zh_TW.po
 pxgettext
+t/examples-api.pl
+t/gimpsetup.pl
 t/import.t
 t/loadlib.t
 t/load.t

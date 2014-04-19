@@ -5,20 +5,20 @@
          xmlns="http://usefulinc.com/ns/doap#">
 
   <name xml:lang="en">GIMP Perl</name>
-  <shortdesc xml:lang="en">A plug-in for GIMP allowing automation by the use of Perl scripts</shortdesc>
-  <homepage rdf:resource="http://www.ve3syb.ca/software/gimp-perl/" />
-  <download-page rdf:resource="http://www.ve3syb.ca/software/gimp-perl/gimp-perl-download.html" />
+  <shortdesc xml:lang="en">A plug-in for GIMP allowing automation with Perl scripts</shortdesc>
+  <homepage rdf:resource="https://metacpan.org/pod/Gimp" />
+  <download-page rdf:resource="https://metacpan.org/pod/Gimp" />
 <!--
   <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/desktop-devel-list" />
 -->
-  <bug-database rdf:resource="http://bugzilla.gnome.org/browse.cgi?product=gimp-perl" />
+  <bug-database rdf:resource="https://rt.cpan.org/Dist/Display.html?Name=Gimp" />
   <category rdf:resource="http://api.gnome.org/doap-extensions#bindings" />
 
   <maintainer>
     <foaf:Person>
-      <foaf:name>Kevin Cozens</foaf:name>
-      <foaf:mbox rdf:resource="mailto:kcozens@svn.gnome.org" />
-      <gnome:userid>kcozens</gnome:userid>
+      <foaf:name>Ed J</foaf:name>
+<!--      <foaf:mbox rdf:resource="" /> -->
+<!--      <gnome:userid></gnome:userid> -->
     </foaf:Person>
   </maintainer>
 </Project>

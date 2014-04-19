@@ -40,7 +40,7 @@ of the API has been converted.
 # <sjburges@gimp.org> removed the camel logo from scripts
 
 BEGIN {
-   $VERSION = 2.3001;
+   $VERSION = 2.300001;
    eval {
       require XSLoader;
       XSLoader::load Gimp::UI $VERSION;
