@@ -54,7 +54,7 @@ import Gimp;
 # manual "import" to shut perl -cw up
 sub __ ($);
 
-$VERSION = 2.3001;
+$VERSION = 2.300001;
 
 ##############################################################################
 =pod
