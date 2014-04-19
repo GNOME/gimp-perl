@@ -16,7 +16,6 @@ package Gimp::Net;
 # TRCE func trace args	trace status return-vals	run simple command (with tracing)
 # TEST procname		bool			check for procedure existance
 # DTRY in-args					destroy all argument objects
-# LOCK lock? shared?				lock or unlock - integers
 # RSET						reset server (NYI)
 #
 # args is "number of arguments" arguments preceded by length
@@ -61,14 +60,13 @@ sub __ ($) { goto &Gimp::__ }
 sub initialized { $initialized }
 
 sub response {
-   my($len,$req);
-   read($server_fh,$len,4) == 4 or die "protocol error (1)";
+   read($server_fh,my $len,4) == 4 or die "protocol error (1): $!";
    $len=unpack("N",$len);
-   read($server_fh,$req,$len) == $len or die "protocol error (2)";
+   read($server_fh,my $req,$len) == $len or die "protocol error (2): $!";
    net2args(0,$req);
 }
 
-sub senddata { $_[0]->print(pack("N",length $_[1]), $_[1]); }
+sub senddata { $_[0]->print(pack("N",length $_[1]), $_[1]) or die "$_[0]: $!"; }
 
 sub command {
    my $req=shift;
@@ -108,8 +106,6 @@ sub gimp_call_procedure {
 }
 
 sub gimp_procedural_db_proc_exists { command 'TEST', @_; }
-sub lock { command 'LOCK', 1, 0; }
-sub unlock { command 'LOCK', 0, 0; }
 sub server_quit { command 'QUIT'; undef $server_fh; }
 
 sub server_wait {
@@ -129,6 +125,10 @@ sub set_trace {
    $old_level;
 }
 
+our $PERLSERVERPROC = 'extension_perl_server';
+(my $PROC_SF = $PERLSERVERPROC) =~ s#_#-#g;
+our $PERLSERVERTYPE = Gimp::EXTENSION; # Gimp::PLUGIN
+
 sub start_server {
    my $opt = shift;
    $opt = $Gimp::spawn_opts unless $opt;
@@ -144,37 +144,25 @@ sub start_server {
       Gimp::ignore_functions(@Gimp::GUI_FUNCTIONS) unless $opt=~s/(^|:)gui//;
       return $server_fh;
    }
+   undef $gimp_pid;
    close $server_fh;
    fcntl $gimp_fh, F_SETFD, 0;
    delete $ENV{GIMP_HOST};
-   unless ($Gimp::verbose) {
-      open STDIN,"</dev/null";
-      open STDOUT,">/dev/null";
-      #open STDERR,">&1";
-   }
+   open STDIN,"</dev/null";
    my $flags = PS_FLAG_BATCH | ($Gimp::verbose ? 0 : PS_FLAG_QUIET);
    my $args = join ' ',
      &Gimp::RUN_NONINTERACTIVE,
      $flags,
      fileno($gimp_fh),
      int($Gimp::verbose);
-   my @args;
-   push @args,"--no-data" if $opt=~s/(^|:)no-?data//;
-   push @args,"-i" unless $opt=~s/(^|:)gui//;
-   push @args,"--verbose" if $Gimp::verbose;
-   warn __"$$-plug-in-perl-server args='$args' \@args(@args)" if $Gimp::verbose;
-   { # block to suppress warning
-   exec $Gimp::Config{GIMP},
-	"--no-splash",
-	"--console-messages",
-	@args,
-	"--batch-interpreter",
-	"plug-in-script-fu-eval",
-	"-b",
-	"(if (defined? 'plug-in-perl-server) (plug-in-perl-server $args))",
-	"-b",
-	"(gimp-quit 0)";
-   }
+   my @exec_args = ($Gimp::Config{GIMP}, qw(--no-splash --console-messages));
+   push @exec_args, "--no-data" if $opt=~s/(^|:)no-?data//;
+   push @exec_args, "-i" unless $opt=~s/(^|:)gui//;
+   push @exec_args, "--verbose" if $Gimp::verbose;
+   push @exec_args, qw(--batch-interpreter plug-in-script-fu-eval -b);
+   push @exec_args, "(if (defined? '$PROC_SF) ($PROC_SF $args)) (gimp-quit 0)";
+   warn __"$$-exec @exec_args\n" if $Gimp::verbose;
+   { exec @exec_args; } # block to suppress warning
    croak __"unable to exec: $!";
 }
 
@@ -246,7 +234,10 @@ sub gimp_init {
 sub gimp_end {
    warn "$$-gimp_end - gimp_pid=$gimp_pid" if $Gimp::verbose;
    $initialized = 0;
-   #close $server_fh if $server_fh;
+   if ($gimp_pid and $server_fh) {
+      server_quit;
+      server_wait;
+   }
    undef $server_fh;
    undef $gimp_pid;
 }
@@ -280,7 +271,7 @@ END {
 
 # start of server-used block
 use vars qw($use_unix $use_tcp $trace_res $server_quit $max_pkt $unix $tcp
-            $ps_flags $auth @authorized $exclusive $rm $saved_rm %stats);
+            $ps_flags $auth @authorized $rm $saved_rm %stats);
 # you can enable unix sockets, tcp sockets, or both (or neither...)
 #
 # enabling tcp sockets can be a security risk. If you don't understand why,
@@ -288,15 +279,15 @@ use vars qw($use_unix $use_tcp $trace_res $server_quit $max_pkt $unix $tcp
 #
 $use_unix	= 1;
 $use_tcp	= 1;	# tcp is enabled only when authorization is available
+my $unix_path;
 
 $server_quit = 0;
 
 my $max_pkt = 1024*1024*8;
-my $exclusive = 0;
 
 sub slog {
-  return if $ps_flags & &PS_FLAG_QUIET;
-  print localtime.": ",@_,"\n";
+  return if $ps_flags & PS_FLAG_QUIET;
+  print localtime.": $$-slog(",@_,")\n";
 }
 
 sub reply { my $fh = shift; senddata $fh, args2net(0, @_); }
@@ -306,17 +297,18 @@ sub handle_request($) {
    my ($req, $data);
    eval {
       local $SIG{ALRM}=sub { die "1\n" };
-      #alarm(6) unless $ps_flags & &PS_FLAG_BATCH;
+      #alarm(6) unless $ps_flags & PS_FLAG_BATCH;
       my $length;
       read($fh,$length,4) == 4 or die "2\n";
       $length=unpack("N",$length);
       $length>0 && $length<$max_pkt or die "3\n";
-      #alarm(6) unless $ps_flags & &PS_FLAG_BATCH;
+      #alarm(6) unless $ps_flags & PS_FLAG_BATCH;
       read($fh,$req,4) == 4 or die "4\n";
-      #alarm(20) unless $ps_flags & &PS_FLAG_BATCH;
+      #alarm(20) unless $ps_flags & PS_FLAG_BATCH;
       read($fh,$data,$length-4) == $length-4 or die "5\n";
       #alarm(0);
    };
+   warn "$$-handle_request got '$@'" if $@ and $Gimp::verbose;
    return 0 if $@;
    my @args = net2args(($req eq "TRCE" or $req eq "EXEC"), $data);
    if(!$auth or $authorized[fileno($fh)]) {
@@ -342,29 +334,11 @@ sub handle_request($) {
          destroy_objects(@args);
          reply $fh; # fix to work around using non-sysread/write functions
       } elsif ($req eq "QUIT") {
-         reply $fh;
          slog __"received QUIT request";
-         $server_quit = 1;
+         reply $fh;
+	 $server_quit = 1;
       } elsif($req eq "AUTH") {
          reply $fh, 1, __"authorization unnecessary";
-      } elsif($req eq "LOCK") {
-         my ($lock,$shared) = @args;
-         slog __"WARNING: shared locking requested but not implemented" if $shared;
-         if($lock) {
-            unless($exclusive) {
-               $saved_rm=$rm;
-               undef $rm; vec($rm,fileno($fh),1)=1;
-            }
-            $exclusive++;
-         } else {
-            if ($exclusive) {
-               $exclusive--;
-               $rm = $saved_rm unless $exclusive;
-            } else {
-               slog __"WARNING: client tried to unlock without holding a lock";
-            }
-         }
-         reply $fh;
       } else {
          reply $fh;
          slog __"illegal command received, aborting connection";
@@ -378,8 +352,7 @@ sub handle_request($) {
             $authorized[fileno($fh)]=1;
          } else {
             $ok=0;
-            $msg=__"wrong authorization, aborting connection";
-            slog $msg;
+            slog __"wrong authorization, aborting connection";
             sleep 5; # safety measure
          }
          reply $fh, $ok, $msg;
@@ -406,7 +379,7 @@ sub new_connection {
   $stats{fileno($fh)}=[0,time];
 }
 
-sub plug_in_perl_server {
+sub perl_server_run {
   my $run_mode=$_[0];
   $ps_flags=$_[1];
   my $extra=$_[2];
@@ -502,11 +475,6 @@ sub plug_in_perl_server {
             $stats{$f}[0]++;
           } else {
             slog sprintf __"closing connection %d (%d requests in %g seconds)", $f, $stats{$f}[0], time-$stats{$f}[1];
-            if ($exclusive) {
-               $rm = $saved_rm;
-               $exclusive = 0;
-               slog __"WARNING: client disconnected while holding an active lock\n";
-            }
             vec($rm,$f,1)=0;
             delete $handles{$f};
             undef $fh;

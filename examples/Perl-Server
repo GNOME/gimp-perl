@@ -10,21 +10,19 @@ N_"/Xtns/Perl"; # workaround for i18n weirdnesses
 Gimp::set_trace(\$Gimp::Net::trace_res);
 Gimp::ignore_functions(qw(gimp_progress_init gimp_progress_update));
 
-Gimp::register_callback
-  plug_in_perl_server => \&Gimp::Net::plug_in_perl_server;
+Gimp::on_run \&Gimp::Net::perl_server_run;
 
 Gimp::on_query {
    Gimp->install_procedure(
-      "plug_in_perl_server", "Gimp-Perl scripts net server",
+      $Gimp::Net::PERLSERVERPROC, "Gimp-Perl scripts net server",
       "Allow scripting GIMP with Perl providing Gimp::Net server",
       "Marc Lehmann <pcg\@goof.com>", "Marc Lehmann", "1999-12-02",
       N_"<Toolbox>/Xtns/Perl/Server", undef,
-#      &Gimp::EXTENSION,
-      &Gimp::PLUGIN,
+      $Gimp::Net::PERLSERVERTYPE,
       [
        [&Gimp::PDB_INT32, "run_mode", "Interactive, [non-interactive]"],
        [&Gimp::PDB_INT32, "flags", "internal flags (must be 0)"],
-       [&Gimp::PDB_INT32, "extra", "multi-purpose ;)"],
+       [&Gimp::PDB_INT32, "extra", "multi-purpose"],
        [&Gimp::PDB_INT32, "verbose", "Gimp verbose var"],
       ],
       [],
