@@ -44,7 +44,7 @@ register "xach_shadows",
         Gimp::Context->push();
  #	$selection_flag = 0;
 	if (!$drawable->has_alpha) {
-		$drawable->add_alpha;
+		$drawable->Gimp::Layer::add_alpha; # not drawable method
 		};
         Gimp::Context->set_foreground('white');
         Gimp::Context->set_background('black');
