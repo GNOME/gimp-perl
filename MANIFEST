@@ -140,6 +140,7 @@ pxgettext
 t/import.t
 t/loadlib.t
 t/load.t
+t/netplugin.t
 t/pdl.t
 t/perlplugin.t
 t/run.t

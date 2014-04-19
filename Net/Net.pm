@@ -399,8 +399,7 @@ sub setup_listen_unix {
   Glib::IO->add_watch(fileno($unix), 'in', sub {
     warn "$$-setup_listen_unix WATCHER(@_)" if $Gimp::verbose;
     my ($fd, $condition, $fh) = @_;
-    my $h = $fh->accept
-      or die __"unable to accept unix connection: $!\n";
+    my $h = $fh->accept or die __"unable to accept unix connection: $!\n";
     new_connection($h);
     slog __"accepted unix connection";
     &Glib::SOURCE_CONTINUE;
@@ -420,8 +419,7 @@ sub setup_listen_tcp {
   Glib::IO->add_watch(fileno($tcp), 'in', sub {
     warn "$$-setup_listen_tcp WATCHER(@_)" if $Gimp::verbose;
     my ($fd, $condition, $fh) = @_;
-    my $h = $fh->accept
-      or die __"unable to accept tcp connection: $!\n";
+    my $h = $fh->accept or die __"unable to accept tcp connection: $!\n";
     my ($port,$host) = ($h->peerport, $h->peerhost);
     new_connection($h);
     slog __"accepted tcp connection from $host:$port";
