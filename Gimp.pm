@@ -3,7 +3,7 @@ package Gimp;
 use strict 'vars';
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK $AUTOLOAD %EXPORT_TAGS @EXPORT_FAIL
             $interface_pkg $interface_type
-            @PREFIXES @GUI_FUNCTIONS
+            @PREFIXES
             $function $basename $spawn_opts
             $in_quit $in_run $in_net $in_init $in_query $no_SIG
             $host $in_top);
@@ -24,10 +24,9 @@ BEGIN {
 use Gimp::ColorDB;
 use Carp qw(croak);
 
-@GUI_FUNCTIONS = qw(
+our @GUI_FUNCTIONS = qw(
    gimp_progress_init
    gimp_progress_update
-   gimp_displays_flush
    gimp_display_new
    gimp_display_delete
 );
@@ -631,6 +630,40 @@ query) it will install temporary procedures.
 If it has no parameters, then rather than being run when called, either
 from a menu or a scripting interface, it is run at GIMP startup.
 
+An extension can receive and act on messages from GIMP, unlike a plugin,
+which can only initiate requests and get responses. This does mean the
+extension needs to fit in with GIMP's event loop (the L<Glib> event loop
+in fact - use this by using L<Gtk2>). This is easy. In its C<run> hook,
+the extension simply needs to run C<Gimp-E<gt>extension_ack> after it
+has initialised itself (including installing any temporary
+procedures). Then, if it wants to just respond to GIMP events:
+
+  # to deal only with GIMP events:
+  Gimp->extension_ack;
+  Gimp->extension_process(0) while 1;
+
+or also other event sources (including a GUI, or L<Glib::IO>):
+
+  # to deal with other events:
+  Gimp::gtk_init;
+  Gimp->extension_ack; # GIMP locks until this is done
+  Gimp->extension_enable; # adds a Glib handler for GIMP messages
+  my $tcp = IO::Socket::INET->new(
+    Type => SOCK_STREAM, LocalPort => $port, Listen => 5, ReuseAddr => 1,
+    ($host ? (LocalAddr => $host) : ()),
+  ) or die __"unable to create listening tcp socket: $!\n";
+  Glib::IO->add_watch(fileno($tcp), 'in', sub {
+    warn "$$-setup_listen_tcp WATCHER(@_)" if $Gimp::verbose;
+    my ($fd, $condition, $fh) = @_;
+    my $h = $fh->accept or die __"unable to accept tcp connection: $!\n";
+    my ($port,$host) = ($h->peerport, $h->peerhost);
+    new_connection($h);
+    slog __"accepted tcp connection from $host:$port";
+    &Glib::SOURCE_CONTINUE;
+  }, $tcp);
+  Gtk2->main; # won't return if GIMP quits, but
+	      # GIMP will call your quit callback
+
 A working, albeit trivial, example is provided in
 examples/example-extension. A summarised example:
 
@@ -645,9 +678,7 @@ examples/example-extension. A summarised example:
       [],
     );
     Gimp->extension_ack;
-    while (1) {
-      Gimp->extension_process(0);
-    }
+    Gimp->extension_process(0) while 1;
   };
   Gimp::register_callback perl_fu_temp_demo => sub {
     my ($run_mode) = @_;

@@ -70,7 +70,7 @@ my %pfname2info = (
    PF_IMAGE		=> [ PF_IMAGE, 'image', ],
    PF_LAYER		=> [ PF_LAYER, 'layer', ],
    PF_CHANNEL		=> [ PF_CHANNEL, 'channel', ],
-   PF_DRAWABLE		=> [ PF_DRAWABLE, 'drawable', ],
+   PF_DRAWABLE		=> [ PF_DRAWABLE, 'drawable (%number or %a = active)', ],
    PF_COLORARRAY	=> [ PF_COLORARRAY, 'list of colours' ],
    PF_VECTORS		=> [ PF_VECTORS, 'vectors' ],
    PF_PARASITE		=> [ PF_PARASITE, 'parasite' ],
@@ -104,7 +104,7 @@ my @scripts;
 
 # Some Standard Arguments
 my @image_params = ([PF_IMAGE, "image", "Input image"],
-                    [PF_DRAWABLE, "drawable", "Input drawable"]);
+                    [PF_DRAWABLE, "drawable", "Input drawable", '%a']);
 
 my @load_params  = ([PF_STRING, "filename", "Filename"],
                     [PF_STRING, "raw_filename", "User-given filename"]);
@@ -172,14 +172,37 @@ sub string2pf($$) {
       Gimp::canonicalize_colour($s);
    } elsif($pf2info{$type}->[0] eq 'boolean') {
       $s?1:0;
-   #} elsif($type == PF_IMAGE) {
+   } elsif($type == PF_IMAGE) {
+      my $image;
+      if ((my $arg) = $s =~ /%(.+)/) {
+	 die "image % argument not integer - if file, put './' in front\n"
+	    unless $arg eq int $arg;
+	 $image = bless \$arg, 'Gimp::Image';
+	 eval { $image->get_layers; };
+	 die "'$arg' not a valid image - need to run Perl Server?\n" if $@;
+      } else {
+	 $image = Gimp->file_load(Gimp::RUN_NONINTERACTIVE, $s, $s),
+      }
+      $latest_image = $image; # returned as well
+   } elsif($type == PF_DRAWABLE) {
+      if ((my $arg) = $s =~ /%(.+)/) {
+	 if ($arg eq 'a') {
+	    $latest_image->get_active_drawable;
+	 } else {
+	    # existing GIMP object - rely on autobless
+	    die "drawable % argument not integer\n"
+	       unless $arg eq int $arg;
+	    $arg;
+	 }
+      } else {
+	 die "must specify drawable as %number or %a (active)\n";
+      }
+   } elsif($type == PF_GRADIENT) {
+      $s;
    } else {
       die __"conversion from string to type $pf2info{$type}->[0] is not yet implemented\n";
    }
 }
-
-# set options read from the command line
-my $outputfile;
 
 # mangle argument switches to contain only a-z0-9 and the underscore,
 # for easier typing.
@@ -191,55 +214,54 @@ sub mangle_key {
 }
 
 Gimp::on_net {
-   no strict 'refs';
+   require Getopt::Long;
    my $this = this_script;
    my(%mangleparam2index,@args);
-   my $interact = 1;
-   $outputfile = undef;
-
+   my ($interact, $outputfile) = 1;
    my($perl_sub,$function,$blurb,$help,$author,$copyright,$date,
       $menupath,$imagetypes,$params,$results,$code,$type)=@$this;
-
    @mangleparam2index{map mangle_key($_->[1]), @$params} = (0..$#{$params});
-
-   # Parse the command line
-   while(defined($_=shift @ARGV)) {
-      if (/^-+(.*)$/) {
-	 if($1 eq "i" or $1 eq "interact") {
-	   $interact=1e6;
-	 } elsif($1 eq "o" or $1 eq "output") {
-	   $outputfile=shift @ARGV;
-	 } elsif($1 eq "info") {
-	   print __"no additional information available, use --help\n";
-	   exit 0;
-	 } else {
-           my $arg=shift @ARGV;
-	   my $idx=$mangleparam2index{$1};
-	   die __"$_: illegal switch, try $0 --help\n" unless defined($idx);
-	   $args[$idx]=string2pf($arg,$params->[$idx]);
-	   $interact--;
-	 }
-      } elsif (@args < @$params) {
-         push(@args,string2pf($_,$params->[@args]));
-	 $interact--;
-      } else {
-         die __"too many arguments, use --help\n";
-      }
-   }
-
+   die "$0: error - try $0 --help\n" unless Getopt::Long::GetOptions(
+      'interact|i' => sub { $interact = 1e6 },
+      'output|o=s' => \$outputfile,
+      map {
+	 ("$_=s"=>sub {$args[$mangleparam2index{$_[0]}] = $_[1]; $interact--;})
+      } keys %mangleparam2index,
+   );
+   die "$0: too many arguments. Try $0 --help\n" if @ARGV > @$params;
+   $interact -= @ARGV;
+   map { $args[$_] = $ARGV[$_] } (0..$#ARGV); # can mix & match --args and bare
    # Fill in default arguments
    foreach my $i (0..@$params-1) {
       next if defined $args[$i];
       my $entry = $params->[$i];
-      $args[$i] = $entry->[3];             # Default value
-      die __"parameter '$entry->[1]' is not optional\n" unless defined $args[$i] || $interact>0;
+      $args[$i] = $entry->[3];
+      die __"parameter '$entry->[1]' is not optional\n"
+	 unless defined $args[$i] or $interact>0;
    }
-
-   # Go for it
-   $perl_sub->(
+   for my $i (0..$#args) { $args[$i] = string2pf($args[$i], $params->[$i]); }
+   my $input_image = $args[0] if ref $args[0] eq "Gimp::Image";
+   my @retvals = $perl_sub->(
       ($interact>0 ? RUN_FULLINTERACTIVE : Gimp::RUN_NONINTERACTIVE),
       @args
    );
+   if ($outputfile and $menupath !~ /^<Load>\//) {
+      my @images = grep { defined $_ and ref $_ eq "Gimp::Image" } @retvals;
+      if (@images) {
+	 for my $i (0..$#images) {
+	    my $path = sprintf $outputfile, $i;
+	    if (@images > 1 and $path eq $outputfile) {
+	       $path=~s/\.(?=[^.]*$)/$i./; # insert number before last dot
+	    }
+	    save_image($images[$i],$path);
+	    $images[$i]->delete;
+	 }
+      } elsif ($input_image) {
+	 save_image($input_image, sprintf $outputfile, 0);
+      } else {
+	 die "$0: outputfile specified but plugin returned no image and no input image\n";
+      }
+   }
 };
 
 sub datatype(@) {
@@ -338,7 +360,7 @@ sub register($$$$$$$$$;@) {
 
    my $perl_sub = sub {
       $run_mode = shift;	# global!
-      my(@pre,@defaults,@lastvals,$input_image);
+      my(@pre,@defaults,@lastvals);
 
       Gimp::ignore_functions(@Gimp::GUI_FUNCTIONS)
 	 unless $run_mode == Gimp::RUN_INTERACTIVE or
@@ -410,8 +432,6 @@ sub register($$$$$$$$$;@) {
       } else {
          die __"run_mode must be INTERACTIVE, NONINTERACTIVE or RUN_WITH_LAST_VALS\n";
       }
-      $input_image = $_[0]   if ref $_[0]   eq "Gimp::Image";
-      $input_image = $pre[0] if ref $pre[0] eq "Gimp::Image";
 
       if ($Gimp::verbose) {
 	 require Data::Dumper;
@@ -419,28 +439,10 @@ sub register($$$$$$$$$;@) {
       }
       $Gimp::Data{"$function/_fu_data"}=[time, @_];
 
-      print "$$-Gimp::Fu-generated sub: $function(",join(",",(@pre,@_)),")\n" if $Gimp::verbose;
+      warn "$$-Gimp::Fu-generated sub: $function(",join(",",(@pre,@_)),")\n"
+	 if $Gimp::verbose;
 
       my @retvals = $code->(@pre,@_);
-
-      if ($outputfile and $menupath !~ /^<Load>\//) {
-	 my @images = grep { defined $_ and ref $_ eq "Gimp::Image" } @retvals;
-	 if (@images) {
-	    for my $i (0..$#images) {
-	       my $path = sprintf $outputfile, $i;
-	       if (@images > 1 and $path eq $outputfile) {
-		  $path=~s/\.(?=[^.]*$)/$i./; # insert number before last dot
-	       }
-	       save_image($images[$i],$path);
-	       $images[$i]->delete;
-	    }
-	 } elsif ($input_image) {
-	    save_image($input_image, sprintf $outputfile, 0);
-	 } else {
-	    die "$0: outputfile specified but plugin returned no image and no input image\n";
-	 }
-      }
-
       Gimp->displays_flush;
       wantarray ? @retvals : $retvals[0];
    };
