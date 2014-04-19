@@ -167,7 +167,7 @@ if (@ARGV) {
             $Gimp::help=1;
             print __<<EOF;
 Usage: $0 [gimp-args..] [interface-args..] [script-args..]
-           gimp-arguments are
+       gimp-arguments are
            -h | -help | --help | -?   print some help
            -v | --verbose             be more verbose in what you do
            --host|--tcp HOST[:PORT]   connect to HOST (optionally using PORT)
@@ -416,6 +416,8 @@ sub compare($$)		{ $_[0]->[0] eq $_[1]->[0] and
 sub new($$$$)		{ shift; [@_] }
 }
 
+1;
+__END__
 =head1 NAME
 
 Gimp - a Perl extension for writing Gimp Extensions/Plug-ins/Load &
@@ -1007,7 +1009,3 @@ Ed J (with oversight and guidance from Kevin Cozens) (2.3+)
 
 perl(1), gimp(1), L<Gimp::OO>, L<Gimp::Data>, L<Gimp::PixelRgn>,
 L<Gimp::Util>, L<Gimp::UI>, L<Gimp::Config>, L<Gimp::Net>, and L<Gimp::Lib>.
-
-=cut
-
-1;

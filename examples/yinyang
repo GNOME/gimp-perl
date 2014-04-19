@@ -11,6 +11,8 @@
 
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
+#$Gimp::verbose = 1;
+#Gimp::set_trace(TRACE_ALL);
 
 # Main function. Takes width, height, do_eyes (toggle), eye_images (toggle),
 # white_eye_image (filename) and black_eye_image (filename).

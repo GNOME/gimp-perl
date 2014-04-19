@@ -22,7 +22,7 @@ use vars qw(@EXPORT @PARAMS @INXS);
 my %sub2value;
 
 for my $class (Gimp->enums_get_type_names) {
-  if ($class eq 'GimpRunMode') {
+  if ($class =~ m#^(?:GimpRunMode|GimpPDBProcType)#) {
     # done in XS - special case as need in Gimp::Net
     next;
   }
