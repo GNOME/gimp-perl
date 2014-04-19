@@ -18,7 +18,7 @@ Gimp::on_query {
       $Gimp::Net::PERLSERVERPROC, "Gimp-Perl scripts net server",
       "Allow scripting GIMP with Perl providing Gimp::Net server",
       "Marc Lehmann <pcg\@goof.com>", "Marc Lehmann", "1999-12-02",
-      N_"<Toolbox>/Xtns/Perl/Server", undef,
+      N_"<Image>/Filters/Languages/_Perl/_Server", undef,
       $Gimp::Net::PERLSERVERTYPE,
       [
        [&Gimp::PDB_INT32, "run_mode", "Interactive, [non-interactive]"],
