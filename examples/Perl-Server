@@ -11,6 +11,7 @@ Gimp::set_trace(\$Gimp::Net::trace_res);
 Gimp::ignore_functions(qw(gimp_progress_init gimp_progress_update));
 
 Gimp::on_run \&Gimp::Net::perl_server_run;
+Gimp::on_quit \&Gimp::Net::perl_server_quit;
 
 Gimp::on_query {
    Gimp->install_procedure(

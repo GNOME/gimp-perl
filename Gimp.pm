@@ -113,8 +113,6 @@ sub import($;@) {
 # the monadic identity function
 sub N_($) { shift }
 
-my @init_functions;
-
 my $gtk_init = 1;
 
 sub gtk_init() {
@@ -123,14 +121,6 @@ sub gtk_init() {
       Gtk2->init;
       Gtk2::Rc->parse (Gimp->gtkrc);
       $gtk_init = 0;
-   }
-   &{shift @init_functions} while @init_functions;
-}
-
-sub gtk_init_hook(&) {
-   push @init_functions, @_;
-   unless ($gtk_init) {
-      &{shift @init_functions} while @init_functions;
    }
 }
 
@@ -255,6 +245,7 @@ sub on_query(&) { register_callback "query", $_[0] }
 sub on_net  (&) { register_callback "net"  , $_[0] }
 sub on_lib  (&) { register_callback "lib"  , $_[0] }
 sub on_run  (&) { register_callback "run"  , $_[0] }
+sub on_quit  (&) { register_callback "quit"  , $_[0] }
 
 sub main {
    &{"$interface_pkg\::gimp_main"};
@@ -625,6 +616,10 @@ Run only when called from within Gimp.
 
 Run when anything calls it (network or lib).
 
+=item Gimp::on_quit
+
+Run when plugin terminates.
+
 =back
 
 =head1 OUTLINE OF A GIMP EXTENSION
@@ -719,17 +714,6 @@ supported. Initializations can later be done in the init function.
 Initialize Gtk in a similar way GIMP itself did it. This automatically
 parses gimp's gtkrc and sets a variety of default settings (visual,
 colormap, gamma, shared memory...).
-
-=item Gimp::gtk_init_add { init statements ... };
-
-Add a callback function that should be called when gtk is being
-initialized (i.e. when Gimp::gtk_init is called, which should therefore be
-done even in Gnome applications).
-
-This is different to Gtk->init_add, which only gets called in Gtk->main,
-which is too late for registering types.
-
-This function has not been well tested.
 
 =item use Gimp qw(net_init=...);
 

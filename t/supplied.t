@@ -22,7 +22,7 @@ BEGIN {
       bump-map checkerboard edge file-gif-save file-png unsharp-mask crop-auto
     );
 }
-use Gimp qw(:auto), "net_init=spawn/";
+use Gimp qw(:consts), "net_init=spawn/";
 #Gimp::set_trace(TRACE_ALL);
 
 sub newimage {

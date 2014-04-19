@@ -484,16 +484,11 @@ sub perl_server_run {
       }
     }
   }
+}
 
+sub perl_server_quit {
   slog __"server going down...";
-  if ($use_tcp) {
-    undef $tcp;
-  }
-  if ($use_unix) {
-    undef $unix;
-    unlink $unix_path;
-    rmdir $DEFAULT_UNIX_DIR;
-  }
+  unlink $unix_path or die "failed to unlink '$unix_path': $!\n" if $unix_path;
 }
 
 1;
