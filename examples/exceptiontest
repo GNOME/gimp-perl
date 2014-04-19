@@ -7,13 +7,13 @@ use Gimp::Fu;
 #Gimp::set_trace(TRACE_ALL);
 
 sub boilerplate_params {
-  my ($testing, $menuloc) = @_;
+  my ($testing, $menuloc, $imagetypes) = @_;
   (
     ("exercise gimp-perl filter testing $testing") x 2,
     ("boilerplate id") x 2,
     "20140310",
     N_$menuloc,
-    "*",
+    ($imagetypes // "*"),
   );
 }
 
@@ -21,7 +21,7 @@ sub boilerplate_params {
   "test_exception",
   boilerplate_params(
     'exceptions',
-    '<Toolbox>/Xtns/Perl/Test/Exception',
+    '<Image>/Filters/Languages/_Perl/Test/Exception', '',
   ),
   [],
   sub { die "I DIED\n" }

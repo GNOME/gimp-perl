@@ -8,7 +8,7 @@ use Gimp::Fu;
 
 &register(
   "test_dialogs", 'help', 'blurb', 'id', 'id', '20140411',
-  N_ '<Toolbox>/Xtns/Perl/Test/Dialog', undef,
+  N_ '<Image>/Filters/Languages/_Perl/Test/Dialog', undef,
   [
     [ PF_COLOR, "colour", "Image colour", [255, 127, 0], ],
     [ PF_FONT, "font", "Font", 'Arial', ],

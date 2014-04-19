@@ -336,7 +336,7 @@ sub handle_request($) {
       } elsif ($req eq "QUIT") {
          slog __"received QUIT request";
          reply $fh;
-	 $server_quit = 1;
+	 Gtk2->main_quit;
       } elsif($req eq "AUTH") {
          reply $fh, 1, __"authorization unnecessary";
       } else {
@@ -366,34 +366,81 @@ sub handle_request($) {
    return 1;
 }
 
-my %handles;
-
 sub new_connection {
+  warn "$$-new_connection(@_)" if $Gimp::verbose;
   my $fh = shift;
-  select $fh; $|=1; select STDOUT;
-  $handles{fileno($fh)}=$fh;
-  my @r = ("PERL-SERVER",$PROTOCOL_VERSION);
-  push(@r,"AUTH") if $auth;
-  reply $fh,@r;
-  vec($rm,fileno($fh),1)=1;
+  $fh->autoflush;
+  reply $fh, "PERL-SERVER", $PROTOCOL_VERSION, ($auth ? "AUTH" : ());
   $stats{fileno($fh)}=[0,time];
+  Glib::IO->add_watch(fileno($fh), 'in', sub {
+    warn "$$-new_connection WATCHER(@_)" if $Gimp::verbose;
+    my ($fd, $condition, $fh) = @_;
+    if(handle_request($fh)) {
+      $stats{$fd}[0]++;
+    } else {
+      slog sprintf __"closing connection %d (%d requests in %g seconds)", $fd, $stats{$fd}[0], time-$stats{$fd}[1];
+      undef $fh;
+    }
+    $fh ? &Glib::SOURCE_CONTINUE : &Glib::SOURCE_REMOVE;
+  }, $fh);
+}
+
+sub setup_listen_unix {
+  warn "$$-setup_listen_unix(@_)" if $Gimp::verbose;
+  use File::Basename;
+  my $host = shift;
+  my $dir = dirname($host);
+  mkdir $dir, 0700 or die "mkdir $dir: $!" unless -d $dir;
+  unlink $host if -e $host;
+  my $unix = IO::Socket::UNIX->new(
+    Type => SOCK_STREAM, Local => $host, Listen => 5
+  ) or die __"unable to create listening unix socket: $!\n";
+  slog __"accepting connections in $host";
+  Glib::IO->add_watch(fileno($unix), 'in', sub {
+    warn "$$-setup_listen_unix WATCHER(@_)" if $Gimp::verbose;
+    my ($fd, $condition, $fh) = @_;
+    my $h = $fh->accept
+      or die __"unable to accept unix connection: $!\n";
+    new_connection($h);
+    slog __"accepted unix connection";
+    &Glib::SOURCE_CONTINUE;
+  }, $unix);
+}
+
+sub setup_listen_tcp {
+  warn "$$-setup_listen_tcp(@_)" if $Gimp::verbose;
+  my $host = shift;
+  ($host, my $port)=split /:/,$host;
+  $port = $DEFAULT_TCP_PORT unless $port;
+  my $tcp = IO::Socket::INET->new(
+    Type => SOCK_STREAM, LocalPort => $port, Listen => 5, ReuseAddr => 1,
+    ($host ? (LocalAddr => $host) : ()),
+  ) or die __"unable to create listening tcp socket: $!\n";
+  slog __"accepting connections on port $port";
+  Glib::IO->add_watch(fileno($tcp), 'in', sub {
+    warn "$$-setup_listen_tcp WATCHER(@_)" if $Gimp::verbose;
+    my ($fd, $condition, $fh) = @_;
+    my $h = $fh->accept
+      or die __"unable to accept tcp connection: $!\n";
+    my ($port,$host) = ($h->peerport, $h->peerhost);
+    new_connection($h);
+    slog __"accepted tcp connection from $host:$port";
+    &Glib::SOURCE_CONTINUE;
+  }, $tcp);
 }
 
 sub perl_server_run {
-  my $run_mode=$_[0];
-  $ps_flags=$_[1];
-  my $extra=$_[2];
-  $Gimp::verbose=$_[3];
-
+  (my $run_mode, $ps_flags, my $extra, $Gimp::verbose) = @_;
+  Gimp::gtk_init;
+  Gimp->extension_ack;
+  Gimp->extension_enable;
+  warn "$$-".__PACKAGE__."::perl_server_run(@_)\n" if $Gimp::verbose;
   if ($run_mode == &Gimp::RUN_NONINTERACTIVE) {
-     if ($ps_flags & &PS_FLAG_BATCH) {
-        my($fh) = local *FH;
-        open $fh,"+<&$extra" or die __"unable to open Gimp::Net communications socket: $!\n";
-        select $fh; $|=1; select STDOUT;
-        reply $fh,"PERL-SERVER",$PROTOCOL_VERSION;
-        while(!$server_quit and !eof($fh)) {
-           last unless handle_request($fh);
-        }
+     if ($ps_flags & PS_FLAG_BATCH) {
+	die __"unable to open Gimp::Net communications socket: $!\n"
+	   unless open my $fh,"+<&$extra";
+        new_connection($fh);
+	Gtk2->main;
         Gimp->quit(0);
         exit(0);
      }
@@ -401,94 +448,35 @@ sub perl_server_run {
      $run_mode=&Gimp::RUN_INTERACTIVE;
      $ps_flags=0;
   }
-
   my $host = $ENV{'GIMP_HOST'};
   $auth = $host=~s/^(.*)\@// ? $1 : undef;	# get authorization
-
   slog __"server version $Gimp::VERSION started".($auth ? __", authorization required" : "");
-
   $SIG{PIPE}='IGNORE'; # may not work, since libgimp (eech) overwrites it.
-  my($unix_path)=$DEFAULT_UNIX_DIR.$DEFAULT_UNIX_SOCK;
-
   if ($host ne "") {
      if ($host=~s{^spawn/}{}) {
         die __"invalid GIMP_HOST: 'spawn' is not a valid connection method for the server";
      } elsif ($host=~s{^unix/}{/}) {
-        $unix = IO::Socket::UNIX->new(
-	  Type => SOCK_STREAM, Local => $host, Listen => 5
-	) or die __"unable to create listening unix socket: $!\n";
-        slog __"accepting connections in $host";
-        vec($rm,fileno($unix),1)=1;
+        setup_listen_unix($unix_path = $host);
      } else {
         $host=~s{^tcp/}{};
-        my($host,$port)=split /:/,$host;
-        $port=$DEFAULT_TCP_PORT unless $port;
-        $tcp = IO::Socket::INET->new(
-	  Type => SOCK_STREAM, LocalPort => $port, Listen => 5, ReuseAddr => 1,
-	) or die __"unable to create listening tcp socket: $!\n";
-        slog __"accepting connections on port $port";
-        vec($rm,fileno($tcp),1)=1;
+	die __"authorization required for tcp connections" unless $auth;
+        setup_listen_tcp($host);
      }
   } else {
      if ($use_unix) {
-        unlink $unix_path;
-        rmdir $DEFAULT_UNIX_DIR;
-        mkdir $DEFAULT_UNIX_DIR,0700 or die "$!";
-        $unix = IO::Socket::UNIX->new(
-	  Type => SOCK_STREAM, Local => $unix_path, Listen => 5
-	) or die __"unable to create listening unix socket: $!\n";
-        slog __"accepting connections on $unix_path";
-        vec($rm,fileno($unix),1)=1;
+        setup_listen_unix($unix_path = $DEFAULT_UNIX_DIR.$DEFAULT_UNIX_SOCK);
      }
      if ($use_tcp && $auth) {
-        $tcp = IO::Socket::INET->new(
-	  Type => SOCK_STREAM, LocalPort => $DEFAULT_TCP_PORT,
-	  Listen => 5, ReuseAddr => 1,
-	) or die __"unable to create listening tcp socket: $!\n";
-        slog __"accepting connections on port $DEFAULT_TCP_PORT";
-        vec($rm,fileno($tcp),1)=1;
-    }
+        setup_listen_tcp(":$DEFAULT_TCP_PORT");
+     }
   }
-
-  !$tcp || $auth or die __"authorization required for tcp connections";
-
-  while(!$server_quit) {
-    my $r;
-    if(select($r=$rm,undef,undef,undef)>0) {
-      if ($tcp && vec($r,fileno($tcp),1)) {
-        my $h = $tcp->accept
-	  or die __"unable to accept tcp connection: $!\n";
-        my ($port,$host) = ($h->peerport, $h->peerhost);
-        new_connection($h);
-        slog __"accepted tcp connection from $host:$port";
-      }
-      if ($unix && vec($r,fileno($unix),1)) {
-        my $h = $unix->accept
-	  or die __"unable to accept unix connection: $!\n";
-        new_connection($h);
-        slog __"accepted unix connection";
-      }
-      for my $f (keys(%handles)) {
-        if(vec($r,$f,1)) {
-          my $fh=$handles{$f};
-          if(handle_request($fh)) {
-            $stats{$f}[0]++;
-          } else {
-            slog sprintf __"closing connection %d (%d requests in %g seconds)", $f, $stats{$f}[0], time-$stats{$f}[1];
-            vec($rm,$f,1)=0;
-            delete $handles{$f};
-            undef $fh;
-          }
-          last; # this is because the client might have called lock()
-        }
-      }
-    }
-  }
+  Gtk2->main;
 }
 
 sub perl_server_quit {
-  slog __"server going down...";
-  unlink $unix_path or die "failed to unlink '$unix_path': $!\n" if $unix_path;
+  return unless $unix_path;
+  unlink $unix_path or die "failed to unlink '$unix_path': $!\n";
+  rmdir $DEFAULT_UNIX_DIR if $unix_path eq $DEFAULT_UNIX_DIR.$DEFAULT_UNIX_SOCK;
 }
 
 1;
