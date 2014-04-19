@@ -41,7 +41,7 @@ sub install_plugin_target {
   my $dest = '$(GIMP_PLUGINS)/'.basename($plugin);
   <<EOF;
 $dest : $src
-	\$(NOECHO) $cfg{GIMPTOOL} --install-admin-bin "$src"
+	\$(NOECHO) \$(GTINSTALL) "$src"
 
 EOF
 }
@@ -96,4 +96,5 @@ WriteMakefile(
     'clean'	=> { FILES => qq(Makefile.old) },
     NO_MYMETA	=> 1,
     NO_META	=> 1,
+    macro	=> { GTINSTALL => "$cfg{GIMPTOOL} --install-admin-bin" },
 );

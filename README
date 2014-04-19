@@ -5,66 +5,34 @@ NAME
 
 WARNING
 
-       This version of the module is for use with GIMP 2.8.0 or later.
-
-       Current limitations:
-
-       Please report all problems
+       This version of the module is for use with GIMP 2.8.0 or
+       later. Please report all problems:
+	https://rt.cpan.org/Dist/Display.html?Name=Gimp
 
 SYNOPSIS
 
-       my $img = new Image (600, 300, RGB);
+       my $img = new Gimp::Image (600, 300, RGB);
        my $bg = $img->layer_new(600,300,RGB_IMAGE,"Background",100,NORMAL_MODE);
-       $img->add_layer($bg, 1);
-       $img->edit_fill($bg);
-       $img->display_new;
+       $img->insert_layer($bg, 1, 0);
+       $img->edit_fill($bg, FOREGROUND_FILL);
+       Gimp::Display->new($img);
 
        A complete & documented example script can be found at the end of
        this document (search for EXAMPLE).
-
-DOCUMENTATION
-
-       Online documentation is largely outdated.  Much of the documentation at
-       http://www.goof.com/pcg/marc/gimp.html still applies.  The POD
-       information embedded in the modules is the latest available, though
-       it isn't very updated either.
 
 PREREQUISITES
 
        To install/use this perl extension, you need to have the following
        software packages installed (the given order is best):
 
-       Perl 5.6 (or higher):
-
-          While this extension might run with perl 5.6, it is being developed
-          using Perl 5.14, and later. If you encounter problems when trying to
-          use a version of Perl older than 5.14, update to a newer version of
-          Perl and try again. The developers of this module can neither support
-          nor encourage the use of older versions of Perl.
-
-       The GNU Image Manipulation Program, aka. GIMP
-       http://www.gimp.org/
-       ftp://ftp.gimp.org/pub/gimp/
-
-          gimp-2.8 (or newer, e.g. git master) is required.  For
-          older versions of GIMP, use version 1.2* of the gimp-perl
-          module.
-
-       Gtk, the perl extension for gtk+2
-       http://gtk2-perl.sourceforge.net
-
-          The "gtk2-perl-xs" variant is required, the "inline"
-          version is *NOT* supported. Releases (as on CPAN) may work.
-
-       PDL, the Perl Data Language
-       http://www.cpan.org/
-
-          Optionally, you can install the PDL module to be able to
-          manipulate pixel data (or to be able to run the example plug-ins
-          that do pixel manipulation). PDL is available at any CPAN
-          mirror, version 2.4 or higher is recommended. Without PDL,
-          some plug-ins do not work (they will not be installed),
-	  and accessing raw image data is impossible.
+       Perl: 5.14+
+       The GNU Image Manipulation Program (GIMP): 2.8 (pref 2.8.10)
+	 http://www.gimp.org/
+	 ftp://ftp.gimp.org/pub/gimp/
+       Gtk2, the perl extension for gtk+2, "gtk2-perl-xs" variant
+	 http://gtk2-perl.sourceforge.net
+       PDL, the Perl Data Language: 2.0+ (2.004+ recommended)
+	 http://www.cpan.org/
 
 INSTALLATION
 
@@ -81,10 +49,16 @@ INSTALLATION
        After installation, these perl plug-ins should be visible from
        within the Gimp (and many, many more):
 
-       <Toolbox>/Xtns/Perl-Server
-       <Image>/Filters/Artistic/Windify
-       <Image>/Filters/Misc/Prepare for GIF
-       <Image>/Filters/Misc/Webify
+       Filters/Perl/Server
+       Filters/Artistic/Windify
+       Filters/Misc/Prepare for GIF
+       Filters/Misc/Webify
+
+       If you wish to install the plugins in your personal GIMP directory
+       instead of the system-wide one (e.g. if you don't have root
+       access), install instead using this:
+
+       make install GTINSTALL='gimptool-2.0 --install-bin'
 
 OVERWRITING INSTALL LOCATIONS (PREFIX)
 
@@ -129,16 +103,10 @@ SUPPORT/MAILING LISTS/MORE INFO
        You can also upload your scripts to the gimp registry at
        http://registry.gimp.org/.
 
-       If you think your script is of general intrest, please let
-       <sjburges@gimp.org> know and it will be considered for
-       inclusion in future Gimp module releases.  If you just want
-       a link to your gimp-perl project, please mail <sjburges@gimp.org>
-       also.
-
 BLURB
 
-       gimp-perl is an effort to make a usable, debuggable, and flexible
-       interface to GIMP through use of Perl.
+       gimp-perl is a usable, debuggable, and flexible interface to GIMP
+       through use of Perl.
 
 LICENSE
 
@@ -157,72 +125,83 @@ EXAMPLE PERL PLUG-IN
         To get even more look & feel, here is a complete plug-in source,
         it's the examples/example-fu script from the distribution.
 
-#!/opt/bin/perl
+#!/usr/bin/perl
 
 use Gimp;
 use Gimp::Fu;
 
+# expand your terminal to 121 across to read easily...
+
 register
-  "gimp_fu_example_script",                      # fill in a function name
-  "A non-working example of Gimp::Fu usage",     # and a short description,
+  "gimp_fu_example_script",			# fill in a function name
+  "An example of Gimp::Fu usage, mostly non-functional",	# and a short description,
   "Just a starting point to derive new ".        # a (possibly multiline) help text
-  "scripts. Always remember to put a long".
-  "help message here!",
-  "Marc Lehmann <pcg\@goof.com>",                # don't forget your name (author)
-  "(c)1998,1999,2000 Marc Lehmann",              # and your copyright!
-  "20000321",                                    # the date this script was written (YYYYMMDD)
-  N_"<Image>/File/Create/Gimp::Fu Example...",        # the menu path - the 'N_' is for internationalization
-  "RGB*, GRAYA",                                 # image types to accept (RGB, RGAB amnd GRAYA)
+    "scripts. Always remember to put a long".
+    "help message here!",
+  "Marc Lehmann <pcg\@goof.com>",		# don't forget your name (author)
+  "(c)1998,1999,2000 Marc Lehmann",		# and your copyright!
+  "20000321",					# the date this script was written (YYYYMMDD)
+  N_"<Toolbox>/Xtns/Perl/Gimp::Fu Example...",	# the menu path - the 'N_' is for internationalization
+  "",						# image types to accept (RGB, RGAB and GRAYA) - blank or undef means don't need one
   [ # one of each type of parameter here
-    # argument type, switch name   , a short description           , default value, extra arguments
-    [PF_SLIDER    , "width"       , "The image width"             , 360, [300, 500]],
-    [PF_SPINNER   , "height"      , "The image height"            , 100, [100, 200]],
-    [PF_STRING    , "text"        , "The message"                 , "example text"],
-    [PF_INT32     , "bordersize"  , "The bordersize"              , 10],
-    [PF_FLOAT     , "borderwidth" , "The borderwidth"             , 1/5],
-    [PF_FONT      , "font"        , "The font family"             ],
-    [PF_COLOUR    , "text_colour" , "The (foreground) text colour", [10,10,10]],
-    [PF_COLOUR    , "bg_colour"   , "The background colour"       , [0xff,0x80,0]],
-    [PF_TOGGLE    , "ignore_cols" , "Ignore colours"              , 0],
-    [PF_IMAGE     , "extra_image" , "An additional picture to ignore"],
-    [PF_DRAWABLE  , "extra_draw"  , "Something to ignore as well" ],
-    [PF_RADIO     , "type"        , "The effect type"             , 0, [small => 0, large => 1]],
-    [PF_BRUSH     , "a_brush"     , "An unused brush"             ],
-    [PF_PATTERN   , "a_pattern"   , "An unused pattern"           ],
-    [PF_GRADIENT  , "a_gradients" , "An unused gradients"         ],
+    # argument type, switch name	, a short description		, default value, extra arguments
+    [PF_SLIDER	, "width"	, "The image width"		, 360, [300, 500]],
+    [PF_SPINNER	, "height"	, "The image height"		, 100, [100, 200]],
+    [PF_STRING	, "text"	, "The Message"			, "example text"],
+    [PF_INT32	, "bordersize"	, "The bordersize"		, 10],
+    [PF_FLOAT	, "borderwidth"	, "The borderwidth"		, 1/5],
+    [PF_FONT	, "font"	, "The Font Family"		],
+    [PF_COLOUR	, "text_colour"	, "The (foreground) text colour", [10,10,10]],
+    [PF_COLOUR	, "bg_colour"	, "The background colour"	, [0xff,0x80,0]],
+    [PF_TOGGLE	, "ignore_cols" , "Ignore colours"		, 0],
+    [PF_IMAGE	, "extra_image"	, "An additonal picture to ignore"],
+    [PF_DRAWABLE	, "extra_draw"	, "Somehting to ignroe as well"	],
+    [PF_RADIO	, "type"	, "The effect type"		, 0, [small => 0, large => 1]],
+    [PF_BRUSH	, "a_brush"	, "An unused brush"		],
+    [PF_PATTERN	, "a_pattern"	, "An unused pattern"		],
+    [PF_GRADIENT	, "a_gradients"	, "An unused gradients"		],
+  ],
+  [
+    [PF_IMAGE	, "output image", "Output image"],
   ],
   sub {
-    # now do something useful with our parameters
-    my($width,$height,$text,$brd1,$brd2,$font,$fg,$bg,$ignore,$xtraimg,
-    $xtradrw,$effecttype,$brush,$pattern,$gradient)=@_;
 
-    # set tracing, disable this to get rid of the debugging output
-    Gimp::set_trace(TRACE_CALL);
+   # now do something useful with our parameters
+   my($width,$height,$text,$brd1,$brd2,$font,$fg,$bg,$ignore,$xtraimg,$xtradrw,$effecttype,$brush,$pattern,$gradient)=@_;
 
-    my $img = new Gimp::Image ($width, $height, RGB);
+   # set tracing, disable this to get rid of the debugging output
+   Gimp::set_trace(TRACE_CALL);
 
-    # put an undo group around any modifications, so that
-    # they can be undone in one step.
-    $img->undo_group_start;
+   # store current context, so that present settings aren't affected
+   Gimp::Context->push();
 
-    # the __ before the string in the next line indicates text that must be translated
-    my $l = new Gimp::Layer ($img, $width, $height, RGB, __"Background", 100, NORMAL_MODE);
-    $l->add_layer(0);
+   my $img = new Gimp::Image ($width, $height, RGB);
 
-    # now a few syntax examples
+   # put an undo group around any modifications, so that
+   # they can be undone in one step.
+   $img->undo_group_start;
 
-    Gimp::Context->set_foreground($fg) unless $ignore;
-    Gimp::Context->set_background($bg) unless $ignore;
+   # the __ before the string in the next line indicates text that must be translated
+   my $l = new Gimp::Layer ($img, $width, $height, RGB, __"Background", 100, NORMAL_MODE);
+   $l->insert_layer(0, 0);
 
-    fill $l BACKGROUND_FILL;
-    $text_layer = $img->text_fontname(-1, 10, 10, $text, 5, 1, 10, PIXELS, $font);
+   # now a few syntax examples
 
-    Gimp::Palette->set_foreground("green");
+   Gimp::Context->set_foreground($fg) unless $ignore;
+   Gimp::Context->set_background($bg) unless $ignore;
 
-    # close the undo push group
-    $img->undo_group_end;
+   fill $l BACKGROUND_FILL;
+   my $text_layer = $img->text_fontname(-1, 10, 10, $text, 5, 1, 10, PIXELS, $font);
 
-    $img;        # return the image, or an empty list, i.e. ()
-  };
+   Gimp::Context->set_foreground("green");
 
-exit main;  # call the "main" funciton to start the script working
+   # close the undo push group
+   $img->undo_group_end;
+
+   # restore original context
+   Gimp::Context->pop();
+
+   $img;	# return the image, as it's on our output parameters
+};
+
+exit main;
