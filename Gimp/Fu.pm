@@ -103,17 +103,15 @@ my %pf2info = map {
 my @scripts;
 
 # Some Standard Arguments
-my @image_params = ([Gimp::PDB_IMAGE, "image", "The image to work on"],
-                    [Gimp::PDB_DRAWABLE, "drawable", "The drawable to work on"]);
+my @image_params = ([PF_IMAGE, "image", "Input image"],
+                    [PF_DRAWABLE, "drawable", "Input drawable"]);
 
-my @load_params  = ([Gimp::PDB_STRING, "filename", "The name of the file"],
-                    [Gimp::PDB_STRING, "raw_filename", "The name of the file"]);
+my @load_params  = ([PF_STRING, "filename", "Filename"],
+                    [PF_STRING, "raw_filename", "User-given filename"]);
 
 my @save_params  = (@image_params, @load_params);
 
-my @load_retvals = ([Gimp::PDB_IMAGE, "image", "Output image"]);
-
-my $image_retval = [Gimp::PDB_IMAGE, "image", "The resulting image"];
+my $image_retval = [PF_IMAGE, "image", "Output image"];
 
 # expand all the pod directives in string (currently they are only removed)
 sub expand_podsections() {
@@ -171,7 +169,7 @@ sub string2pf($$) {
       die __"$s: not a number\n" unless $s==1.0*$s;
       $s*1.0;
    } elsif($type == PF_COLOUR) {
-      $s=Gimp::canonicalize_colour($s);
+      Gimp::canonicalize_colour($s);
    } elsif($pf2info{$type}->[0] eq 'boolean') {
       $s?1:0;
    #} elsif($type == PF_IMAGE) {
@@ -260,13 +258,6 @@ Gimp::on_query {
       my($perl_sub,$function,$blurb,$help,$author,$copyright,$date,
          $menupath,$imagetypes,$params,$results,$code,$type)=@$_;
 
-      for (@$results) {
-         next if ref $_;
-         if ($_ == Gimp::PDB_IMAGE) {
-            $_ = $image_retval;
-         }
-      }
-
       for(@$params) {
 	 next if $_->[0] < Gimp::PDB_END;
 	 $_->[0] = $pf2info{$_->[0]}->[1] // datatype(values %{+{@{$_->[4]}}});
@@ -303,13 +294,17 @@ sub register($$$$$$$$$;@) {
 
    if ($menupath =~ /^<Image>\//) {
       $type = Gimp::PLUGIN;
-      if (defined $imagetypes and length $imagetypes) {
+      if ($imagetypes) {
 	 unshift @$params, @image_params;
+      } else {
+	 # undef or ''
+	 unshift @$results, $image_retval
+	    if !@$results or $results->[0]->[0] != PF_IMAGE;
       }
    } elsif ($menupath =~ /^<Load>\//) {
       $type = Gimp::PLUGIN;
       unshift @$params, @load_params;
-      unshift @$results, @load_retvals;
+      unshift @$results, $image_retval;
    } elsif ($menupath =~ /^<Save>\//) {
       $type = Gimp::PLUGIN;
       unshift @$params, @save_params;
@@ -446,6 +441,7 @@ sub register($$$$$$$$$;@) {
 	 }
       }
 
+      Gimp->displays_flush;
       wantarray ? @retvals : $retvals[0];
    };
 
@@ -504,7 +500,7 @@ sub save_image($$) {
    } elsif ($type eq "PNM") {
       $layer->file_pnm_save($path,$path,1);
    } else {
-      $layer->gimp_file_save($path,$path);
+      $layer->file_save($path,$path);
    }
 }
 
@@ -523,7 +519,7 @@ EOF
       my $default_text = defined $_->[3]
 	  ? " [".(ref $_->[3] eq 'ARRAY' ? "[@{$_->[3]}]" : $_->[3])."]"
 	  : "";
-      printf "           -%-25s %s%s\n",
+      printf "           --%-24s %s%s\n",
 	"$key $type",
 	$_->[2],
 	$default_text;
@@ -644,9 +640,12 @@ If the plugin works on or produces an image.
 
 If the "image types" argument (see below) is defined and non-zero-length,
 L<Gimp::Fu> will supply a C<PF_IMAGE> and C<PF_DRAWABLE> as the first
-two parameters to the plugin. If the plugin is intending to create
-an image rather than to work on an existing one, make sure you supply
-C<undef> or C<""> as the "image types".
+two parameters to the plugin.
+
+If the plugin is intending to create an image rather than to work on
+an existing one, make sure you supply C<undef> or C<""> as the "image
+types". In that case, L<Gimp::Fu> will supply a C<PF_IMAGE> return value
+if the first return value is not a C<PF_IMAGE>.
 
 In any case, the plugin will be installed in the specified menu location;
 almost always under C<File/Create> or C<Filters>.
@@ -720,8 +719,11 @@ that, e.g.:
      "<Image>/Filters/Render/Do Something...",
      "*",
      [ [PF_INT32, "input", "Input value", 1] ],
-     [ [PF_IMAGE, "output image", "Output image", 1] ],
+     [ [PF_IMAGE, "output image", "Output image"] ],
      sub { Gimp::Image->new($_[0], $_[0], RGB) };
+
+If your "image types" is false, then L<Gimp::Fu> will ensure your first
+return parameter is a C<PF_IMAGE>.
 
 =item the code
 
@@ -736,10 +738,9 @@ You must make sure your plugin returns the correct types of value, or none:
    ();
  };
 
-If you want to display images, you must have your script do that
-(and call C<Gimp-E<gt>displays_flush> at the end). C<Gimp::Fu> plugins
-will thereby be good GIMP "citizens", able to fit in with plugins/filters
-written in other languages.
+If you want to display images, you must have your script do
+that. C<Gimp::Fu> plugins will thereby be good GIMP "citizens", able to
+fit in with plugins/filters written in other languages.
 
 =back
 

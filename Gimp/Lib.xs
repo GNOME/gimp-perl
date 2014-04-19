@@ -545,8 +545,8 @@ convert_array2paramdef (AV *av, GimpParamDef **res)
 	  if ((x = av_fetch (av, 0, 0))) type = *x;
 	  if ((x = av_fetch (av, 1, 0))) name = *x;
 	  if ((x = av_fetch (av, 2, 0))) help = *x;
-	} else if (SvIOK(sv))
-	  type = sv;
+	} else
+	  croak("Each parameter to a plugin must be an array-ref");
 
 	if (type) {
 	  if (def) {

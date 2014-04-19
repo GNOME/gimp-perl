@@ -43,11 +43,7 @@ register $regname, $shortdesc, $longdesc, $authorname, $author, $date, $path, $i
    [PF_SLIDER, "depth_shape", "Determines the final shape", 7 , [0,64,32]],
    [PF_RADIO, "map", "The type of Map to use(0=Linear,1=Spherical,2=Sinusoidal)", 2, [Linear => 0, Spherical => 1, Sinusoidal => 2] ],
   ],
-  [
-   [PF_IMAGE, "image", "Return image", 0],
-  ],
   sub {
-
 my ($font, $fontsize, $text, $color1, $color2, $azimuth, $elevation, $depth, $maptype) = @_;
 
 # -- step 1 --

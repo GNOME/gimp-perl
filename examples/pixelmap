@@ -79,7 +79,6 @@ register "pixelgen",
 						   GRAYA => GRAYA_IMAGE, INDEXED => INDEXED_IMAGE, INDEXEDA => INDEXEDA_IMAGE]],
 	   [PF_TEXT,		"expression"	, "The perl expression to use",	"(\$x*\$y*0.01)\n->slice(\"*\$bpp\")"]
 	 ],
-	 [PF_IMAGE],
 	 sub {
    my($w,$h,$type,$expr)=@_;
    my $image = new Gimp::Image $w, $h, Gimp->layer2imagetype($type);

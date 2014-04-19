@@ -153,7 +153,6 @@ register
          [PF_STRING,  "imageh", "Height of image", 256],
          [PF_STRING,  "skew", "Random darken/lighten factor (0..20)", 0]
         ],
-        [PF_IMAGE],
         \&do_bricks;
 
 exit main();

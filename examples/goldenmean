@@ -27,7 +27,7 @@ sub goldenmean {
 	$layer->gimp_edit_fill(BACKGROUND_FILL);
 	Gimp::Context->pop();
 
-	return;
+	return $img;
 }
 
 register	"golden_mean",
