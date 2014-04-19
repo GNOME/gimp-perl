@@ -128,6 +128,7 @@ sub do_bricks {
     gimp_drawable_offset ($layerpat,1,0,-1,-1);
     gimp_drawable_offset ($layerb,1,0,-1,-1);
     gimp_context_pop();
+    gimp_display_new($image);
 
     $image;
 }

@@ -82,6 +82,7 @@ sub perl_fu_glowing_steel {
   gimp_image_set_active_layer($image,$backlayer);
 
   gimp_context_pop();
+  gimp_display_new($image);
 
   return $image;
 }

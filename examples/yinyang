@@ -71,6 +71,7 @@ sub yinyang {
     # Finish up
     gimp_context_pop();
     gimp_selection_none($img);
+    gimp_display_new($img);
 
     $img;
 }

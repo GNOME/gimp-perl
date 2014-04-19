@@ -93,6 +93,7 @@ $img->add_new_layer(2);
 $img->gimp_selection_none();
 
 Gimp::Context->pop();
+gimp_display_new($img);
 return($img);
 };
 

@@ -26,6 +26,7 @@ sub goldenmean {
 	Gimp::Context->push();
 	$layer->gimp_edit_fill(BACKGROUND_FILL);
 	Gimp::Context->pop();
+	Gimp::Display->new($img);
 
 	return $img;
 }
