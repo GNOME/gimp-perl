@@ -36,6 +36,7 @@ sub canonicalize_colour {
       return [ map { hex($_)/255.0 } ($1, $2, $3) ];
    } else {
       unless (%rgb_db) {
+	 local ($_, *RGB_TEXT);
          if ($rgb_db_path) {
             open RGB_TEXT, "<", $rgb_db_path or croak "$rgb_db_path: $!";
          } else {
@@ -43,7 +44,7 @@ sub canonicalize_colour {
          }
          while(<RGB_TEXT>) {
 	    my @rgb = split ' ';
-	    my $label = lc pop @rgb;
+	    my $label = lc join ' ', splice @rgb, 3;
             next unless @rgb == 3 and not grep { $_ ne int $_ } @rgb;
             $rgb_db{$label} = [ map { $_ / 255.0 } @rgb ];
          }

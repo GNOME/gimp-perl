@@ -45,10 +45,10 @@ use constant {
   REQ_FILE  => 1 << 5,
 };
 
-my $color1 = [0,0,1.0];
-my $color2 = [0.4,0,1.0];
-my $black = [0,0,0];
-my $white  = [1,1,1];
+my $color1 = 'blue';
+my $color2 = 'dark red';
+my $black = 'black';
+my $white  = 'white';
 my $gradient1 = "Burning Paper";
 my $width     = 10;
 my $height    = 10;
