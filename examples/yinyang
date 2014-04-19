@@ -126,7 +126,6 @@ register("yinyang",
 		[PF_STRING, "bottom_eye_filename", "eye 2", ""],
 		[PF_TOGGLE, "anti_aliasing", "", 1]
 	],
-        [PF_IMAGE],
 	\&yinyang);
 
 exit main;

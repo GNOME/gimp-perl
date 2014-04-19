@@ -316,7 +316,6 @@ register
 	"film \"Lost In Space\".",
   "Aaron Sherman", "Aaron Sherman (c)", "1999-06-14",
   N_"<Image>/File/Create/Logos/Glowing Steel",
-
   undef,
   [
    [PF_STRING, "string", "string", "GET LOST"],
@@ -329,7 +328,6 @@ register
    [PF_TOGGLE, "highlight_edges", "", 0],
    [PF_TOGGLE, "antialias", "", 1]
   ],
-  [PF_IMAGE],
   \&perl_fu_glowing_steel;
 
 exit main;

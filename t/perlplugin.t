@@ -14,13 +14,13 @@ use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 
 sub boilerplate_params {
-  my ($testing, $menuloc) = @_;
+  my ($testing, $menuloc, $imagetypes) = @_;
   (
     ("exercise gimp-perl filter testing $testing") x 2,
     ("boilerplate id") x 2,
     "20140310",
     N_$menuloc,
-    "*",
+    $imagetypes // "*",
   );
 }
 
@@ -128,6 +128,25 @@ sub boilerplate_params {
 );
 
 &register(
+  "test_create_return_image",
+  boilerplate_params('retval addition', '<Image>/File/Create/x1', ''),
+  [],
+  [
+  ],
+  sub { Gimp::Image->new(20, 20, RGB) }
+);
+
+&register(
+  "test_create_return_int_image",
+  boilerplate_params('retval addition', '<Image>/File/Create/x1', ''),
+  [],
+  [
+    [ PF_INT32, "int", "Output int", ],
+  ],
+  sub { (Gimp::Image->new(20, 20, RGB), 2) }
+);
+
+&register(
   "test_perl_filter",
   boilerplate_params('filter', '<Image>/Filters'),
   [ [PF_STRING, "text", "Text to name layer", "hello"], ],
@@ -187,6 +206,12 @@ eval { Gimp::Plugin->test_return_toomany; };
 like($@, qr/too many/, 'too many return values is error');
 eval { Gimp::Plugin->test_return_toofew; };
 like($@, qr/too few/, 'too few return values is error');
+isa_ok(Gimp::Plugin->test_create_return_image, 'Gimp::Image', 'add image ret');
+is_deeply(
+  [ map { ref($_) || $_ } Gimp::Plugin->test_create_return_int_image ],
+  [ 'Gimp::Image', 2 ],
+  'add image ret when other ret there'
+);
 # if enable next line, brings up script dialog
 # color one works, font doesn't - speculate is due to being in "batch mode"
 #Gimp::Plugin->test_dialogs(RUN_INTERACTIVE, [0,0,0], "Arial", 150, );
