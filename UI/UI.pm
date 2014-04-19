@@ -342,7 +342,7 @@ sub get_list { Gimp->gradients_get_list("") }
 sub new_pixbuf {
    use POSIX;
    my @grad_row = map { $_ = abs(ceil($_*255 - 0.5)) }
-                   Gradient->get_uniform_samples ($_,100,0);
+                   Gimp::Gradient->get_uniform_samples ($_,100,0);
 
 # make it 16 tall; there's bound to be a better way to do this? (its slow)
    push @grad_row, @grad_row, @grad_row, @grad_row,

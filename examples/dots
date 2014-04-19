@@ -3,11 +3,12 @@
 # <sjburges@gimp.org>
 # Generate dots within a selection.
 
+#BEGIN { $Gimp::verbose = 1; }
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 use Gimp::Util;
 
-# Gimp::set_trace(TRACE_ALL);
+#Gimp::set_trace(TRACE_ALL);
 
 register "dots",
          "Dots",
