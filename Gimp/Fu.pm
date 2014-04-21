@@ -6,6 +6,7 @@ use strict;
 use Carp qw(croak carp);
 use vars qw($run_mode @EXPORT_OK @EXPORT %EXPORT_TAGS);
 use base 'Exporter';
+use Filter::Simple;
 use FindBin qw($RealBin $RealScript);
 use File::stat;
 
@@ -94,6 +95,28 @@ my %pf2info = map {
    my $v = $pfname2info{$_}; ($v->[0] => [ @$v[1..3] ])
 } keys %pfname2info;
 
+my @image_params = ([PF_IMAGE, "image", "Input image"],
+                    [PF_DRAWABLE, "drawable", "Input drawable", '%a']);
+my @load_params  = ([PF_STRING, "filename", "Filename"],
+                    [PF_STRING, "raw_filename", "User-given filename"]);
+my @save_params  = (@image_params, @load_params);
+my $image_retval = [PF_IMAGE, "image", "Output image"];
+my %IND2SECT = (
+   2 => 'DESCRIPTION', 3 => 'AUTHOR', 4 => 'LICENSE',
+   5 => 'DATE', 6 => 'SYNOPSIS', 7 => 'IMAGE TYPES',
+);
+
+my $podreg_re = qr/(\bpodregister\s*{)/;
+FILTER {
+   return unless /$podreg_re/;
+   my @p = fixup_args(('') x 9, 1);
+   return unless @{$p[9]};
+   my $myline = 'my ('.join(',', map { '$'.$_->[1] } @{$p[9]}).') = @_;';
+   warn __PACKAGE__."::FILTER_ONLY: $myline" if $Gimp::verbose;
+   s/$podreg_re/$1\n$myline/;
+   warn __PACKAGE__."::FILTER_ONLY: found: '$1'" if $Gimp::verbose;
+};
+
 @EXPORT_OK = qw($run_mode save_image);
 %EXPORT_TAGS = (
    params => [ keys %pfname2info ]
@@ -101,17 +124,6 @@ my %pf2info = map {
 @EXPORT = (qw(podregister register main), @{$EXPORT_TAGS{params}});
 
 my @scripts;
-
-# Some Standard Arguments
-my @image_params = ([PF_IMAGE, "image", "Input image"],
-                    [PF_DRAWABLE, "drawable", "Input drawable", '%a']);
-
-my @load_params  = ([PF_STRING, "filename", "Filename"],
-                    [PF_STRING, "raw_filename", "User-given filename"]);
-
-my @save_params  = (@image_params, @load_params);
-
-my $image_retval = [PF_IMAGE, "image", "Output image"];
 
 sub interact {
    require Gimp::UI;
@@ -263,58 +275,51 @@ sub podregister (&) { unshift @_, ('') x 9; goto &register; }
 sub getpod ($$) {
    require Gimp::Pod; $_[0] ||= new Gimp::Pod; $_[0]->section($_[1]);
 }
-my %IND2SECT = (
-   2 => 'DESCRIPTION', 3 => 'AUTHOR', 4 => 'LICENSE',
-   5 => 'DATE', 6 => 'SYNOPSIS', 7 => 'IMAGE TYPES',
-);
-#(func,blurb,help,author,copyright,date,menupath,imagetypes,params,return,code)
-sub register($$$$$$$$$;@) {
-   no strict 'refs';
+# inserts type after imagetypes
+sub fixup_args {
    my @p = @_;
    splice @p, 9, 0, [] if @p == 10; # optional return values
    die __"register called with too many or wrong arguments\n" unless @p == 11;
    my $pod;
-   @p[0,1] = getpod($pod,'NAME') =~ /(.*?)\s*-\s*(.*)/ unless $p[0] or $p[1];
+   @p[0,1] = (getpod($pod,'NAME')//'') =~ /(.*?)\s*-\s*(.*)/ unless $p[0] or $p[1];
    ($p[0]) = File::Basename::fileparse($RealScript, qr/\.[^.]*/) unless $p[0];
    while (my ($k, $v) = each %IND2SECT) { $p[$k] ||= getpod($pod, $v); }
-   $p[8] ||= [ eval getpod($pod, 'PARAMETERS') ]; die $@ if $@;
-   $p[9] ||= [ eval getpod($pod, 'RETURN VALUES') ]; die $@ if $@;
+   $p[8] ||= [ eval (getpod($pod, 'PARAMETERS') // '') ]; die $@ if $@;
+   $p[9] ||= [ eval getpod($pod, 'RETURN VALUES') // '' ]; die $@ if $@;
    for my $i (0..6, 10) {
-      croak "$0: Need arg $i (or POD $IND2SECT{$i} section)" unless $p[$i]
+      croak "$0: Need arg $i (or POD ".($IND2SECT{$i}//'')." section)" unless $p[$i]
    }
-   my ($function, $blurb, $help, $author, $copyright, $date,
-       $menupath, $imagetypes, $params, $results, $code) = @p;
-   my $type;
-   if ($menupath =~ /^<Image>\//) {
-      $type = Gimp::PLUGIN;
-      if ($imagetypes) {
-	 unshift @$params, @image_params;
+   die __<<EOF unless $p[6] =~ /^<(?:Image|Load|Save|Toolbox|None)>/;
+Menupath must start with <Image>, <Load>, <Save>, <Toolbox>, or <None>!
+(got '$p[6]')
+EOF
+   splice @p, 8, 0, Gimp::PLUGIN;
+   if ($p[6] =~ /^<Image>\//) {
+      if ($p[7]) {
+	 unshift @{$p[9]}, @image_params;
       } else {
 	 # undef or ''
-	 unshift @$results, $image_retval
-	    if !@$results or $results->[0]->[0] != PF_IMAGE;
+	 unshift @{$p[10]}, $image_retval
+	    if !@{$p[10]} or $p[10]->[0]->[0] != PF_IMAGE;
       }
-   } elsif ($menupath =~ /^<Load>\//) {
-      $type = Gimp::PLUGIN;
-      unshift @$params, @load_params;
-      unshift @$results, $image_retval;
-   } elsif ($menupath =~ /^<Save>\//) {
-      $type = Gimp::PLUGIN;
-      unshift @$params, @save_params;
-   } elsif ($menupath =~ m#^<Toolbox>/Xtns/#) {
-      $type = Gimp::PLUGIN;
-      undef $imagetypes;
-   } elsif ($menupath =~ /^<None>/) {
-      $type = Gimp::PLUGIN;
-      undef $menupath;
-      undef $imagetypes;
-   } else {
-      die __<<EOF;
-menupath _must_ start with <Image>, <Load>, <Save>, <Toolbox>/Xtns/, or <None>!
-(got '$menupath')
-EOF
+   } elsif ($p[6] =~ /^<Load>\//) {
+      unshift @{$p[9]}, @load_params;
+      unshift @{$p[10]}, $image_retval;
+   } elsif ($p[6] =~ /^<Save>\//) {
+      unshift @{$p[9]}, @save_params;
+   } elsif ($p[6] =~ m#^<Toolbox>/Xtns/#) {
+      undef $p[7];
+   } elsif ($p[6] =~ /^<None>/) {
+      undef $p[6]; undef $p[7];
    }
+   @p;
+}
 
+#(func,blurb,help,author,copyright,date,menupath,imagetypes,params,return,code)
+sub register($$$$$$$$$;@) {
+   no strict 'refs';
+   my ($function, $blurb, $help, $author, $copyright, $date, $menupath,
+       $imagetypes, $type, $params, $results, $code) = fixup_args(@_);
    for my $p (@$params,@$results) {
       next unless ref $p;
       croak __"$function: argument/return value '$p->[1]' has illegal type '$p->[0]'"
@@ -561,6 +566,31 @@ It extracts all the relevant values from your script's POD documentation
 explanation. You will also notice you don't need to provide the C<sub>
 keyword, thanks to Perl's prototyping.
 
+=head2 AUTOMATIC PERL PARAMETER INSERTION
+
+Thanks to L<Filter::Simple> source filtering, this C<podregister>-ed
+function:
+
+  # the POD "PARAMETERS" section defines vars called "x" and "y"
+  # the POD "SYNOPSIS" i.e. menupath starts with "<Image>"
+  # the POD "IMAGE TYPES" says "*" - this means image and drawable params too
+  podregister {
+     # code...
+  };
+
+will also have the exact equivalent (because it's literally this) of:
+
+  podregister {
+     my ($image, $drawable, $x, $y) = @_;
+     # code...
+  };
+
+This means if you add or remove parameters in the POD, or change their
+order, your code will just continue to work - no more maintaining two
+copies of the parameter list. The above is the most common scenario,
+but see the L</menupath> for the other possibilities for the variable
+names you will be supplied with.
+
 =head1 THE REGISTER FUNCTION
 
   register
@@ -568,7 +598,7 @@ keyword, thanks to Perl's prototyping.
     "blurb", "help",
     "author", "copyright",
     "date",
-    "menu path",
+    "menupath",
     "imagetypes",
     [
       [PF_TYPE,name,desc,optional-default,optional-extra-args],
@@ -588,7 +618,7 @@ It is B<highly> recommended you use the L</PODREGISTER> interface.
 
 =over 2
 
-=item function name
+=item function_name
 
 Defaults to the NAME section of the POD, the part B<before> the first
 C<->. Falls back to the script's filename.
@@ -633,7 +663,7 @@ Defaults to the DATE section of the POD.
 The "last modified" date of this script. There is no strict syntax here, but
 I recommend ISO format (yyyymmdd or yyyy-mm-dd).
 
-=item menu path
+=item menupath
 
 Defaults to the SYNOPSIS section of the POD.
 
@@ -651,8 +681,17 @@ It should start with one of the following:
 If the plugin works on or produces an image.
 
 If the "imagetypes" argument (see below) is defined and non-zero-length,
-L<Gimp::Fu> will supply a C<PF_IMAGE> and C<PF_DRAWABLE> as the first
-two parameters to the plugin.
+L<Gimp::Fu> will B<supply parameters>:
+
+=over 2
+
+=item * C<PF_IMAGE> called B<image>
+
+=item * C<PF_DRAWABLE> called B<drawable>
+
+=back
+
+as the first parameters to the plugin.
 
 If the plugin is intending to create an image rather than to work on
 an existing one, make sure you supply C<undef> or C<""> as the
@@ -662,7 +701,43 @@ value if the first return value is not a C<PF_IMAGE>.
 In any case, the plugin will be installed in the specified menu location;
 almost always under C<File/Create> or C<Filters>.
 
+=item <Load>/FILETYPE
+
+L<Gimp::Fu> will B<supply parameters>:
+
+=over 2
+
+=item * C<PF_STRING> called B<filename>
+
+=item * C<PF_STRING> called B<raw_filename>
+
+=back
+
+as the first parameters to the plugin.
+
+If the script is an export-handler. Make sure you also have something like:
+
+ Gimp::on_query {
+   Gimp->register_save_handler("file_filetype_save", "filetype", "");
+ };
+
 =item <Save>/FILETYPE
+
+L<Gimp::Fu> will B<supply parameters>:
+
+=over 2
+
+=item * C<PF_IMAGE> called B<image>
+
+=item * C<PF_DRAWABLE> called B<drawable>
+
+=item * C<PF_STRING> called B<filename>
+
+=item * C<PF_STRING> called B<raw_filename>
+
+=back
+
+as the first parameters to the plugin.
 
 If the script is an export-handler. Make sure you also have something like:
 
