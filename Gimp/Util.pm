@@ -1,6 +1,6 @@
 =head1 NAME
 
- Gimp::Util - some handy routines for Gimp-Perl users
+Gimp::Util - Handy routines for Gimp-Perl users
 
 =head1 SYNOPSIS
 

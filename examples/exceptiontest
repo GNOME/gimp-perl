@@ -21,7 +21,7 @@ sub boilerplate_params {
   "test_exception",
   boilerplate_params(
     'exceptions',
-    '<Image>/Filters/Languages/_Perl/Test/Exception', '',
+    '<Image>/Filters/Languages/_Perl/_Test/Exception', '',
   ),
   [],
   sub { die "I DIED\n" }

@@ -58,7 +58,7 @@ __END__
 
 =head1 NAME
 
-Gimp::Data - Set and get state data.
+Gimp::Data - Set and get persistent data.
 
 =head1 SYNOPSIS
 
@@ -79,22 +79,20 @@ values again (L<Gimp::Fu> does this already).
 
 =head1 %Gimp::Data
 
-You can store and retrieve anything you like in this hash. It's contents
+You can store and retrieve anything you like in this hash. Its contents
 will automatically be stored in Gimp, and can be accessed in later
 invocations of your plug-in. Be aware that other plug-ins store data
 in the same "hash", so better prefix your key with something unique,
 like your plug-in's name. As an example, the Gimp::Fu module uses
 "function_name/_fu_data" to store its data.
 
-This module might use a persistant implementation, i.e. your data might
-survive a restart of the Gimp application, but you cannot count on this.
+As of L<Gimp> version 2.3 (and GIMP 2.8), your data B<will> survive a
+restart of the Gimp application.
 
 C<Gimp::Data> will try to freeze your data when you pass in a reference. On
-retrieval, the data is thawed again. See L<Storable> for more info. This
-might be implemented through either Storable or Data::Dumper, or not
-implemented at all (i.e. silently fail) ;)
+retrieval, the data is thawed again. See L<Data::Dumper> for more info.
 
-=head1 PERSISTANCE
+=head1 PERSISTENCE
 
 C<Gimp::Data> contains the following functions to ease applications where
 persistence for perl data structures is required:

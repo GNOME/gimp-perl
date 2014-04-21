@@ -19,7 +19,6 @@ Gimp/Fu.pm
 Gimp/Lib.pm
 Gimp/Lib.xs
 Gimp/Makefile.PL
-Gimp/OO.pod
 Gimp/PixelRgn.pod
 Gimp/Pod.pm
 Gimp/Util.pm

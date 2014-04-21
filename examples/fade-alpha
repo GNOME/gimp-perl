@@ -1,26 +1,17 @@
 #!/usr/bin/perl -w
 
-use Gtk2;
-use Gimp qw(:auto);
+use Gimp;
+use Gimp::Fu;
+use strict;
 
-use strict 'vars';
-
-# Gimp::set_trace(TRACE_ALL);
-
+# 2014/04/20 Ed J: rewrite to use Gimp::Fu and PF_CUSTOM
 # 12/5/03: <sjburges@gimp.org>
 #  s/->mask/->get_mask
 # 3/21/04: <sjburges@gimp.org>
 #  s/AlphaFade/alpha_fade/ to be compatible with PDB naming conventions
 
-###
-# Globals
-###
-my ($direction, $cancelFlag);
-my ($plugin) = "plug_in_alpha_fade";
-
-# XPM's that I removed the $ and the @'s from (they get intrepreted in
+# XPM's that I removed the $ and the @'s from (they get interpreted in
 # strings, which makes for nasty problems).
-
 my @arr = (
 ["24 24 66 1",
 " 	c None",
@@ -783,305 +774,106 @@ my @arr = (
 "WWWWWWWWWWWWWWWWWWWWWWWW"
 ]);
 
-###
-# Subroutines
-###
-sub do_fade
-{
-  my ($image, $drawable) = @_;
-  my (@bounds, $mask, $prevBack, $prevFore);
+sub avg { ($_[0] + $_[1]) / 2 }
 
-  if (!$drawable->is_layer)
-    {
-      die "$plugin: Cannot operate on anything other than layers; Check that you don't have a channel or floating selection currently selected.";
-    }
-
-  $image->undo_group_start;
-  @bounds = $image->selection_bounds;
-
-  if (!$drawable->has_alpha)
-    {
-      $drawable->add_alpha;
-    }
-
-  if ($drawable->get_mask)
-    {
-      $mask = $drawable->get_mask;
-    }
-  else
-    {
+register
+  "alpha_fade",
+  "Fade the alpha channel of a layer from one side to another",
+  <<EOF,
+Rewritten by Ed J to use Gimp::Fu as demo of PF_CUSTOM widget. Original
+by Seth Burgess, inspired by a mailing list question that asked how to do
+exactly what this does, which is fade the alpha from one side to another.
+EOF
+  "Seth Burgess",
+  "Seth Burgess",
+  "2000",
+  "<Image>/Layer/Transparency/_Fade...",
+  "*",
+  [
+    [PF_CUSTOM, "direction", "Direction to fade(0-8)", 4, sub {
+      my $btnTable = new Gtk2::Table(3,3,1);
+      $btnTable->set_border_width(6);
+      my $btn = new Gtk2::RadioButton;
+      my $u_direction;
+      my @buttons;
+      for (my $x=0;$x<3;$x++) {
+	for (my $y=0;$y<3;$y++) {
+	  my $dir = $x*3 + $y;
+	  $buttons[$dir] = $btn = Gtk2::RadioButton->new_from_widget($btn);
+	  $btn->set_mode(0);
+	  $btn->signal_connect("clicked", sub { $u_direction = $_[1]; }, $dir);
+	  $btn->show;
+	  $btnTable->attach_defaults($btn, $x, $x+1, $y, $y+1);
+	  my $pixmap = Gtk2::Image->new_from_pixmap(
+	    Gtk2::Gdk::Pixmap->colormap_create_from_xpm_d(
+	      undef, $btn->get_colormap,
+	      $btn->style->bg('normal'), @{$arr[$dir]}
+	    )
+	  );
+	  $pixmap->show;
+	  $btn->add($pixmap);
+	}
+      }
+      $btnTable->show;
+      ($btnTable, sub { $buttons[$_[0]]->clicked }, sub { $u_direction });
+    },
+  ]
+  ],
+  [],
+  sub {
+    my ($image, $drawable, $direction) = @_;
+    die "Can only operate on layers\n" unless $drawable->is_layer;
+    $drawable->become('Gimp::Layer');
+    $image->undo_group_start;
+    my @bounds = $image->selection_bounds;
+    $drawable->add_alpha unless $drawable->has_alpha;
+    my $mask;
+    unless ($mask = $drawable->get_mask) {
       $mask = $drawable->create_mask(ADD_ALPHA_MASK);
       $drawable->add_mask($mask);
     }
+    Gimp::Context->push;
+    Gimp::Context->set_background([0.0,0.0,0.0,1.0]);
+    Gimp::Context->set_foreground([1.0,1.0,1.0,1.0]);
+    # Direction Map
+    # 0 3 6
+    # 1 4 7
+    # 2 5 8
+    # Bounds Map
+    # (1,2) (3,2)
+    # (1,4) (3,4)
+    my @blend_args = (
+      FG_BG_RGB_MODE, NORMAL_MODE,
+      ($direction == 4 ? GRADIENT_RADIAL : GRADIENT_LINEAR),
+      100.0,       # opacity
+      0.0,         # offset
+      REPEAT_NONE,
+      0,           # reverse
+      0,           # supersample
+      1,           # recursion levels
+      0.1,         # supersample threshold
+      0,		 # dither
+    );
+    my %dir2argfunc = (
+      0 => sub { @_[3, 4, 1, 2] },
+      1 => sub { ($_[3], avg(@_[2,4]), $_[1], avg(@_[2,4])) },
+      2 => sub { @_[3, 2, 1, 4] },
+      3 => sub { (avg(@_[1,3]), $_[4], avg(@_[1,3]), $_[2]) },
+      4 => sub { (avg(@_[1,3]), avg(@_[2,4]), avg(@_[1,3]), $_[4]) }, # radial
+      5 => sub { (avg(@_[1,3]), $_[2], avg(@_[1,3]), $_[4]) },
+      6 => sub { @_[1, 4, 3, 2] },
+      7 => sub { ($_[1], avg(@_[2,4]), $_[3], avg(@_[2,4])) },
+      8 => sub { @_[1, 2, 3, 4] },
+    );
+    $mask->edit_blend(@blend_args, $dir2argfunc{$direction}->(@bounds));
+    $drawable->remove_mask(MASK_APPLY) if $direction >=0 && $direction <9;
+    Gimp::Context->pop;
+    $image->undo_group_end;
+  };
 
-  Gimp::Context->push();
-
-  Gimp::Context->set_background([0.0,0.0,0.0,1.0]);
-  Gimp::Context->set_foreground([1.0,1.0,1.0,1.0]);
-
-  # Direction Map
-  # 0 3 6
-  # 1 4 7
-  # 2 5 8
-
-  # Bounds Map
-  # (1,2) (3,2)
-  # (1,4) (3,4)
-
-  if ($direction==0)
-    {
-      $mask->edit_blend(FG_BG_RGB_MODE,
-                   NORMAL_MODE,
-		   GRADIENT_LINEAR,
-		   100.0,             # opacity
-		   0.0,               # offset
-                   REPEAT_NONE,
-		   0,                 # reverse
-		   0,                 # supersample
-		   1,                 # recursion levels
-		   0.1,               # supersample threshold
-	           0,		      # dither
-		   $bounds[3], $bounds[4],
-		   $bounds[1], $bounds[2]);
-    }
-  elsif ($direction==1)
-    {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0,
-                   REPEAT_NONE, 0, 0, 0, 1, 0,
-		   $bounds[3], ($bounds[2]+$bounds[4])/2,
-		   $bounds[1], ($bounds[2]+$bounds[4])/2);
-
-    }
-  elsif ($direction==2)
-    {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0,
-                   REPEAT_NONE, 0, 0, 0, 1, 0,
-		   $bounds[3], $bounds[2],
-		   $bounds[1], $bounds[4]);
-
-    }
-  elsif ($direction==3)
-    {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0,
-                   REPEAT_NONE, 0, 0, 0, 1, 0,
-		   ($bounds[3]+$bounds[1])/2, $bounds[4],
-		   ($bounds[3]+$bounds[1])/2, $bounds[2]);
-    }
-  elsif ($direction==4)
-    {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_RADIAL, 100.0, 0.0,
-                   REPEAT_NONE, 0, 0, 0, 1, 0,
-		   ($bounds[1]+$bounds[3])/2,
-		   ($bounds[2]+$bounds[4])/2,
-		   ($bounds[3]+$bounds[1])/2, $bounds[4]);
-
-    }
-  elsif ($direction==5)
-    {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0,
-                   REPEAT_NONE, 0, 0, 0, 1, 0,
-		   ($bounds[3]+$bounds[1])/2, $bounds[2],
-		   ($bounds[3]+$bounds[1])/2, $bounds[4]);
-    }
-  elsif ($direction==6)
-    {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0,
-                   REPEAT_NONE, 0, 0, 0, 1, 0,
-		   $bounds[1], $bounds[4],
-		   $bounds[3], $bounds[2]);
-    }
-  elsif ($direction==7)
-    {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0,
-                   REPEAT_NONE, 0, 0, 0, 1, 0,
-		   $bounds[1], ($bounds[2]+$bounds[4])/2,
-		   $bounds[3], ($bounds[2]+$bounds[4])/2);
-    }
-  elsif ($direction==8)
-    {
-      $mask->edit_blend(FG_BG_RGB_MODE, DARKEN_ONLY_MODE, GRADIENT_LINEAR, 100.0, 0.0,
-                   REPEAT_NONE, 0, 0, 0, 1, 0,
-		   $bounds[1], $bounds[2],
-		   $bounds[3], $bounds[4]);
-    }
-  if ($direction >=0 && $direction <9)
-    {
-      $drawable->remove_mask(MASK_APPLY);
-    }
-
-  Gimp::Context->pop();
-  $image->undo_group_end;
-}
-
-sub btn_pressed
-{
-  my ($widget, $btnIndex) = @_;
-  $direction = $btnIndex;
-}
-
-sub add_pixmap
-{
-  my ($window, $but, $num) = @_;
-  my @tar = @{$arr[$num]};
-  my ($pixmap, $mask) = Gtk2::Gdk::Pixmap->colormap_create_from_xpm_d(undef,
-                        $but->get_colormap,
-                        $but->style->bg('normal'),
-			@{$arr[$num]});
-  my ($pixmapId) = new_from_pixmap Gtk2::Image($pixmap, $mask);
-
-  $pixmapId->show;
-  $but->add($pixmapId);
-}
-
-sub okCbk
-{
-  $cancelFlag = 0;
-  Gtk2->main_quit;
-}
-
-sub create_window
-{
-  my ($window, $frm, $box1, $hbox, $hsep, $btnTable, $i, $j, $btn);
-
-  $window = new Gtk2::Window('toplevel');
-  $window->set_name("Alpha Fader");
-  $window->set_wmclass("Gimp", "AlphaFader");
-
-  $window->signal_connect("destroy" => \&Gtk2::main_quit);
-  $window->signal_connect("delete_event" => \&Gtk2::false);
-
-  $box1 = new Gtk2::VBox(0, 0);
-  $box1->set_spacing(2);
-  $window->add($box1);
-
-  $frm = new Gtk2::Frame "Fade Type";
-  $frm->set_border_width(6);
-  $frm->show;
-
-  $box1->pack_start($frm, 1, 1, 0);
-  $btnTable = new Gtk2::Table(3,3,1);
-  $btnTable->set_border_width(6);
-  $frm->add($btnTable);
-
-  $btn = new Gtk2::RadioButton;
-
-  for ($i=0;$i<3;$i++)
-    {
-      for ($j=0;$j<3;$j++)
-        {
-	   $btn = Gtk2::RadioButton->new_from_widget($btn);
-           $btn->set_mode(0);
-	   $btn->signal_connect("clicked", \&btn_pressed, $i*3+$j);
-	   $btn->show;
-	   $btnTable->attach_defaults($btn, $i, $i+1, $j, $j+1);
-	   add_pixmap($window, $btn, $i*3+$j);
-
-	   if (Gimp->get_data($plugin) ne "")
-	     { # if run before, get last data
-	       if (Gimp->get_data($plugin) == $i*3+$j)
-	         {
-	           $btn->clicked;
-	         }
-	     }
-	   else
-	     { # first run of plug-in, set first button
-	       if ($i==0 && $j==0)
-	         {
-		   $btn->clicked;
-		 }
-             }
-	}
-    }
-
-  $hsep = new Gtk2::HSeparator;
-  $box1->pack_start($hsep, 0, 0, 0);
-  $hsep->show;
-
-  $hbox = new Gtk2::HButtonBox;
-  $hbox->set_border_width(2);
-  $hbox->set_spacing(4);
-  $box1->pack_start($hbox, 0, 0, 0);
-  $hbox->show;
-
-  $btn = new Gtk2::Button "OK";
-  $btn->can_default(1);
-  $btn->signal_connect("clicked" => \&okCbk);
-  $btn->show;
-  $hbox->pack_start($btn, 0, 0, 0);
-  $btn->grab_default;
-
-  $btn = new Gtk2::Button "Cancel";
-  $btn->can_default(1);
-  $btn->signal_connect("clicked" => \&Gtk2::main_quit);
-  $btn->show;
-  $hbox->pack_start($btn, 0, 0, 0);
-
-  $btnTable->show;
-  $box1->show;
-  $window->show;
-}
-
-Gimp::on_run
-{
-  my ($interactive, $img, $drw);
-  ($interactive, $img, $drw, $direction) = @_;
-
-  $cancelFlag = 1;
-  if ($interactive==1)
-    {
-       $cancelFlag = 0;
-    }
-  elsif ($interactive==2)
-    {
-       $direction = Gimp->get_data($plugin);
-       $cancelFlag = 0;
-    }
-  else
-    {
-      init Gtk2;
-      create_window;
-      main Gtk2;
-    }
-
-  # Do the gimply stuff on it
-  if (!$cancelFlag)
-    {
-      do_fade($img, $drw);
-      Gimp->displays_flush;
-      Gimp->set_data($plugin, $direction);
-    }
-};
-
-Gimp::on_query {
-gimp_install_procedure(
-$plugin,
-"Fade the alpha channel of a layer from one side to another",
-"This was written as a slightly useful exercise,
-mostly to learn Gtk's excellent perl interface.  It was
-inspired by a mailing list question that asked how to do
-exactly what this does, which is fade the alpha from one
-side to another.",
-"Seth Burgess",
-"Seth Burgess",
-"2000",
-"<Image>/Layer/Transparency/Fade...",
-"*",
-PLUGIN,
-[
- [PDB_INT32, "run_mode", "Interactive, [non-interactive"],
- [PDB_IMAGE, "image", "Input image (unused)"],
- [PDB_DRAWABLE, "drawable", "Input drawable"],
- [PDB_INT32, "direction", "Direction to fade(0-8)"]
-],
-[]);
-};
-
-exit Gimp::main;
+exit main;
 
 =head1 LICENSE
 
 Copyright Seth Burgess.
 Distributed under the same terms as Gimp-Perl.
-
-=cut
-

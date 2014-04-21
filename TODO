@@ -2,8 +2,7 @@ Items as of 2014-04-19 (by Ed J)
 * <Load> and <Save> need any registration as such done in Gimp::Fu - see pod
 * image in Gimp.pm POD http://perlmaven.com/how-to-add-images-to-cpan -
   input image -> output image of a plugin
-* longer example in Gimp.pm/SYNOPSIS
-* examples POD (and Gimp::Pod TLC)
+* examples POD
 * Add Gimp::existing (Gimp::Fu IMAGE) and ::become (examples/xachshadows)
 * Gimp/Lib.xs is huge, and not very XS-y - lots of it is manually
   pushing GIMP data structures onto perl stack and vice versa. Figure

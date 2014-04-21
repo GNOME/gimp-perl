@@ -29,7 +29,7 @@ our @testbench;
 our %proc2file;
 require 't/examples-api.pl';
 
-my %plug2yes = map { ($_=>1) } qw(dots ); # glowing_steel map_to_gradient
+my %plug2yes = map { ($_=>1) } qw(dots glowing_steel ); # map_to_gradient redeye
 @testbench = grep { $plug2yes{$_->[0]} } @testbench;
 my @duptest = @{$testbench[0]};
 $duptest[3] = [ @{$duptest[3]} ]; # don't change original

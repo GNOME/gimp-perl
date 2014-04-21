@@ -2,7 +2,7 @@ package Gimp::Config;
 
 =head1 NAME
 
-  Gimp::Config - config options found during configure time.
+  Gimp::Config - Access config options found during configure time.
 
 =head1 DESCRIPTION
 

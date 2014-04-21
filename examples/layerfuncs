@@ -16,7 +16,9 @@ register "center_layer", "Center Layer",
          "Seth Burgess", "Seth Burgess <sjburges\@gimp.org>",
          "1.0", N_"<Image>/Layer/Center Layer", "*", [], sub {
 	($img, $layer) = @_;
-	$layer->Gimp::Layer::set_offsets(($img->width  - $layer->width )/2,
+	die "Must have layer selected\n" unless $layer->is_layer;
+	$layer->become('Gimp::Layer');
+	$layer->set_offsets(($img->width  - $layer->width )/2,
                         ($img->height - $layer->height)/2);
 	return();
 };

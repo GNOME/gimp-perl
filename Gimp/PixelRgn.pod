@@ -1,6 +1,6 @@
 =head1 NAME
 
-Gimp::PixelRgn - how to operate on raw pixels.
+Gimp::PixelRgn - Operate on raw pixels in powerful, efficient way.
 
 =head1 SYNOPSIS
 
@@ -12,7 +12,7 @@ Gimp::PixelRgn - how to operate on raw pixels.
   my $gd = $l->get;
   my $region = $gd->pixel_rgn(0,0,10,10,0,0);
   my $piddle = $region->get_pixel($x,$y);
-  print "@{[ unpdl $piddle ]}\n";
+  print $piddle."\n"; # stringified piddle is readable
 
 =head1 DESCRIPTION
 

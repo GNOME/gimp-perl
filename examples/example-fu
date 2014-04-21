@@ -1,87 +1,77 @@
 #!/usr/bin/perl
 
+use strict;
 use Gimp;
 use Gimp::Fu;
 
-# expand your terminal to 121 across to read easily...
-
-register
-  "gimp_fu_example_script",			# fill in a function name
-  "An example of Gimp::Fu usage, mostly non-functional",	# and a short description,
-  "Just a starting point to derive new ".        # a (possibly multiline) help text
-    "scripts. Always remember to put a long".
-    "help message here!",
-  "Marc Lehmann <pcg\@goof.com>",		# don't forget your name (author)
-  "(c)1998,1999,2000 Marc Lehmann",		# and your copyright!
-  "20000321",					# the date this script was written (YYYYMMDD)
-  N_"<Toolbox>/Xtns/Perl/Gimp::Fu Example...",	# the menu path - the 'N_' is for internationalization
-  "",						# image types to accept (RGB, RGAB and GRAYA) - blank or undef means don't need one
-  [ # one of each type of parameter here
-    # argument type, switch name	, a short description		, default value, extra arguments
-    [PF_SLIDER	, "width"	, "The image width"		, 360, [300, 500]],
-    [PF_SPINNER	, "height"	, "The image height"		, 100, [100, 200]],
-    [PF_STRING	, "text"	, "The Message"			, "example text"],
-    [PF_INT32	, "bordersize"	, "The bordersize"		, 10],
-    [PF_FLOAT	, "borderwidth"	, "The borderwidth"		, 1/5],
-    [PF_FONT	, "font"	, "The Font Family"		],
-    [PF_COLOUR	, "text_colour"	, "The (foreground) text colour", [10,10,10]],
-    [PF_COLOUR	, "bg_colour"	, "The background colour"	, [0xff,0x80,0]],
-    [PF_TOGGLE	, "ignore_cols" , "Ignore colours"		, 0],
-    [PF_IMAGE	, "extra_image"	, "An additonal picture to ignore"],
-    [PF_DRAWABLE	, "extra_draw"	, "Somehting to ignroe as well"	],
-    [PF_RADIO	, "type"	, "The effect type"		, 0, [small => 0, large => 1]],
-    [PF_BRUSH	, "a_brush"	, "An unused brush"		],
-    [PF_PATTERN	, "a_pattern"	, "An unused pattern"		],
-    [PF_GRADIENT	, "a_gradients"	, "An unused gradients"		],
-  ],
-  [
-    [PF_IMAGE	, "output image", "Output image"],
-  ],
-  sub {
-
-   # now do something useful with our parameters
-   my($width,$height,$text,$brd1,$brd2,$font,$fg,$bg,$ignore,$xtraimg,$xtradrw,$effecttype,$brush,$pattern,$gradient)=@_;
-
-   # set tracing, disable this to get rid of the debugging output
-   Gimp::set_trace(TRACE_CALL);
-
-   # store current context, so that present settings aren't affected
-   Gimp::Context->push();
-
-   my $img = new Gimp::Image ($width, $height, RGB);
-
-   # put an undo group around any modifications, so that
-   # they can be undone in one step.
-   $img->undo_group_start;
-
-   # the __ before the string in the next line indicates text that must be translated
-   my $l = new Gimp::Layer ($img, $width, $height, RGB, __"Background", 100, NORMAL_MODE);
-   $l->insert_layer(0, 0);
-
-   # now a few syntax examples
-
-   Gimp::Context->set_foreground($fg) unless $ignore;
-   Gimp::Context->set_background($bg) unless $ignore;
-
-   fill $l BACKGROUND_FILL;
-   my $text_layer = $img->text_fontname(-1, 10, 10, $text, 5, 1, 10, PIXELS, $font);
-
-   Gimp::Context->set_foreground("green");
-
-   # close the undo push group
-   $img->undo_group_end;
-
-   # restore original context
-   Gimp::Context->pop();
-
-   $img;	# return the image, as it's on our output parameters
+podregister {
+  my($width,$height,$text,$longtext,$brd1,$brd2,$font,$fg,$bg,$ignore,$xtraimg,$xtradrw,$effecttype,$brush,$pattern,$gradient)=@_;
+  Gimp::set_trace(TRACE_CALL); # remove this to stop debugging output
+  Gimp::Context->push; # store current settings, so present ones preserved
+  my $img = Gimp::Image->new($width, $height, RGB);
+  $img->undo_group_start; # so all actions can be undone in one step
+  # the __ before the string will translate it if available
+  my $l = Gimp::Layer->new($img, $width, $height, RGB, __"Background", 100, NORMAL_MODE);
+  $l->insert_layer(0, 0); # required!
+  # now a few syntax examples
+  Gimp::Context->set_foreground($fg) unless $ignore;
+  Gimp::Context->set_background($bg) unless $ignore;
+  fill $l BACKGROUND_FILL;
+  my $text_layer = $img->text_fontname(-1, 10, 10, $text, 5, 1, 10, PIXELS, $font);
+  Gimp::Context->set_foreground("green");
+  $img->undo_group_end; # close the undo group
+  Gimp::Context->pop; # restore original context
+  Gimp::Display->new($img);
+  $img; # return image, as Gimp::Fu added that to our output parameters
+        # because no-image-input
 };
 
 exit main;
+__END__
+
+=head1 NAME
+
+example_script - Gimp::Fu example, mostly non-functional
+
+=head1 SYNOPSIS
+
+<Image>/Filters/Languages/_Perl/_Test/Dialog
+
+=head1 DESCRIPTION
+
+Just a starting point to derive new scripts. Always remember to put a
+long help message here!
+
+=head1 PARAMETERS
+
+  # one of each type of parameter here
+  # argument type, variable name, short description, default, extra arguments
+  [PF_SLIDER	, "width"	, "Image width"		, 360, [300, 500]],
+  [PF_SPINNER	, "height"	, "Image height"	, 100, [100, 200]],
+  [PF_STRING	, "text"	, "Message"		, "example text"],
+  [PF_TEXT	, "longtext"	, "Longer text"		, "more example text"],
+  [PF_INT32	, "bordersize"	, "Border size"		, 10],
+  [PF_FLOAT	, "borderwidth"	, "Border width"	, 1/5],
+  [PF_FONT	, "font"	, "Font"],
+  [PF_COLOUR	, "text_colour"	, "Text colour", [10,10,10]],
+  [PF_COLOUR	, "bg_colour"	, "Background colour"	, [0xff,0x80,0]],
+  [PF_TOGGLE	, "ignore_cols" , "Ignore colours"	, 0],
+  [PF_IMAGE	, "extra_image"	, "Additional picture to ignore"],
+  [PF_DRAWABLE	, "extra_draw"	, "Something to ignore as well"	],
+  [PF_RADIO	, "type"	, "Effect type"		, 0, [small => 0, large => 1]],
+  [PF_BRUSH	, "a_brush"	, "An unused brush"],
+  [PF_PATTERN	, "a_pattern"	, "An unused pattern"],
+  [PF_GRADIENT	, "a_gradients"	, "An unused gradients"],
+
+=head1 AUTHOR
+
+Marc Lehmann <pcg@goof.com>
+
+=head1 DATE
+
+2000-03-21
+
 =head1 LICENSE
 
-Copyright Marc Lehman.
+(c) 1998,1999,2000 Marc Lehmann
 Distributed under the same terms as Gimp-Perl.
-
-=cut
-

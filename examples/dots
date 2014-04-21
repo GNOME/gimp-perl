@@ -1,109 +1,98 @@
 #!/usr/bin/perl
 
-# <sjburges@gimp.org>
-# Generate dots within a selection.
-
 #BEGIN { $Gimp::verbose = 1; }
-use Gimp qw(:auto __ N_);
+use Gimp;
 use Gimp::Fu;
-use Gimp::Util;
-
 #Gimp::set_trace(TRACE_ALL);
 
-register "dots",
-         "Dots",
-         "Create evenly spaced dots on a layer, within a selection.",
-         "Seth Burgess",
-         "Seth Burgess <sjburges\@gimp.org>",
-         "2003-09-20",
-         N_"<Image>/Filters/Render/Pattern/Dots...",
-         "RGB*, GRAY*",
-         [
-           [PF_SPINNER, "size", "Diameter of dots", 4, [1,255,1]],
-	   [PF_COLOR, "dotcolor", "Color of the dots", [0,0,255]],
-	   [PF_SLIDER, "opacity", "Opacity of dots", 100, [0,100,1]],
-           [PF_SPINNER, "xspacing", "Spacing of dots in X dimension", 16, [1,255,1]],
-           [PF_SPINNER, "yspacing", "Spacing of dots in Y dimension", 16, [1,255,1]],
-           [PF_SPINNER, "xoffset", "Offset of dots in X dimension", 0, [0,255,1]],
-           [PF_SPINNER, "yoffset", "Offset of dots in y dimension", 0, [0,255,1]],
-            ],
-         [],
-         sub {
-    my($img,$layer,$size,$dotcolor,$opacity,$xspacing,$yspacing,$xoffset,$yoffset) =@_;
-    my $has_noselection;
-    $layer->is_layer || die "A layer is required for this plugin";
-
-    $yoffset = $yoffset % $yspacing;
-    $xoffset = $xoffset % $xspacing;
-
-    $img->undo_group_start;
-
+podregister {
+  my($img,$layer,$size,$color,$opacity,$xspacing,$yspacing,$xoffset,$yoffset) =@_;
+  my $has_noselection;
+  $layer->is_layer || die "A layer is required for this plugin";
+  $yoffset %= $yspacing;
+  $xoffset %= $xspacing;
+  $img->undo_group_start;
 # Get/save current selection info
-    @bounds = $img->selection_bounds;
-    if (!$bounds[0])
-      {
-         $img->selection_all;
-	 $has_noselection=1;
-      }
-    $selchannel = $img->selection_save;
-
+  if (!($img->selection_bounds)[0]) {
+    $img->selection_all;
+    $has_noselection=1;
+  }
+  $selchannel = $img->selection_save;
 # Generate selection mask of dots on entire image
-    $img->selection_none;
-    for ($x=$xoffset-$xspacing;
-         $x<$img->width+$size+$xspacing;
-	 $x+=$xspacing)
-      {
-         for ($y=$yoffset-$yspacing;
-	      $y<$img->height+$size+$yspacing;
-	      $y+=$yspacing)
-	   {
-	     $img->select_ellipse(CHANNEL_OP_ADD,$x-0.5*$size,$y-0.5*$size,
-				  $size,$size);
-           }
-      }
-
+  $img->selection_none;
+  for ($x=$xoffset-$xspacing; $x<$img->width+$size+$xspacing; $x+=$xspacing) {
+    for (
+      $y=$yoffset-$yspacing; $y<$img->height+$size+$yspacing; $y+=$yspacing
+    ) {
+      $img->select_ellipse(CHANNEL_OP_ADD,$x-0.5*$size,$y-0.5*$size,
+      $size,$size);
+    }
+  }
 # Set opacity of dots via selection mask
-    Gimp::Context->push();
-
-    $opc = gimp_channel_new($img,$img->width,$img->height,"OPC", 50, [0,0,0]);
-    $img->insert_channel($opc,0,0);
-    Gimp::Context->set_foreground([($opacity/100.0)x3]);
-    $opc->fill(FOREGROUND_FILL);
-    $img->select_item(CHANNEL_OP_INTERSECT, $opc);
-
+  Gimp::Context->push;
+  $opc = Gimp::Channel->new($img,$img->width,$img->height,"OPC", 50, [0,0,0]);
+  $img->insert_channel($opc,0,0);
+  Gimp::Context->set_foreground([($opacity/100.0)x3]);
+  $opc->fill(FOREGROUND_FILL);
+  $img->select_item(CHANNEL_OP_INTERSECT, $opc);
 # And mask off with original selection
-    $img->select_item(CHANNEL_OP_INTERSECT, $selchannel);
-
+  $img->select_item(CHANNEL_OP_INTERSECT, $selchannel);
 # Make the dots
-    Gimp::Context->set_foreground($dotcolor);
-    $layer->edit_fill(FOREGROUND_FILL);
-
+  Gimp::Context->set_foreground($color);
+  $layer->edit_fill(FOREGROUND_FILL);
 # Cleanup to state before plugin was called
-    if ($has_noselection)
-      {
-        $img->selection_none;
-      }
-    else
-      {
-	$img->select_item(CHANNEL_OP_REPLACE, $selchannel);
-      }
-
-    $img->remove_channel($selchannel);
-    $img->remove_channel($opc);
-
-    Gimp::Context->pop();
-
-    $img->undo_group_end;
-    $layer->set_active_layer;
-
-    return();
+  if ($has_noselection) {
+    $img->selection_none;
+  } else {
+    $img->select_item(CHANNEL_OP_REPLACE, $selchannel);
+  }
+  $img->remove_channel($selchannel);
+  $img->remove_channel($opc);
+  Gimp::Context->pop;
+  $img->undo_group_end;
+  $layer->set_active_layer;
+  return;
 };
+
 exit main;
+__END__
+
+=head1 NAME
+
+dots - Create evenly spaced dots on a layer, within a selection
+
+=head1 SYNOPSIS
+
+<Image>/Filters/Render/Pattern/Dots...
+
+=head1 DESCRIPTION
+
+Create evenly spaced dots of the given colour on a layer, within a
+selection (or on whole layer if no selection).
+
+=head1 PARAMETERS
+
+  [PF_SPINNER, "size", "Diameter of dots", 4, [1,255,1]],
+  [PF_COLOR, "dotcolor", "Color of the dots", [0,0,255]],
+  [PF_SLIDER, "opacity", "Opacity of dots", 100, [0,100,1]],
+  [PF_SPINNER, "xspacing", "Spacing of dots in X dimension", 16, [1,255,1]],
+  [PF_SPINNER, "yspacing", "Spacing of dots in Y dimension", 16, [1,255,1]],
+  [PF_SPINNER, "xoffset", "Offset of dots in X dimension", 0, [0,255,1]],
+  [PF_SPINNER, "yoffset", "Offset of dots in y dimension", 0, [0,255,1]],
+
+=head1 IMAGE TYPES
+
+RGB*, GRAY*
+
+=head1 AUTHOR
+
+Seth Burgess <sjburges@gimp.org>
+
+=head1 DATE
+
+2003-09-20
 
 =head1 LICENSE
 
 Copyright Seth Burgess.
 Distributed under the same terms as Gimp-Perl.
-
-=cut
-

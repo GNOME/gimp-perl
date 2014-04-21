@@ -13,7 +13,7 @@
 #           a grid into it at pixelize size
 #[Xach] that's a bit roundabout, but it's also in the xcf
 #
-# Because the way xach does it is a bit ackward, I'm switching it around a bit
+# Because the way xach does it is a bit awkward, I'm switching it around a bit
 # and working from the bottom up..
 
 # Revision 1.1: Marc Lehman <pcg@goof.com> added undo capability
@@ -23,7 +23,7 @@
 # Revision 1.4: Seth Burgess <sjburges@gimp.org> removed deprecated stuff
 #
 
-use Gimp qw(:auto __ N_);
+use Gimp;
 use Gimp::Fu;
 
 register "xach_shadows",
@@ -38,50 +38,47 @@ register "xach_shadows",
           [PF_SLIDER,	"block_size",	"The size of the blocks...", 10, [4, 255, 1]],
          ],
          sub {
-   my($img,$drawable,$blocksize) =@_;
-
-        eval { $img->undo_group_start };
+        my($img,$drawable,$blocksize) =@_;
+        die "Must have layer selected\n" unless $drawable->is_layer;
+        $drawable->become('Gimp::Layer');
+        $img->undo_group_start;
         Gimp::Context->push();
- #	$selection_flag = 0;
-	if (!$drawable->has_alpha) {
-		$drawable->Gimp::Layer::add_alpha; # not drawable method
-		};
+#	$selection_flag = 0;
+	$drawable->add_alpha unless $drawable->has_alpha;
         Gimp::Context->set_foreground('white');
         Gimp::Context->set_background('black');
 # This only can be applied to an entire image right now..
 #	$selection = $img->selection_save;
     $img->selection_all;
 # Now the fun begins :)
-	$drawable->plug_in_pixelize($blocksize);
+	$drawable->pixelize($blocksize);
 	$shadowlayer = $drawable->layer_copy(0);
 	$img->insert_layer($shadowlayer,0,0);
 	$checkmask = $shadowlayer->create_mask(ADD_WHITE_MASK);
 	$shadowlayer->add_mask($checkmask);
-	plug_in_checkerboard ($img, $checkmask, 0, $blocksize);
+	$img->checkerboard($checkmask, 0, $blocksize);
 
 	$frontlayer = $shadowlayer->layer_copy(0);
 	$img->insert_layer($frontlayer,0,0);
 	Gimp::Context->set_background([0,0,0]);
 	$shadowlayer->fill(BACKGROUND_FILL);
-	$checkmask->plug_in_gauss_iir(0.3*$blocksize, 1, 1);
+	$checkmask->gauss_iir(0.3*$blocksize, 1, 1);
 	$checkmask->offset (1, 0, 0.2*$blocksize, 0.2*$blocksize);
-
 
 	$gridlayer = $img->layer_new($img->width, $img->height, RGBA_IMAGE, "Grid 1", 100, 0);
 	$img->insert_layer($gridlayer,0,0);
 	$img->selection_all;
-	gimp_edit_clear($gridlayer);
+	$gridlayer->edit_clear;
 	Gimp::Context->set_background([255,255,255]);
-	gimp_edit_fill($gridlayer, BACKGROUND_FILL);
-	$gridlayer->plug_in_grid((1, $blocksize, 0, [0,0,0], 255) x 3);
+	$gridlayer->edit_fill(BACKGROUND_FILL);
+	$gridlayer->grid((1, $blocksize, 0, [0,0,0], 255) x 3);
 
-	gimp_layer_set_mode($gridlayer, 3);
+	$gridlayer->set_mode(3);
 # Clean up stuff
-        Gimp::Context->pop();
+        Gimp::Context->pop;
         $img->selection_none;
-        eval { $img->undo_group_end };
-	gimp_displays_flush();
-	return();
+        $img->undo_group_end;
+	return;
 };
 
 exit main;
@@ -90,5 +87,3 @@ exit main;
 
 Copyright Seth Burgess.
 Distributed under the same terms as Gimp-Perl.
-
-=cut

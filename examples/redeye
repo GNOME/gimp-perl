@@ -122,7 +122,7 @@ __END__
 
 =pod
 
-=head1 HELP
+=head1 DESCRIPTION
 
 Searches the selection for pixels in which the red component
 dominates, and removes the red from those components.  The sensitivity
@@ -142,7 +142,4 @@ different sensitivity.
 
 Copyright Geoff Kuenning
 
-Distrubted under the Gnu Public License v2 or higher.
-
-=cut
-
+Distributed under the Gnu Public License v2 or higher.
