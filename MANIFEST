@@ -44,7 +44,6 @@ examples/burst
 examples/centerguide
 examples/colorhtml
 examples/dataurl
-examples/dialogtest
 examples/ditherize
 examples/dots
 examples/dust
@@ -139,10 +138,11 @@ po/zh_CN.po
 po/zh_TW.po
 pxgettext
 t/examples-api.pl
+t/gimppod.t
 t/gimpsetup.pl
 t/import.t
-t/loadlib.t
 t/load.t
+t/loadlib.t
 t/netplugin.t
 t/pdl.t
 t/perlplugin.t

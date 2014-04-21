@@ -1,107 +1,52 @@
 package Gimp::Pod;
 
-$VERSION = 2.300001;
+use Config;
+use strict;
+use FindBin qw($RealBin $RealScript);
 
-sub myqx(&) {
-   local $/;
-   local *MYQX;
-   if (0==open MYQX,"-|") {
-      &{$_[0]};
-      close STDOUT;
-      Gimp::_exit;
-   }
-   <MYQX>;
-}
+our $VERSION = 2.3001;
 
-sub find_converters {
-   my $path = eval 'use Config; $Config{installscript}';
+warn "$$-Loading ".__PACKAGE__ if $Gimp::verbose;
 
-   if ($] < 5.00558) {
-      $converter{text} = sub { my $pod=shift; require Pod::Text; myqx { Pod::Text::pod2text (-60000,       $pod) } };
-      $converter{texta}= sub { my $pod=shift; require Pod::Text; myqx { Pod::Text::pod2text (-60000, '-a', $pod) } };
-   } else {
-      $converter{text} = sub { qx($path/pod2text $_[0]) } if -x "$path/pod2text" ;
-      $converter{texta}= sub { qx($path/pod2text $_[0]) } if -x "$path/pod2text" ;
-   }
-   $converter{html} = sub { my $pod=shift; require Pod::Html; myqx { Pod::Html::pod2html ($pod) } };
-   $converter{man}  = sub { qx($path/pod2man   $_[0]) } if -x "$path/pod2man" ;
-   $converter{latex}= sub { qx($path/pod2latex $_[0]) } if -x "$path/pod2latex" ;
-}
-
-sub find {
-   -f $0 ? $0 : ();
+{
+package Gimp::Pod::Parser;
+use base 'Pod::Text';
+sub output { shift->{gpp_text} .= join '', @_; }
+sub get_text { $_[0]->{gpp_text} }
 }
 
 sub new {
-   my $pkg = shift;
-   my $self={};
-   return () unless defined($self->{path}=find);
-   bless $self, $pkg;
+   return unless -f "$RealBin/$RealScript";
+   bless { path => "$RealBin/$RealScript", }, $_[0];
 }
 
 sub _cache {
    my $self = shift;
-   my $fmt = shift;
-   if (!$self->{doc}{$fmt} && $converter{$fmt}) {
-      local $^W = 0;
-      my $doc = $converter{$fmt}->($self->{path});
-      undef $doc if $?>>8;
-      undef $doc if $doc=~/^[ \t\r\n]*$/;
-      $self->{doc}{$fmt}=\$doc;
-   }
-   $self->{doc}{$fmt};
+   return $self->{doc} if $self->{doc};
+   my $parser = Gimp::Pod::Parser->new;
+   $parser->parse_from_file($self->{path});
+   $self->{doc} = $parser->get_text;
 }
 
-sub format {
-   my $self = shift;
-   my $fmt = shift || 'text';
-   ${$self->_cache($fmt)};
-}
+sub format { $_[0]->_cache; }
 
-sub sections {
-   my $self = shift;
-   my $doc = $self->_cache('text');
-   $$doc =~ /^\S.*$/mg;
-}
+sub sections { $_[0]->_cache =~ /^\S.*$/mg; }
 
 sub section {
    my $self = shift;
-   my $doc = $self->_cache('text');
-   if (defined $$doc) {
-      ($doc) = $$doc =~ /^$_[0]$(.*?)(?:^[A-Z]|$)/sm;
-      if ($doc) {
-         $doc =~ y/\r//d;
-         $doc =~ s/^\s*\n//;
-         $doc =~ s/[ \t\r\n]+$/\n/;
-         $doc =~ s/^    //mg;
-      }
-      $doc;
-   } else {
-      ();
+   warn __PACKAGE__."::section(@_)" if $Gimp::verbose;
+   return unless defined(my $doc = $self->_cache);
+   ($doc) = $doc =~ /^$_[0]\n(.*?)(?:^[A-Z]|\Z)/sm;
+   if ($doc) {
+      $doc =~ y/\r//d;
+      $doc =~ s/^\s*\n//;
+      $doc =~ s/[\s]+$/\n/;
+      $doc =~ s/^    //mg;
+      chomp $doc;
    }
+   warn __PACKAGE__."::section returning '$doc'" if $Gimp::verbose;
+   $doc;
 }
-
-sub author {
-   my $self = shift;
-   $self->section('AUTHOR');
-}
-
-sub blurb {
-   my $self = shift;
-   $self->section('BLURB') || $self->section('NAME');
-}
-
-sub description {
-   my $self = shift;
-   $self->section('DESCRIPTION');
-}
-
-sub copyright {
-   my $self = shift;
-   $self->section('COPYRIGHT') || $self->section('AUTHOR');
-}
-
-find_converters;
 
 1;
 __END__
@@ -113,19 +58,15 @@ Gimp::Pod - Evaluate pod documentation embedded in scripts.
 =head1 SYNOPSIS
 
   use Gimp::Pod;
-
-  $pod = new Gimp::Pod;
-  $text = $pod->format ();
-  $html = $pod->format ('html');
-  $synopsis = $pod->section ('SYNOPSIS');
-  $author = $pod->author;
-  @sections = $pod->sections;
+  my $pod = Gimp::Pod->new;
+  my $text = $pod->format;
+  my $synopsis = $pod->section('SYNOPSIS');
+  my @sections = $pod->sections;
 
 =head1 DESCRIPTION
 
 C<Gimp::Pod> can be used to find and parse embedded pod documentation in
-gimp-perl scripts.  At the moment only the formatted text can be fetched,
-future versions might have more interesting features.
+Gimp-Perl scripts, returning formatted text.
 
 =head1 METHODS
 
@@ -133,43 +74,30 @@ future versions might have more interesting features.
 
 =item new
 
-return a new Gimp::Pod object representing the current script or undef, if
+Return a new Gimp::Pod object representing the current script or undef, if
 an error occured.
 
-=item format([$format])
+=item format
 
-Returns the embedded pod documentation in the given format, or undef if no
-documentation can be found.  Format can be one of 'text', 'html', 'man' or
-'latex'. If none is specified, 'text' is assumed.
+Return the embedded pod documentation in text format, or undef if no
+documentation can be found.
 
 =item section($header)
 
-Tries to retrieve the section with the header C<$header>. There is no
-trailing newline on the returned string, which may be undef in case the
-section can't be found.
-
-=item author
-
-=item blurb
-
-=item description
-
-=item copyright
-
-Tries to retrieve fields suitable for calls to the register function.
+Return the section with the header C<$header>, or undef if not
+found. There is no trailing newline on the returned string.
 
 =item sections
 
-Returns a list of paragraphs found in the pod.
+Returns a list of paragraph titles found in the pod.
 
 =back
 
 =head1 AUTHOR
 
-Marc Lehmann <pcg@goof.com>
+Marc Lehmann <pcg@goof.com>.
+Rewritten to eliminate external executables by Ed J.
 
 =head1 SEE ALSO
 
-perl(1), Gimp(1),
-
-=cut
+perl(1), L<Gimp>

@@ -3,43 +3,32 @@
 use Gimp ":auto";
 use Gimp::Fu;
 
-sub SOBEL()        {0}
-sub PREWITT()      {1}
-sub GRADIENT()     {2}
-sub ROBERTS()      {3}
-sub DIFFERENTIAL() {4}
-sub LAPLACE()      {5}
-
 # Gimp::set_trace(TRACE_ALL);
 
 sub my_code {
     my ($img,$original_layer,$sharpen_radius,$sharpen_amt,$sharpen_threshold) = @_;
-    my $edge_layer;
-    my $saved_selection;
-    my @selbounds;
 
     # sanity stuff
-    $original_layer->is_layer || die "Can only operate on layers";
+    die "Can only operate on layers" unless $original_layer->is_layer;
+    $original_layer->become('Gimp::Layer');
+
     $img->undo_group_start;
 
-    @selbounds = $img->selection_bounds;
-    if ($selbounds[0] == 0) # if empty
-      {
-	$img->selection_all;
-      }
+    my @selbounds = $img->selection_bounds;
+    $img->selection_all if $selbounds[0] == 0;
 
-    $saved_selection = $img->selection_save;
+    my $saved_selection = $img->selection_save;
     $img->selection_none;
 
     # 1) take the original photo, duplicate the layer
-    $edge_layer = $original_layer->Gimp::Layer::copy(1);
+    my $edge_layer = $original_layer->Gimp::Layer::copy(1);
     $img->insert_layer($edge_layer,0,-1);
 
     # 2) convert the copy to grayscale
     $edge_layer->desaturate;
 
     # 3) run edge detect to the gray layer (default works)
-    $edge_layer->edge(2.0, 3, 0);
+    $edge_layer->edge(2.0, 2, 0);
 
     # 4) blur it slightly
     $edge_layer->gauss_iir2(3.0, 3.0);

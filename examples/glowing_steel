@@ -319,7 +319,7 @@ register
   N_"<Image>/File/Create/Logos/Glowing Steel",
   undef,
   [
-   [PF_STRING, "string", "string", "GET LOST"],
+   [PF_STRING, "string", "String", "GET LOST"],
    # The font in the poster was like "cobalt extended"
    [PF_FONT, "font", "Font", "Bitstream Charter Bold"],
    [PF_SPINNER, "size", "Size", 100, [0, 3000, 1]],

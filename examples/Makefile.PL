@@ -8,7 +8,7 @@ require '../config.pl';
 @pins = qw(
   Perl-Server
   dataurl
-  dialogtest
+  example-fu
   exceptiontest
   colorhtml
   fade-alpha

@@ -1,9 +1,15 @@
-Items as of 2014-03-31 (by Ed J)
+Items as of 2014-04-19 (by Ed J)
+* <Load> and <Save> need any registration as such done in Gimp::Fu - see pod
+* image in Gimp.pm POD http://perlmaven.com/how-to-add-images-to-cpan -
+  input image -> output image of a plugin
+* longer example in Gimp.pm/SYNOPSIS
+* examples POD (and Gimp::Pod TLC)
+* Add Gimp::existing (Gimp::Fu IMAGE) and ::become (examples/xachshadows)
 * Gimp/Lib.xs is huge, and not very XS-y - lots of it is manually
   pushing GIMP data structures onto perl stack and vice versa. Figure
   way to pass GIMP data back and forth directly via typemap system. May
   involve a gimp-perl "wrapper" data structure that pairs an SV with its
-  GimpPDBArgType/GimpParamDef counterpart - Gimp::Lib::Data?
+  GimpParam counterpart - Gimp::Lib::Data?
 * gimp-perl website: maybe just gimp.org/glossary entry - only needs
   links to CPAN, bugzilla, git - make sure CPAN has all POD docs
   - https://mail.gnome.org/mailman/listinfo/gimp-developer-list
@@ -13,11 +19,14 @@ Items as of 2014-03-31 (by Ed J)
 * http://search.cpan.org/dist/Glib-Object-Introspection/
 * Add a gtk2 gimp-perl console - cf http://registry.gimp.org/node/29348
   - gimp/plug-ins/script-fu/script-fu-console.c
-* Test menupath <File> etc
+* Test Gimp::Fu menupath <Load>/<Save>/<Image>/<Toolbox>/<None>
 * "IGNORE THIS MESSAGE" - $in_top - whole quiet_die probably needs to go too
 * PS flags are obsolete - replace with verbose - set_trace may also be obsolete
+* interactive collab image-editing:
+  http://users.telenet.be/blendix/verse/#gimp_plugin
+  https://github.com/verse/verse/wiki/Tutorial-Simple-C-Verse-Client
+  http://graphicdesign.stackexchange.com/questions/25077/how-can-i-collaborate-using-gimp2
 
 Legacy notes from Seth Burgess:
 * Win32 port
-* Improve documentation quality - feedback desired!
 * Figure out i18n some day.

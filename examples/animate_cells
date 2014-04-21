@@ -129,10 +129,6 @@ on top of it which represent your "cells".
 
 Written in 1999 (c) by Aaron Sherman E<lt>ajs@ajs.comE<gt>
 
-=head1 BUGS
-
-TBD
-
 =head1 SEE ALSO
 
 L<gimp>, L<perl>, L<Gimp>: the Gimp module for perl.
