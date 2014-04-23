@@ -427,18 +427,25 @@ Gimp - write GIMP extensions/plug-ins/load- and save-handlers in Perl
 
   podregister {
     # your code
-    return Gimp::Image->new(100, 100, RGB);
+    my $image = new Gimp::Image (600, 300, RGB);
+    my $bg = $image->layer_new(
+      600,300,RGB_IMAGE,"Background",100,NORMAL_MODE
+    );
+    $image->insert_layer($bg, 1, 0);
+    $image->edit_fill($bg, FOREGROUND_FILL);
+    Gimp::Display->new($image);
+    $image;
   };
 
   exit main;
   __END__
   =head1 NAME
 
-  function_name - Short description of the function
+  example_function - Short description of the function
 
   =head1 SYNOPSIS
 
-  <Image>/Filters/Menu/Location...
+  <Image>/File/Create/Patterns/Example...
 
   =head1 DESCRIPTION
 
