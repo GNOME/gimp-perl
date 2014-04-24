@@ -1,49 +1,8 @@
 #!/usr/bin/perl
 
-eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-
-eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-
-# <sjburges@gimp.org>
-#
 use Gimp;
 use Gimp::Fu;
 use Gimp::Util;
-
-# This script was requested by jimmac, and I thought it sounded moderately
-# useful.  I could have just made a couple selection masks and made it
-# moderately useful, but instead I redid all the math myself to make it
-# intresting and have a really nice effect on the end points (rather than
-# chopping off odd-shaped brushes when the ellipse ends).
-
-# Its good to exercise the ol geometry skills every now and then ;)
-# Enjoy,
-#  Seth Burgess <sjburges@gimp.org>
-
-####-----
-# Revision 03/18/2000
-#  Changed second angle to be a sweep measurement, not an absolute angle (I
-#  found that I was calculating a lot more by hand than I should be when
-#  using it)
-#
-#  Also fixed up a bug that I'd covered up, and did a decent for loop for
-#  a change.  Fixed up rectangle to not mess up on corner areas.
-#
-#  Lastly, I added a special case for 360 degrees - don't redraw the last
-#  line for a full circle; instead re-adjust end point.  I'm not entirely
-#  happy with this solution, but its close to what I expect to happen.  I
-#  don't desire to litter the interface with more strange options if possible
-#  and I suspect most users will never notice.
-#
-
-####-----
-# Revision 08/10/2003
-#  Changed PF_SLIDER to PF_SPINNER, since they're a whole lot nicer to work with
-#  for this type of operation - getting it "close" is pretty annoying with
-#  sliders.
-
 # Gimp::set_trace(TRACE_ALL);
 
 # find an equivalent polar value in the range of 0 to 2 pi
@@ -57,56 +16,28 @@ sub find_in_2pi
   return ($ang - int($ang/(2*3.1415926))*2*3.1415926);
 }
 
-# actual script
-
-register "burst",
-  "Bursts from a central location\n",
-  "Creates a Burst of various sizes from the center of the currently
-selected areas.  Can create either an elliptical burst, or some portion
-of said burst.  Also, you can specify how much (in pixels) to leave blank on
-the inside and the outside of the burst.  This uses whatever the current
-brush settings are, and lets you control which direction to have it draw the
-fades from if you have Fade set\n",
-  "Seth Burgess",
-  "Seth Burgess <sjburges\@gimp.org>",
-  "1999-07-31",
-  N_"<Image>/Filters/Render/Burst...",
-  "*",
-  [
-   [PF_RADIO, "shape", "Shape To Burst Into", 0,  [Rectangle => 1, Ellipse=> 0]],
-   [PF_RADIO, "fade_dir", "Fade Direction (if fade is set)", 0,  [In => 1, Out => 0]],
-   [PF_VALUE, 'spokes', "How many spokes", 16],
-   [PF_VALUE, 'inside_pixels', "Inside Pixels", 10],
-   [PF_VALUE, 'outside_pixels', "Outside Pixels", 10],
-   [PF_SPINNER, 'start_angle', "Angle to start at, with 0 being left, and sweeping counter-clockwise.", 0, [-360, 360, 1]],
-   [PF_SPINNER, 'arc_angle', "How many degrees to arc through.", 360, [-360, 360, 1]]
-  ],
-  [],
-  sub {
-    my($img,$layer, $shape, $fade_dir, $points,
-       $inside_pixels, $outside_pixels, $start_angle, $arc_angle) =@_;
-
+podregister {
     $pi = 3.1415927;
 
     # Special case 360
     if (abs($arc_angle) == 360)
       {
-        $end_angle = $start_angle + $arc_angle - abs ($arc_angle/$points);
+        $end_angle = $start_angle + $arc_angle - abs ($arc_angle/$spokes);
       }
     else
       {
         $end_angle = $start_angle + $arc_angle;
       }
 
-    eval { $img->undo_group_start };
+    eval { $image->undo_group_start };
 
     Gimp->progress_init("Burst");
-    $progress_increment = 1/$points;
+    $progress_increment = 1/$spokes;
     $progress = 0;
 
     my $dumb;
-    ($dumb, $x1, $y1, $x2, $y2) = $img->selection_bounds;
-    # $img->selection_none;
+    ($dumb, $x1, $y1, $x2, $y2) = $image->selection_bounds;
+    # $image->selection_none;
 
     $width = $x2 - $x1;
     $height = $y2 - $y1;
@@ -124,13 +55,13 @@ fades from if you have Fade set\n",
 
     if ($shape == 0)
       { #ellipse
-        # do $points worth
+        # do $spokes worth
         for ($i = 0;
-             $i < $points;
+             $i < $spokes;
 	     #$angle <$end_angle*$pi/180-0.01;
              $i++ )
           {
-            $angle = $i * abs($start_angle-$end_angle)*$pi/($points-1)/180;
+            $angle = $i * abs($start_angle-$end_angle)*$pi/($spokes-1)/180;
             $angle += $start_angle*$pi/180;
 
             # use the major/minor axis description of an ellipse:
@@ -183,11 +114,11 @@ fades from if you have Fade set\n",
 
             if ($fade_dir == 1)
               {
-                $layer->paintbrush_default(4, [$x, $y, $x_start, $y_start]);
+                $drawable->paintbrush_default(4, [$x, $y, $x_start, $y_start]);
               }
             else
               {
-                $layer->paintbrush_default(4, [$x_start, $y_start, $x, $y]);
+                $drawable->paintbrush_default(4, [$x_start, $y_start, $x, $y]);
               }
             $progress += $progress_increment;
             Gimp->progress_update($progress);
@@ -202,10 +133,10 @@ fades from if you have Fade set\n",
         #print "width = $width, height = $height\n";
 
         for ($i = 0;
-             $i < $points;
+             $i < $spokes;
              $i++ )
           {
-            $angle = $i * abs($start_angle-$end_angle)*$pi/($points-1)/180;
+            $angle = $i * abs($start_angle-$end_angle)*$pi/($spokes-1)/180;
             $angle += $start_angle*$pi/180;
 
             # get the slope
@@ -263,25 +194,95 @@ fades from if you have Fade set\n",
           $y_start = $y_start + $center_y;
           if ($fade_dir == 1)
             {
-              $layer->paintbrush_default(4, [$x, $y, $x_start, $y_start]);
+              $drawable->paintbrush_default(4, [$x, $y, $x_start, $y_start]);
             }
           else
             {
-              $layer->paintbrush_default(4, [$x_start, $y_start, $x, $y]);
+              $drawable->paintbrush_default(4, [$x_start, $y_start, $x, $y]);
             }
           $progress += $progress_increment;
           Gimp->progress_update($progress);
         }
     }
-  eval { $img->undo_group_end };
+  eval { $image->undo_group_end };
   return();
 };
 
 exit main;
+__END__
+
+=head1 NAME
+
+burst - Bursts from a central location
+
+=head1 SYNOPSIS
+
+<Image>/Filters/Render/Burst...
+
+=head1 DESCRIPTION
+
+Creates a Burst of various sizes from the center of the currently
+selected areas.  Can create either an elliptical burst, or some portion
+of said burst.  Also, you can specify how much (in pixels) to leave blank on
+the inside and the outside of the burst.  This uses whatever the current
+brush settings are, and lets you control which direction to have it draw the
+fades from if you have Fade set
+
+=head1 PARAMETERS
+
+ [PF_RADIO, "shape", "Shape To Burst Into", 0,  [Rectangle => 1, Ellipse=> 0]],
+ [PF_RADIO, "fade_dir", "Fade Direction (if fade is set)", 0,  [In => 1, Out => 0]],
+ [PF_VALUE, 'spokes', "How many spokes", 16],
+ [PF_VALUE, 'inside_pixels', "Inside Pixels", 10],
+ [PF_VALUE, 'outside_pixels', "Outside Pixels", 10],
+ [PF_SPINNER, 'start_angle', "Angle to start at, with 0 being left, and sweeping counter-clockwise.", 0, [-360, 360, 1]],
+ [PF_SPINNER, 'arc_angle', "How many degrees to arc through.", 360, [-360, 360, 1]]
+
+=head1 IMAGE TYPES
+
+*
+
+=head1 AUTHOR
+
+Seth Burgess
+
+=head1 DATE
+
+1999-07-31
+
+=head1 HISTORY
+
+This script was requested by jimmac, and I thought it sounded moderately
+useful.  I could have just made a couple selection masks and made it
+moderately useful, but instead I redid all the math myself to make it
+interesting and have a really nice effect on the end points (rather than
+chopping off odd-shaped brushes when the ellipse ends).
+
+Its good to exercise the ol geometry skills every now and then ;)
+Enjoy,
+Seth Burgess <sjburges@gimp.org>
+
+Revision 03/18/2000
+Changed second angle to be a sweep measurement, not an absolute angle (I
+found that I was calculating a lot more by hand than I should be when
+using it)
+
+Also fixed up a bug that I'd covered up, and did a decent for loop for
+a change.  Fixed up rectangle to not mess up on corner areas.
+
+Lastly, I added a special case for 360 degrees - don't redraw the last
+line for a full circle; instead re-adjust end point.  I'm not entirely
+happy with this solution, but its close to what I expect to happen.  I
+don't desire to litter the interface with more strange options if possible
+and I suspect most users will never notice.
+
+Revision 08/10/2003
+Changed PF_SLIDER to PF_SPINNER, since they're a whole lot nicer to work with
+this type of operation - getting it "close" is pretty annoying with
+sliders.
 
 =head1 LICENSE
 
-Copyright Seth Burgess.
-Distributed under the same terms as Gimp-Perl.
+Seth Burgess <sjburges@gimp.org>
 
-=cut
+Distributed under the same terms as Gimp-Perl.

@@ -1,29 +1,39 @@
 NAME
 
-       gimp-perl is a plug-in used for writing GIMP extensions/plug-ins/load &
-       save handlers in Perl.
-
-WARNING
-
-       This version of the module is for use with GIMP 2.8.0 or
-       later. Please report all problems:
-	https://rt.cpan.org/Dist/Display.html?Name=Gimp
+       Gimp-Perl allows GIMP extensions/plug-ins/load & save handlers in Perl.
 
 SYNOPSIS
 
-       my $img = new Gimp::Image (600, 300, RGB);
-       my $bg = $img->layer_new(600,300,RGB_IMAGE,"Background",100,NORMAL_MODE);
-       $img->insert_layer($bg, 1, 0);
-       $img->edit_fill($bg, FOREGROUND_FILL);
-       Gimp::Display->new($img);
+         use Gimp;
+         use Gimp::Fu;
+         podregister {
+           # your code
+	   my $image = new Gimp::Image (600, 300, RGB);
+	   my $bg = $image->layer_new(
+	     600,300,RGB_IMAGE,"Background",100,NORMAL_MODE
+	   );
+	   $image->insert_layer($bg, 1, 0);
+	   $image->edit_fill($bg, FOREGROUND_FILL);
+	   Gimp::Display->new($image);
+	   $image;
+         };
+         exit main;
+         __END__
+         =head1 NAME
 
-       A complete & documented example script can be found at the end of
-       this document (search for EXAMPLE).
+         example_function - Short description of the function
+
+         =head1 SYNOPSIS
+
+         <Image>/File/Create/Patterns/Example...
+
+         =head1 DESCRIPTION
+
+         Longer description of the function...
+
+       See the end of this document for a complete example script.
 
 PREREQUISITES
-
-       To install/use this perl extension, you need to have the following
-       software packages installed (the given order is best):
 
        Perl: 5.14+
        The GNU Image Manipulation Program (GIMP): 2.8 (pref 2.8.10)
@@ -33,175 +43,132 @@ PREREQUISITES
 	 http://gtk2-perl.sourceforge.net
        PDL, the Perl Data Language: 2.0+ (2.004+ recommended)
 	 http://www.cpan.org/
+       Other packages: use CPAN to install this one, and it will get these too.
 
 INSTALLATION
 
-       On Unix/Linux, you should be able to run "perl Makefile.PL", make, make
-       test && make install. To get a listing of configuration options, enter:
-
-       perl ./Makefile.PL --help
-
-       Simply using "perl Makefile.PL" should do the job on most systems,
-       but watch out for warnings. If everything went fine, enter "make",
-       "make test, (su to appropriate level if you are installing system-wide),
-       "make install".
+       On Unix/Linux, you should be able to:
+	  perl ./Makefile.PL && make test && make install
+       To get a listing of configuration options, enter:
+	  perl ./Makefile.PL --help
 
        After installation, these perl plug-ins should be visible from
        within the Gimp (and many, many more):
 
-       Filters/Perl/Server
-       Filters/Artistic/Windify
-       Filters/Misc/Prepare for GIF
-       Filters/Misc/Webify
+	   Filters/Perl/Server
+	   Filters/Artistic/Windify
+	   Filters/Misc/Prepare for GIF
+	   Filters/Misc/Webify
 
        If you wish to install the plugins in your personal GIMP directory
        instead of the system-wide one (e.g. if you don't have root
        access), install instead using this:
+	  make install GTINSTALL='gimptool-2.0 --install-bin'
 
-       make install GTINSTALL='gimptool-2.0 --install-bin'
+       To override other build or install options see ExtUtils::MakeMaker docs.
 
-OVERWRITING INSTALL LOCATIONS (PREFIX)
-
-       In the rare case that you want to install the gimp-perl modules
-       somewhere else than in the standard location then there is a
-       standard way to accomplish this.
-
-       Usually, you can just use the PREFIX=/path option to the
-       Makefile.PL, or the other common solution of adding the INST* path
-       definitions onto the "make install" commandline.
-
-       These options are described in the "perldoc ExtUtils::MakeMaker"
-       manpage.
-
-       If you are building a slp/deb/rpm/whatever package you usually want
-       to use the normal prefix, while overwriting the prefix at "make
-       install" time. In that case, just build gimp-perl (or the whole
-       GIMP) as usual, but instead of just calling "make install", use
-       something like the following command (this example is for debian):
-
-          make prefix=`pwd`/debian/tmp/usr PREFIX=`pwd`/debian/tmp/usr \
-               install
-
-       The lowercase prefix is used by the Gimp, the uppercase PREFIX is
-       used by perl.  Rarely you also want to specifiy manpage directories
-       etc.. you can also overwrite these (see "man ExtUtils::MakeMaker")
-       as well, e.g. for debian:
-
-          make prefix=`pwd`/debian/tmp/usr PREFIX=`pwd`/debian/tmp/usr \
-               INSTALLMAN1DIR=`pwd`/debian/tmp/usr/man/man1 \
-               INSTALLMAN3DIR=`pwd`/debian/tmp/usr/man/man3 \
-               install
+       To build a slp/deb/rpm/whatever package use the normal prefix,
+       and override prefix at "make install" time (lowercase for GIMP,
+       upper for perl):
+          make prefix=`pwd`/debian/tmp/usr PREFIX=`pwd`/debian/tmp/usr install
 
 SUPPORT/MAILING LISTS/MORE INFO
 
-       The gimp-user and gimp-developer lists (see
-       http://www.gimp.org/mail_lists.html) are currently the suggested
-       mailing lists.
+       Please report any problems:
+	  http://bugzilla.gnome.org/browse.cgi?product=gimp-perl
+	  https://rt.cpan.org/Dist/Display.html?Name=Gimp
 
+       Homepages: https://git.gnome.org/browse/gimp-perl/
+		  http://search.cpan.org/dist/Gimp/
+       Currently-suggested mailing list: gimp-user
+	  (see http://www.gimp.org/mail_lists.html)
        New releases will be announced to gimp-announce.
 
        You can also upload your scripts to the gimp registry at
-       http://registry.gimp.org/.
+	  http://registry.gimp.org/
 
-BLURB
-
-       gimp-perl is a usable, debuggable, and flexible interface to GIMP
-       through use of Perl.
-
-LICENSE
-
-       The gimp-perl module is available under the GNU Public License
-       (see COPYING.GPL for details) and the Artistic License (see
-       COPYING.Artistic for details). Many of the scripts in the example
-       section follow these rules, but some of them have a different
-       licensing approach.  Each should have a licensing statement; please
-       consult individual plugin sources/POD for more info.
-
-       (c)1998,1999 Marc Lehmann <pcg@goof.com>
-       (c)2003,2004 Seth Burgess <sjburges@gimp.org>
+       If you want to play along at home with git:
+	  git://git.gnome.org/gimp-perl
 
 EXAMPLE PERL PLUG-IN
 
-        To get even more look & feel, here is a complete plug-in source,
-        it's the examples/example-fu script from the distribution.
+       Here is a complete plug-in, examples/example-fu:
 
 #!/usr/bin/perl
 
+use strict;
 use Gimp;
 use Gimp::Fu;
 
-# expand your terminal to 121 across to read easily...
-
-register
-  "gimp_fu_example_script",			# fill in a function name
-  "An example of Gimp::Fu usage, mostly non-functional",	# and a short description,
-  "Just a starting point to derive new ".        # a (possibly multiline) help text
-    "scripts. Always remember to put a long".
-    "help message here!",
-  "Marc Lehmann <pcg\@goof.com>",		# don't forget your name (author)
-  "(c)1998,1999,2000 Marc Lehmann",		# and your copyright!
-  "20000321",					# the date this script was written (YYYYMMDD)
-  N_"<Toolbox>/Xtns/Perl/Gimp::Fu Example...",	# the menu path - the 'N_' is for internationalization
-  "",						# image types to accept (RGB, RGAB and GRAYA) - blank or undef means don't need one
-  [ # one of each type of parameter here
-    # argument type, switch name	, a short description		, default value, extra arguments
-    [PF_SLIDER	, "width"	, "The image width"		, 360, [300, 500]],
-    [PF_SPINNER	, "height"	, "The image height"		, 100, [100, 200]],
-    [PF_STRING	, "text"	, "The Message"			, "example text"],
-    [PF_INT32	, "bordersize"	, "The bordersize"		, 10],
-    [PF_FLOAT	, "borderwidth"	, "The borderwidth"		, 1/5],
-    [PF_FONT	, "font"	, "The Font Family"		],
-    [PF_COLOUR	, "text_colour"	, "The (foreground) text colour", [10,10,10]],
-    [PF_COLOUR	, "bg_colour"	, "The background colour"	, [0xff,0x80,0]],
-    [PF_TOGGLE	, "ignore_cols" , "Ignore colours"		, 0],
-    [PF_IMAGE	, "extra_image"	, "An additonal picture to ignore"],
-    [PF_DRAWABLE	, "extra_draw"	, "Somehting to ignroe as well"	],
-    [PF_RADIO	, "type"	, "The effect type"		, 0, [small => 0, large => 1]],
-    [PF_BRUSH	, "a_brush"	, "An unused brush"		],
-    [PF_PATTERN	, "a_pattern"	, "An unused pattern"		],
-    [PF_GRADIENT	, "a_gradients"	, "An unused gradients"		],
-  ],
-  [
-    [PF_IMAGE	, "output image", "Output image"],
-  ],
-  sub {
-
-   # now do something useful with our parameters
-   my($width,$height,$text,$brd1,$brd2,$font,$fg,$bg,$ignore,$xtraimg,$xtradrw,$effecttype,$brush,$pattern,$gradient)=@_;
-
-   # set tracing, disable this to get rid of the debugging output
-   Gimp::set_trace(TRACE_CALL);
-
-   # store current context, so that present settings aren't affected
-   Gimp::Context->push();
-
-   my $img = new Gimp::Image ($width, $height, RGB);
-
-   # put an undo group around any modifications, so that
-   # they can be undone in one step.
-   $img->undo_group_start;
-
-   # the __ before the string in the next line indicates text that must be translated
-   my $l = new Gimp::Layer ($img, $width, $height, RGB, __"Background", 100, NORMAL_MODE);
-   $l->insert_layer(0, 0);
-
-   # now a few syntax examples
-
-   Gimp::Context->set_foreground($fg) unless $ignore;
-   Gimp::Context->set_background($bg) unless $ignore;
-
-   fill $l BACKGROUND_FILL;
-   my $text_layer = $img->text_fontname(-1, 10, 10, $text, 5, 1, 10, PIXELS, $font);
-
-   Gimp::Context->set_foreground("green");
-
-   # close the undo push group
-   $img->undo_group_end;
-
-   # restore original context
-   Gimp::Context->pop();
-
-   $img;	# return the image, as it's on our output parameters
+podregister {
+  # no input parameters line - source filter inserts. See Gimp::Fu docs.
+  Gimp::set_trace(TRACE_CALL); # remove this to stop debugging output
+  Gimp::Context->push; # store current settings, so present ones preserved
+  my $img = Gimp::Image->new($width, $height, RGB);
+  $img->undo_group_start; # so all actions can be undone in one step
+  # the __ before the string will translate it if available
+  my $l = Gimp::Layer->new($img, $width, $height, RGB, __"Background", 100, NORMAL_MODE);
+  $l->insert_layer(0, 0); # required!
+  # now a few syntax examples
+  Gimp::Context->set_foreground($text_colour) unless $ignore_cols;
+  Gimp::Context->set_background($bg_colour) unless $ignore_cols;
+  fill $l BACKGROUND_FILL;
+  my $text_layer = $img->text_fontname(-1, 10, 10, $text, 5, 1, 10, PIXELS, $font);
+  Gimp::Context->set_foreground("green");
+  $img->undo_group_end; # close the undo group
+  Gimp::Context->pop; # restore original context
+  Gimp::Display->new($img);
+  $img; # return image, as Gimp::Fu added that to our output parameters
+        # because no-image-input
 };
 
 exit main;
+__END__
+
+=head1 NAME
+
+example_script - Gimp::Fu example, mostly non-functional
+
+=head1 SYNOPSIS
+
+<Image>/Filters/Languages/_Perl/_Test/Dialog
+
+=head1 DESCRIPTION
+
+Just a starting point to derive new scripts. Always remember to put a
+descriptive help message here!
+
+=head1 PARAMETERS
+
+  # one of each type of parameter here
+  # argument type, variable name, short description, default, extra arguments
+  [PF_SLIDER	, "width"	, "Image width"		, 360, [300, 500]],
+  [PF_SPINNER	, "height"	, "Image height"	, 100, [100, 200]],
+  [PF_STRING	, "text"	, "Message"		, "example text"],
+  [PF_TEXT	, "longtext"	, "Longer text"		, "more example text"],
+  [PF_INT32	, "bordersize"	, "Border size"		, 10],
+  [PF_FLOAT	, "borderwidth"	, "Border width"	, 1/5],
+  [PF_FONT	, "font"	, "Font"],
+  [PF_COLOUR	, "text_colour"	, "Text colour", [10,10,10]],
+  [PF_COLOUR	, "bg_colour"	, "Background colour"	, [0xff,0x80,0]],
+  [PF_TOGGLE	, "ignore_cols" , "Ignore colours"	, 0],
+  [PF_IMAGE	, "extra_image"	, "Additional picture to ignore"],
+  [PF_DRAWABLE	, "extra_draw"	, "Something to ignore as well"	],
+  [PF_RADIO	, "type"	, "Effect type"		, 0, [small => 0, large => 1]],
+  [PF_BRUSH	, "a_brush"	, "An unused brush"],
+  [PF_PATTERN	, "a_pattern"	, "An unused pattern"],
+  [PF_GRADIENT	, "a_gradients"	, "An unused gradients"],
+
+=head1 AUTHOR
+
+Marc Lehmann <pcg@goof.com>
+
+=head1 DATE
+
+2000-03-21
+
+=head1 LICENSE
+
+(c) 1998,1999,2000 Marc Lehmann
+
+Distributed under the same terms as Gimp-Perl.

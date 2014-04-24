@@ -1,9 +1,5 @@
 #!/usr/bin/perl
 
-# <sjburges@gimp.org>
-# This is adrian's idea - take random blends and difference them.  You're
-# bound to come up w/ something cool eventually.
-
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 use Gimp::Util;
@@ -13,34 +9,19 @@ use Gimp::Util;
 sub randint {
     my ($int) = @_;
     return int(rand()*$int +0.5);
-    }
+}
 
-register "random_blends",
-         "Random Blends - Perform N random blends",
-         "A random approach to art, using the blend tool with DIFFERENCE_MODE.  Alpha is not affected; best used on opaque background.  Just try it. It might be good.",
-         "Seth Burgess",
-         "Seth Burgess <sjburges\@gimp.org>",
-         "1999-03-18",
-         N_"<Image>/Filters/Render/Random Blends...",
-         "RGB*, GRAY*",
-         [
-           [PF_SPINNER, "number", "How many gradients to apply", 7, [1,255,1]],
-            ],
-         [],
-         sub {
-    my($img,$layer,$numgradients) =@_;
-    eval { $img->undo_group_start };
+podregister {
+    eval { $image->undo_group_start };
     Gimp::Context->push();
     my $sel;
-    ($sel,$x1,$y1,$x2,$y2) = $img->gimp_selection_bounds;
+    ($sel,$x1,$y1,$x2,$y2) = $image->gimp_selection_bounds;
     srand();
-
     @gradientlist = gimp_gradients_get_list("");
-
     Gimp->progress_init("Random blends...");
     for ($i=0; $i<$numgradients; $i++) {
         Gimp::Context->set_gradient(@gradientlist[randint($#gradientlist)]);
-	$layer->edit_blend(CUSTOM_MODE,
+	$drawable->edit_blend(CUSTOM_MODE,
                        DIFFERENCE_MODE,
                        randint(10),      # gradient type
                        randint(100),     # opacity
@@ -57,16 +38,48 @@ register "random_blends",
                        randint($y2-$y1)+$y1, # y2
                        );
         Gimp->progress_update($i/(1.0*$numgradients));
-        }
-    eval { $img->undo_group_end };
+    }
+    eval { $image->undo_group_end };
     Gimp::Context->pop();
     return();
 };
 exit main;
+__END__
+
+=head1 NAME
+
+random_blends - Random Blends - Perform N random blends
+
+=head1 SYNOPSIS
+
+<Image>/Filters/Render/Random Blends...
+
+=head1 DESCRIPTION
+
+A random approach to art, using the blend tool with DIFFERENCE_MODE.  Alpha is not affected; best used on opaque background.  Just try it. It might be good.
+
+=head1 PARAMETERS
+
+ [PF_SPINNER, "numgradients", "How many gradients to apply", 7, [1,255,1]],
+
+=head1 IMAGE TYPES
+
+RGB*, GRAY*
+
+=head1 HISTORY
+
+ <sjburges@gimp.org>
+ This is adrian's idea - take random blends and difference them.  You're
+ bound to come up w/ something cool eventually.
+
+=head1 AUTHOR
+
+Seth Burgess <sjburges@gimp.org>
+
+=head1 DATE
+
+1999-03-18
 
 =head1 LICENSE
 
-Copyright Seth Burgess.
 Distributed under the same terms as Gimp-Perl.
-
-=cut

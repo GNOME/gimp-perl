@@ -1,62 +1,44 @@
 #!/usr/bin/perl
 
-eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-
-# 07/15/03: <sjburges@gimp.org>
-# s/Layers/Layer
-
-use Gimp 1.095;
+use Gimp;
 use Gimp::Fu;
+use strict;
 
-register	"layer_reorder",
-		"Reshuffle the order of layers in an image according to a function",
-		"=pod",
-		"Marc Lehmann <pcg\@goof.com>",
-		"Marc Lehmann <pcg\@goof.com>",
-		"19990708",
-		N_"<Image>/Layer/Stack/Reorder Layers...",
-		"*",
-		[
-                 [PF_RADIO,	"function",	"which remapping function to use: CUSTOM (0), REVERSE (1), SHIFT (2)", 1,
-                  [Custom => 0, Reverse => 1, Shift => 2] ],
-                 [PF_STRING,	"custom",	"the (optional) custom function to use, e.g. 'n-i' reverses the order"],
-		],
-                [],
-	sub {
-		my($img,$drawable,$function,$custom) = @_;
-
-                $custom = "-i"            if $function == 1;
-                $custom = "(i+$custom)%n" if $function == 2;
-
-                my @layers = $img->get_layers;
-
-                $layers[-1]->add_alpha;
-
-                # replace vars
-                $custom =~ s/\bn\b/scalar@layers/ge;
-                $custom =~ s/\bi\b/\$i/g;
-
-                $function = eval "sub { my \$i = shift;\n#line 0 \"expression\"\n$custom\n}";
-                die "syntax error in expression '$custom': $@\n" if $@;
-
-                # calculcate new order
-                my $index = 0;
-                @layers = map $_->[0],
-                             sort { $b->[1] <=> $a->[1] }
-                                map [$_, $function->($index++)],
-                                   @layers;
-
-                # now re-order the layers
-		$img->undo_group_start;
-                for(@layers) {
-                   $img->raise_item_to_top($_) unless $$_ == ${($img->get_layers)[0]};
-                }
-                Gimp->displays_flush;
-		$img->undo_group_end;
-	};
+podregister {
+  my($image,$drawable,$function,$custom) = @_;
+  $custom = "-i"            if $function == 1;
+  $custom = "(i+$custom)%n" if $function == 2;
+  my @layers = $image->get_layers;
+  $layers[-1]->add_alpha;
+  # replace vars
+  $custom =~ s/\bn\b/scalar@layers/ge;
+  $custom =~ s/\bi\b/\$i/g;
+  $function = eval "sub { my \$i = shift;\n#line 0 \"expression\"\n$custom\n}";
+  die "syntax error in expression '$custom': $@\n" if $@;
+  # calculate new order
+  my $index = 0;
+  @layers = map $_->[0],
+	       sort { $b->[1] <=> $a->[1] }
+		  map [$_, $function->($index++)],
+		     @layers;
+  # now re-order the layers
+  $image->undo_group_start;
+  for(@layers) {
+    $image->raise_item_to_top($_) unless $$_ == ${($image->get_layers)[0]};
+  }
+  $image->undo_group_end;
+};
 
 exit main;
+__END__
+
+=head1 NAME
+
+layer_reorder - Reshuffle the order of layers in an image according to a function
+
+=head1 SYNOPSIS
+
+<Image>/Layer/Stack/Reorder Layers...
 
 =head1 DESCRIPTION
 
@@ -84,9 +66,26 @@ Examples:
  -i        # reverse the order of layers
  (i+5)%n   # shift the order of frames by 5
 
+=head1 PARAMETERS
+
+ [PF_RADIO, "function", "Which remapping function to use", 1,
+  [Custom => 0, Reverse => 1, Shift => 2] ],
+ [PF_STRING, "custom", "The (optional) custom function to use, e.g. 'n-i' reverses the order"],
+
+=head1 IMAGE TYPES
+
+*
+
+=head1 AUTHOR
+
+Marc Lehmann <pcg@goof.com>
+
+=head1 DATE
+
+19990708
+
 =head1 LICENSE
 
-Copyright Marc Lehman.
-Distributed under the same terms as Gimp-Perl.
+Marc Lehmann <pcg@goof.com>
 
-=cut
+Distributed under the same terms as Gimp-Perl.

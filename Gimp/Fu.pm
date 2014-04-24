@@ -284,8 +284,14 @@ sub fixup_args {
    @p[0,1] = (getpod($pod,'NAME')//'') =~ /(.*?)\s*-\s*(.*)/ unless $p[0] or $p[1];
    ($p[0]) = File::Basename::fileparse($RealScript, qr/\.[^.]*/) unless $p[0];
    while (my ($k, $v) = each %IND2SECT) { $p[$k] ||= getpod($pod, $v); }
-   $p[8] ||= [ eval (getpod($pod, 'PARAMETERS') // '') ]; die $@ if $@;
-   $p[9] ||= [ eval getpod($pod, 'RETURN VALUES') // '' ]; die $@ if $@;
+   $p[8] ||= [
+      eval "package main;\n#line 0 \"$0 PARAMETERS\"\n".
+	 (getpod($pod, 'PARAMETERS') // '')
+   ]; die $@ if $@;
+   $p[9] ||= [
+      eval "package main;\n#line 0 \"$0 RETURN VALUES\"\n".
+	 (getpod($pod, 'RETURN VALUES') // '')
+   ]; die $@ if $@;
    for my $i (0..6, 10) {
       croak "$0: Need arg $i (or POD ".($IND2SECT{$i}//'')." section)" unless $p[$i]
    }

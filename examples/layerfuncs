@@ -4,30 +4,45 @@ use Gimp;
 use Gimp::Fu;
 # Gimp::set_trace(TRACE_ALL);
 
-# 7/15/03: <sjburges@gimp.org>
-# * s/Layers/Layer/ in registration
-# * remove layer_to_image_size, since its in core now
-#
-# These are a couple of one-liners that you might find handy.  Both should
-# be undoable w/o any special magick, and work with any gimp.
-
-register "center_layer", "Center Layer",
-         "Centers the current layer on the image",
-         "Seth Burgess", "Seth Burgess <sjburges\@gimp.org>",
-         "1.0", N_"<Image>/Layer/Center Layer", "*", [], sub {
-	($img, $layer) = @_;
-	die "Must have layer selected\n" unless $layer->is_layer;
-	$layer->become('Gimp::Layer');
-	$layer->set_offsets(($img->width  - $layer->width )/2,
-                        ($img->height - $layer->height)/2);
-	return();
+podregister {
+  die "Must have layer selected\n" unless $drawable->is_layer;
+  $drawable->become('Gimp::Layer');
+  $drawable->set_offsets(
+    ($image->width - $drawable->width )/2,
+    ($image->height - $drawable->height)/2
+  );
+  return;
 };
 
 exit main;
+__END__
+
+=head1 NAME
+
+center_layer - Center Layer
+
+=head1 SYNOPSIS
+
+<Image>/Layer/Center Layer
+
+=head1 DESCRIPTION
+
+Centers the current layer on the image
+
+=head1 PARAMETERS
+
+=head1 IMAGE TYPES
+
+*
+
+=head1 AUTHOR
+
+Seth Burgess <sjburges@gimp.org>
+
+=head1 DATE
+
+1.0
 
 =head1 LICENSE
 
-Copyright Seth Burgess.
 Distributed under the same terms as Gimp-Perl.
-
-=cut

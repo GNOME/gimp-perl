@@ -1,97 +1,81 @@
 #!/usr/bin/perl
 
-eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-
-# <sjburges@gimp.org> (original release)
-#
-# 11/7/99 <brendy@swipnet.se>
-# Added an option to remove existing guides
-# Added progress bar.
-#
-# 12/7/99 <sjburges@gimp.org>
-# Changed the display code in C and got rid of ugly hack in perl.
-#
-# 7/15/03 <sjburges@gimp.org>
-# Changed spot that its registered from <Image>/Guides to <Image>/Image/Guides
-# to reduce horizontal clutter on menubar
-
 use Gimp;
 use Gimp::Fu;
-use Gimp::Util;
 
 # Gimp::set_trace(TRACE_ALL);
 
-register "guide_grid",
-  "GuideGrid - creates a grid of guides\n",
-  "You specify the X spacing, the Y spacing, and initial offsets.  It creates a grid of guides\n",
-  "Seth Burgess",
-  "Seth Burgess <sjburges\@gimp.org>",
-  "1999-03-20",
-  N_"<Image>/Image/Guides/Guide Grid...",
-  "*",
-  [
-   [PF_SPINNER, "x_spacing", "How far to space grid horizontally", 24, [1,1000,1]],
-   [PF_SPINNER, "y_spacing", "How far to space grid vertically", 24, [1,1000,1]],
-   [PF_SPINNER, "x_offset", "How much to initially offset it horizontally", 0, [0,1000,1]],
-   [PF_SPINNER, "y_offset", "How much to initially offset it vertically", 0, [0,1000,1]],
-   [PF_TOGGLE, "remove_old_guides", "Remove existing guides?", 0],
-  ],
-  [],
-  sub {
-    my($img,$layer,$xspace, $yspace, $xoffset, $yoffset, $remove_old_guides) =@_;
-
-    #
-    # Remove all existing guides (this is optional)
-    #
-    if($remove_old_guides) {
-      $i=$img->find_next_guide(0);
-      while ($i != 0) {
-        $img->delete_guide($i);
-        $i=$img->find_next_guide(0);
-      }
+podregister {
+  # Remove all existing guides (this is optional)
+  if($remove_old_guides) {
+    my $i=$image->find_next_guide(0);
+    while ($i != 0) {
+      $image->delete_guide($i);
+      $i=$image->find_next_guide(0);
     }
-
-    #
-    # Add vertical guides to the image
-    #
-    for ($i=$xoffset; $i<$img->width; $i+=$xspace) {
-      if ($i) {
-	$img->add_vguide($i);
-      }
-    }
-
-    #
-    # Add horizontal guides to the image
-    #
-    for ($i=$yoffset; $i<$img->height; $i+=$yspace) {
-      if ($i) {
-	$img->add_hguide($i);
-      }
-    }
-
-    #
-    # I fixed this in Gimp C code (it wasn't flushing guides properly)
-    # Seth Burgess <sjburges@gimp.org>
-    #
-
-    ##
-    ## Refresh the display (probably not good, works for me!)
-    ##
-    ##
-    #$img->selection_all();
-    #$img->selection_none();
-
-    $layer->update(0, 0, $img->height, $img->width);
-
-    return();
-  };
+  }
+  for (my $i=$xoffset; $i<$image->width; $i+=$xspace) {
+    $image->add_vguide($i) if $i;
+  }
+  for (my $i=$yoffset; $i<$image->height; $i+=$yspace) {
+    $image->add_hguide($i) if $i;
+  }
+  $drawable->update(0, 0, $image->height, $image->width);
+  return;
+};
 exit main;
+__END__
+
+=head1 NAME
+
+guide_grid - creates a grid of guides
+
+=head1 SYNOPSIS
+
+<Image>/Image/Guides/Guide Grid...
+
+=head1 DESCRIPTION
+
+You specify the X spacing, the Y spacing, and initial offsets.  It creates
+a grid of guides.
+
+=head1 PARAMETERS
+
+ [PF_SPINNER, "xspace", "How far to space grid horizontally", 24, [1,1000,1]],
+ [PF_SPINNER, "yspace", "How far to space grid vertically", 24, [1,1000,1]],
+ [PF_SPINNER, "xoffset", "How much to initially offset it horizontally", 0, [0,1000,1]],
+ [PF_SPINNER, "yoffset", "How much to initially offset it vertically", 0, [0,1000,1]],
+ [PF_TOGGLE, "remove_old_guides", "Remove existing guides?", 0],
+
+=head1 IMAGE TYPES
+
+*
+
+=head1 HISTORY
+
+  <sjburges@gimp.org> (original release)
+
+  11/7/99 <brendy@swipnet.se>
+  Added an option to remove existing guides
+  Added progress bar.
+
+  12/7/99 <sjburges@gimp.org>
+  Changed the display code in C and got rid of ugly hack in perl.
+
+  7/15/03 <sjburges@gimp.org>
+  Changed spot that its registered from <Image>/Guides to <Image>/Image/Guides
+  to reduce horizontal clutter on menubar
+
+=head1 AUTHOR
+
+Seth Burgess
+
+=head1 DATE
+
+1999-03-20
 
 =head1 LICENSE
 
-Copyright Seth Burgess.
+Seth Burgess <sjburges@gimp.org>
+
 Distributed under the same terms as Gimp-Perl.
-
-=cut
-

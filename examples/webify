@@ -1,59 +1,69 @@
 #!/usr/bin/perl
 
-eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-
 use Gimp;
 use Gimp::Fu;
 
 #Gimp::set_trace(TRACE_ALL);
 
-register "webify",
-         "Make an image suitable for the web",
-         "This plug-in converts the image to indexed, with some extra options",
-         "Marc Lehmann",
-         "Marc Lehmann",
-         "1.0",
-         N_"<Image>/Filters/Web/Webify...",
-         "RGB*, GRAY*",
-         [
-          [PF_BOOL,	"new",		"create a new image?", 1],
-          [PF_BOOL,	"transparent",	"make transparent?", 1],
-          [PF_COLOUR,	"bg_color",	"the background colour to use for transparency", "white"],
-          [PF_SLIDER,	"threshold",	"the threshold to use for background detection", 3, [0, 255, 1]],
-          [PF_INT32,	"colors",	"how many colours to use (0 = don't convert to indexed)", 32],
-          [PF_BOOL,	"autocrop",	"autocrop at end?", 1],
-         ],
-	 [ [PF_IMAGE, 'image', 'Output image', 0] ],
-         sub {
-   my($img,$drawable,$new,$alpha,$bg,$thresh,$colours,$autocrop)=@_;
-   $thresh /= 255;
-
-   $img = $img->duplicate if $new;
-
-   eval { $img->undo_group_start };
-
-   $drawable = $img->flatten;
-
-   if ($alpha) {
-      $drawable->add_alpha;
-      Gimp::Context->set_sample_threshold($thresh);
-      $img->select_color(CHANNEL_OP_REPLACE,$drawable,$bg);
-      $drawable->edit_cut if $img->selection_bounds;
-   }
-   Gimp::Plugin->autocrop($drawable) if $autocrop;
-   $img->convert_indexed (2, 0, $colours, 0, 0, '') if $colours;
-
-   eval { $img->undo_group_end };
-
-   $new ? ($img->clean_all, $img) : ($img);
+podregister {
+  $thresh /= 255;
+  $image = $image->duplicate if $new;
+  $image->undo_group_start;
+  $drawable = $image->flatten;
+  if ($alpha) {
+    $drawable->add_alpha;
+    Gimp::Context->set_sample_threshold($thresh);
+    $image->select_color(CHANNEL_OP_REPLACE,$drawable,$bg);
+    $drawable->edit_cut if $image->selection_bounds;
+  }
+  $drawable->autocrop if $autocrop;
+  $image->convert_indexed (2, 0, $colours, 0, 0, '') if $colours;
+  $image->undo_group_end;
+  $new ? ($image->clean_all, $image) : ($image);
 };
 
 exit main;
+__END__
+
+=head1 NAME
+
+webify - Make an image suitable for the web
+
+=head1 SYNOPSIS
+
+<Image>/Filters/Web/Webify...
+
+=head1 DESCRIPTION
+
+This plug-in converts the image to indexed, with some extra options.
+
+=head1 PARAMETERS
+
+  [PF_BOOL, "new", "Create a new image?", 1],
+  [PF_BOOL, "alpha", "Make transparent?", 1],
+  [PF_COLOUR, "bg", "Background colour to use for transparency", "white"],
+  [PF_SLIDER, "thresh", "Threshold to use for background detection", 3, [0, 255, 1]],
+  [PF_INT32, "colours", "How many colours to use (0 = don't convert to indexed)", 32],
+  [PF_BOOL, "autocrop", "Autocrop at end?", 1],
+
+=head1 RETURN VALUES
+
+  [PF_IMAGE, 'image', 'Output image']
+
+=head1 IMAGE TYPES
+
+RGB*, GRAY*
+
+=head1 AUTHOR
+
+Marc Lehmann
+
+=head1 DATE
+
+1.0
 
 =head1 LICENSE
 
-Copyright Marc Lehman.
-Distributed under the same terms as Gimp-Perl.
+Marc Lehmann
 
-=cut
+Distributed under the same terms as Gimp-Perl.

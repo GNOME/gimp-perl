@@ -1,49 +1,22 @@
 #!/usr/bin/perl
 
-eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-
-# <sjburges@gimp.org> 12/13/03: adjusted number of blend arguments to
-#                               be 1.3.23 compatible
-#                               Removed channel_ops_ from channel_ops_offset    #                               Adjusted colors to be 1.3.x compatible
-
 use Gimp;
 use Gimp::Fu;
 
 # Definiere die Konstante "pi mal zwei"
 use constant PIx2 => 8 * atan2 1,1;
 
-register "random_art_1",			# Funktionsname
-	 "Create a Random Tile",		# Kurzhilfe
-	 "Create a tileable image by repeatedly drawing colourful polygons",
-						# Hilfetext
-	 "Marc Lehmann",			# Autor
-	 "Marc Lehmann <pcg\@goof.com",		# Copyright
-	 "0.4",					# Version/Datum
-	 N_"<Image>/File/Create/Logos/Random Art #1...",	# Menüpfad
-	 "",					# Bildtypen
-	 # Eingabeparameter
-	 # Typ		Name		Beschreibung		Wert
-	 [
-	  [PF_INT32,	'width',	'Image Width',		300],
-	  [PF_INT32,	'height',	'Image Height',		300],
-	  [PF_SLIDER,	'num_poly',	'Number of Polygons',	20, [5,100,1]],
-	  [PF_SLIDER,	'edges',	'Number of Edges',      10, [3, 30, 1]],
-	  [PF_SLIDER,	'revolutions',	'Number of Revolutions',1, [1, 3, 1]],
-	  [PF_SLIDER,	'feather',	'Feather Radius',	30, [1, 100]],
-	  [PF_BOOL,	'supersample',	'Adaptive Supersampling?', 0],
-	 ],
-	 sub {					# Perl-Code
+podregister {
    # Die Parameter werden ganz "normal" übergeben:
-   my ($w,$h,$num_poly,$edges,$revolutions,$feather,$super)=@_;
+   my ($width,$height,$num_poly,$edges,$revolutions,$feather,$super)=@_;
    Gimp::Context->push();
 
    # Erzeuge ein neues Bild
-   my $image = new Gimp::Image($w,$h,RGB);
+   my $image = new Gimp::Image($width,$height,RGB);
    $image->undo_disable;
 
    # Erzeuge die erste Ebene für das Bild
-   my $layer = $image->layer_new($w,$h,RGB_IMAGE,
+   my $layer = $image->layer_new($width,$height,RGB_IMAGE,
 		   "Random Art #1",100,NORMAL_MODE);
 
    # Füge sie in das Bild ein
@@ -65,8 +38,8 @@ register "random_art_1",			# Funktionsname
       my @ecken;
       for (1..$edges*$revolutions) {
 	 my $r = rand(0.4)+0.1;
-	 push(@ecken, $w/2+sin($_*PIx2/$edges)*$r*$w,
-		      $h/2+cos($_*PIx2/$edges)*$r*$h);
+	 push(@ecken, $width/2+sin($_*PIx2/$edges)*$r*$width,
+		      $height/2+cos($_*PIx2/$edges)*$r*$height);
       }
 
       # Selektiere die Region
@@ -89,13 +62,13 @@ register "random_art_1",			# Funktionsname
 		     2,
 		     3,
 		     0,                       # no dithering
-		     $w/2,                    # x1
-		     $h/2,                    # y1
-		     rand($w),                # x2
-		     rand($h));               # y2
+		     $width/2,                    # x1
+		     $height/2,                    # y1
+		     rand($width),                # x2
+		     rand($height));               # y2
 
       # Und dann verschiebe das Bild etwas
-      $layer->offset (1,0,(rand(0.8)+0.1)*$w,(rand(0.8)+0.1)*$h);
+      $layer->offset (1,0,(rand(0.8)+0.1)*$width,(rand(0.8)+0.1)*$height);
    }
 
    Gimp::Context->pop();
@@ -109,10 +82,38 @@ register "random_art_1",			# Funktionsname
 };
 
 exit main;
+__END__
+
+=head1 NAME
+
+random_art_1 - Create a Random Tile
+
+=head1 SYNOPSIS
+
+<Image>/File/Create/Logos/Random Art #1...
+
+=head1 DESCRIPTION
+
+Create a tileable image by repeatedly drawing colourful polygons
+
+=head1 PARAMETERS
+
+  [PF_INT32,	'width',	'Image Width',		300],
+  [PF_INT32,	'height',	'Image Height',		300],
+  [PF_SLIDER,	'num_poly',	'Number of Polygons',	20, [5,100,1]],
+  [PF_SLIDER,	'edges',	'Number of Edges',      10, [3, 30, 1]],
+  [PF_SLIDER,	'revolutions',	'Number of Revolutions',1, [1, 3, 1]],
+  [PF_SLIDER,	'feather',	'Feather Radius',	30, [1, 100]],
+  [PF_BOOL,	'super',	'Adaptive Supersampling?', 0],
+
+=head1 AUTHOR
+
+Marc Lehmann <pcg@goof.com>
+
+=head1 DATE
+
+0.4
 
 =head1 LICENSE
 
-Copyright Marc Lehman.
 Distributed under the same terms as Gimp-Perl.
-
-=cut

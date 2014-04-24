@@ -1,33 +1,11 @@
 #!/usr/bin/perl
 
-# A plug-in for GIMP for producing logos and other such nifty things
-# which appear to be made of steel and floating over a glowing cloud.
-# This plug-in also includes several filters and such for performing the
-# various stages of this logo (e.g. brushed steel, add glow, highlight edges).
-#
-# Written in 1999 (c) by Aaron Sherman <ajs@ajs.com>.
-# This plugin may be distributed under the same terms as Gimp itself.
-# See http://www.gimp.org/ for more information on Gimp.
-
-=head1 LICENSE
-
-Written in 1999 (c) by Aaron Sherman <ajs@ajs.com>.
-This plugin may be distributed under the same terms as Gimp itself.
-
-=cut
-require 5.004;
-
 use Gimp qw(:auto N_);
 use Gimp::Fu;
 use Gimp::Util;
+use strict;
 
 N_"/Xtns/Render"; N_"/Xtns/Render/Logos"; # i18n workaround
-
-use strict;
-use vars qw($glowing_steel_version $glowing_steel_released);
-
-$glowing_steel_version = "1.0a";
-$glowing_steel_released = "6/14/1999";
 
 sub perl_fu_glowing_steel {
   my $string = shift;
@@ -270,7 +248,7 @@ register
   "Highlight the edges of an alpha layer and make ".
 	"it appear to have height. Not quite the same as a beveled edge, ".
 	"this is a somewhat more subtle technique.",
-  "Aaron Sherman", "Aaron Sherman (c)", "1999-06-14",
+  '', '', '',
   N_"<Image>/Filters/Render/Highlight Edges...",
   "*",
   [
@@ -283,7 +261,7 @@ register
   "Create a brushed metal surface effect",
   "Make a surface (selected area) look like ".
 	"brushed metal (kind of like steel).",
-  "Aaron Sherman", "Aaron Sherman (c)", "1999-06-14",
+  '', '', '',
   N_"<Image>/Filters/Render/Pattern/Brushed Metal...",
   "*",
   [
@@ -300,7 +278,7 @@ register
   "Add a glowing layer behind an existing layer. This ".
 	"is very different from drop shadows, as the glow will extend out ".
 	"in the given radius from all edges of the layer.",
-  "Aaron Sherman", "Aaron Sherman (c)", "1999-06-14",
+  '', '', '',
   N_"<Image>/Filters/Render/Add Glow",
   "*",
   [
@@ -315,7 +293,7 @@ register
   "Create the effect of a metallic surface over ".
 	"a glowing surface. This effect was inspired by a poster for the ".
 	"film \"Lost In Space\".",
-  "Aaron Sherman", "Aaron Sherman (c)", "1999-06-14",
+  '', '', '',
   N_"<Image>/File/Create/Logos/Glowing Steel",
   undef,
   [
@@ -332,7 +310,6 @@ register
   \&perl_fu_glowing_steel;
 
 exit main;
-
 __END__
 
 =head1 NAME
@@ -347,6 +324,11 @@ glowing_steel - A logo plugin for GIMP
   <Image>/Filters/Render/Add Glow
 
 =head1 DESCRIPTION
+
+Produce logos and other such nifty things which appear to be made of
+steel and floating over a glowing cloud.  This plug-in also includes
+several filters and such for performing the various stages of this logo
+(e.g. brushed steel, add glow, highlight edges).
 
 This plugin renders the given text in the given font and size in a logo
 style that combines the I<Brushed Metal> effect with the I<Highlight Edges>
@@ -443,19 +425,19 @@ that you turn off antialiasing).
 
 PDB call:
 
-  perl_fu_glowing_metal( string, font, size, glow_color,
+  my $image = perl_fu_glowing_metal( string, font, size, glow_color,
 	back_color, glow_radius, highlight, antialias)
 
 =head1 AUTHOR
 
-Written in 1999 (c) by Aaron Sherman E<lt>ajs@ajs.comE<gt>
+Aaron Sherman <ajs@ajs.com>
 
-=head1 BUGS
+=head1 DATE
 
-TBD
+Version 1.0a released 1999-06-14
 
-=head1 SEE ALSO
+=head1 LICENSE
 
-L<gimp>, L<perl>, L<Gimp>: the Gimp module for perl.
+Written in 1999 (c) by Aaron Sherman <ajs@ajs.com>.
 
-=cut
+This plugin may be distributed under the same terms as Gimp itself.

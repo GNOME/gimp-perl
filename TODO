@@ -1,5 +1,8 @@
-Items as of 2014-04-19 (by Ed J)
-* <Load> and <Save> need any registration as such done in Gimp::Fu - see pod
+Items as of 2014-04-23 (by Ed J)
+* <Load> and <Save> need any registration as such done in Gimp::Fu - see pod and e/dataurl
+* Gimp::Fu must doc command-line usage
+* e/fade-alpha should generate buttons, not hardcode
+* ensure Server startup, security note in docs
 * image in Gimp.pm POD http://perlmaven.com/how-to-add-images-to-cpan -
   input image -> output image of a plugin
 * examples POD
@@ -9,10 +12,6 @@ Items as of 2014-04-19 (by Ed J)
   way to pass GIMP data back and forth directly via typemap system. May
   involve a gimp-perl "wrapper" data structure that pairs an SV with its
   GimpParam counterpart - Gimp::Lib::Data?
-* gimp-perl website: maybe just gimp.org/glossary entry - only needs
-  links to CPAN, bugzilla, git - make sure CPAN has all POD docs
-  - https://mail.gnome.org/mailman/listinfo/gimp-developer-list
-  - https://bugzilla.gnome.org/buglist.cgi?quicksearch=product:gimp-perl
 * Get gimp PDL objects working right over Gimp::Net - infrastructure is there
 * Restructure dirs so all libs under lib/ using ExtUtils::MakeMaker::BigHelper
 * http://search.cpan.org/dist/Glib-Object-Introspection/

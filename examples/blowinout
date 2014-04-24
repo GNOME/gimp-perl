@@ -1,42 +1,34 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
-eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-
-# Blow In/Out
-# John Pitney
-
-use Gimp qw(:auto __ N_);
+use Gimp;
 use Gimp::Fu;
-
-# print "hello there\n";
+use strict;
 
 # Gimp::set_trace(TRACE_CALL);
 
-
-sub blowinout {
-    my ($img, $drawable, $angle, $nsteps, $distance, $inmode, $arithmode) = @_;
+podregister {
     # bail out if $drawable isn't a layer
+    die "Not a layer\n" unless $drawable->is_layer;
+    $drawable->become('Gimp::Layer');
 #    print "Starting\n";
-    if( gimp_selection_is_empty($img) == 0) { return };
+    if( $image->selection_is_empty == 0) { return };
 #    if ($nsteps == 0) return;
-    eval { $img->undo_group_start };
-    # save the background color for later restoration
-    my $oldbg = gimp_context_get_background();
+    eval { $image->undo_group_start };
+    Gimp::Context->push();
     #get the drawable dimensions
-    my $xsize = gimp_drawable_width($drawable);
-    my $ysize = gimp_drawable_height($drawable);
+    my $xsize = $drawable->width;
+    my $ysize = $drawable->height;
 
     # Set background color to 128, for clearing dm
-    gimp_context_set_background([128,128,128]);
+    Gimp::Context->set_background([128,128,128]);
 
     # Create a grayscale workspace image for displacement map
-    my $dm = gimp_image_new($xsize, $ysize, 1);
+    my $dm = Gimp::Image->new($xsize, $ysize, 1);
     eval { $dm->undo_group_start };
     # It needs to have 2 layers
-    my $dmlayer = gimp_layer_new($dm, $xsize, $ysize, GRAY_IMAGE, "newlayer",
+    my $dmlayer = Gimp::Layer->new($dm, $xsize, $ysize, GRAY_IMAGE, "newlayer",
         100, NORMAL_MODE);
-    gimp_image_insert_layer($dm, $dmlayer, 0, 0);
+    $dm->insert_layer($dmlayer, 0, 0);
 
     # Create the layers, one-by-one
     my $i = 1;
@@ -46,16 +38,14 @@ sub blowinout {
     my $ydist = ($arithmode) ?
         $i * $distance / $nsteps * sin($angle * 3.14159 / 180) :
         $distance ** ($i/$nsteps) * sin($angle * 3.14159 / 180);
-    gimp_edit_clear($dmlayer);
-    plug_in_noisify($dm, $dmlayer, 0, 255, 255, 255, 0);
-    gimp_levels($dmlayer, 0, 0, 255, 1.0, 128, 255);
-    $drawable = gimp_layer_copy($drawable, 0);
-    gimp_image_insert_layer($img, $drawable, 0, -1);
-    plug_in_displace($img, $drawable, $xdist, $ydist, 1, 1, $dmlayer,
-        $dmlayer, 1);
-    if ( $inmode == 1 )
-    {
-        gimp_image_lower_item($img, $drawable);
+    $dmlayer->edit_clear;
+    $dmlayer->noisify(0, 255, 255, 255, 0);
+    $dmlayer->levels(0, 0, 255, 1.0, 128, 255);
+    $drawable = $drawable->copy(0);
+    $image->insert_layer($drawable, 0, -1);
+    $drawable->displace($xdist, $ydist, 1, 1, $dmlayer, $dmlayer, 1);
+    if ( $inmode == 1 ) {
+        $image->lower_item($drawable);
     };
     for ( $i = 2; $i <= $nsteps; $i++ ) {
         $xdist = ($arithmode) ?
@@ -64,52 +54,65 @@ sub blowinout {
         $ydist = ($arithmode) ?
             $i * $distance / $nsteps * sin($angle * 3.14159 / 180) :
             $distance ** ($i/$nsteps) * sin($angle * 3.14159 / 180);
-        gimp_edit_clear($dmlayer);
-        plug_in_noisify($dm, $dmlayer, 0, 255, 255, 255, 0);
-        gimp_levels($dmlayer, 0, 0, 255, 1.0, 128, 255);
-        $drawable = gimp_layer_copy($drawable, 0);
-        gimp_image_insert_layer($img, $drawable, 0, -1);
-        plug_in_displace($img, $drawable, $xdist, $ydist, 1, 1, $dmlayer,
-            $dmlayer, 1);
-        if ( $inmode == 1 )
-        {
-            gimp_image_lower_item($img, $drawable);
+        $dmlayer->edit_clear;
+        $dmlayer->noisify(0, 255, 255, 255, 0);
+        $dmlayer->levels(0, 0, 255, 1.0, 128, 255);
+	$drawable = $drawable->copy(0);
+	$image->insert_layer($drawable, 0, -1);
+	$drawable->displace($xdist, $ydist, 1, 1, $dmlayer, $dmlayer, 1);
+        if ( $inmode == 1 ) {
+	    $image->lower_item($drawable);
         };
     }
 
     eval { $dm->undo_group_end };
 #    gimp_image_remove_layer($dm, $dmlayer);
 #    gimp_image_delete ($dm);
-    gimp_context_set_background($oldbg);
-    eval { $img->undo_group_end };
+    Gimp::Context->pop;
+    eval { $image->undo_group_end };
 #    gimp_displays_flush(); unneccessary (and dangerous ;)
 
     (); # I like smileys ;)
-}
-
-register
-	"blowinout",
-	"Blow selected layer inout",
-	"Generates an animation thats blows the selected layer in or out",
-	"John Pitney",
-	"John Pitney <john\@pitney.org>",
-	"1999-03-15",
-	N_"<Image>/Filters/Animation/BlowInOut...",
-	"*",
-	[
-	 [PF_INT32, "angle", "Wind Angle, 0 is left", 120],
-         [PF_INT32, "steps", "Number of Steps/Layers", 5],
-	 [PF_VALUE, "distance", "How far to blow",30],
-	 [PF_RADIO, "direction", "Blow direction", 0, [In => 1, Out => 0]],
-         [PF_RADIO, "series", "Kind of series", 1, [Arithmetic => 1, Geometric => 0]]
-	],
-        [],
-	\&blowinout;
+};
 
 exit main;
 
+__END__
+
+=head1 NAME
+
+blowinout - Blow selected layer in/out
+
+=head1 SYNOPSIS
+
+<Image>/Filters/Animation/BlowInOut...
+
+=head1 DESCRIPTION
+
+Generates an animation thats blows the selected layer in or out.
+
+=head1 PARAMETERS
+
+ [PF_INT32, "angle", "Wind Angle, 0 is left", 120],
+ [PF_INT32, "nsteps", "Number of Steps/Layers", 5],
+ [PF_VALUE, "distance", "How far to blow",30],
+ [PF_RADIO, "inmode", "Blow direction", 0, [In => 1, Out => 0]],
+ [PF_RADIO, "arithmode", "Kind of series", 1, [Arithmetic => 1, Geometric => 0]]
+
+=head1 IMAGE TYPES
+
+*
+
+=head1 AUTHOR
+
+John Pitney <john@pitney.org>
+
+=head1 DATE
+
+1999-03-15
+
 =head1 LICENSE
+
 Copyright John Pitney.
 
 Released under the same terms as Gimp-Perl.
-=cut

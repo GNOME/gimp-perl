@@ -1,17 +1,8 @@
 #!/usr/bin/perl
 
-use strict 'subs';
+use strict;
 use Gimp qw(:auto);
 use Gimp::Fu;
-
-#
-# this is quite convoluted, but I found no other way to do this than:
-#
-# create a new image & one layer
-# copy & paste the layer
-# ditherize new image
-# copy & paste back
-#
 
 #Gimp::set_trace(TRACE_ALL);
 
@@ -21,22 +12,7 @@ my %imagetype2layertype = (
    INDEXED,	INDEXED_IMAGE,
 );
 
-register "ditherize",
-	 "dithers current selection",
-	 "This script takes the current selection and dithers it just like convert to indexed",
-	 "Marc Lehmann",
-	 "Marc Lehmann",
-	 "1.2",
-	 N_"<Image>/Filters/Noise/Ditherize...",
-	 "RGB*, GRAY*",
-	 [
-	  [PF_RADIO,		"dither_type",	"The dither type (see gimp_image_convert_indexed)", 1,
-						[none => 0, fs => 1, "fs/low-bleed" => 2, ordered => 3]],
-	  [PF_SLIDER,		"colours",	"The number of colours to dither to", 10, [0, 256, 1, 1]],
-	 ],
-	 sub {
-   my($image,$drawable,$dither,$colours)=@_;
-
+podregister {
 #   Gimp::set_trace(-1);
 
    $drawable->is_layer or die "this plug-in only works for layers";
@@ -62,7 +38,7 @@ register "ditherize",
 			"temporary layer", 100, NORMAL_MODE);
    $copy->insert_layer ($draw, 0, 1);
    $draw->edit_paste(0)->anchor;
-   $copy->convert_indexed ($dither, MAKE_PALETTE, $colours, 1, 1, "");
+   $copy->convert_indexed ($dither_type, MAKE_PALETTE, $colours, 1, 1, "");
 
    $draw->edit_copy;
    $drawable->edit_paste(1)->anchor;
@@ -74,11 +50,50 @@ register "ditherize",
 };
 
 exit main;
+__END__
+
+=head1 NAME
+
+ditherize - dithers current selection
+
+=head1 SYNOPSIS
+
+<Image>/Filters/Noise/Ditherize...
+
+=head1 DESCRIPTION
+
+This script takes the current selection and dithers it just like convert
+to indexed.
+
+=head1 PARAMETERS
+
+ [PF_RADIO, "dither_type", "The dither type (see gimp_image_convert_indexed)", 1,
+   [none => 0, fs => 1, "fs/low-bleed" => 2, ordered => 3]],
+ [PF_SLIDER, "colours",	"The number of colours to dither to", 10, [0, 256, 1, 1]],
+
+=head1 IMAGE TYPES
+
+RGB*, GRAY*
+
+=head1 RATIONALE
+
+This is quite convoluted, but I found no other way to do this than:
+
+ create a new image & one layer
+ copy & paste the layer
+ ditherize new image
+ copy & paste back
+
+=head1 AUTHOR
+
+Marc Lehmann
+
+=head1 DATE
+
+1.2
 
 =head1 LICENSE
 
-Copyright Marc Lehman.
+Marc Lehmann
+
 Distributed under the same terms as Gimp-Perl.
-
-=cut
-

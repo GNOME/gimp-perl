@@ -1,8 +1,5 @@
 #!/usr/bin/perl
 
-eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-
 # 7/15/03 <sjburges@gimp.org>
 # Changed spot that its registered from <Image>/Guides to <Image>/Image/Guides
 # to reduce horizontal clutter on menubar
@@ -10,43 +7,56 @@ eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 
-register	"center_guide",
-		"Creates h- & v-guides at the center of the image.",
-		"Physical center = width/2 and height/2; Optical center = the Golden Mean.",
-		"Claes G Lindblad <claesg\@algonet.se>",
-		"Claes G Lindblad",
-		"990323",
-		N_"<Image>/Image/Guides/Center Guide...",
-		"*",
-		[
-		[PF_RADIO,
-			"center",
-			"center",
-			 0,
-			[Physical => 0, Optical => 1]
-		]
-		],
+podregister
 	sub {
-		my ($img, $layer, $center) = @_;
+		my ($image, $drawable, $center) = @_;
 
-		$w = $img->width();
-		$h = $img->height();
+		$w = $image->width();
+		$h = $image->height();
 		$hc = int($h/2 + 0.5);
 		$vc = int($w/2 + 0.5);
 
 		if ($center == 1) {
 			$hc = int(($h / 2.6179) + 0.5);
 		};
-                $img->undo_group_start;
-		$bit_bucket = $img->add_hguide($hc);
-		$bit_bucket = $img->add_vguide($vc);
-		gimp_drawable_update($layer, 0, 0, $w, $h);
-                $img->undo_group_end;
+                $image->undo_group_start;
+		$bit_bucket = $image->add_hguide($hc);
+		$bit_bucket = $image->add_vguide($vc);
+		gimp_drawable_update($drawable, 0, 0, $w, $h);
+                $image->undo_group_end;
 	};
 exit main;
+__END__
+
+=head1 NAME
+
+center_guide - Creates h- & v-guides at the center of the image.
+
+=head1 SYNOPSIS
+
+<Image>/Image/Guides/Center Guide...
+
+=head1 DESCRIPTION
+
+Physical center = width/2 and height/2; Optical center = the Golden Mean.
+
+=head1 PARAMETERS
+
+  [PF_RADIO, "center", "center", 0, [Physical => 0, Optical => 1] ]
+
+=head1 IMAGE TYPES
+
+*
+
+=head1 AUTHOR
+
+Claes G Lindblad <claesg@algonet.se>
+
+=head1 DATE
+
+990323
+
 =head1 LICENSE
 
 Copyright Claes G Lindblad.
 Distributed under the terms of the GNU Public License.
-
-=cut
