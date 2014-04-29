@@ -1,12 +1,14 @@
 use strict;
 use Test::More;
 our ($dir, $DEBUG);
+my $tpf_name;
 BEGIN {
 #  $Gimp::verbose = 1;
   $DEBUG = 0;
   require 't/gimpsetup.pl';
   use Config;
-  write_plugin($DEBUG, "test_perl_filter", $Config{startperl}.
+  $tpf_name = "test_perl_filter";
+  write_plugin($DEBUG, $tpf_name, $Config{startperl}.
     "\nBEGIN { \$Gimp::verbose = ".int($Gimp::verbose||0).'; }'.<<'EOF');
 
 use strict;
@@ -29,7 +31,7 @@ sub boilerplate_params {
   "test_dies",
   boilerplate_params('exceptions', '<None>'),
   [ [ PF_STRING, "text", "Input text", 'default' ], ],
-  sub { die $_[0]."\n" }
+  sub { die $_[0] }
 );
 
 &register(
@@ -185,8 +187,14 @@ is_deeply(
   'return colour'
 );
 my $send_text = 'exception';
+eval { Gimp::Plugin->test_dies($send_text."\n"); };
+is($@, "$send_text\n", 'exception with newline correct');
 eval { Gimp::Plugin->test_dies($send_text); };
-is($@, "$send_text\n", 'exception returned correctly');
+like($@, qr/$send_text.*$tpf_name/, 'exception net w/o newline correct');
+eval { Gimp::Image->new; };
+my $dot_t_file = __FILE__;
+$dot_t_file =~ s#.*/##;
+like($@, qr/$dot_t_file/, 'exception from GIMP proc');
 eval { Gimp::Plugin->test_return_str_not_int; };
 like($@, qr/Expected a number/, 'exception handling on bad return value');
 eval { Gimp::Plugin->test_float_in('notfloat'); };

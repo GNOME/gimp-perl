@@ -101,7 +101,7 @@ sub gimp_call_procedure {
 	 print $trace_res $trace;
       }
    }
-   die $die_text if $die_text;
+   Gimp::recroak(__FILE__, $die_text) if $die_text;
    wantarray ? @response : $response[0];
 }
 
