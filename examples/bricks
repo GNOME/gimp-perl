@@ -3,114 +3,97 @@
 use Gimp;
 use Gimp::Fu;
 use Gimp::Util;
+#$Gimp::verbose = 1;
+#Gimp::set_trace(TRACE_ALL);
 
 podregister {
-    my ($pattern,$pattern2,$borderpattern,$color,$borderwidth,$brickx,$bricky,$imagew,$imageh,$skew) = @_;
-    my ($image, $layer, $state, $layerpat);
-    Gimp::Context->push();
-
-    $imagew = abs($imagew); $imagew = 256 if (($imagew < 32) || ($imagew > 4096));
-    $imageh = abs($imageh); $imageh = 256 if (($imageh < 32) || ($imageh > 4096));
-    #print "Creating texture $imagew"."x$imageh\n";
-    $image = Gimp::Image->new($imagew,$imageh,RGB);
-    # make background
-    Gimp::Context->set_pattern($pattern);
-    $layerpat = $image->add_new_layer(0,0,0);
-    $image->selection_all;
-    $layerpat->edit_bucket_fill(2,0,100,0,0,1,1);
-
-    # make border lines
-    Gimp::Context->set_foreground ([1,1,1]);
-    $layer = $image->add_new_layer(0,0,0);
-    $layer->fill(3);
-    my $w = 1; my $h = 1; my $j = 0; my $wo = 0;
-    my $brickw = ($imagew / $brickx); my $brickh = ($imageh / $bricky);
-    $image->undo_group_start;
-    while ($h < $imageh)
-      {
-      $image->select_rectangle(2,0,$h,$imagew,$borderwidth);
-      $layer->edit_bucket_fill(0,0,100,0,0,0,0);
-      $w = 1;
-      $wo = 0; $wo = ($brickw / 2) if ($j == 1);
-      while ($w < $imagew)
-        {
-        $image->select_rectangle(2,$w+$wo,$h,$borderwidth,$brickh+1);
-        $layer->edit_bucket_fill(0,0,100,0,0,1,1);
-#        print "$h $w\n";
-        $w += $brickw;
-        }
-      $j = 1 - $j;
-      $h += $brickh;
-      }
-    $image->undo_group_end;
-    # make a copy of it for bump mapping
-    $image->selection_all;
-    $layer->edit_copy();
-    $border = $image->add_new_layer(0,0,0);
-    #print "$border\n";
-    $border->edit_paste(0);
-    $image->floating_sel_anchor($image->get_floating_sel);
-    $image->selection_none;
-    # somebody seems to have changed the parameter for the following 3 lines
-    # omy office machine use the old variant, at home I need the new :(
-    # Changed text:
-    #plug_in_gauss_iir (1,$image,$border,1,1,1);
-    #plug_in_gauss_iir (1,$image,$layer,2,1,1);
-    #plug_in_bump_map (1,$image,$layerpat,$layer,257,40,3,0,0,0,0,1,0,1);
-    $border->gauss_iir (2,1,1);
-    $layer->gauss_iir (2,1,1);
-    $layer->bump_map(280,40,2,0,0,0,0,1,0,1);
-    # overlay border lines and random skew bricks
-    $image->undo_group_start;
-    $h = 0; $j = 0; $wo = 0;
-    while ($h < $imageh)
-      {
-      $w = 0; $wo = 0; $wo = ($brickw / 2) if ($j == 1);
-      while ($w < $imagew)
-        {
-        $r = int(rand ($skew) - ($skew / 1));
-        if ($r != 0)
-          {
-	  Gimp::Context->set_foreground ("#ffffff") if ($r > 0);
-	  Gimp::Context->set_foreground ("#000000") if ($r < 0);
-          $image->select_rectangle(2,$w+$wo+$borderpattern,$h+$borderpattern,$brickw,$brickh);
-          $layerpat->edit_bucket_fill(0,0,4*abs($r),0,0,1,1);
-          # halves
-          if (($j == 1) && ($w+$wo+$brickw > $imagew))
-            {
-            $image->select_rectangle(2,0,$h+$borderpattern,$brickw/2,$brickh);
-            $layerpat->edit_bucket_fill(0,0,4*abs($r),0,0,1,1);
-            }
-          }
-        $w += $brickw;
-        }
-      $j = 1 - $j;
-      $h += $brickh;
-      }
-    $image->undo_group_end;
-    Gimp::Context->set_background ($color);
-    $layerb = $image->image_add_new_layer(1,BACKGROUND_FILL,0);
-    $image->selection_all;
-    if ($borderpattern ne "") {
-      Gimp::Context->set_pattern($borderpattern);
-      $layerb->edit_bucket_fill(2,0,100,0,0,1,1);
+  Gimp::Context->push();
+  $imagew = abs($imagew); $imagew = 256 if (($imagew < 32) || ($imagew > 4096));
+  $imageh = abs($imageh); $imageh = 256 if (($imageh < 32) || ($imageh > 4096));
+  #print "Creating texture $imagew"."x$imageh\n";
+  my $image = Gimp::Image->new($imagew,$imageh,RGB);
+  Gimp::Display->new($image);
+  # make background
+  Gimp::Context->set_pattern($pattern);
+  my $layerpat = $image->add_new_layer(0,0,0);
+  $image->selection_all;
+  $layerpat->edit_bucket_fill(2,0,100,0,0,1,1);
+  # make border lines
+  Gimp::Context->set_foreground ([1,1,1]);
+  my $layer = $image->add_new_layer(0,0,0);
+  $layer->fill(3);
+  my $w = 1; my $h = 1; my $j = 0; my $wo = 0;
+  my $brickw = ($imagew / $brickx); my $brickh = ($imageh / $bricky);
+  $image->undo_group_start;
+  while ($h < $imageh) {
+    $image->select_rectangle(2,0,$h,$imagew,$borderwidth);
+    $layer->edit_bucket_fill(0,0,100,0,0,0,0);
+    $w = 1;
+    $wo = 0; $wo = ($brickw / 2) if ($j == 1);
+    while ($w < $imagew) {
+      $image->select_rectangle(2,$w+$wo,$h,$borderwidth,$brickh+1);
+      $layer->edit_bucket_fill(0,0,100,0,0,1,1);
+#      print "$h $w\n";
+      $w += $brickw;
     }
-    $border->edit_copy();
-    $layerb->add_alpha;
-    $mask = $layerb->create_mask(0);
-    $layerb->add_mask($mask);
-    $mask->edit_paste(0);
-    $image->floating_sel_anchor($image->get_floating_sel);
-    $image->selection_none;
-    $border->remove_layer ;
-    $layer->remove_layer ;
-    $layerb->remove_mask (0);
-    $layerpat->offset (1,0,-1,-1);
-    $layerb->offset (1,0,-1,-1);
-    Gimp::Context->pop();
-    Gimp::Display->new($image);
-
-    $image;
+    $j = 1 - $j;
+    $h += $brickh;
+  }
+  $image->undo_group_end;
+  # make a copy of it for bump mapping
+  $image->selection_all;
+  $layer->edit_copy();
+  $border = $image->add_new_layer(0,0,0);
+  #print "$border\n";
+  $border->edit_paste(0)->floating_sel_anchor;
+  $image->selection_none;
+  $border->gauss_iir (2,1,1);
+  $layer->gauss_iir (2,1,1);
+  $layerpat->bump_map($layer,280,40,2,0,0,0,0,1,0,1);
+  # overlay border lines and random skew bricks
+  $image->undo_group_start;
+  $h = 0; $j = 0; $wo = 0;
+  while ($h < $imageh) {
+    $w = 0; $wo = 0; $wo = ($brickw / 2) if ($j == 1);
+    while ($w < $imagew) {
+      $r = int(rand ($skew) - ($skew / 1));
+      if ($r != 0) {
+	Gimp::Context->set_foreground ("#ffffff") if ($r > 0);
+	Gimp::Context->set_foreground ("#000000") if ($r < 0);
+	$image->select_rectangle(2,$w+$wo,$h,$brickw,$brickh);
+	$layerpat->edit_bucket_fill(0,0,4*abs($r),0,0,1,1);
+	# halves
+	if (($j == 1) && ($w+$wo+$brickw > $imagew)) {
+	  $image->select_rectangle(2,0,$h,$brickw/2,$brickh);
+	  $layerpat->edit_bucket_fill(0,0,4*abs($r),0,0,1,1);
+	}
+      }
+      $w += $brickw;
+    }
+    $j = 1 - $j;
+    $h += $brickh;
+  }
+  $image->undo_group_end;
+  Gimp::Context->set_background ($color);
+  $layerb = $image->image_add_new_layer(1,BACKGROUND_FILL,0);
+  $image->selection_all;
+  if ($borderpatuse) {
+    Gimp::Context->set_pattern($borderpattern);
+    $layerb->edit_bucket_fill(2,0,100,0,0,1,1);
+  }
+  $border->edit_copy();
+  $layerb->add_alpha;
+  $mask = $layerb->create_mask(0);
+  $layerb->add_mask($mask);
+  $mask->edit_paste(0)->floating_sel_anchor;
+  $image->selection_none;
+  $border->remove_layer ;
+  $layer->remove_layer ;
+  $layerb->remove_mask (0);
+  $layerpat->offset (1,0,-1,-1);
+  $layerb->offset (1,0,-1,-1);
+  Gimp::Context->pop;
+  $image;
 };
 
 exit main();
@@ -122,7 +105,7 @@ do_bricks - Generate brick texture
 
 =head1 SYNOPSIS
 
-<Image>/File/Create/Patterns/Bricks...
+<Image>/File/Create/Patterns/_Bricks...
 
 =head1 DESCRIPTION
 
@@ -130,16 +113,16 @@ Generate a brick texture for using in 3d games.
 
 =head1 PARAMETERS
 
- [PF_PATTERN,  "pattern", "Brick pattern", "Leather"],
- [PF_STRING,  "pattern2", "Second brick pattern for some highlightin (unused)", "unused yet"],
- [PF_STRING,  "borderpattern", "Border pattern (empty for none)", ""],
+ [PF_PATTERN, "pattern", "Brick pattern", "Leather"],
+ [PF_TOGGLE,  "borderpatuse", "Use border pattern?", 0],
+ [PF_PATTERN, "borderpattern", "Border pattern", "Leather"],
  [PF_COLOR,   "color", "Border color", [0.80,0.80,0.80]],
- [PF_SPINNER,  "borderwidth", "Border width", 1, [0,1000,1]],
- [PF_STRING,  "brickx", "Bricks in X", 8],
- [PF_STRING,  "bricky", "Bricks in Y", 16],
- [PF_STRING,  "imagew", "Width of image", 256],
- [PF_STRING,  "imageh", "Height of image", 256],
- [PF_STRING,  "skew", "Random darken/lighten factor (0..20)", 0]
+ [PF_SPINNER, "borderwidth", "Border width", 1, [0,1000,1]],
+ [PF_INT32,   "brickx", "Bricks in X", 8],
+ [PF_INT32,   "bricky", "Bricks in Y", 16],
+ [PF_INT32,   "imagew", "Width of image", 256],
+ [PF_INT32,   "imageh", "Height of image", 256],
+ [PF_SPINNER, "skew", "Random darken/lighten factor (0..20)", 5, [0,20,1]],
 
 =head1 IMAGE TYPES
 
@@ -161,10 +144,13 @@ Reordered so that pasting happens after layer mask is
 attached to image.  Removed harmful gimp_layer_delete()
 calls. s/gimp_channel_ops_offset/gimp_drawable_offset/.
 
-The plug-in is certainly incomplete, with unused parameters, artficial
-limiation on max/min size (which silently moves it to 256?). Doesn't
+The plug-in is certainly incomplete, with unused parameters, artificial
+limitation on max/min size (which silently moves it to 256?). Doesn't
 save/restore current gimp pattern/colors before setting them.  Otherwise,
 it seems to work OK now :)
+
+29/4/14: Ed J. Removed unused params, now does save context, make number
+params be INT types.
 
 =head1 DATE
 

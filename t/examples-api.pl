@@ -38,7 +38,7 @@ our @testbench = (
 ["center_layer"        , 2, REQ_ALPHA, [] ],
 ["contrast_enhance_2x2", 1, REQ_NONE , [] ],
 ["ditherize"           , 1, REQ_NONE , [1, 10] ],
-["do_bricks"           , 0, REQ_NONE , ["Leather","unused yet","",'grey50',1,8,16,256,256,0] ],
+["do_bricks"           , 0, REQ_NONE , ["Leather",0,"",'grey50',1,8,16,256,256,0] ],
 ["dots"                , 1, REQ_NONE , [8,$color1,80,20,16,0,0] ],
 ["dust"                , 1, REQ_NONE , [0.0005,0,50] ],
 ["edge_detect_2x2"     , 1, REQ_NONE , [] ],
