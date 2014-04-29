@@ -278,19 +278,20 @@ sub getpod ($$) {
 # inserts type after imagetypes
 sub fixup_args {
    my @p = @_;
-   splice @p, 9, 0, [] if @p == 10; # optional return values
-   die __"register called with too many or wrong arguments\n" unless @p == 11;
    my $pod;
+   splice @p, 9, 0, [ eval (getpod($pod, 'RETURN VALUES') // '') ] if @p == 10;
+      die $@ if $@;
+   croak sprintf
+      __"register called with too many or wrong arguments: wanted 11, got %d(%s)",
+      scalar(@p),
+      join(' ', @p),
+      unless @p == 11;
    @p[0,1] = (getpod($pod,'NAME')//'') =~ /(.*?)\s*-\s*(.*)/ unless $p[0] or $p[1];
    ($p[0]) = File::Basename::fileparse($RealScript, qr/\.[^.]*/) unless $p[0];
    while (my ($k, $v) = each %IND2SECT) { $p[$k] ||= getpod($pod, $v); }
    $p[8] ||= [
       eval "package main;\n#line 0 \"$0 PARAMETERS\"\n".
 	 (getpod($pod, 'PARAMETERS') // '')
-   ]; die $@ if $@;
-   $p[9] ||= [
-      eval "package main;\n#line 0 \"$0 RETURN VALUES\"\n".
-	 (getpod($pod, 'RETURN VALUES') // '')
    ]; die $@ if $@;
    for my $i (0..6, 10) {
       croak "$0: Need arg $i (or POD ".($IND2SECT{$i}//'')." section)" unless $p[$i]
