@@ -46,14 +46,14 @@ podregister {
 
   for(my $i=$#ids;$i>=0;$i--) {
     Gimp::Progress->update(0.5+1/@ids*(@ids-$i));
-    $image->merge_down($image, $ids[$i], EXPAND_AS_NECESSARY);
+    $image->merge_down($ids[$i], EXPAND_AS_NECESSARY);
   }
 
   Gimp::Progress->update(1.0);
 
   Gimp::Display->new($image) if $work_on_copy;
   $image->selection_none;
-  $image->undo_enable($image);
+  $image->undo_enable;
   Gimp->displays_flush();
 };
 
