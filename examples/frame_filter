@@ -7,17 +7,18 @@ use strict;
 podregister {
   my @layers = $image->get_layers;
   my $n = @layers or die "At least one layer is required\n";
-  my $func = eval "sub{\n#line 0 \"expression\"\n$expr\n}";
+  my ($i, $I, $p, $P, $d); # declare here so seen by eval below
+  my $func = eval "sub{\nno strict;\n#line 0 \"expression\"\n$expr\n}";
   die "Syntax error in expression '$expr': $@\n" if $@;
   # now apply the expr
   eval { $image->undo_group_start };
   # 5.004 has problems with overlaying functions
   Gimp->progress_init("Applying Expression...",-1);
-  for my $i (0..$n-1) {
-    my $I = $n-$i-1;
-    my $p = @layers > 1 ? $i/$#layers : 0;
-    my $P = 1-$p;
-    my $d = $layers[$i];
+  for $i (0..$n-1) {
+    $I = $n-$i-1;
+    $p = @layers > 1 ? $i/$#layers : 0;
+    $P = 1-$p;
+    $d = $layers[$i];
     eval { &$func };
     die "Evaluation error in frame $i: $@\n" if $@;
     Gimp->progress_update(($i+1)/$n);
