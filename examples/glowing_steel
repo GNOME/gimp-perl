@@ -297,15 +297,15 @@ register
   N_"<Image>/File/Create/Logos/Glowing Steel",
   undef,
   [
-   [PF_STRING, "string", "String", "GET LOST"],
+   [PF_STRING, "string", "Logo text", "GET LOST"],
    # The font in the poster was like "cobalt extended"
-   [PF_FONT, "font", "Font", "Bitstream Charter Bold"],
-   [PF_SPINNER, "size", "Size", 100, [0, 3000, 1]],
-   [PF_COLOR, "glow_color", "Color", [1.0, 0.8157, 0]],
-   [PF_COLOR, "background", "Color", [0x00, 0x00, 0x00]],
-   [PF_INT32, "glow_radius", "radius", 4],
-   [PF_TOGGLE, "highlight_edges", "", 0],
-   [PF_TOGGLE, "antialias", "", 1]
+   [PF_FONT, "font", "Logo font", "Bitstream Charter Bold"],
+   [PF_SPINNER, "size", "Font size (pixels)", 100, [0, 3000, 1]],
+   [PF_COLOR, "glow_color", "Glow color", [1.0, 0.8157, 0]],
+   [PF_COLOR, "background", "Background color", [0x00, 0x00, 0x00]],
+   [PF_INT32, "glow_radius", "Glow radius", 4],
+   [PF_TOGGLE, "highlight_edges", "Highlight edges", 0],
+   [PF_TOGGLE, "antialias", "Anti-alias text", 1]
   ],
   \&perl_fu_glowing_steel;
 
@@ -314,11 +314,11 @@ __END__
 
 =head1 NAME
 
-glowing_steel - A logo plugin for GIMP
+glowing_steel - Logo plugin for GIMP
 
 =head1 SYNOPSIS
 
-  <Toolbox>/Xtns/Logos/Glowing Steel
+  <Image>/File/Create/Logos/Glowing Steel
   <Image>/Filters/Render/Brushed Metal
   <Image>/Filters/Render/Highlight Edges
   <Image>/Filters/Render/Add Glow
@@ -327,8 +327,8 @@ glowing_steel - A logo plugin for GIMP
 
 Produce logos and other such nifty things which appear to be made of
 steel and floating over a glowing cloud.  This plug-in also includes
-several filters and such for performing the various stages of this logo
-(e.g. brushed steel, add glow, highlight edges).
+several filters for performing the various stages of this logo
+(i.e. brushed steel, add glow, highlight edges).
 
 This plugin renders the given text in the given font and size in a logo
 style that combines the I<Brushed Metal> effect with the I<Highlight Edges>
@@ -336,7 +336,7 @@ and I<Add Glow> effects. The text is surfaced with brushed metal, and
 highlighted, and the glow is added in the background.
 
 This plug-in also includes the effects listed above as separate tools
-which may be used independant of creating a logo. These tools are:
+which may be used independent of creating a logo. These tools are:
 
 =over 5
 
@@ -388,13 +388,7 @@ The Font to render the string in.
 
 =item B<Size>
 
-The size to use for the font. Note: if B<Font> includes a size, it will
-be ignored. This is because not all fonts I<do> include a size (e.g.
-True Type Fonts from the xttf server).
-
-Passing a value less than 1 (e.g. 0) for the size will force use of the given
-font's size, but as noted above, this may be sub-optimal (e.g. you may not
-be given size choices in the font dialog).
+The size to use for the font.
 
 =item B<Glow Color>
 
@@ -406,7 +400,7 @@ The color to use for the background layer.
 
 =item B<Glow Radius>
 
-The radius in pixels that the glow should eminate from the edge of the text.
+The radius in pixels that the glow should emanate from the edge of the text.
 
 =item B<Highlight Edges>
 
