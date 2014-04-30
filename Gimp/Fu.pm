@@ -227,7 +227,7 @@ Gimp::on_net {
 	 unless defined $args[$i] or $interact>0;
    }
    if ($interact > 0) {
-      (my $res,@args)=interact($function,$blurb,$help,$params,@args);
+      (my $res,@args)=interact($function,$blurb,$help,$params,$menupath,@args);
       return unless $res;
    } else {
       for my $i (0..$#args) { $args[$i] = string2pf($args[$i], $params->[$i]); }
@@ -399,7 +399,7 @@ sub register($$$$$$$$$;@) {
                my @hide = splice @$params, 0, scalar @pre;
 
                my $res;
-               ($res,@_)=interact($function,$blurb,$help,$params,@$fudata);
+               ($res,@_)=interact($function,$blurb,$help,$params,$menupath,@$fudata);
                return (undef) x @$results unless $res;
 
                unshift @$params, @hide;

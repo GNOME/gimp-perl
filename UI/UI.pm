@@ -4,6 +4,7 @@ use Gimp ('__');
 use Gimp::Fu;
 use Gtk2;
 use IO::All;
+use List::Util qw(min);
 use strict;
 
 our (@ISA, $VERSION);
@@ -94,8 +95,6 @@ package Gimp::UI::PreviewSelect;
 #                  ->get_title
 #                  ->get_pixbuf
 #TODO: Add preview (or portion of preview) directly to button
-
-use Gimp '__';
 
 use Gtk2::SimpleList;
 
@@ -202,8 +201,6 @@ sub preview_dialog {
 
 package Gimp::UI::PatternSelect;
 
-use Gimp '__';
-
 our @ISA = 'Glib::Object';
 
 Glib::Type->register (
@@ -212,7 +209,7 @@ Glib::Type->register (
    properties => [],
 );
 
-sub get_title { __"Pattern Selection Dialog" }
+sub get_title { Gimp::__"Pattern Selection Dialog" }
 sub get_list { Gimp::Patterns->get_list("") }
 
 sub new_pixbuf {
@@ -242,8 +239,6 @@ sub new_pixbuf {
 
 package Gimp::UI::BrushSelect;
 
-use Gimp '__';
-
 our @ISA = 'Glib::Object';
 
 Glib::Type->register (
@@ -252,7 +247,7 @@ Glib::Type->register (
    properties => [],
 );
 
-sub get_title { __"Brush Selection Dialog" }
+sub get_title { Gimp::__"Brush Selection Dialog" }
 sub get_list { Gimp::Brushes->get_list("") }
 
 sub new_pixbuf {
@@ -282,8 +277,6 @@ sub new_pixbuf {
 
 package Gimp::UI::GradientSelect;
 
-use Gimp '__';
-
 our @ISA = 'Glib::Object';
 
 Glib::Type->register (
@@ -292,7 +285,7 @@ Glib::Type->register (
    properties => [],
 );
 
-sub get_title { __"Gradient Selection Dialog" }
+sub get_title { Gimp::__"Gradient Selection Dialog" }
 sub get_list { Gimp::Gradients->get_list("") }
 
 sub new_pixbuf {
@@ -337,6 +330,9 @@ sub help_window(\$$$) {
       $$helpwin = new Gtk2::Dialog;
       $$helpwin->set_title(sprintf __"Help for %s", $title);
       $$helpwin->action_area->set_border_width (2);
+      my $tophelp = new Gtk2::Label $help;
+      $tophelp->set_alignment(0.5,0.5);
+      $$helpwin->vbox->pack_start($tophelp,0,1,3);
       my $sw = new Gtk2::ScrolledWindow undef,undef;
       $sw->set_policy (-automatic, -automatic);
       $sw->set_size_request(500,600);
@@ -403,23 +399,17 @@ sub interact($$$$@) {
      my $title = $menupath;
      $title =~ s#.*/##; $title =~ s#[_\.]##g;
      set_title $w "Perl-Fu: $title";
-     $w->set_border_width(3); # sets border on inside because its a window
+     $w->set_border_width(3); # sets border on inside because it's a window
      $w->action_area->set_spacing(2);
      $w->action_area->set_homogeneous(0);
-
-     my $aboutbox = new Gtk2::HBox 0,0;
+     signal_connect $w destroy => sub { main_quit Gtk2 };
 
      my $topblurb = new Gtk2::Label $blurb;
      $topblurb->set_alignment(0.5,0.5);
-     #realize $w;
-     signal_connect $w destroy => sub { main_quit Gtk2 };
-     $aboutbox->pack_start($topblurb,1,1,3);
-
-     $w->vbox->pack_start($aboutbox,1,1,0);
+     $w->vbox->pack_start($topblurb,0,1,3);
 
      $g = new Gtk2::Table scalar @params,2,0;
      $g->set(border_width => 4);
-     $w->vbox->pack_start($g,1,1,0);
 
      for(@params) {
         my ($label,$a);
@@ -752,6 +742,10 @@ if (0) {
         };
         $res++;
      }
+     my $sw = new Gtk2::ScrolledWindow undef,undef;
+     $sw->set_policy (-automatic, -automatic);
+     $sw->add_with_viewport($g);
+     $w->vbox->add($sw);
 
      my $hbbox = new Gtk2::HButtonBox;
      $hbbox->set_spacing (4);
@@ -785,6 +779,10 @@ if (0) {
      $res=0;
 
      show_all $w;
+     $sw->set_size_request(
+        min(0.75*$sw->get_screen->get_width, $g->size_request->width + 30),
+        min(0.6*$sw->get_screen->get_height, $g->size_request->height + 5)
+     );
      main Gtk2;
      die $EXCEPTION if $EXCEPTION;
 
