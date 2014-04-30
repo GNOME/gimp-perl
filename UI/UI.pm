@@ -331,34 +331,26 @@ sub _find_digits {
    $digits > 0 ? int $digits + 0.9 : 0;
 }
 
-# TODO: add optional Gtk2::Ex::Podviewer interface
 sub help_window(\$$$) {
-   my ($helpwin, $blurb, $help) = @_;
+   my ($helpwin, $title, $help) = @_;
    unless ($$helpwin) {
       $$helpwin = new Gtk2::Dialog;
-      $$helpwin->set_title(sprintf __"Help for %s", $Gimp::function);
+      $$helpwin->set_title(sprintf __"Help for %s", $title);
       $$helpwin->action_area->set_border_width (2);
-      my $b = new Gtk2::TextBuffer;
-      my $e = new_with_buffer Gtk2::TextView $b;
-      $e->set_editable (0);
-      $e->set_wrap_mode('GTK_WRAP_WORD');
       my $cs = new Gtk2::ScrolledWindow undef,undef;
       $cs->set_policy (-automatic, -automatic);
       $cs->set_size_request(500,600);
-      $cs->add ($e);
-      $$helpwin->vbox->add ($cs);
-      $b->set_text (sprintf __"BLURB:\n\n%s\n\nHELP:\n\n%s", $blurb, $help);
+      require Gtk2::Ex::PodViewer;
+      my $pv = new Gtk2::Ex::PodViewer;
+      require FindBin;
+      $pv->load("$FindBin::RealBin/$FindBin::RealScript");
+      $pv->show;
+      $cs->add($pv);
+      $$helpwin->vbox->add($cs);
       my $button = Gtk2::Button->new_from_stock('gtk-ok');
       signal_connect $button clicked => sub { hide $$helpwin };
       $$helpwin->action_area->add ($button);
       $$helpwin->signal_connect (destroy => sub { undef $$helpwin });
-      require Gimp::Pod;
-      my $pod = Gimp::Pod->new;
-      my $text = $pod->format;
-      if ($text) {
-         $b->insert ($b->get_end_iter, __"\n\nEMBEDDED POD DOCUMENTATION:\n\n");
-         $b->insert ($b->get_end_iter, $text);
-      }
    }
    $$helpwin->show_all;
 }
@@ -387,6 +379,7 @@ sub interact($$$$@) {
    my $blurb = shift;
    my $help = shift;
    my @types = @{+shift};
+   my $menupath = shift;
    my (@getvals, @setvals, @lastvals, @defaults);
    my ($button, $box, $bot, $g);
    my $helpwin;
@@ -407,25 +400,22 @@ sub interact($$$$@) {
    my $w = new Gtk2::Dialog;
 
    for(;;) {
-     set_title $w "Perl-Fu: $function";
+     my $title = $menupath;
+     $title =~ s#.*/##; $title =~ s#[_\.]##g;
+     set_title $w "Perl-Fu: $title";
      $w->set_border_width(3); # sets border on inside because its a window
      $w->action_area->set_spacing(2);
      $w->action_area->set_homogeneous(0);
 
-     my $helpaboutbox = new Gtk2::HBox 0,0;
+     my $aboutbox = new Gtk2::HBox 0,0;
 
      my $topblurb = new Gtk2::Label $blurb;
-     $topblurb->set_alignment(0.0,0.5);
+     $topblurb->set_alignment(0.5,0.5);
      #realize $w;
      signal_connect $w destroy => sub { main_quit Gtk2 };
-     $helpaboutbox->pack_start($topblurb,1,1,0);
+     $aboutbox->pack_start($topblurb,1,1,3);
 
-     my $aboutbutton = new Gtk2::Button->new_from_stock('gtk-help');
-     signal_connect $aboutbutton clicked => sub { help_window ($helpwin, $blurb, $help) };
-     can_default $aboutbutton 1;
-     $helpaboutbox->pack_start($aboutbutton,1,1,5);
-
-     $w->vbox->pack_start($helpaboutbox,1,1,0);
+     $w->vbox->pack_start($aboutbox,1,1,0);
 
      $g = new Gtk2::Table scalar@types,2,0;
      $g->set(border_width => 4);
@@ -763,32 +753,14 @@ if (0) {
         $res++;
      }
 
-     my $v = new Gtk2::HBox 0,4;
-     $w->vbox->pack_start ($v, 0, 0, 4);
-
      my $hbbox = new Gtk2::HButtonBox;
      $hbbox->set_spacing (4);
-     $v->pack_end ($hbbox, 0, 0, 2);
+     $w->action_area->pack_end ($hbbox, 0, 0, 2);
 
-
-#     $button = new Gtk2::Button __"Previous";
-#     signal_connect $button clicked => sub {
-#       for my $i (0..$#lastvals) {
-#         $setvals[$i]->($lastvals[$i]);
-#       }
-#     };
-#     $hbbox->pack_start($button,0,0,0);
-#     set_tip $t $button,__"Restore values to the previous ones";
-
-
-#     $helpbox = new Gtk2::HButtonBox;
-#     $helpbox->set_spacing (2);
-#     $w->action_area->pack_start ($helpbox, 0, 0, 0);
-#     show $helpbox;
-#
-
-     $hbbox = new Gtk2::HButtonBox;
-     $w->action_area->pack_end ($hbbox, 0, 0, 0);
+     $button = new Gtk2::Button->new_from_stock('gtk-help');
+     signal_connect $button clicked => sub { help_window ($helpwin, $title, $help) };
+#     can_default $button 1;
+     $hbbox->pack_start($button, 0, 0, 0);
 
      $button = new Gtk2::Button->new_from_stock('gimp-reset');
      signal_connect $button clicked => sub {
@@ -796,7 +768,6 @@ if (0) {
          $setvals[$i]->($defaults[$i]);
        }
      };
-
      $hbbox->pack_start ($button, 0, 0, 0);
      #  set_tip $t $button,__"Reset all values to their default";
 
