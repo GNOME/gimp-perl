@@ -45,7 +45,6 @@ use constant {
   PF_CUSTOM => Gimp::PDB_END + 10,
   PF_FILE => Gimp::PDB_END + 11,
   PF_TEXT => Gimp::PDB_END + 12,
-  RUN_FULLINTERACTIVE => Gimp::RUN_INTERACTIVE+100, # you don't want to know
 };
 use constant {
   PF_BOOL => PF_TOGGLE,
@@ -215,6 +214,7 @@ Gimp::on_net {
 	 ("$_=s"=>sub {$args[$mangleparam2index{$_[0]}] = $_[1]; $interact--;})
       } keys %mangleparam2index,
    );
+   warn "$$-".__PACKAGE__." on_net (@args) (@ARGV) '$interact'" if $Gimp::verbose;
    die "$0: too many arguments. Try $0 --help\n" if @ARGV > @$params;
    $interact -= @ARGV;
    map { $args[$_] = $ARGV[$_] } (0..$#ARGV); # can mix & match --args and bare
@@ -226,12 +226,14 @@ Gimp::on_net {
       die __"parameter '$entry->[1]' is not optional\n"
 	 unless defined $args[$i] or $interact>0;
    }
-   for my $i (0..$#args) { $args[$i] = string2pf($args[$i], $params->[$i]); }
+   if ($interact > 0) {
+      (my $res,@args)=interact($function,$blurb,$help,$params,@args);
+      return unless $res;
+   } else {
+      for my $i (0..$#args) { $args[$i] = string2pf($args[$i], $params->[$i]); }
+   }
    my $input_image = $args[0] if ref $args[0] eq "Gimp::Image";
-   my @retvals = $perl_sub->(
-      ($interact>0 ? RUN_FULLINTERACTIVE : Gimp::RUN_NONINTERACTIVE),
-      @args
-   );
+   my @retvals = $perl_sub->(Gimp::RUN_NONINTERACTIVE, @args);
    if ($outputfile) {
       my @images = grep { defined $_ and ref $_ eq "Gimp::Image" } @retvals;
       if (@images) {
@@ -347,8 +349,7 @@ sub register($$$$$$$$$;@) {
       my(@pre,@defaults,@lastvals);
 
       Gimp::ignore_functions(@Gimp::GUI_FUNCTIONS)
-	 unless $run_mode == Gimp::RUN_INTERACTIVE or
-	        $run_mode == RUN_FULLINTERACTIVE;
+	 unless $run_mode == Gimp::RUN_INTERACTIVE;
 
       # set default arguments
       for (0..$#{$params}) {
@@ -398,18 +399,11 @@ sub register($$$$$$$$$;@) {
                my @hide = splice @$params, 0, scalar @pre;
 
                my $res;
-               ($res,@_)=interact($function,$blurb,$help,$params,@{$fudata});
+               ($res,@_)=interact($function,$blurb,$help,$params,@$fudata);
                return (undef) x @$results unless $res;
 
                unshift @$params, @hide;
             }
-         }
-      } elsif ($run_mode == RUN_FULLINTERACTIVE) {
-         if (@_) {
-            my($res);
-            ($res,@_)=interact($function,$blurb,$help,$params,@pre,@_);
-            undef @pre;
-            return (undef) x @$results unless $res; # right AMOUNT of nothing
          }
       } elsif ($run_mode == Gimp::RUN_NONINTERACTIVE) {
          # nop
