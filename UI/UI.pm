@@ -337,16 +337,16 @@ sub help_window(\$$$) {
       $$helpwin = new Gtk2::Dialog;
       $$helpwin->set_title(sprintf __"Help for %s", $title);
       $$helpwin->action_area->set_border_width (2);
-      my $cs = new Gtk2::ScrolledWindow undef,undef;
-      $cs->set_policy (-automatic, -automatic);
-      $cs->set_size_request(500,600);
+      my $sw = new Gtk2::ScrolledWindow undef,undef;
+      $sw->set_policy (-automatic, -automatic);
+      $sw->set_size_request(500,600);
       require Gtk2::Ex::PodViewer;
       my $pv = new Gtk2::Ex::PodViewer;
       require FindBin;
       $pv->load("$FindBin::RealBin/$FindBin::RealScript");
       $pv->show;
-      $cs->add($pv);
-      $$helpwin->vbox->add($cs);
+      $sw->add($pv);
+      $$helpwin->vbox->add($sw);
       my $button = Gtk2::Button->new_from_stock('gtk-ok');
       signal_connect $button clicked => sub { hide $$helpwin };
       $$helpwin->action_area->add ($button);
@@ -378,7 +378,7 @@ sub interact($$$$@) {
    my $function = shift;
    my $blurb = shift;
    my $help = shift;
-   my @types = @{+shift};
+   my @params = @{+shift};
    my $menupath = shift;
    my (@getvals, @setvals, @lastvals, @defaults);
    my ($button, $box, $bot, $g);
@@ -417,11 +417,11 @@ sub interact($$$$@) {
 
      $w->vbox->pack_start($aboutbox,1,1,0);
 
-     $g = new Gtk2::Table scalar@types,2,0;
+     $g = new Gtk2::Table scalar @params,2,0;
      $g->set(border_width => 4);
      $w->vbox->pack_start($g,1,1,0);
 
-     for(@types) {
+     for(@params) {
         my ($label,$a);
         my ($type,$name,$desc,$default,$extra)=@$_;
         my ($value)=shift;
