@@ -1,106 +1,23 @@
 #!/usr/bin/perl
-######################################################################
-#  This program is an automatic way of scaling and tiling lots of
-#  images in order to create an index image.
-#
-#  Todo:
-#    - Add more layout algorithms. (fixed grid, dynamic grid, better
-#      orphan handling)
-#    - Add more decoration algorithms (e.g. negative strip, slides,
-#      sunken windows).
-#    - Create a way of supplying a template HTML index file into which
-#      the image map will be added.
-#    - Create a way of supplying a template HTML file in which
-#      full size images will be displayed. This file may include
-#      image annotations that come from the input file.
-#    - Define format of input file. This file should include
-#      annotations on/below images, comments in the full size html
-#      file, perhaps baloon text on top of images.
-#    - Make all parameters of tiling algorithms into options.
-#    - Change background of simple-shadow algorithm.
-#    - Option for either keeping image in gimp, or flattening and
-#      saving to disk.
-#    - Add a modular way of adding new layout and decoration algorithms.
-#
-#  Availability:
-#    - You can always find the latest version of this script at
-#      http://imagic.weizmann.ac.il/~dov/gimp/perl
-#
-#  Author:
-#    Dov Grobgeld <dov@imagic.weizmann.ac.il>
-#
-#  Bugs:
-#    -  -padx px means at least px and not exactly px. This should
-#       be fixed.
-#
-#  Changes:
-#    0.13  * Replaced call to gimp_image_get_layers() with call to
-#            gimp_image_get_active_layer(), as the former was broken
-#            in Gimp-0.90 .
-#          * Made kludge to be able to print out my own help message.
-#    0.14  * Got rid of OO module which is no longer in use.
-#
-#  Version: 0.14
-######################################################################
-
-=head1 LICENSE
-
-(c) Dov Grobgeld
-
-Released under the Artistic license.
-
-=cut
 
 BEGIN {
-# Defaults
-$max_height = 64;
-$layout_width = 600;
-$bgcolor = [194,194,194];
-$decoration = 'drop-shadow';
-$gutter_x = 15;
-$gutter_y = 15;
-$pad_x = 20;
-$pad_y = 20;
-$compensate_for_darkening = 0;
-chop($PWD = `pwd`);
-
-$HELP=<<__;
-make-img-map - Make an image map from a list of images
-
-Syntax:
-    gimp-make-img-map [-max_height mh] [-htmlindex hi] [-layoutwidth lw]
-	         [-flatten] [-bgcolor clr] [-bgpattern ptn] list
-
-Description:
-    gimp-make-img-map communicates with Gimp through the Perl Net-Server
-    and automizes the process of combining a list of images into an
-    image map for use e.g. within a HTML page.
-
-Options:
-    -max_height mh   Set max height of images. (Default $max_height)
-    -index if        Create an index file mapping filename to bounding box
-	             coordinates in output image, where if is the name of
-		     the index file. The index file may e.g. be translated by
-		     a subsequent program into a html index file.
-    -layoutwidth lw  Set total width of layout. (Default $layout_width)
-    -flatten         Flatten the final image.
-    -bgcolor         Set bg color.
-    -bgpattern       Set bg pattern. Overrides the bgcolor.
-    -padx px         Extra space around all images in x-direction. (Default $pad_x)
-    -pady py         Extra space around all images in y-direction. (Default $pad_y)
-    -gutterx gx      Space between images in x-direction. (Default $gutter_x)
-    -gutterx gy      Space between images in y-direction. (Default $gutter_y)
-    -darkcomp        Compensate for darkening when bumpmapping.
-    -decoration alg  Choose algorithm for drawing the decoration in the layout.
-		     Known algorithms are:
-			   drop-shadow
-			   sunken-windows
-		     Default is 'drop_shadow'.
-__
-    if (grep(/^-help/, @ARGV)) {
-	print $HELP;
-	exit;
-    }
+  # Defaults
+  $max_height = 64;
+  $layout_width = 600;
+  $bgcolor = [194,194,194];
+  $decoration = 'drop-shadow';
+  $gutter_x = 15;
+  $gutter_y = 15;
+  $pad_x = 20;
+  $pad_y = 20;
+  $compensate_for_darkening = 0;
+  chop($PWD = `pwd`);
+  if (grep(/^-help/, @ARGV)) {
+    require Gimp::Pod;
+    my $p = Gimp::Pod->new;
+    warn $p->section('SYNOPSIS') . "\n" . $p->section('PARAMETERS') . "\n";
+    exit;
+  }
 }
 
 use Gimp qw( :auto );
@@ -465,8 +382,6 @@ Gimp::on_net sub {
 # Parse command line arguments
 while($_ = $ARGV[0], /^-/) {
     shift;
-    /^-help/ and do { print $HELP; exit; };
-
     /^-max_height/  and do { $max_height = shift; next; };
     /^-index/       and do { $index_file = shift; next; };
     /^-layoutwidth/ and do { $layout_width = shift; next; };
@@ -484,5 +399,90 @@ while($_ = $ARGV[0], /^-/) {
 
 # Translate background into a color according to the X11 color dbase.
 exit Gimp::main();
+__END__
 
+=head1 NAME
 
+make-img-map - Make an image map from a list of images
+
+=head1 SYNOPSIS
+
+  gimp-make-img-map [-max_height mh] [-htmlindex hi] [-layoutwidth lw]
+	       [-flatten] [-bgcolor clr] [-bgpattern ptn] list
+
+=head1 DESCRIPTION
+
+This program is an automatic way of scaling and tiling lots of
+images in order to create an index image.
+
+C<gimp-make-img-map> communicates with GIMP through the Perl Net-Server
+and automates the process of combining a list of images into an
+image map for use e.g. within a HTML page.
+
+=head1 PARAMETERS
+
+  Options:
+    -max_height mh   Set max height of images. (Default $max_height)
+    -index if        Create an index file mapping filename to bounding box
+	             coordinates in output image, where if is the name of
+		     the index file. The index file may e.g. be translated by
+		     a subsequent program into a html index file.
+    -layoutwidth lw  Set total width of layout. (Default $layout_width)
+    -flatten         Flatten the final image.
+    -bgcolor         Set bg color.
+    -bgpattern       Set bg pattern. Overrides the bgcolor.
+    -padx px         Extra space around all images in x-direction.
+		     (Default $pad_x)
+    -pady py         Extra space around all images in y-direction.
+		     (Default $pad_y)
+    -gutterx gx      Space between images in x-direction. (Default $gutter_x)
+    -gutterx gy      Space between images in y-direction. (Default $gutter_y)
+    -darkcomp        Compensate for darkening when bumpmapping.
+    -decoration alg  Choose algorithm for drawing the decoration in the layout.
+		     Known algorithms are:
+			   drop-shadow
+			   sunken-windows
+		     Default is 'drop_shadow'.
+
+=head1 BUGS
+
+  -padx px means at least px and not exactly px. This should be fixed.
+
+=head1 TODO
+
+    - Add more layout algorithms. (fixed grid, dynamic grid, better
+      orphan handling)
+    - Add more decoration algorithms (e.g. negative strip, slides,
+      sunken windows).
+    - Create a way of supplying a template HTML index file into which
+      the image map will be added.
+    - Create a way of supplying a template HTML file in which
+      full size images will be displayed. This file may include
+      image annotations that come from the input file.
+    - Define format of input file. This file should include
+      annotations on/below images, comments in the full size html
+      file, perhaps baloon text on top of images.
+    - Make all parameters of tiling algorithms into options.
+    - Change background of simple-shadow algorithm.
+    - Option for either keeping image in gimp, or flattening and
+      saving to disk.
+    - Add a modular way of adding new layout and decoration algorithms.
+
+=head1 AUTHOR
+
+Dov Grobgeld <dov@imagic.weizmann.ac.il>
+
+=head1 HISTORY
+
+  Changes:
+    0.13  * Replaced call to gimp_image_get_layers() with call to
+            gimp_image_get_active_layer(), as the former was broken
+            in Gimp-0.90 .
+          * Made kludge to be able to print out my own help message.
+    0.14  * Got rid of OO module which is no longer in use.
+
+=head1 LICENSE
+
+(c) Dov Grobgeld
+
+Released under the Artistic license.
