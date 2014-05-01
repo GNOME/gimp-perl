@@ -41,7 +41,7 @@ register "blur_2x2",
          "Low-pass filtering (smoothing) using a fast 2x2 kernel",
          '', '', '',
        N_"<Image>/Filters/Blur/2x2 Blur",
-         '', [],
+         '', '',
          sub {
    my($image,$drawable)=@_;
 
@@ -60,7 +60,7 @@ register "contrast_enhance_2x2",
          "Contrast Enhance an image using a fast 2x2 kernel",
          '', '', '',
          N_"<Image>/Filters/Enhance/2x2 Contrast Enhance",
-         '', [],
+         '', '',
          sub {
    my($image,$drawable)=@_;
 
@@ -79,7 +79,7 @@ register "edge_detect_2x2",
          "Detect edges in the image using a 2x2 kernel. It is similar to Sobel, yet sharper (and lower quality).",
          '', '', '',
          N_"<Image>/Filters/Edge-Detect/2x2 Edge Detect",
-         '', [],
+         '', '',
          sub {
    my($image,$drawable)=@_;
 
@@ -123,20 +123,20 @@ These are all simple 2x2 kernels, fast but relatively effective.
 
 =head1 PARAMETERS
 
+ # none
+
 =head1 IMAGE TYPES
 
 RGB*, GRAY*
 
 =head1 AUTHOR
 
-Marc Lehmann
+Marc Lehmann <pcg@goof.com>
 
 =head1 DATE
 
 19990725
 
 =head1 LICENSE
-
-Marc Lehmann <pcg@goof.com>
 
 Distributed under the same terms as Gimp-Perl.
