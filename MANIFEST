@@ -50,8 +50,6 @@ examples/example-extension
 examples/example-fu
 examples/example-net
 examples/example-no-fu
-examples/example-oo
-examples/examples.TODO
 examples/exceptiontest
 examples/fade-alpha
 examples/feedback
