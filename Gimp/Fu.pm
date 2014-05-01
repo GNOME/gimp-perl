@@ -877,7 +877,8 @@ A string.
 
 Will accept a colour argument. In dialogs, a colour preview will be created
 which will open a colour selection box when clicked. The default value
-needs to be a suitable Gimp-Perl colour; see L<Gimp::canonicalize_colour>.
+needs to be a suitable Gimp-Perl colour; see
+L<Gimp/"Gimp::canonicalize_colour">.
 
  [ PF_COLOR, 'colour', 'Input colour', 'white' ],
  [ PF_COLOR, 'colour2', 'Input colour 2', [ 255, 128, 0 ] ],

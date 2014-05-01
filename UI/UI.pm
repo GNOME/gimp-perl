@@ -819,7 +819,7 @@ parameter types.
 
 If you use L<Gimp::Fu> in your script, a GUI will be taken care of
 for you. However, for an example of implementing your own UI, see
-C<examples/fade-alpha>.
+C<examples/example-no-fu>.
 
 =over 4
 

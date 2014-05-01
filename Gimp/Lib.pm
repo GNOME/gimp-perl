@@ -97,7 +97,7 @@ Gimp::Lib - Interface to libgimp (as opposed to Gimp::Net)
 
 This is the package that interfaces to GIMP via the libgimp interface,
 i.e. the normal interface to use with GIMP. You don't normally use this
-module directly, look at the documentation for the package "Gimp".
+module directly, see L<Gimp>.
 
 =head1 AUTHOR
 

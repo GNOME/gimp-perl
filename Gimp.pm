@@ -521,19 +521,17 @@ of the box.
 Place these in your C<use Gimp qw(...)> command to have added features
 available to your plug-in.
 
-=over 4
-
-=item :consts
+=head2 :consts
 
 All constants found by querying GIMP (BG_IMAGE_FILL, RUN_NONINTERACTIVE,
 NORMAL_MODE, PDB_INT32 etc.).
 
-=item :param
+=head2 :param
 
 Import constants for plugin parameter types (PDB_INT32, PDB_STRING
 etc.) only.
 
-=item net_init=I<options>
+=head2 net_init=I<options>
 
 This is how to use Gimp-Perl in "net mode". Previous versions of this
 package required a call to Gimp::init. This is no longer necessary. The
@@ -551,20 +549,20 @@ constants on which modules rely. The connection is made when
 C<Gimp::import> is called, after C<Gimp> has been compiled - so don't
 put C<use Gimp ();>
 
-=item spawn_options=I<options>
+=head2 spawn_options=I<options>
 
 Set default spawn options to I<options>, see L<Gimp::Net>.
 
-=item :DEFAULT
+=head2 :DEFAULT
 
 The default set: C<':consts', 'N_', '__'>. (C<'__'> is used for i18n
 purposes).
 
-=item ''
+=head2 ''
 
 Over-ride (don't import) the defaults.
 
-=item :auto (DEPRECATED)
+=head2 :auto (DEPRECATED)
 
 Import constants as above, as well as all libgimp and PDB functions
 automagically into the caller's namespace.  This will overwrite your
@@ -582,14 +580,12 @@ a reference (including objects):
 This tag is deprecated, and you will be far better off using Gimp-Perl
 solely in OO mode.
 
-=item :pollute (DEPRECATED)
+=head2 :pollute (DEPRECATED)
 
 In previous version of C<gimp-perl>, you could refer to GIMP classes
 as either e.g. Gimp::Image, B<and> as Image. Now in order to not pollute
 the namespace, the second option will be available only when this option
 is specified.
-
-=back
 
 =head1 ARCHITECTURE
 
@@ -669,33 +665,29 @@ plug-in writer.  This does not apply if using C<Gimp::Fu>, as these are
 done automatically. These are specifically how your program can fit into
 the model of query, run and quit hooks.
 
-=over 4
-
-=item Gimp::on_query
+=head3 Gimp::on_query
 
 Do any activities that must be performed at GIMP startup, when the
 plugin is queried.  Should typically have at least one call to
 C<Gimp-E<gt>install_procedure>.
 
-=item Gimp::on_net
+=head3 Gimp::on_net
 
 Run when the plugin is executed from the command line, either in "net
 mode" via the Perl-Server, or "batch mode".
 
-=item Gimp::on_lib
+=head3 Gimp::on_lib
 
 Run only when called from within GIMP, i.e. in "plugin mode".
 
-=item Gimp::on_run
+=head3 Gimp::on_run
 
 Run when anything calls it (network or lib).
 
-=item Gimp::on_quit
+=head3 Gimp::on_quit
 
 Run when plugin terminates - allows a plugin (or extension, see below)
 to clean up after itself before it actually exits.
-
-=back
 
 =head1 OUTLINE OF A GIMP EXTENSION
 
@@ -828,11 +820,11 @@ Classes for which objects are not created:
   Gimp::Plugin
   Gimp::Progress
 
-C<Gimp::Base> implements two methods:
+=head3 Gimp::Base
 
-=over 4
+Methods:
 
-=item $object->become($class)
+=head4 $object->become($class)
 
 Allows an object of one class to change its class to another, but with
 the same ID. No checking is performed. It is intended for use in plugins,
@@ -842,43 +834,39 @@ e.g. where GIMP passes a C<Gimp::Drawable>, but you need a C<Gimp::Layer>:
   die "Can only operate on a layer\n" unless $layer->is_layer;
   $layer->become('Gimp::Layer'); # now can call layer methods on it
 
-=item $class->existing($id)
+=head4 $class->existing($id)
 
 Allows you to instantiate a Gimp-Perl object with the given C<$class>
 and C<$id>. Again, no checking is performed.
 
-=back
-
 It also provides a "stringify" overload method, so debugging output can
 be more readable.
 
-C<Gimp::Parasite> implements these self-explanatory methods:
+=head3 Gimp::Parasite
 
-=over 4
+Self-explanatory methods:
 
-=item $parasite = Gimp::Parasite-E<gt>new($name, $flags, $data)
+=head4 $parasite = Gimp::Parasite-E<gt>new($name, $flags, $data)
 
 C<$name> and C<$data> are perl strings, C<flags> is the numerical flag value.
 
-=item $parasite-E<gt>name
+=head4 $parasite-E<gt>name
 
-=item $parasite-E<gt>flags
+=head4 $parasite-E<gt>flags
 
-=item $parasite-E<gt>data
+=head4 $parasite-E<gt>data
 
-=item $parasite-E<gt>has_flag($flag)
+=head4 $parasite-E<gt>has_flag($flag)
 
-=item $parasite-E<gt>is_type($type)
+=head4 $parasite-E<gt>is_type($type)
 
-=item $parasite-E<gt>is_persistent
+=head4 $parasite-E<gt>is_persistent
 
-=item $parasite-E<gt>is_error
+=head4 $parasite-E<gt>is_error
 
-=item $different_parasite = $parasite-E<gt>copy
+=head4 $different_parasite = $parasite-E<gt>copy
 
-=item $parasite-E<gt>compare($other_parasite)
-
-=back
+=head4 $parasite-E<gt>compare($other_parasite)
 
 =head2 SPECIAL METHODS
 
@@ -886,9 +874,7 @@ Some methods behave differently from how you'd expect, or methods uniquely
 implemented in Perl (that is, not in the PDB). All of these must be
 invoked using the method syntax (C<Gimp-E<gt>> or C<$object-E<gt>>).
 
-=over 4
-
-=item Gimp->install_procedure(name, blurb, help, author, copyright, date, menu_path, image_types, type, params[, return_vals])
+=head3 Gimp->install_procedure(name, blurb, help, author, copyright, date, menu_path, image_types, type, params[, return_vals])
 
 Mostly the same as gimp_install_procedure from the C library. The
 parameters and return values for the functions are each specified as an
@@ -912,17 +898,17 @@ C<[PARAM_TYPE, "NAME", "DESCRIPTION"]>, e.g.:
      );
   };
 
-=item Gimp::Progress->init(message,[display])
+=head3 Gimp::Progress->init(message,[display])
 
-=item Gimp::Progress->update(percentage)
+=head3 Gimp::Progress->update(percentage)
 
 Initializes or updates a progress bar. In networked modules these are a no-op.
 
-=item Gimp::Image-E<gt>list
+=head3 Gimp::Image-E<gt>list
 
-=item $image-E<gt>get_layers
+=head3 $image-E<gt>get_layers
 
-=item $image-E<gt>get_channels
+=head3 $image-E<gt>get_channels
 
 These functions return what you would expect: an array of images, layers or
 channels. The reason why this is documented is that the usual way to return
@@ -932,14 +918,12 @@ integers>, rather than blessed objects:
   perl -MGimp -e '@x = Gimp::Image->list; print "@x\n"'
   # returns: Gimp::Image->existing(7) Gimp::Image->existing(6)
 
-=item $drawable-E<gt>bounds, $gdrawable-E<gt>bounds
+=head3 $drawable-E<gt>bounds, $gdrawable-E<gt>bounds
 
 Returns an array (x,y,w,h) containing the upper left corner and the
 size of currently selected parts of the drawable, just as needed by
 C<Gimp::PixelRgn-E<gt>new> and similar functions. Exist for objects of
 both C<Gimp::Drawable> and C<Gimp::GimpDrawable>.
-
-=back
 
 =head2 NORMAL METHODS
 
@@ -1016,20 +1000,18 @@ interesting. All of these functions must either be imported explicitly
 or called using a namespace override (C<Gimp::>), not as methods
 (C<Gimp-E<gt>>).
 
-=over 4
-
-=item Gimp::main()
+=head2 Gimp::main()
 
 Should be called immediately when perl is initialized. Arguments are not
 supported. Initializations can later be done in the init function.
 
-=item Gimp::gtk_init()
+=head2 Gimp::gtk_init()
 
 Initialize Gtk in a similar way GIMP itself did. This automatically
 parses GIMP's gtkrc and sets a variety of default settings, including
 visual, colormap, gamma, and shared memory.
 
-=item Gimp::set_rgb_db(filespec)
+=head2 Gimp::set_rgb_db(filespec)
 
 Use the given rgb database instead of the default one. The format is
 the same as the one used by the X11 Consortiums rgb database (you might
@@ -1037,12 +1019,12 @@ have a copy in /usr/lib/X11/rgb.txt). You can view the default database
 with C<perldoc -m Gimp::ColorDB>, at the end of the file; the default
 database is similar, but not identical to the X11 default C<rgb.txt>.
 
-=item Gimp::initialized()
+=head2 Gimp::initialized()
 
 this function returns true whenever it is safe to call GIMP functions. This is
 usually only the case after gimp_main has been called.
 
-=item Gimp::register_callback(gimp_function_name, perl_function)
+=head2 Gimp::register_callback(gimp_function_name, perl_function)
 
 Using this function you can override the standard Gimp-Perl behaviour of
 calling a perl subroutine of the same name as the GIMP function.
@@ -1052,11 +1034,12 @@ to overwrite ('perl_fu_make_something'), and the second argument can be
 either a name of the corresponding perl sub (C<'Elsewhere::make_something'>)
 or a code reference (C<\&my_make>).
 
-=item Gimp::canonicalize_colour/Gimp::canonicalize_color
+=head2 Gimp::canonicalize_colour
 
 Take in a color specifier in a variety of different formats, and return
 a valid GIMP color specifier (a C<GimpRGB>), consisting of 3 or 4 numbers
-in the range between 0 and 1.0.
+in the range between 0 and 1.0. Can also be called as
+C</Gimp::canonicalize_color>.
 
 For example:
 
@@ -1069,20 +1052,18 @@ For example:
 Note that bounds checking is somewhat lax; this assumes relatively
 good input.
 
-=item gimp_tile_*, gimp_pixel_rgn_*, gimp_drawable_get
+=head2 gimp_tile_*, gimp_pixel_rgn_*, gimp_drawable_get
 
 With these functions you can access the raw pixel data of drawables. They
 are documented in L<Gimp::PixelRgn>.
 
-=item server_eval(string)
+=head2 server_eval(string)
 
 This evaluates the given string in array context and returns the
 results. It's similar to C<eval>, but with two important differences: the
 evaluating always takes place on the server side/server machine (which
 might be the same as the local one) and compilation/runtime errors are
 reported as runtime errors (i.e. throwing an exception).
-
-=back
 
 =head1 PROCEDURAL SYNTAX (DEPRECATED)
 

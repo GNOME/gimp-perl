@@ -478,7 +478,6 @@ sub perl_server_quit {
 }
 
 1;
-
 __END__
 
 =head1 NAME
@@ -495,9 +494,9 @@ For Gimp::Net (and thus commandline and remote scripts) to work, you
 first have to install the "Perl-Server" plugin somewhere where Gimp
 can find it (e.g in your .gimp/plug-ins/ directory). Usually this is
 done automatically while installing the Gimp extension. If you have a
-menu entry C<<Xtns>/Perl-Server> then it is probably installed.
+menu entry C<Filters/Perl/Server> then it is probably installed.
 
-The Perl-Server can either be started from the C<<Xtns>> menu in Gimp,
+The Perl-Server can either be started from the C<Filters> menu in Gimp,
 or automatically when a perl script can't find a running Perl-Server,
 in which case it will start up its own copy of GIMP.
 
@@ -536,10 +535,11 @@ and spawn/ for a private GIMP instance. Examples are:
 
 =over 4
 
-=item net()
+=item Gimp::on_net($callback)
 
-is called after we have succesfully connected to the server. Do your dirty
-work in this function, or see L<Gimp::Fu> for a better solution.
+C<$callback> is called after we have succesfully connected to the
+server. Do your dirty work in this function, or see L<Gimp::Fu> for a
+better solution.
 
 =back
 
@@ -573,5 +573,3 @@ Marc Lehmann <pcg@goof.com>
 =head1 SEE ALSO
 
 perl(1), L<Gimp>.
-
-=cut
