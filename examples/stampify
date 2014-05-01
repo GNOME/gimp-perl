@@ -46,6 +46,7 @@ podregister {
   my $float = gimp_edit_paste($layer1, 0);
   gimp_floating_sel_anchor($float);
 # and return command to The Gimp.
+  Gimp::Display->new($img2);
   return $img2;
 };
 exit main;
@@ -73,6 +74,8 @@ image, perforations may look strange. Test alternatives!
   [PF_INT32, "marg", "Marginal between art and perforations", 7]
 
 =head1 RETURN VALUES
+
+  [PF_IMAGE, 'image', 'Return image'],
 
 =head1 IMAGE TYPES
 
