@@ -47,8 +47,8 @@ Once again, an effect of Xach's.
 
 =head1 PARAMETERS
 
-  [PF_COLOR,	"color",	"What Color to see the world in", [0, 255, 0]],
-  [PF_SLIDER,   "amt", "How much noise to add", 25, [0,255,5]]
+  [PF_COLOR, "color", "Color to see the world in", [0, 255, 0]],
+  [PF_SLIDER, "amt", "How much noise to add", 25, [0,255,5]]
 
 =head1 IMAGE TYPES
 

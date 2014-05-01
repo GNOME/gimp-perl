@@ -35,16 +35,18 @@ webify - Make an image suitable for the web
 
 =head1 DESCRIPTION
 
-This plug-in converts the image to indexed, with some extra options.
+Flattens an image, makes the background transparent, converts it to
+indexed and then crops it to the right size. Useful to save small &
+transparent gifs from a higher-quality source.
 
 =head1 PARAMETERS
 
-  [PF_BOOL, "new", "Create a new image?", 1],
-  [PF_BOOL, "alpha", "Make transparent?", 1],
+  [PF_BOOL, "new", "Create a new image", 1],
+  [PF_BOOL, "alpha", "Make transparent", 1],
   [PF_COLOUR, "bg", "Background colour to use for transparency", "white"],
   [PF_SLIDER, "thresh", "Threshold to use for background detection", 3, [0, 255, 1]],
   [PF_INT32, "colours", "How many colours to use (0 = don't convert to indexed)", 32],
-  [PF_BOOL, "autocrop", "Autocrop at end?", 1],
+  [PF_BOOL, "autocrop", "Autocrop at end", 1],
 
 =head1 RETURN VALUES
 

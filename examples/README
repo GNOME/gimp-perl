@@ -1,45 +1,8 @@
-This file describes a few of the many scripts in the examples/ directory.
+Please read the POD for the scripts in here; either with "perldoc",
+or run them from the command-line and click the "Help" button, or find
+them on the Gimp-Perl CPAN POD docs.
 
-Some links of interest have been added to the bottom as well.
-
-If you want to be added, drop me a note at <sjburges@gimp.org>.
-
-Each script will contain a licensing statement in it, describing how it may
-be distributed.  A handful are believed to be GPL, but the author hasn't
-been able to be contacted.
-
-Also, most scripts in the examples directory are not described or
-documented here. See their source for more info.
-
-example-fu.pl
-        An example Gimp::Fu script. This shows every widget Gimp::Fu
-	offers, but doesn't do much useful otherwise.
-
-example-oo.pl
-	A small nonsense extension just showing the object-oriented
-	pdb syntax.
-
-example-net.pl
-	a small nonsense extension showing a bare-bones networked script.
-
-webify.pl
-	a small plugin that flattens an image, makes the background
-	transparent, converts it to indexed and then crops it
-	to the right size. Useful to save small & transparent gifs
-	from a higher-quality source. It also features several
-	Gimp::Fu UI-elements.
-
-windify.pl
-	Blows your image in a direction, using the Displace filter.
-
-prep4gif.pl
-	Will create a copy of your image prepared for saving
-	as indexed gif. It will create a border around the non-alpha
-	sections of your image, so it won't look jaggy on a background.
-
-gimp-make-img-map
-	"This program is an automatic way of scaling and tiling lots of
-	images in order to create an index image."
+Other sources of inspiration:
 
 http://www.ualberta.ca/~cwant/gimp/postprocess.html
 	Using Gimp-Perl for animation post-processing; some very neat effects
@@ -51,5 +14,3 @@ http://bbgallery.sourceforge.net/
 
 http://imagic.weizmann.ac.il/~dov/gimp/perl-tut-2.0/
 	Dov Grobgeld's excellent intro to Gimp-Perl, updated for 2.0
-
-

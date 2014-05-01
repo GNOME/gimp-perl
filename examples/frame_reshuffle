@@ -70,7 +70,7 @@ Examples:
 
  [PF_RADIO, "function", "Which remapping function to use", 1,
   [Custom => 0, Reverse => 1, Shift => 2] ],
- [PF_STRING, "custom", "The (optional) custom function to use, e.g. 'n-i' reverses the order"],
+ [PF_STRING, "custom", "Optional custom function to use, e.g. 'n-i' reverses the order"],
 
 =head1 IMAGE TYPES
 

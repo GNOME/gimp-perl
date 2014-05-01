@@ -1,8 +1,5 @@
 #!/usr/bin/perl
 
-eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-
 use Gimp;
 use Gimp::Fu;
 use Gimp::Util;
@@ -53,47 +50,34 @@ use Gimp::Util;
 #set_seed 0; use PDL; use PDL::Graphics::PGPLOT; line(pdl(float,map gen_rand, 1..500));
 
 podregister {
-   # Die Parameter werden ganz "normal" übergeben:
-   my ($image, $layer, $density, $seed, $len) = @_;
-
-   $len *= 0.75;
-
-   set_seed $seed;
-
-   # Gimp::set_trace(TRACE_ALL);
-   my ($w, $h) = ($image->width, $image->height);
-
-   $image->undo_group_start;
-
-   Gimp::Context->push;
-   Gimp::Context->set_foreground("white");
-   my $brush = Gimp->brush_duplicate("Circle (01)");
-   Gimp::Context->set_brush($brush);
-   Gimp::Brushes->set_spacing($brush, 100);
-   Gimp::Context->set_opacity(50);
-   Gimp::Context->set_paint_mode(NORMAL_MODE);
-
-   $layer = $image->add_new_layer (0, TRANSPARENT_FILL, 1);
-   $layer->set_mode (DIFFERENCE_MODE);
-
-   for (1..($w*$h*$density)) {
-      my ($x, $y) = (rand $w, rand $h);
-      my $l = int($len + rand $len);
-      my @c;
-      my $b = 0;
-      for (1..$l) {
-         push @c, $b += 5*(gen_rand-0.5);
-         push @c, $b += 5*(gen_rand-0.5);
-      }
-
-      $layer->paintbrush_default([map { $x+$c[$_], $y+$c[$_+$l] } 0..$l-1]);
-   }
-
-   Gimp::Context->pop;
-
-   $image->undo_group_end;
-
-   ();
+  $length *= 0.75;
+  set_seed $seed;
+  # Gimp::set_trace(TRACE_ALL);
+  my ($w, $h) = ($image->width, $image->height);
+  $image->undo_group_start;
+  Gimp::Context->push;
+  Gimp::Context->set_foreground("white");
+  my $brush = Gimp->brush_duplicate("Circle (01)");
+  Gimp::Context->set_brush($brush);
+  Gimp::Brushes->set_spacing($brush, 100);
+  Gimp::Context->set_opacity(50);
+  Gimp::Context->set_paint_mode(NORMAL_MODE);
+  $drawable = $image->add_new_layer (0, TRANSPARENT_FILL, 1);
+  $drawable->set_mode (DIFFERENCE_MODE);
+  for (1..($w*$h*$density)) {
+    my ($x, $y) = (rand $w, rand $h);
+    my $l = int($length + rand $length);
+    my @c;
+    my $b = 0;
+    for (1..$l) {
+       push @c, $b += 5*(gen_rand-0.5);
+       push @c, $b += 5*(gen_rand-0.5);
+    }
+    $drawable->paintbrush_default([map { $x+$c[$_], $y+$c[$_+$l] } 0..$l-1]);
+  }
+  Gimp::Context->pop;
+  $image->undo_group_end;
+  ();
 };
 
 #register "gen_rand_1f",
@@ -136,9 +120,9 @@ Add the appearance of dust to an image.
 
 =head1 PARAMETERS
 
-  [PF_FLOAT,	'density',	'dust density in dust/pixel',	 0.0001],
-  [PF_INT32,	'seed',		'the random seed (0 == unspecified)', 0],
-  [PF_SPINNER,	'length',	'the average dust corn length', 50, [1,300]],
+  [PF_FLOAT,	'density',	'Dust density in dust/pixel',	 0.0001],
+  [PF_INT32,	'seed',		'Random seed (0 == unspecified)', 0],
+  [PF_SPINNER,	'length',	'Average dust corn length', 50, [1,300]],
 
 =head1 IMAGE TYPES
 

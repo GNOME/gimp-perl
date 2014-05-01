@@ -46,11 +46,11 @@ Default values are not bad!
 
 =head1 PARAMETERS
 
-  [PF_INT32, "size", "img size", 90],
-  [PF_COLOR, "paper", "paper color", [255, 255, 255]],
-  [PF_COLOR, "hole", "hole color", [0, 0, 0]],
-  [PF_INT32, "diameter", "diameter", 10],
-  [PF_INT32, "gap", "gap", 5]
+  [PF_INT32, "size", "Image size", 90],
+  [PF_COLOR, "paper", "Paper color", [255, 255, 255]],
+  [PF_COLOR, "hole", "Hole color", [0, 0, 0]],
+  [PF_INT32, "diameter", "Diameter", 10],
+  [PF_INT32, "gap", "Gap", 5]
 
 =head1 AUTHOR
 

@@ -134,7 +134,7 @@ the other image.
   [PF_INT32, "width", "Width", 256],
   [PF_INT32, "height", "Height", 256],
   [PF_TOGGLE, 'do_eyes', "Insert eyes", 1],
-  [PF_TOGGLE, 'eye_images', "Eyes are images?", 0],
+  [PF_TOGGLE, 'eye_images', "Eyes are images", 0],
   [PF_FILE, 'white_eye_image', "Top eye filename", ""],
   [PF_FILE, 'black_eye_image', "Bottom eye filename", ""],
   [PF_TOGGLE, 'aa', "Anti-aliasing", 1]

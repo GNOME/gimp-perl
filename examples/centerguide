@@ -4,27 +4,18 @@
 # Changed spot that its registered from <Image>/Guides to <Image>/Image/Guides
 # to reduce horizontal clutter on menubar
 
-use Gimp qw(:auto __ N_);
+use Gimp;
 use Gimp::Fu;
 
-podregister
-	sub {
-		my ($image, $drawable, $center) = @_;
-
-		$w = $image->width();
-		$h = $image->height();
-		$hc = int($h/2 + 0.5);
-		$vc = int($w/2 + 0.5);
-
-		if ($center == 1) {
-			$hc = int(($h / 2.6179) + 0.5);
-		};
-                $image->undo_group_start;
-		$bit_bucket = $image->add_hguide($hc);
-		$bit_bucket = $image->add_vguide($vc);
-		gimp_drawable_update($drawable, 0, 0, $w, $h);
-                $image->undo_group_end;
-	};
+podregister {
+  my $w = $image->width;
+  my $h = $image->height;
+  $image->undo_group_start;
+  $image->add_hguide($center == 1 ? int(($h / 2.6179) + 0.5) : int($h/2 + 0.5));
+  $image->add_vguide(int($w/2 + 0.5));
+  $drawable->update(0, 0, $w, $h);
+  $image->undo_group_end;
+};
 exit main;
 __END__
 
@@ -42,7 +33,7 @@ Physical center = width/2 and height/2; Optical center = the Golden Mean.
 
 =head1 PARAMETERS
 
-  [PF_RADIO, "center", "center", 0, [Physical => 0, Optical => 1] ]
+  [PF_RADIO, "center", "Which center", 0, [Physical => 0, Optical => 1] ]
 
 =head1 IMAGE TYPES
 

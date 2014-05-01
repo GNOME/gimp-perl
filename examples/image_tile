@@ -1,33 +1,5 @@
 #!/usr/bin/perl
 
-# A photo-tiling pluggin. Take an image, and tile it (much like the
-# mosaic operation, only using other images).
-#
-# Written in 1998 (c) by Aaron Sherman <ajs@ajs.com>.
-# This plugin may be distributed under the same terms as The Gimp itself.
-# See http://www.gimp.org/ for more information on The Gimp.
-#
-# TODO:
-#
-#	o Fix undo
-#	o Handle input drawable correctly (for working on selections)
-#	o Find faster ways to sample sub-images.
-#	o More control over cropping
-#	o Scaling vs cropping of sub-images
-#	o Better color matching algorithms
-#	o Test (fix?) non-interactive use...
-#	o Allow tile aspect selection independant of base image
-#
-# DONE:
-#       o 04-22-2001, peter@kirchgessner.net: fix problems with functions
-#         that changed number of arguments
-#
-#12/5/03: <sjburges@gimp.org>
-# s/gimp_convert/gimp_image_convert/
-# s/gimp_drawable_image/gimp_drawable_get_image/
-
-
-
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 use Fcntl qw(O_RDWR O_CREAT O_TRUNC);
@@ -38,31 +10,7 @@ use DB_File;
 $DO_HSV = 0;
 $debug = 0;
 
-# This function takes:
-#	Gimp-provided:
-#	Image -- The gimp image to be operated on.
-#	Drawable -- Its drawable
-#	User-provided:
-#	X Tiles -- Number of images to be tiled across.
-#	Y Tiles -- Number of images to be tiled down.
-#	X Cells -- Number of color samples across for each image.
-#	Y Cells -- Number of color samples down for each image.
-#	Duplicates Weight -- Amount of weight to apply against images that
-#		have already been used.
-#	Directories -- Space separated list of directories.
-#
-# It will tile the images from the given directories over the given
-# image to form a mosaic of the original.
-sub perl_fu_image_tile {
-  my $image = shift;
-  my $drawable = shift;
-  my $xtiles = shift;
-  my $ytiles = shift;
-  my $xcells = shift;
-  my $ycells = shift;
-  my $dupweight = shift;
-  my $dirs = shift;
-  my $cleanup = shift;
+podregister {
   my $subimages = 0;
   my $TOP = "$ENV{HOME}/.gimp";
   if (! -d $TOP) {
@@ -288,7 +236,8 @@ sub perl_fu_image_tile {
   gimp_progress_update(1);
   gimp_image_undo_enable($image);
   gimp_displays_flush();
-}
+  ();
+};
 
 # Take IMAGE, XCELLS, YCELLS, TARGET_ASPECT.
 # Works destructively on IMAGE, and returns a list of anon-lists which
@@ -363,23 +312,23 @@ sub match_aspect {
 # Opens image referenced by INFO->{name} and scale/crop to fit in rectagnle
 # described by X,Y,WIDTH,HEIGHT
 sub overlay_image {
-    my $draw = shift;
-    my $file = shift;
-    my $x = shift;
-    my $y = shift;
-    my $width = shift;
-    my $height = shift;
-    my $img = gimp_file_load($file,$file);
-    my $subwidth = gimp_image_width($img);
-    my $subheight = gimp_image_height($img);
-    match_aspect($img,$width/$height,$subwidth,$subheight);
-    gimp_image_scale($img,$width,$height);
-    gimp_edit_copy(gimp_image_get_active_drawable($img)); #gimp 1.1 -deleted $img
-    my $baseimg = gimp_item_get_image($draw);
-    gimp_image_select_rectangle(CHANNEL_OP_REPLACE,$baseimg,$x,$y,$width,$height);
-    my $sel = gimp_edit_paste($draw,0); # gimp 1.1 -deleted $baseimg
-    gimp_floating_sel_anchor($sel);
-    gimp_image_delete($img);
+  my $draw = shift;
+  my $file = shift;
+  my $x = shift;
+  my $y = shift;
+  my $width = shift;
+  my $height = shift;
+  my $img = gimp_file_load($file,$file);
+  my $subwidth = gimp_image_width($img);
+  my $subheight = gimp_image_height($img);
+  match_aspect($img,$width/$height,$subwidth,$subheight);
+  gimp_image_scale($img,$width,$height);
+  gimp_edit_copy(gimp_image_get_active_drawable($img)); #gimp 1.1 -deleted $img
+  my $baseimg = gimp_item_get_image($draw);
+  gimp_image_select_rectangle(CHANNEL_OP_REPLACE,$baseimg,$x,$y,$width,$height);
+  my $sel = gimp_edit_paste($draw,0); # gimp 1.1 -deleted $baseimg
+  gimp_floating_sel_anchor($sel);
+  gimp_image_delete($img);
 }
 
 # Take a Red, Green, Blue color value and return Hue, Saturation and Value
@@ -427,72 +376,31 @@ sub hue_dist {
   return($d>128?(256-$d):$d);
 }
 
-# Gimp::Fu registration routine for placing this function into gimp's PDB
-register
-  "image_tile",
-  "Tile images to form a larger Image",
-  "Use Image Tile to take a directory of images and use it to
-	construct a single, existing image, sort of like the
-	Filters/Artistic/Mosaic plugin, but with images as the
-	tiles.",
-  "Aaron Sherman", "Aaron Sherman (c)", "1999-03-15",
-  N_"<Image>/Filters/Map/Image Tile...",
-  "*",
-  [
-   # Image and drawable are given for free...
-   # [PF_IMAGE, "Input image", undef],
-   # [PF_DRAWABLE, "Input drawable", undef],
-   [PF_INT32, "tiles_x", "Number of tiles (X)", 10],
-   [PF_INT32, "tiles_y", "Number of tiles (Y)", 10],
-   [PF_INT32, "samples_x", "Number of sample cells per tile (X)", 4],
-   [PF_INT32, "samples_y", "Number of sample cells per tile (Y)", 4],
-   [PF_INT32, "duplicates", "Duplicates (0[lots] - 100[none])", 5],
-   [PF_STRING, "image_dirs", "Sub-image directories (space speparated)"],
-   [PF_TOGGLE, "delete_cached", "Delete cached image samples?", 0]
-  ],
-  \&perl_fu_image_tile;
-
 exit main;
-
 __END__
 
 =head1 NAME
 
-image_tile - An image tiling plug-in for The Gimp
+image_tile - Tile images to form a larger image
 
 =head1 SYNOPSIS
 
-B<image_tile> is called from The Gimp under the Perl-Fu image menu.
+<Image>/Filters/Map/Image Tile...
 
 =head1 DESCRIPTION
 
-B<image_tile> is a plug-in for The Gimp that re-creates an image by tiling many
-sub-images which are in turn chosen for their likeness to a part of the original.
+Re-create an image by tiling many sub-images which are in turn chosen
+for their likeness to a part of the original.
 
-In other words, you give image_tile a base image (the one you open in The
-Gimp, and call image_tile on) and a list of directories to find other images
-in. It then tiles small versions of the images over the original image in
-such a way that you can still make out the original if you squint hard
-enough.
+In other words, you give C<image_tile> a base image and a list of
+directories to find other images in. It then tiles small versions of
+the images over the original image in such a way that you can still make
+out the original if you squint hard enough.
 
-=head1 LIMITATIONS
+Functions a little like the Filters/Artistic/Mosaic plugin, but with
+images as the tiles.
 
-B<image_tile> requires a large number of image to work from. This is because
-it needs to divide up your original image and for each tile, find another
-image which looks like that tile. This can require anywhere from 2000 to tens
-of thousands of component images.
-
-image_tile will use as much disk space as is required to store the sampling
-information that it creates for each of the sub images. However, its use of
-memory is much more conservative. The assumption being that a lot more people
-have a Gig of disk free than a Gig of RAM. So, expect a large file to be
-created in your .gimp directory (you can select automatic cleanup of this
-file if you wish).
-
-=head1 PARAMETERS
-
-When you bring up the image tiler, you are given several options. Each of these
-is detailed below:
+Options:
 
 =over 5
 
@@ -538,9 +446,41 @@ or number of cells. Sorry.
 
 =back
 
+=head1 LIMITATIONS
+
+B<image_tile> requires a large number of image to work from. This is because
+it needs to divide up your original image and for each tile, find another
+image which looks like that tile. This can require anywhere from 2000 to tens
+of thousands of component images.
+
+image_tile will use as much disk space as is required to store the sampling
+information that it creates for each of the sub images. However, its use of
+memory is much more conservative. The assumption being that a lot more people
+have a Gig of disk free than a Gig of RAM. So, expect a large file to be
+created in your .gimp directory (you can select automatic cleanup of this
+file if you wish).
+
+=head1 PARAMETERS
+
+ [PF_INT32, "xtiles", "Number of tiles (X)", 10],
+ [PF_INT32, "ytiles", "Number of tiles (Y)", 10],
+ [PF_INT32, "xcells", "Number of sample cells per tile (X)", 4],
+ [PF_INT32, "ycells", "Number of sample cells per tile (Y)", 4],
+ [PF_INT32, "dupweight", "Duplicates (0[lots] - 100[none])", 5],
+ [PF_STRING, "dirs", "Sub-image directories (space speparated)"],
+ [PF_TOGGLE, "cleanup", "Delete cached image samples", 0]
+
 =head1 AUTHOR
 
 Written in 1998 (c) by Aaron Sherman <ajs@ajs.com>
+
+=head1 DATE
+
+1999-03-15
+
+=head1 IMAGE TYPES
+
+*
 
 =head1 BUGS
 
@@ -583,13 +523,33 @@ this would require more code than I want to write right now.
 
 =back
 
+=head1 HISTORY
+
+  TODO:
+ 	o Fix undo
+ 	o Handle input drawable correctly (for working on selections)
+ 	o Find faster ways to sample sub-images.
+ 	o More control over cropping
+ 	o Scaling vs cropping of sub-images
+ 	o Better color matching algorithms
+ 	o Test (fix?) non-interactive use...
+ 	o Allow tile aspect selection independant of base image
+ 
+  DONE:
+        o 04-22-2001, peter@kirchgessner.net: fix problems with functions
+          that changed number of arguments
+ 
+ 12/5/03: <sjburges@gimp.org>
+  s/gimp_convert/gimp_image_convert/
+  s/gimp_drawable_image/gimp_drawable_get_image/
+
 =head1 LICENSE
 
 Copyright Aaron Sherman.
-This plugin may be distributed under the same terms as The Gimp itself.
+This plugin may be distributed under the same terms as GIMP itself.
 
 =head1 SEE ALSO
 
-L<gimp>, L<perl>, L<Gimp>: the Gimp module for perl.
+L<gimp>, L<perl>, L<Gimp>.
 
 =cut

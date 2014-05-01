@@ -123,12 +123,12 @@ another image.  I made it for easy web buttons.
 
 =head1 PARAMETERS
 
-  [PF_DRAWABLE, "destination","What drawable to spin to?"],
-  [PF_INT8, "frames", "How many frames to use?", 16],
-  [PF_COLOR, "color", "What color to use for background if not transparent", [0,0,0]],
+  [PF_DRAWABLE, "destination","Drawable to spin to"],
+  [PF_INT8, "frames", "How many frames to use", 16],
+  [PF_COLOR, "color", "Color to use for background if not transparent", [0,0,0]],
   [PF_SLIDER, "perspective", "How much perspective effect to get", 40, [0,255,5]],
-  [PF_TOGGLE, "spinback", "Also spin back?" , 1],
-  [PF_TOGGLE, "indexed", "Convert to indexed?", 1],
+  [PF_TOGGLE, "spinback", "Spin back" , 1],
+  [PF_TOGGLE, "indexed", "Convert to indexed", 1],
 
 =head1 IMAGE TYPES
 

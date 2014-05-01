@@ -7,61 +7,61 @@ use strict;
 # Gimp::set_trace(TRACE_ALL);
 
 podregister {
-    # sanity stuff
-    die "Can only operate on layers" unless $drawable->is_layer;
-    $drawable->become('Gimp::Layer');
+  # sanity stuff
+  die "Can only operate on layers" unless $drawable->is_layer;
+  $drawable->become('Gimp::Layer');
 
-    $image->undo_group_start;
+  $image->undo_group_start;
 
-    my @selbounds = $image->selection_bounds;
-    $image->selection_all if $selbounds[0] == 0;
+  my @selbounds = $image->selection_bounds;
+  $image->selection_all if $selbounds[0] == 0;
 
-    my $saved_selection = $image->selection_save;
-    $image->selection_none;
+  my $saved_selection = $image->selection_save;
+  $image->selection_none;
 
-    # 1) take the original photo, duplicate the layer
-    my $edge_layer = $drawable->Gimp::Layer::copy(1);
-    $image->insert_layer($edge_layer,0,-1);
+  # 1) take the original photo, duplicate the layer
+  my $edge_layer = $drawable->Gimp::Layer::copy(1);
+  $image->insert_layer($edge_layer,0,-1);
 
-    # 2) convert the copy to grayscale
-    $edge_layer->desaturate;
+  # 2) convert the copy to grayscale
+  $edge_layer->desaturate;
 
-    # 3) run edge detect to the gray layer (default works)
-    $edge_layer->edge(2.0, 2, 0);
+  # 3) run edge detect to the gray layer (default works)
+  $edge_layer->edge(2.0, 2, 0);
 
-    # 4) blur it slightly
-    $edge_layer->gauss_iir2(3.0, 3.0);
+  # 4) blur it slightly
+  $edge_layer->gauss_iir2(3.0, 3.0);
 
-    # 5) boost contrast (I can give you a specific curve or such)
-    $edge_layer->curves_spline(HISTOGRAM_VALUE,
-			      [0,0,
-			       45,20,
-			       160,225,
-			       255,255]
-			      );
+  # 5) boost contrast (I can give you a specific curve or such)
+  $edge_layer->curves_spline(HISTOGRAM_VALUE,
+			    [0,0,
+			     45,20,
+			     160,225,
+			     255,255]
+			    );
 
-    # 6) then make the boosted, gray edge-detection into a selection mask
-    my $selchan = $image->channel_new($image->width, $image->height, "sharpen_mask",
-		      100.0, [1.0,0,0]);
+  # 6) then make the boosted, gray edge-detection into a selection mask
+  my $selchan = $image->channel_new($image->width, $image->height, "sharpen_mask",
+		    100.0, [1.0,0,0]);
 
-    $image->insert_channel($selchan, 0, -1);
-    $edge_layer->edit_copy;
-    $selchan->edit_paste(1);
-    $image->get_floating_sel->anchor;
-    $selchan->combine_masks($saved_selection, CHANNEL_OP_INTERSECT, 0, 0);
-    $selchan->selection_load;
+  $image->insert_channel($selchan, 0, -1);
+  $edge_layer->edit_copy;
+  $selchan->edit_paste(1);
+  $image->get_floating_sel->anchor;
+  $selchan->combine_masks($saved_selection, CHANNEL_OP_INTERSECT, 0, 0);
+  $selchan->selection_load;
 
-    # 7) then use unsharp mask to that selection (scratch the gray layer)
-    $drawable->unsharp_mask($sharpen_radius, $sharpen_amt, $threshold);
+  # 7) then use unsharp mask to that selection (scratch the gray layer)
+  $drawable->unsharp_mask($sharpen_radius, $sharpen_amt, $threshold);
 
-    # cleanup
-    $saved_selection->selection_load;
-    $image->remove_channel($saved_selection);
-    $image->remove_channel($selchan);
-    $image->remove_layer($edge_layer);
+  # cleanup
+  $saved_selection->selection_load;
+  $image->remove_channel($saved_selection);
+  $image->remove_channel($selchan);
+  $image->remove_layer($edge_layer);
 
-    $image->undo_group_end;
-    ();
+  $image->undo_group_end;
+  ();
 };
 
 exit main;

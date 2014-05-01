@@ -145,13 +145,13 @@ and give you the html to reassemble the resulting images.
 
 =head1 PARAMETERS
 
-  [PF_STRING, "savepath", "The path to export the HTML to",$ENV{HOME}],
+  [PF_FILE, "savepath", "The path to export the HTML to",$ENV{HOME}],
   [PF_STRING, "htmlname", "Filename to export","perlotine.html"],
   [PF_STRING, "imgbasename", "What to call the images","perlotine"],
   [PF_RADIO,  "extension", "The format of the images: (gif, jpg, png)", "gif", [gif => "gif", jpg => "jpg", png => "png"]],
-  [PF_TOGGLE, "separate", "Use a separate directory for images?",0],
+  [PF_TOGGLE, "separate", "Use a separate directory for images",0],
   [PF_STRING, "imgpath", "The path to export the images to, relative to the Save Path", "images/"],
-  [PF_TOGGLE, "capitalize_tags", "Capatalize HTML tags?", 0],
+  [PF_TOGGLE, "capitalize_tags", "Capitalize HTML tags", 0],
   [PF_SPINNER, "cellspacing", "Add space between the table elements", 0, [0,15,1]],
 
 =head1 IMAGE TYPES

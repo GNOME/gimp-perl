@@ -78,9 +78,9 @@ Saves the image as many small tiles using data:-urls.
 
 =head1 PARAMETERS
 
- [PF_SPINNER, "tile_x", "tile width", 32, [0, 8192, 1, 10]],
- [PF_SPINNER, "tile_y", "tile height", 32, [0, 8192, 1, 10]],
- [PF_RADIO, "filetype", "underlying file type", 0,
+ [PF_SPINNER, "tile_x", "Tile width", 32, [0, 8192, 1, 10]],
+ [PF_SPINNER, "tile_y", "Tile height", 32, [0, 8192, 1, 10]],
+ [PF_RADIO, "filetype", "Underlying file type", 0,
     [GIF => 0, JFIF => 1, PNG => 2]],
 
 =head1 IMAGE TYPES

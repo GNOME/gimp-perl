@@ -1,12 +1,9 @@
 #!/usr/bin/perl
 
-# example for the gimp-perl-server (also called Net-Server)
-
 use Gimp;
 
-# on_lib is called if run through Gimp
 Gimp::on_lib {
-   print STDERR "$0: this script is not intended to be run from within the gimp!\n";
+   die "Not intended to be run from within GIMP!\n";
 };
 
 # on_net is called if connecting to an already open Perl-Server, or if
@@ -35,11 +32,13 @@ Gimp::on_net {
 };
 
 exit main;
+__END__
+
+=head1 NAME
+
+example-net - Demonstrate use of Gimp-Perl "net mode"
 
 =head1 LICENSE
 
 Copyright Marc Lehman.
 Distributed under the same terms as Gimp-Perl.
-
-=cut
-

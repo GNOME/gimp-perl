@@ -92,7 +92,7 @@ on top of it which represent your "cells".
 
 =head1 PARAMETERS
 
-  [PF_TOGGLE, "work_on_copy", "", 1]
+  [PF_TOGGLE, "work_on_copy", "Work on copy", 1]
 
 =head1 IMAGE TYPES
 

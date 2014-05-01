@@ -63,7 +63,7 @@ Screen of 50% of your drawing into a dropshadowed layer.
 
 =head1 PARAMETERS
 
-  [PF_SLIDER,	"blocksize",	"The size of the blocks...", 10, [4, 255, 1]],
+  [PF_SLIDER, "blocksize", "Size of blocks", 10, [4, 255, 1]],
 
 =head1 IMAGE TYPES
 

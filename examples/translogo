@@ -89,8 +89,8 @@ and index it.  The original image is untouched.
 
  [PF_RADIO, 'rad_tog', 'Use a colour or a pattern for text', 0,
     [Colour => 0, Pattern => 1]],
- [PF_PATTERN, 'pattern', "Choose the text pattern", "Wood #1"],
- [PF_COLOUR, 'txt_col', "Choose the text color", [69, 88, 211]],
+ [PF_PATTERN, 'pattern', "Text pattern", "Wood #1"],
+ [PF_COLOUR, 'txt_col', "Text color", [69, 88, 211]],
 
 =head1 IMAGE TYPES
 

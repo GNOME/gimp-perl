@@ -65,10 +65,10 @@ transparent text doesn't look blocky.
 
 =head1 PARAMETERS
 
- [PF_INT32, "threshold", "Lower Alpha Threshold", 64],
- [PF_INT32, "growth", "How Much growth for safety ",1],
- [PF_TOGGLE, "index", "Convert Image to indexed", 0],
- [PF_TOGGLE, "dither", "Floyd-Steinberg Dithering?", 1],
+ [PF_INT32, "threshold", "Lower alpha threshold", 64],
+ [PF_INT32, "growth", "How much growth for safety ",1],
+ [PF_TOGGLE, "index", "Convert image to indexed", 0],
+ [PF_TOGGLE, "dither", "Floyd-Steinberg dithering", 1],
  [PF_INT32, "colors", "Colors to quantize to", "255"],
 
 =head1 IMAGE TYPES

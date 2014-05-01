@@ -31,3 +31,17 @@ Gimp::on_query {
 };
 
 exit Gimp::main;
+__END__
+
+=head1 NAME
+
+Perl-Server - enable Gimp-Perl scripts to access running GIMP instance
+via Gimp::Net
+
+=head1 SYNOPSIS
+
+<Image>/Filters/Languages/_Perl/_Server
+
+=head1 DESCRIPTION
+
+Also provides a working example of a GIMP extension in Gimp-Perl.

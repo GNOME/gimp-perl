@@ -833,9 +833,9 @@ alpha_fade - Fade the alpha channel of a layer from one side to another
 
 =head1 DESCRIPTION
 
-Rewritten by Ed J to use Gimp::Fu as demo of PF_CUSTOM widget. Original
-by Seth Burgess, inspired by a mailing list question that asked how to do
-exactly what this does, which is fade the alpha from one side to another.
+Inspired by a mailing list question that asked how to do exactly what this
+does, which is fade the alpha from one side to another. Original by Seth
+Burgess, rewritten by Ed J to use Gimp::Fu as demo of PF_CUSTOM widget.
 
 =head1 PARAMETERS
 
@@ -843,8 +843,7 @@ exactly what this does, which is fade the alpha from one side to another.
      my $btnTable = new Gtk2::Table(3,3,1);
      $btnTable->set_border_width(6);
      my $btn = new Gtk2::RadioButton;
-     my $u_direction;
-     my @buttons;
+     my ($u_direction, @buttons);
      for (my $x=0;$x<3;$x++) {
        for (my $y=0;$y<3;$y++) {
 	 my $dir = $x*3 + $y;

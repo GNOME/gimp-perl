@@ -171,12 +171,12 @@ I think it was tigert that suggested this.
 
 =head1 PARAMETERS
 
-  [PF_DRAWABLE, "destination","What drawable to spin to?"],
-  [PF_INT8, "frames", "How many frames to use?", 16],
+  [PF_DRAWABLE, "destination", "What drawable to spin to"],
+  [PF_INT8, "frames", "How many frames to use", 16],
   [PF_COLOR, "background", "What color to use for background if not transparent", 'black'],
   [PF_INT8, "perspective", "How much perspective effect to get", 40],
-  [PF_TOGGLE, "spin_back", "Also spin back?" , 0],
-  [PF_TOGGLE, "convert_indexed", "Convert to indexed?", 1],
+  [PF_TOGGLE, "spin_back", "Also spin back" , 0],
+  [PF_TOGGLE, "convert_indexed", "Convert to indexed", 1],
   [PF_SPINNER, "billboard_slats", "Number of shades", 3, [1,50,1]],
 
 =head1 IMAGE TYPES

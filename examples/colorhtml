@@ -149,16 +149,16 @@ and will disturb the current font colour.
 
 =head1 PARAMETERS
 
-  [PF_RADIO,	"character_source", "where to take the characters from", 0,
+  [PF_RADIO,	"character_source", "Where to take characters from", 0,
 		[sourcecode => 0, textfile => 1, textblock => 2]],
   [
     PF_FILE,	"characters",
-    "the filename to read or the characters to use", ""
+    "Filename to read or characters to use", ""
   ],
-  [PF_STRING, "font_size", "the html font size (1..7 or -7 .. +7)", 2],
-  [PF_BOOL, "use_css", "use CSS?", 1],
-  [PF_BOOL, "compatible", "html-4.0 compliance?", 1],
-  [PF_BOOL, "closetag", "add closing tag?", 1],
+  [PF_STRING, "font_size", "HTML font size (1..7 or -7 .. +7)", 2, ],
+  [PF_BOOL, "use_css", "Use CSS", 1],
+  [PF_BOOL, "compatible", "HTML-4.0 compliance", 1],
+  [PF_BOOL, "closetag", "Add closing tag", 1],
 
 =head1 IMAGE TYPES
 

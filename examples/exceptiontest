@@ -1,6 +1,5 @@
-#!/usr/local/bin/perl -w
+#!/usr/bin/perl -w
 
-use strict;
 use Gimp;
 use Gimp::Fu;
 #BEGIN { $Gimp::verbose = 1; }
