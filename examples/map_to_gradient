@@ -59,7 +59,7 @@ __END__
 
 =head1 NAME
 
-map_to_gradient - map grayscale values to gradient
+map_to_gradient - Map grayscale values to gradient
 
 =head1 SYNOPSIS
 
