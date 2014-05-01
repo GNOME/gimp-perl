@@ -421,7 +421,7 @@ sub become($$)		{ bless $_[0], $_[1]; }
 __END__
 =head1 NAME
 
-Gimp - write GIMP extensions/plug-ins/load- and save-handlers in Perl
+Gimp - Write GIMP extensions/plug-ins/load- and save-handlers in Perl
 
 =head1 SYNOPSIS
 

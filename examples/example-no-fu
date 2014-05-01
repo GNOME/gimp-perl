@@ -977,6 +977,46 @@ EOF
 };
 
 exit Gimp::main;
+__END__
+
+=head1 NAME
+
+alpha_fade - Fade the alpha channel of a layer from one side to another
+
+=head1 SYNOPSIS
+
+<Image>/Layer/Transparency/Fade...
+
+=head1 DESCRIPTION
+
+This was written as a slightly useful exercise, mostly to learn Gtk's
+excellent perl interface. It was inspired by a mailing list question
+that asked how to do exactly what this does, which is fade the alpha
+from one side to another.
+
+B<Does not use> L<Gimp::Fu>; look at L<fade-alpha> for the version that
+does.
+
+=head1 PARAMETERS
+
+ [PDB_INT32, "run_mode", "Interactive, [non-interactive"],
+ [PDB_IMAGE, "image", "Input image (unused)"],
+ [PDB_DRAWABLE, "drawable", "Input drawable"],
+ [PDB_INT32, "direction", "Direction to fade(0-8)"]
+
+=head1 RETURN VALUES
+
+=head1 IMAGE TYPES
+
+*
+
+=head1 AUTHOR
+
+Seth Burgess
+
+=head1 DATE
+
+2000
 
 =head1 LICENSE
 
