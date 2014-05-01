@@ -40,8 +40,18 @@ via Gimp::Net
 
 =head1 SYNOPSIS
 
-<Image>/Filters/Languages/_Perl/_Server
+<Image>/Filters/Languages/Perl/Server
 
 =head1 DESCRIPTION
 
-Also provides a working example of a GIMP extension in Gimp-Perl.
+If activated by the user, allows Gimp-Perl scripts to connect to the
+running GIMP instance. Also provides a working example of a GIMP extension
+in Gimp-Perl.
+
+There is a security advisory about GIMP scripting servers. This program
+will only allow TCP connections if a password is specified (the "auth"
+option), thereby eliminating any network-related security risk.
+
+=head1 SEE ALSO
+
+L<Gimp::Net>
