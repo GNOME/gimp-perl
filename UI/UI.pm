@@ -9,7 +9,7 @@ use strict;
 
 our (@ISA, $VERSION);
 BEGIN {
-   $VERSION = 2.300001;
+   $VERSION = 2.3002;
    eval {
       require XSLoader;
       XSLoader::load Gimp::UI $VERSION;

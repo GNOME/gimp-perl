@@ -21,7 +21,7 @@ tags: .
 
 # set \$VERSION in all modules
 setver:
-	\$(PERL) -pi -e 's/^(\\s*\\\$\$VERSION\\s*=\\s*).*\$\$/\$\${1}\$(VERSION);/' *.pm Gimp/*.pm UI/*.pm Net/*.pm
+	\$(PERL) -pi -e 's/^(\\s*\\\$\$VERSION\\s*=\\s*).*;/\$\${1}\$(VERSION);/' *.pm Gimp/*.pm UI/*.pm Net/*.pm
 
 EOF
 }

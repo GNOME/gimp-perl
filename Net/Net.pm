@@ -34,7 +34,7 @@ use IO::Socket;
 use Carp 'croak';
 use Fcntl qw(F_SETFD);
 
-$VERSION = 2.300001;
+$VERSION = 2.3002;
 bootstrap Gimp::Net $VERSION;
 
 use constant {
