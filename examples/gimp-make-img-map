@@ -444,6 +444,51 @@ image map for use e.g. within a HTML page.
 			   sunken-windows
 		     Default is 'drop_shadow'.
 
+=head1 EXAMPLES
+
+Given a text file C<myimg.list> containing the names of four images of
+arbitrary sizes:
+
+ red.png                               
+ green.png
+ blue.jpg
+ pink.jpg
+
+Run:
+
+ gimp-make-img-map -bgcolor #440000 -layoutwidth 400 myimg.list
+
+An alternative command line:
+
+ gimp-make-img-map -index myindex.list -max_height 50 -bgpattern Wood \
+    -decoration sunken-windows -darkcomp -layoutwidth 200 myimg.list      
+
+=head1 LIST FILE
+
+If the option C<-index index.idx> is given then the following info is
+written to the file C<index.idx>:
+
+  red.png 22 20 178 70 
+  green.png 55 85 105 135 
+  blue.png 120 85 145 135 
+  pink.png 62 150 138 200
+
+This info can easily be converted into a html image map with a script
+similar to the following:
+
+  #!/usr/local/bin/perl
+  my $map = q(<map name="mymap">);
+  my $idx = 0;
+  while(<>) {
+     ($img, $x0, $y0, $x1, $y1) = split;
+     $map .= "<area shape=\"rect\" coords=\"$x0,$y0,$x1,$y1\" ".
+	     "href=\"img$idx.html\">\n";
+     $idx++;
+  }
+  $map .= "</map>";
+  print "$map";
+  print "<img src=\"index.jpg\" usemap=\"#mymap\>\n";
+
 =head1 BUGS
 
   -padx px means at least px and not exactly px. This should be fixed.
