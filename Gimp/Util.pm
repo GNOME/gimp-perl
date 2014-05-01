@@ -15,7 +15,7 @@ import Gimp;
 # manual "import" to shut perl -cw up
 sub __ ($);
 
-our $VERSION = 2.300001;
+our $VERSION = 2.3002;
 
 sub get_state() {
    [

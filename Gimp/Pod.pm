@@ -4,7 +4,7 @@ use Config;
 use strict;
 use FindBin qw($RealBin $RealScript);
 
-our $VERSION = 2.3001;
+our $VERSION = 2.3002;
 
 warn "$$-Loading ".__PACKAGE__ if $Gimp::verbose;
 
