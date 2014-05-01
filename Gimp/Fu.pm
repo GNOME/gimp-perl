@@ -999,11 +999,11 @@ Save, and Edit (in external editor) buttons.
 
 =head1 EMBEDDED POD DOCUMENTATION
 
-Gimp::Fu uses the Gimp::Pod module to display the full text
-of the POD sections that are embedded in your scripts (see L<perlpod> for
-an explanation of the POD documentation format) when the user hits the
-"Help" button in the dialog box. More importantly, various sections of the
-POD can be used instead of hardcoding strings in the call to C<register>.
+Gimp::Fu uses the Gimp::Pod module to access POD sections that are
+embedded in your scripts (see L<perlpod> for an explanation of the POD
+documentation format) when the user hits the "Help" button in the dialog
+box. More importantly, various sections of the POD can be used instead
+of hardcoding strings in the call to C<register>.
 
 Most of the mentioned arguments have default values (see
 L</"THE REGISTER FUNCTION">) that are used when the arguments are
@@ -1060,6 +1060,46 @@ some examples:
 			non-interlaced and without flattening
 
 =back
+
+=head1 COMMAND LINE USAGE
+
+Your scripts can immediately be used from the command line. E.g.
+
+  /usr/local/lib/gimp/2.0/plug-ins/example-fu -i
+
+Use the C<--help> flag to see the available options:
+
+  Usage: .../example-fu [gimp-args..] [interface-args..] [script-args..]
+	 gimp-arguments are
+	     -h | -help | --help | -?   print some help
+	     -v | --verbose             be more verbose in what you do
+	     --host|--tcp HOST[:PORT]   connect to HOST (optionally using PORT)
+					(for more info, see Gimp::Net(3))
+	 interface-arguments are
+	     -o | --output <filespec>   write image to disk
+	     -i | --interact            let the user edit the values first
+	 script-arguments are
+	     --width number             Image width [360]
+	     --height integer           Image height [100]
+	     --text string              Message [example text]
+	     --longtext string          Longer text [more example text]
+	     --bordersize integer (32-bit) Border size [10]
+	     --borderwidth number       Border width [0.2]
+	     --font font                Font
+	     --text_colour colour       Text colour [[10 10 10]]
+	     --bg_colour colour         Background colour [[255 128 0]]
+	     --ignore_cols boolean      Ignore colours [0]
+	     --extra_image image        Additional picture to ignore
+	     --extra_draw drawable (%number or %a = active) Something to ignore as well
+	     --type data                Effect type [0]
+	     --a_brush brush            An unused brush
+	     --a_pattern pattern        An unused pattern
+	     --a_gradients gradient     An unused gradients
+
+You may notice that the C<drawable> above offers the option of "%number"
+(or "%a") - this means you can specify which drawable by numeric ID. From
+the command line, C<image> may be specified either as "%number" or as
+a filename.
 
 =head1 AUTHOR
 
