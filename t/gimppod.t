@@ -12,6 +12,7 @@ is($p->section('NAME'), 'test - Run some tests', 'sect name');
 is($p->section('SPACE NAME'), 'Some text.', 'sect space-name');
 is($p->section('VERBATIM'), " verbatim\n verbatim2", 'sect verbatim');
 is($p->section('OTHER'), 'Other text.', 'sect at eof');
+is($p->section('NOT THERE'), undef, 'sect not there');
 
 done_testing;
 __END__
