@@ -5,7 +5,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK $AUTOLOAD %EXPORT_TAGS @EXPORT_FAIL
             $interface_pkg $interface_type
             @PREFIXES
             $function $basename $spawn_opts
-            $in_quit $in_run $in_net $in_init $in_query $no_SIG
+            $in_quit $no_SIG
             $host $in_top);
 use subs qw(init end lock unlock);
 
@@ -123,22 +123,13 @@ sub gtk_init() {
    }
 }
 
-# internal utility function for Gimp::Fu and others
-sub wrap_text {
-   my $x=$_[0];
-   $x=~s/\G(.{1,$_[1]})(\s+|$)/$1\n/gm;
-   $x=~s/[ \t\r\n]+$//g;
-   $x;
-}
-
 # section on command-line handling/interface selection
 
 ($basename = $0) =~ s/^.*[\\\/]//;
 
 $spawn_opts = "";
 
-$in_query=0 unless defined $in_query;
-$in_top=$in_quit=$in_run=$in_net=$in_init=0;
+$in_quit=0;
 ($function)=$0=~/([^\/\\]+)$/;
 
 $Gimp::verbose=0 unless defined $Gimp::verbose;
@@ -183,11 +174,11 @@ sub quiet_die {
 
 unless($no_SIG) {
    $SIG{__DIE__} = sub {
-      unless ($^S || !defined $^S || $in_quit) {
+      if ($^S || !defined $^S || $in_quit) {
+         die $_[0];
+      } else {
          warn $_[0];
          initialized() ? &quiet_die : exit quiet_main();
-      } else {
-         die $_[0];
       }
    };
 }
@@ -197,37 +188,37 @@ unless($no_SIG) {
 my %callback;
 
 sub cbchain {
-  map { $callback{$_} ? @{$callback{$_}} : (); } @_;
+  map { @{$callback{$_} || []}; } @_;
 }
 
 sub callback {
+  warn "$$-Gimp::callback(@_)" if $Gimp::verbose;
   my $type = shift;
   my @cb;
   if ($type eq "-run") {
     local $function = shift;
-    local $in_run = 1;
     @cb = cbchain(qw(run lib), $function);
-    die __"required callback 'run' not found\n" unless @cb;
+    die __"required callback 'run' not found for $function\n" unless @cb;
     # returning list of last func's return values
     my @retvals;
     for (@cb) {
       @retvals = &$_;
     }
+    warn "$$-Gimp::callback returning(@retvals)" if $Gimp::verbose;
     @retvals;
   } elsif ($type eq "-net") {
-    local $in_net = 1;
-    @cb = cbchain(qw(run net), $function);
-    die __"required callback 'net' not found\n" unless @cb;
+    @cb = cbchain(qw(run net));
+    die __"required callback 'net' not found for $function\n" unless @cb;
     # returning list of last func's return values
     my @retvals;
     for (@cb) {
       @retvals = &$_;
     }
+    warn "$$-Gimp::callback returning(@retvals)" if $Gimp::verbose;
     @retvals;
   } elsif ($type eq "-query") {
-    local $in_query = 1;
     @cb = cbchain(qw(query));
-    die __"required callback 'query' not found\n" unless @cb;
+    die __"required callback 'query' not found for $function\n" unless @cb;
     for (@cb) { &$_ }
   } elsif ($type eq "-quit") {
     local $in_quit = 1;
@@ -237,7 +228,8 @@ sub callback {
 }
 
 sub register_callback($$) {
-   push(@{$callback{$_[0]}},$_[1]);
+   push @{$callback{$_[0]}}, $_[1];
+   warn "$$-register_callback(@_)" if $Gimp::verbose;
 }
 
 sub on_query(&) { register_callback "query", $_[0] }
@@ -693,7 +685,8 @@ to clean up after itself before it actually exits.
 
 A GIMP extension is a special type of plugin. Once started, it stays
 running all the time. Typically during its run-initialisation (not on
-query) it will install temporary procedures.
+query) it will install temporary procedures. A module, L<Gimp::Extension>,
+has been provided to make it easy to write extensions.
 
 If it has no parameters, then rather than being run when called, either
 from a menu or a scripting interface, it is run at GIMP startup.
