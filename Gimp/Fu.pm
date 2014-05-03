@@ -2,7 +2,6 @@ package Gimp::Fu;
 
 use Gimp::Data;
 use Gimp::Pod;
-use File::Basename;
 use strict;
 use Carp qw(croak carp);
 use vars qw($run_mode @EXPORT_OK @EXPORT %EXPORT_TAGS);
@@ -203,7 +202,7 @@ Gimp::on_net {
    my(%mangleparam2index,@args);
    my ($interact, $outputfile) = 1;
    my ($function,$blurb,$help,$author,$copyright,$date,
-       $menupath,$imagetypes,$type,$params,$results,$perl_sub) = @$this;
+       $menupath,$imagetypes,$type,$params,$results) = @$this;
    @mangleparam2index{map mangle_key($_->[1]), @$params} = (0..$#{$params});
    die "$0: error - try $0 --help\n" unless Getopt::Long::GetOptions(
       'interact|i' => sub { $interact = 1e6 },
@@ -231,7 +230,9 @@ Gimp::on_net {
       for my $i (0..$#args) { $args[$i] = string2pf($args[$i], $params->[$i]); }
    }
    my $input_image = $args[0] if ref $args[0] eq "Gimp::Image";
-   my @retvals = $perl_sub->(Gimp::RUN_NONINTERACTIVE, @args);
+   my @retvals = Gimp::callback(
+      '-run', $function, Gimp::RUN_NONINTERACTIVE, @args
+   );
    if ($outputfile) {
       my @images = grep { defined $_ and ref $_ eq "Gimp::Image" } @retvals;
       if (@images) {
@@ -267,7 +268,7 @@ Gimp::on_query {
 	 $p->[0] = $pf2info{$p->[0]}->[1] // datatype(values %{+{@{$p->[4]}}});
       }
       unshift @{$s->[9]}, [Gimp::PDB_INT32,"run_mode","Interactive:0=yes,1=no"];
-      Gimp->install_procedure(@$s[0..10]);
+      Gimp->install_procedure(@$s);
    }
 };
 
@@ -316,7 +317,7 @@ sub register($$$$$$$$$;@) {
    carp __"function name contains dashes instead of underscores\n"
       if $function =~ y/-//;
 
-   my $perl_sub = sub {
+   Gimp::register_callback $function => sub {
       $run_mode = shift;	# global!
       my(@pre,@defaults,@lastvals);
 
@@ -396,11 +397,8 @@ sub register($$$$$$$$$;@) {
       Gimp->displays_flush;
       wantarray ? @retvals : $retvals[0];
    };
-
-   Gimp::register_callback($function,$perl_sub);
    push(@scripts,[$function,$blurb,$help,$author,$copyright,$date,
-		$menupath,$imagetypes,Gimp::PLUGIN,$params,$results,$perl_sub]);
-
+		$menupath,$imagetypes,Gimp::PLUGIN,$params,$results]);
 }
 
 sub save_image($$) {
