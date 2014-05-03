@@ -1,6 +1,7 @@
 package Gimp::Fu;
 
 use Gimp::Data;
+use Gimp::Pod;
 use File::Basename;
 use strict;
 use Carp qw(croak carp);
@@ -108,12 +109,9 @@ my %IND2SECT = (
 my $podreg_re = qr/(\bpodregister\s*{)/;
 FILTER {
    return unless /$podreg_re/;
-   my @p = fixup_args(('') x 9, 1);
-   return unless @{$p[9]};
-   my $myline = 'my ('.join(',', map { '$'.$_->[1] } @{$p[9]}).') = @_;';
-   warn __PACKAGE__."::FILTER_ONLY: $myline" if $Gimp::verbose;
+   my $myline = make_arg_line(insert_params(fixup_args(('') x 9, 1)));
    s/$podreg_re/$1\n$myline/;
-   warn __PACKAGE__."::FILTER_ONLY: found: '$1'" if $Gimp::verbose;
+   warn __PACKAGE__."::FILTER: found: '$1'" if $Gimp::verbose;
 };
 
 @EXPORT_OK = qw($run_mode save_image);
@@ -273,49 +271,25 @@ Gimp::on_query {
    }
 };
 
-sub podregister (&) { unshift @_, ('') x 9; goto &register; }
-sub getpod ($$) {
-   require Gimp::Pod; $_[0] ||= new Gimp::Pod; $_[0]->section($_[1]);
-}
-# inserts type after imagetypes
-sub fixup_args {
+sub insert_params {
    my @p = @_;
-   my $pod;
-   splice @p, 9, 0, [ eval (getpod($pod, 'RETURN VALUES') // '') ] if @p == 10;
-      die $@ if $@;
-   croak sprintf
-      __"register called with too many or wrong arguments: wanted 11, got %d(%s)",
-      scalar(@p),
-      join(' ', @p),
-      unless @p == 11;
-   @p[0,1] = (getpod($pod,'NAME')//'') =~ /(.*?)\s*-\s*(.*)/ unless $p[0] or $p[1];
-   ($p[0]) = File::Basename::fileparse($RealScript, qr/\.[^.]*/) unless $p[0];
-   while (my ($k, $v) = each %IND2SECT) { $p[$k] ||= getpod($pod, $v); }
-   $p[8] ||= [
-      eval "package main;\n#line 0 \"$0 PARAMETERS\"\n".
-	 (getpod($pod, 'PARAMETERS') // '')
-   ]; die $@ if $@;
-   for my $i (0..6, 10) {
-      croak "$0: Need arg $i (or POD ".($IND2SECT{$i}//'')." section)" unless $p[$i]
-   }
    die __<<EOF unless $p[6] =~ /^<(?:Image|Load|Save|Toolbox|None)>/;
 Menupath must start with <Image>, <Load>, <Save>, <Toolbox>, or <None>!
 (got '$p[6]')
 EOF
-   splice @p, 8, 0, Gimp::PLUGIN;
    if ($p[6] =~ /^<Image>\//) {
       if ($p[7]) {
-	 unshift @{$p[9]}, @image_params;
+         unshift @{$p[8]}, @image_params;
       } else {
-	 # undef or ''
-	 unshift @{$p[10]}, $image_retval
-	    if !@{$p[10]} or $p[10]->[0]->[0] != PF_IMAGE;
+         # undef or ''
+         unshift @{$p[9]}, $image_retval
+            if !@{$p[9]} or $p[9]->[0]->[0] != PF_IMAGE;
       }
    } elsif ($p[6] =~ /^<Load>\//) {
-      unshift @{$p[9]}, @load_params;
-      unshift @{$p[10]}, $image_retval;
+      unshift @{$p[8]}, @load_params;
+      unshift @{$p[9]}, $image_retval;
    } elsif ($p[6] =~ /^<Save>\//) {
-      unshift @{$p[9]}, @save_params;
+      unshift @{$p[8]}, @save_params;
    } elsif ($p[6] =~ m#^<Toolbox>/Xtns/#) {
       undef $p[7];
    } elsif ($p[6] =~ /^<None>/) {
@@ -324,11 +298,11 @@ EOF
    @p;
 }
 
-#(func,blurb,help,author,copyright,date,menupath,imagetypes,params,return,code)
+sub podregister (&) { unshift @_, ('') x 9; goto &register; }
 sub register($$$$$$$$$;@) {
    no strict 'refs';
    my ($function, $blurb, $help, $author, $copyright, $date, $menupath,
-       $imagetypes, $type, $params, $results, $code) = fixup_args(@_);
+       $imagetypes, $params, $results, $code) = insert_params(fixup_args(@_));
    for my $p (@$params,@$results) {
       next unless ref $p;
       croak __"$function: argument/return value '$p->[1]' has illegal type '$p->[0]'"
@@ -338,9 +312,7 @@ sub register($$$$$$$$$;@) {
    }
 
    $function="perl_fu_".$function unless $function =~ /^(?:perl_fu_|extension_|plug_in_|file_)/ || $function =~ s/^\+//;
-
    $function=~/^[0-9a-z_]+(-ALT)?$/ or carp(__"$function: function name contains unusual characters, good style is to use only 0-9, a-z and _");
-
    carp __"function name contains dashes instead of underscores\n"
       if $function =~ y/-//;
 
@@ -427,7 +399,8 @@ sub register($$$$$$$$$;@) {
 
    Gimp::register_callback($function,$perl_sub);
    push(@scripts,[$function,$blurb,$help,$author,$copyright,$date,
-                  $menupath,$imagetypes,$type,$params,$results,$perl_sub]);
+		$menupath,$imagetypes,Gimp::PLUGIN,$params,$results,$perl_sub]);
+
 }
 
 sub save_image($$) {
@@ -615,7 +588,9 @@ All these parameters except the code-ref can be replaced with C<''>, in
 which case they will be substituted with appropriate values from various
 sections (see below) of the POD documentation in your script.
 
-It is B<highly> recommended you use the L</PODREGISTER> interface.
+It is B<highly> recommended you use the L</PODREGISTER> interface,
+unless you wish to have more than one interface (i.e. menu entry) to
+your plugin, with different parameters.
 
 =over 2
 
