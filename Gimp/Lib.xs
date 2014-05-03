@@ -1541,7 +1541,7 @@ PPCODE:
     args[0].type = params[0].type;
     if (
       nparams==(items-1) &&
-      (SvIV(ST(j))==GIMP_RUN_INTERACTIVE || SvIV(ST(j))==GIMP_RUN_NONINTERACTIVE)
+      (SvIV(ST(1))==GIMP_RUN_INTERACTIVE || SvIV(ST(1))==GIMP_RUN_NONINTERACTIVE)
     ) {
       args->data.d_int32 = SvIV(ST(1)); // ST(0) = proc_name
       j = 2; // because ST(0) is proc_name, ST(1) is runmode
