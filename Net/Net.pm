@@ -125,9 +125,7 @@ sub set_trace {
    $old_level;
 }
 
-our $PERLSERVERPROC = 'extension_perl_server';
-(my $PROC_SF = $PERLSERVERPROC) =~ s#_#-#g;
-our $PERLSERVERTYPE = Gimp::EXTENSION; # Gimp::PLUGIN
+my $PROC_SF = 'extension-perl-server';
 
 sub start_server {
    my $opt = shift;
@@ -429,9 +427,6 @@ sub setup_listen_tcp {
 
 sub perl_server_run {
   (my $run_mode, $ps_flags, my $extra, $Gimp::verbose) = @_;
-  Gimp::gtk_init;
-  Gimp->extension_ack;
-  Gimp->extension_enable;
   warn "$$-".__PACKAGE__."::perl_server_run(@_)\n" if $Gimp::verbose;
   if ($run_mode == &Gimp::RUN_NONINTERACTIVE) {
      if ($ps_flags & PS_FLAG_BATCH) {

@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
 
+#BEGIN { $Gimp::verbose = 1; }
 use Gimp;
 use Gimp::Fu;
 use strict;
-
 # Gimp::set_trace(TRACE_CALL);
 
 podregister {

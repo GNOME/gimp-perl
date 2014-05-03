@@ -4,45 +4,30 @@ use strict;
 #BEGIN { $Gimp::verbose = 1; }
 use Gimp qw(__ N_);
 use Gimp::Net ();
+use Gimp::Extension;
 
 N_"/Xtns/Perl"; # workaround for i18n weirdnesses
 
 Gimp::set_trace(\$Gimp::Net::trace_res);
 Gimp::ignore_functions(qw(gimp_progress_init gimp_progress_update));
 
-Gimp::on_run \&Gimp::Net::perl_server_run;
 Gimp::on_quit \&Gimp::Net::perl_server_quit;
-
-Gimp::on_query {
-   Gimp->install_procedure(
-      $Gimp::Net::PERLSERVERPROC, "Gimp-Perl scripts net server",
-      "Allow scripting GIMP with Perl providing Gimp::Net server",
-      "Marc Lehmann <pcg\@goof.com>", "Marc Lehmann", "1999-12-02",
-      N_"<Image>/Filters/Languages/_Perl/_Server", undef,
-      $Gimp::Net::PERLSERVERTYPE,
-      [
-       [&Gimp::PDB_INT32, "run_mode", "Interactive, [non-interactive]"],
-       [&Gimp::PDB_INT32, "flags", "internal flags (must be 0)"],
-       [&Gimp::PDB_INT32, "extra", "multi-purpose"],
-       [&Gimp::PDB_INT32, "verbose", "Gimp verbose var"],
-      ],
-      [],
-   );
-};
+podregister \&Gimp::Net::perl_server_run;
 
 exit Gimp::main;
 __END__
 
 =head1 NAME
 
-Perl-Server - Enable Gimp-Perl scripts to access running GIMP instance
-via Gimp::Net
+extension_perl_server - Gimp-Perl scripts net server
 
 =head1 SYNOPSIS
 
-<Image>/Filters/Languages/Perl/Server
+<Image>/Filters/Languages/_Perl/_Server
 
 =head1 DESCRIPTION
+
+Allow scripting GIMP with Perl providing Gimp::Net server.
 
 If activated by the user, allows Gimp-Perl scripts to connect to the
 running GIMP instance. Also provides a working example of a GIMP extension
@@ -51,6 +36,25 @@ in Gimp-Perl.
 There is a security advisory about GIMP scripting servers. This program
 will only allow TCP connections if a password is specified (the "auth"
 option), thereby eliminating any network-related security risk.
+
+=head1 PARAMETERS
+
+ [&Gimp::PDB_INT32, "run_mode", "Interactive:0=yes,1=no"],
+ [&Gimp::PDB_INT32, "flags", "internal flags (must be 0)"],
+ [&Gimp::PDB_INT32, "extra", "multi-purpose"],
+ [&Gimp::PDB_INT32, "verbose", "Gimp verbose var"],
+
+=head1 AUTHOR
+
+Marc Lehmann <pcg@goof.com>
+
+=head1 DATE
+
+1999-12-02
+
+=head1 LICENSE
+
+Same terms as Gimp-Perl.
 
 =head1 SEE ALSO
 

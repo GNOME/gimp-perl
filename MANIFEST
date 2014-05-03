@@ -15,6 +15,7 @@ Gimp/ColorDB.pm
 Gimp/Config.pm.in
 Gimp/Constant.pm
 Gimp/Data.pm
+Gimp/Extension.pm
 Gimp/Fu.pm
 Gimp/Lib.pm
 Gimp/Lib.xs
@@ -136,6 +137,7 @@ po/zh_CN.po
 po/zh_TW.po
 pxgettext
 t/examples-api.pl
+t/extension.t
 t/gimppod.t
 t/gimpsetup.pl
 t/import.t
