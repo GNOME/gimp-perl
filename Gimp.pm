@@ -867,7 +867,10 @@ Some methods behave differently from how you'd expect, or methods uniquely
 implemented in Perl (that is, not in the PDB). All of these must be
 invoked using the method syntax (C<Gimp-E<gt>> or C<$object-E<gt>>).
 
-=head3 Gimp->install_procedure(name, blurb, help, author, copyright, date, menu_path, image_types, type, params[, return_vals])
+=head3 Gimp->install_procedure
+
+Takes as parameters C<(name, blurb, help, author, copyright, date,
+menu_path, image_types, type, params[, return_vals])>.
 
 Mostly the same as gimp_install_procedure from the C library. The
 parameters and return values for the functions are each specified as an
