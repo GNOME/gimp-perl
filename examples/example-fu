@@ -51,6 +51,7 @@ descriptive help message here!
   [PF_STRING	, "text"	, "Message"		, "example text"],
   [PF_TEXT	, "longtext"	, "Longer text"		, "more example text"],
   [PF_FILE	, "file"	, "File"		, "/tmp"],
+  [PF_INT8	, "int8"	, "8-bit int"		, 10],
   [PF_INT32	, "bordersize"	, "Border size"		, 10],
   [PF_FLOAT	, "borderwidth"	, "Border width"	, 1/5],
   [PF_FONT	, "font"	, "Font"],
