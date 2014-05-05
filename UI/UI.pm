@@ -665,20 +665,15 @@ if (0) {
 	   $buttons->add ($edit);
 
            $edit->signal_connect (clicked => sub {
-              my $editor = $ENV{EDITOR} || "vi";
               my $tmp = Gimp->temp_name ("txt");
-              open TMP,">:utf8", $tmp or die __"FATAL: unable to create $tmp: $!\n";
-              print TMP &$gv;
-              close TMP;
+	      io($tmp)->utf8->print(&$gv);
               $w->hide;
-              main_iteration Gtk2;
-              system 'xterm', '-T', "$editor: $name", '-e', $editor, $tmp;
+              main_iteration Gtk2 for (1..3);
+              system 'gedit', $tmp;
               $w->show;
-              if (open TMP,"<:utf8", $tmp) {
-                 local $/; &$sv(scalar<TMP>); close TMP;
-              } else {
+	      my $content = io($tmp)->utf8->all;
+	      $content ? $sv->($content) :
                  Gimp->message(sprintf __"unable to read temporary file '%s': %s", $tmp, "$!");
-              }
            });
 
            my $filename = ($e{prefix} || eval { Gimp->directory } || ".") . "/";
@@ -686,33 +681,18 @@ if (0) {
            my $f = new Gtk2::FileSelection sprintf __"Fileselector for %s", $name;
            $f->set_filename ($filename);
            $f->cancel_button->signal_connect (clicked => sub { $f->hide });
-           my $lf = sub {
-              $f->hide;
-	      my $fn = $f->get_filename;
-	      $sv->(io($fn)->utf8->all ||
-                 Gimp->message(sprintf __"unable to read '%s': %s", $fn, "$!")
-	      );
-           };
-           my $sf = sub {
-              $f->hide;
-              my $fn = $f->get_filename;
-              if (open TMP, ">:utf8", $fn) {
-                 print TMP &$gv;
-                 close TMP;
-              } else {
-                 Gimp->message(sprintf __"unable to create '%s': %s", $fn, "$!");
-              }
-           };
+           my $lf = sub { $f->hide; $sv->(io($f->get_filename)->utf8->all); };
+           my $sf = sub { $f->hide; io($f->get_filename)->utf8->print(&$gv); };
            my $lshandle;
            $load->signal_connect (clicked => sub {
               $f->set_title(sprintf __"Load %s", $name);
-              $f->ok_button->signal_disconnect($lshandle) if $lshandle;
+              $f->ok_button->signal_handler_disconnect($lshandle) if $lshandle;
               $lshandle=$f->ok_button->signal_connect (clicked => $lf);
               $f->show_all;
            });
            $save->signal_connect (clicked => sub {
               $f->set_title(sprintf __"Save %s", $name);
-              $f->ok_button->signal_disconnect($lshandle) if $lshandle;
+              $f->ok_button->signal_handler_disconnect($lshandle) if $lshandle;
               $lshandle=$f->ok_button->signal_connect (clicked => $sf);
               $f->show_all;
            });
