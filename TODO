@@ -7,10 +7,7 @@ Items as of 2014-04-29 (by Ed J)
   PDB call added in tools/pdbgen/pdb/gimp.pdb
 * <Load> and <Save> need any registration as such done in Gimp::Fu - see pod and e/dataurl
 * Gimp::Fu no -o needs give warning
-* Gimp::UI PF_IMAGE needs "open" button
 * e/fade-alpha should generate buttons, not hardcode
-* image in Gimp.pm POD http://perlmaven.com/how-to-add-images-to-cpan -
-  input image -> output image of a plugin
 * Gimp/Lib.xs is huge, and not very XS-y - lots of it is manually
   pushing GIMP data structures onto perl stack and vice versa. Figure
   way to pass GIMP data back and forth directly via typemap system. May
