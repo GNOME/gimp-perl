@@ -23,9 +23,8 @@ FILTER {
 our @EXPORT = qw(podregister main add_listener register_temp);
 
 my @register_params;
-Gimp::on_query {
-   Gimp->install_procedure(@register_params);
-};
+my @temp_procs;
+Gimp::on_query { Gimp->install_procedure(@register_params); };
 
 sub podregister (&) {
    no strict 'refs';
@@ -40,6 +39,20 @@ sub podregister (&) {
    }
    Gimp::register_callback $function => sub {
       warn "$$-Gimp::Extension sub: $function(@_)" if $Gimp::verbose;
+      for my $tp (@temp_procs) {
+	 my (
+	    $tfunction, $tblurb, $tmenupath, $timagetypes, $thelp,
+	    $tparams, $tretvals, $tcallback,
+	 ) = @$tp;
+	 Gimp::register_callback $tfunction => $tcallback;
+	 Gimp->install_temp_proc(
+	    $tfunction, $tblurb, $thelp,
+	    $author, $copyright, $date,
+	    $tmenupath, $timagetypes,
+	    &Gimp::TEMPORARY,
+	    $tparams, $tretvals,
+	 );
+      }
       Gimp::gtk_init;
       Gimp->extension_ack;
       Gimp->extension_enable;
@@ -67,8 +80,8 @@ sub add_listener {
    }, $listen_socket);
 }
 
-sub register_temp ($$$&) {
-   my ($function, $params, $retvals, $callback) = @_;
+sub register_temp ($$$$$$$&) {
+   push @temp_procs, [ @_ ];
 }
 
 1;
@@ -143,6 +156,10 @@ such as network connections (this is how the Perl-Server is implemented).
 Additionally, if no parameters are specified, then the extension will
 be started as soon as GIMP starts up.
 
+If you need to clean up on exit, just register a callback with
+C<Gimp::on_quit>. This is how C<Perl-Server> removes its Unix-domain
+socket on exit.
+
 =head1 FUNCTIONS AVAILABLE TO EXTENSIONS
 
 These are all exported by default.
@@ -182,7 +199,8 @@ sending an initial message down that socket.
 
 This is a convenience wrapper around C<Gimp-E<gt>install_temp_proc>,
 supplying a number of parameters from information in the extension's
-POD. It takes parameters:
+POD. The registration will only happen when the extension's C<on_run>
+callback is called. It takes parameters:
 
 =over 4
 
@@ -190,11 +208,19 @@ POD. It takes parameters:
 
 The name of the new PDB procedure.
 
+=item $blurb
+
+=item $help
+
+=item $menupath
+
+=item $imagetypes
+
 =item $params
 
 =item $retvals
 
-Both as per L<Gimp/Gimp-E<gt>install_procedure>.
+All as per L<Gimp/Gimp-E<gt>install_procedure>.
 
 =item \&callback
 

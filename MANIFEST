@@ -48,6 +48,8 @@ examples/ditherize
 examples/dots
 examples/dust
 examples/example-extension
+examples/example-extension-tester
+examples/example-extension-no-fu
 examples/example-fu
 examples/example-net
 examples/example-no-fu

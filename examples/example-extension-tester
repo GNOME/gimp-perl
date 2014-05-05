@@ -1,0 +1,35 @@
+#!/usr/bin/perl -w
+
+use Gimp;
+use Gimp::Fu;
+#BEGIN { $Gimp::verbose = 1; }
+Gimp::set_trace(TRACE_ALL);
+
+podregister { die Gimp->extension_test_temp($Gimp::Fu::run_mode, 3) };
+
+exit main;
+__END__
+
+=head1 NAME
+
+test_plugin - Exercise extension temp proc
+
+=head1 SYNOPSIS
+
+<Image>/Filters/Languages/_Perl/Test _CB
+
+=head1 DESCRIPTION
+
+Exercise extension temp proc by calling it and die()ing with result.
+
+=head1 AUTHOR
+
+boilerplate id
+
+=head1 DATE
+
+20140505
+
+=head1 LICENSE
+
+Licence.
