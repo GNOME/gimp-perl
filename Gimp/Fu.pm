@@ -222,8 +222,12 @@ Gimp::on_net {
       die __"parameter '$entry->[1]' is not optional\n"
 	 unless defined $args[$i] or $interact>0;
    }
-   for my $i (0..$#args) { $args[$i] = string2pf($args[$i], $params->[$i]); }
-   if ($interact > 0) {
+   $interact = !!$interact;
+   for my $i (0..$#args) {
+      eval { $args[$i] = string2pf($args[$i], $params->[$i]); };
+      die $@ if $@ and not $interact;
+   }
+   if ($interact) {
       (my $res,@args)=interact($function,$blurb,$help,$params,$menupath,@args);
       return unless $res;
    }

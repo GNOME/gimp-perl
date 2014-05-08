@@ -498,18 +498,19 @@ my %PF2INFO = (
     $a->pack_start ($b,1,1,0);
     my $load = Gtk2::Button->new('Browse');
     $a->pack_start ($load,1,1,0);
-    my $f = new Gtk2::FileSelection sprintf __"Fileselector for %s", $name;
-    $f->set_filename ('.');
-    $f->cancel_button->signal_connect (clicked => sub { $f->hide });
     $load->signal_connect (clicked => sub {
-      $f->set_title(sprintf __"Load %s", $name);
-      $f->ok_button->signal_connect (clicked => sub {
-	$f->hide;
+      my $f = new Gtk2::FileChooserDialog
+	sprintf(__"Load %s", $name),
+	undef, 'open', 'gtk-cancel' => 'cancel', 'gtk-open' => 'ok';
+      $f->show_all;
+      my $result = $f->run;
+      if ($result eq 'ok') {
 	my $i = Gimp->file_load($f->get_filename, $f->get_filename);
 	Gimp::Display->new($i);
 	$b->reload;
-      });
-      $f->show_all;
+      }
+      $f->destroy;
+      1;
     });
     my $c = Gtk2::Button->new("Refresh");
     $c->signal_connect("clicked", sub {$b->reload});
