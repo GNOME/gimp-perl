@@ -502,6 +502,7 @@ my %PF2INFO = (
       my $f = new Gtk2::FileChooserDialog
 	sprintf(__"Load %s", $name),
 	undef, 'open', 'gtk-cancel' => 'cancel', 'gtk-open' => 'ok';
+      $f->set_filename ('.');
       $f->show_all;
       my $result = $f->run;
       if ($result eq 'ok') {
