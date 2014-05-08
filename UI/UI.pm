@@ -608,11 +608,9 @@ sub interact($$$$@) {
   );
 
   my $t = new Gtk2::Tooltips;
-  my $w = new Gtk2::Dialog;
-
   my $title = $menupath;
   $title =~ s#.*/##; $title =~ s#[_\.]##g;
-  set_title $w "Perl-Fu: $title";
+  my $w = new Gtk2::Dialog "Perl-Fu: $title", undef, [];
   $w->set_border_width(3); # sets border on inside because it's a window
   $w->action_area->set_spacing(2);
   $w->action_area->set_homogeneous(0);
@@ -628,9 +626,7 @@ sub interact($$$$@) {
     $value=$default unless defined $value;
     die sprintf __"Unsupported argumenttype %s for %s\n", $type, $name
       unless $PF2INFO{$type};
-    my ($a, $sv, $gv) = $PF2INFO{$type}->(
-      $name,$desc,$default,$extra,$value
-    );
+    my ($a, $sv, $gv) = $PF2INFO{$type}->( $name,$desc,$default,$extra,$value);
     push @setvals, $sv;
     push @getvals, $gv;
     push @lastvals, $value;
@@ -659,11 +655,13 @@ sub interact($$$$@) {
   can_default $button 1;
   grab_default $button;
 
-  show_all $w;
+  show_all $table;
+  show_all $sw;
   $sw->set_size_request(
     min(0.75*$sw->get_screen->get_width, $table->size_request->width + 30),
     min(0.6*$sw->get_screen->get_height, $table->size_request->height + 5)
   );
+  show_all $w;
   while (1) {
     my $res = $w->run;
     die $exception_text if $exception_text;
