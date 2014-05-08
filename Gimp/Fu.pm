@@ -70,7 +70,7 @@ my %pfname2info = (
    PF_IMAGE		=> [ PF_IMAGE, 'image', ],
    PF_LAYER		=> [ PF_LAYER, 'layer', ],
    PF_CHANNEL		=> [ PF_CHANNEL, 'channel', ],
-   PF_DRAWABLE		=> [ PF_DRAWABLE, 'drawable (%number or %a = active)', ],
+   PF_DRAWABLE		=> [ PF_DRAWABLE, 'drawable (%[filename:]number or %a = active)', ],
    PF_COLORARRAY	=> [ PF_COLORARRAY, 'list of colours' ],
    PF_VECTORS		=> [ PF_VECTORS, 'vectors' ],
    PF_PARASITE		=> [ PF_PARASITE, 'parasite' ],
@@ -174,6 +174,10 @@ sub string2pf($$) {
       if ((my $arg) = $s =~ /%(.+)/) {
 	 if ($arg eq 'a') {
 	    $latest_image->get_active_drawable;
+	 } elsif ((my $file, $arg) = $arg =~ /(.*):(\d+)/) {
+	    $latest_imagefile = $file;
+	    $latest_image = Gimp->file_load(Gimp::RUN_NONINTERACTIVE, $file, $file),
+	    ($latest_image->get_layers)[$arg]->become('Gimp::Drawable');
 	 } else {
 	    die "Drawable % argument not integer\n"
 	       unless $arg eq int $arg;
@@ -1071,16 +1075,22 @@ Use the C<--help> flag to see the available options:
 	     --bg_colour colour         Background colour [[255 128 0]]
 	     --ignore_cols boolean      Ignore colours [0]
 	     --extra_image image        Additional picture to ignore
-	     --extra_draw drawable (%number or %a = active) Something to ignore as well
+	     --extra_draw drawable (%[filename:]number or %a = active) Something to ignore as well
 	     --type data                Effect type [0]
 	     --a_brush brush            An unused brush
 	     --a_pattern pattern        An unused pattern
 	     --a_gradients gradient     An unused gradients
 
-You may notice that the C<drawable> above offers the option of "%number"
-(or "%a") - this means you can specify which drawable by numeric ID. From
-the command line, C<image> may be specified either as "%number" or as
-a filename.
+You may notice that the C<drawable> above offers the option of
+"%[filename:]number" (or "%a") - this means you can specify which drawable
+by numeric ID, or if specified as C<%filename:number>, Gimp::Fu will
+open that file and set the parameter to the C<number>th layer (starting
+from zero). From the command line, C<image> may be specified either as
+"%number" or as a filename.
+
+If interactive mode is chosen (either by specifying the command-line
+flag, or not giving all the arguments), and no output file is given,
+Gimp::Fu will add a parameter to get an output file.
 
 =head1 AUTHOR
 
