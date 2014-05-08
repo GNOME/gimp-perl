@@ -174,10 +174,9 @@ sub string2pf($$) {
 	 if ($arg eq 'a') {
 	    $latest_image->get_active_drawable;
 	 } else {
-	    # existing GIMP object - rely on autobless
 	    die "Drawable % argument not integer\n"
 	       unless $arg eq int $arg;
-	    $arg;
+	    Gimp::Drawable->existing($arg);
 	 }
       } else {
 	 die "Must specify drawable as %number or %a (active)\n";
@@ -223,11 +222,10 @@ Gimp::on_net {
       die __"parameter '$entry->[1]' is not optional\n"
 	 unless defined $args[$i] or $interact>0;
    }
+   for my $i (0..$#args) { $args[$i] = string2pf($args[$i], $params->[$i]); }
    if ($interact > 0) {
       (my $res,@args)=interact($function,$blurb,$help,$params,$menupath,@args);
       return unless $res;
-   } else {
-      for my $i (0..$#args) { $args[$i] = string2pf($args[$i], $params->[$i]); }
    }
    my $input_image = $args[0] if ref $args[0] eq "Gimp::Image";
    my @retvals = Gimp::callback(
