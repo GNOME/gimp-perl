@@ -635,7 +635,6 @@ sub interact($$$$@) {
     my $label = new Gtk2::Label "$desc: ";
     $label->set_alignment(1.0,0.5);
     $table->attach($label, 0, 1, $row, $row+1, ["expand","fill"], ["expand","fill"], 4, 2);
-    set_tip $t $a,$desc;
     my $halign = new Gtk2::HBox 0,0;
     $halign->pack_start($a,0,0,0);
     $table->attach($halign, 1, 2, $row, $row+1, ["expand","fill"], ["expand","fill"], 4, 2);
@@ -647,13 +646,28 @@ sub interact($$$$@) {
   $w->vbox->add($sw);
 
   my $button = $w->add_button('gtk-help', 3);
+  $button->signal_connect(clicked => sub {
+    help_window($helpwin, $w, $title, $help);
+  });
   $button = $w->add_button('gimp-reset', 2);
+  $button->signal_connect(clicked => sub {
+    map { $setvals[$_]->($defaults[$_]); } (0..$#defaults)
+  });
   set_tip $t $button,__"Reset all values to their default";
+  my $res = 0;
   $button = $w->add_button('gtk-cancel', 0);
+  $button->signal_connect(clicked => sub {
+    Gtk2->main_quit;
+  });
   can_default $button 1;
   $button = $w->add_button('gtk-ok', 1);
+  $button->signal_connect(clicked => sub {
+    $res = 1;
+    Gtk2->main_quit;
+  });
   can_default $button 1;
   grab_default $button;
+  $w->signal_connect(destroy => sub { Gtk2->main_quit; });
 
   show_all $table;
   show_all $sw;
@@ -662,17 +676,10 @@ sub interact($$$$@) {
     min(0.6*$sw->get_screen->get_height, $table->size_request->height + 5)
   );
   show_all $w;
-  while (1) {
-    my $res = $w->run;
-    die $exception_text if $exception_text;
-    if ($res < 2) {
-      hide $w;
-      return if $res == 0;
-      return (1, map {&$_} @getvals);
-    }
-    help_window($helpwin, $w, $title, $help) if $res == 3;
-    map { $setvals[$_]->($defaults[$_]); } (0..$#defaults) if $res == 2
-  }
+  Gtk2->main;
+  die $exception_text if $exception_text;
+  return if $res == 0;
+  return (1, map {&$_} @getvals);
 }
 
 1;
