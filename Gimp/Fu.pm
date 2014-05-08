@@ -141,7 +141,7 @@ sub this_script {
    die __"function '$exe' not found in this script (must be one of ".join(", ",@names).")\n";
 }
 
-my $latest_image;
+my ($latest_image, $latest_imagefile);
 
 sub string2pf($$) {
    my ($s, $type, $name, $desc) = ($_[0], @{$_[1]});
@@ -167,6 +167,7 @@ sub string2pf($$) {
 	    unless $image->is_valid;
       } else {
 	 $image = Gimp->file_load(Gimp::RUN_NONINTERACTIVE, $s, $s),
+	 $latest_imagefile = $s;
       }
       $latest_image = $image; # returned as well
    } elsif($type == PF_DRAWABLE) {
@@ -222,14 +223,18 @@ Gimp::on_net {
       die __"parameter '$entry->[1]' is not optional\n"
 	 unless defined $args[$i] or $interact>0;
    }
-   $interact = !!$interact;
+   $interact = $interact > 0;
    for my $i (0..$#args) {
       eval { $args[$i] = string2pf($args[$i], $params->[$i]); };
       die $@ if $@ and not $interact;
    }
    if ($interact) {
+      push @$params, [
+	 PF_FILE, 'gimp_fu_outputfile', 'Output file', $latest_imagefile
+      ] unless $outputfile;
       (my $res,@args)=interact($function,$blurb,$help,$params,$menupath,@args);
       return unless $res;
+      $outputfile = pop @args unless $outputfile;
    }
    my $input_image = $args[0] if ref $args[0] eq "Gimp::Image";
    my @retvals = Gimp::callback(
