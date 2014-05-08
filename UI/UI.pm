@@ -56,7 +56,7 @@ sub Gimp::UI::Combo::Layer::_items {
   +{
     map {
       my $i = $_;
-      map { (image_name($i)."/".$_->drawable_get_name => $_) } $i->get_layers;
+      map { (image_name($i)."/".$_->get_name => $_) } $i->get_layers;
     } Gimp::Image->list
   }
 }
@@ -65,7 +65,7 @@ sub Gimp::UI::Combo::Channel::_items {
   +{
     map {
       my $i = $_;
-      map { (image_name($i)."/".$_->drawable_get_name => $_) } $i->get_channels;
+      map { (image_name($i)."/".$_->get_name => $_) } $i->get_channels;
     } Gimp::Image->list
   }
 }
@@ -307,8 +307,8 @@ sub _find_digits {
    $digits > 0 ? int $digits + 0.9 : 0;
 }
 
-sub help_window(\$$$) {
-   my ($helpwin, $title, $help) = @_;
+sub help_window(\$$$$) {
+   my ($helpwin, $parent, $title, $help) = @_;
    unless ($$helpwin) {
       $$helpwin = new Gtk2::Dialog;
       $$helpwin->set_title(sprintf __"Help for %s", $title);
@@ -332,6 +332,8 @@ sub help_window(\$$$) {
       $$helpwin->signal_connect (destroy => sub { undef $$helpwin });
    }
    $$helpwin->show_all;
+   $$helpwin->run;
+   $$helpwin->hide;
 }
 
 sub _instrument {
@@ -491,7 +493,6 @@ my %PF2INFO = (
   },
   &PF_IMAGE => sub {
     my ($name,$desc,$default,$extra,$value) = @_;
-    my $res;
     my $a = Gtk2::HBox->new(0,5);
     my $b = Gimp::UI::Combo::Image->new;
     $a->pack_start ($b,1,1,0);
@@ -591,16 +592,9 @@ my %PF2INFO = (
 
 sub interact($$$$@) {
   warn __PACKAGE__ . "::interact(@_)" if $Gimp::verbose;
-  my $function = shift;
-  my $blurb = shift;
-  my $help = shift;
-  my @params = @{+shift};
-  my $menupath = shift;
+  my ($function, $blurb, $help, $params, $menupath) = splice @_, 0, 5;
   my (@getvals, @setvals, @lastvals, @defaults);
-  my ($button, $box, $bot, $g);
   my $helpwin;
-  my $res = 0;
-  my @res;
 
   Gimp::gtk_init;
   my $exception_text;
@@ -616,99 +610,71 @@ sub interact($$$$@) {
   my $t = new Gtk2::Tooltips;
   my $w = new Gtk2::Dialog;
 
-  for(;;) {
-    my $title = $menupath;
-    $title =~ s#.*/##; $title =~ s#[_\.]##g;
-    set_title $w "Perl-Fu: $title";
-    $w->set_border_width(3); # sets border on inside because it's a window
-    $w->action_area->set_spacing(2);
-    $w->action_area->set_homogeneous(0);
-    signal_connect $w destroy => sub { main_quit Gtk2 };
-    my $topblurb = new Gtk2::Label $blurb;
-    $topblurb->set_alignment(0.5,0.5);
-    $w->vbox->pack_start($topblurb,0,1,3);
-    $g = new Gtk2::Table scalar @params,2,0;
-    $g->set(border_width => 4);
-    for(@params) {
-      my ($type,$name,$desc,$default,$extra)=@$_;
-      my ($value)=shift;
-      $value=$default unless defined $value;
-      die sprintf __"Unsupported argumenttype %s for %s\n", $type, $name
-	unless $PF2INFO{$type};
-      my ($a, $sv, $gv) = $PF2INFO{$type}->(
-	$name,$desc,$default,$extra,$value
-      );
-      push @setvals, $sv;
-      push @getvals, $gv;
-      push @lastvals, $value;
-      push @defaults, $default;
-      $sv->($value);
-      my $label = new Gtk2::Label "$desc: ";
-      $label->set_alignment(1.0,0.5);
-      $g->attach($label, 0, 1, $res, $res+1, ["expand","fill"], ["expand","fill"], 4, 2);
-      set_tip $t $a,$desc;
-      my $halign = new Gtk2::HBox 0,0;
-      $halign->pack_start($a,0,0,0);
-      $g->attach($halign, 1, 2, $res, $res+1, ["expand","fill"], ["expand","fill"], 4, 2);
-      $res++;
-    }
-    my $sw = new Gtk2::ScrolledWindow undef,undef;
-    $sw->set_policy (-automatic, -automatic);
-    $sw->add_with_viewport($g);
-    $w->vbox->add($sw);
-
-    my $hbbox = new Gtk2::HButtonBox;
-    $hbbox->set_spacing (4);
-    $w->action_area->pack_end ($hbbox, 0, 0, 2);
-
-    $button = new Gtk2::Button->new_from_stock('gtk-help');
-    signal_connect $button clicked => sub { help_window ($helpwin, $title, $help) };
-#     can_default $button 1;
-    $hbbox->pack_start($button, 0, 0, 0);
-
-    $button = new Gtk2::Button->new_from_stock('gimp-reset');
-    signal_connect $button clicked => sub {
-      for my $i (0..$#defaults) {
-	$setvals[$i]->($defaults[$i]);
-      }
-    };
-    $hbbox->pack_start ($button, 0, 0, 0);
-    #  set_tip $t $button,__"Reset all values to their default";
-
-    $button = new Gtk2::Button->new_from_stock('gtk-cancel');
-    signal_connect $button clicked => sub { hide $w; main_quit Gtk2 };
-    $hbbox->pack_start ($button, 0, 0, 0);
-    can_default $button 1;
-
-    $button = new Gtk2::Button->new_from_stock('gtk-ok');
-    signal_connect $button clicked => sub { $res = 1; hide $w; main_quit Gtk2 };
-    $hbbox->pack_start ($button, 0, 0, 0);
-    can_default $button 1;
-    grab_default $button;
-
-    $res=0;
-
-    show_all $w;
-    $sw->set_size_request(
-      min(0.75*$sw->get_screen->get_width, $g->size_request->width + 30),
-      min(0.6*$sw->get_screen->get_height, $g->size_request->height + 5)
+  my $title = $menupath;
+  $title =~ s#.*/##; $title =~ s#[_\.]##g;
+  set_title $w "Perl-Fu: $title";
+  $w->set_border_width(3); # sets border on inside because it's a window
+  $w->action_area->set_spacing(2);
+  $w->action_area->set_homogeneous(0);
+  my $topblurb = new Gtk2::Label $blurb;
+  $topblurb->set_alignment(0.5,0.5);
+  $w->vbox->pack_start($topblurb,0,1,3);
+  my $table = new Gtk2::Table scalar @$params,2,0;
+  $table->set(border_width => 4);
+  my $row = 0;
+  for(@$params) {
+    my ($type,$name,$desc,$default,$extra)=@$_;
+    my ($value)=shift;
+    $value=$default unless defined $value;
+    die sprintf __"Unsupported argumenttype %s for %s\n", $type, $name
+      unless $PF2INFO{$type};
+    my ($a, $sv, $gv) = $PF2INFO{$type}->(
+      $name,$desc,$default,$extra,$value
     );
-    main Gtk2;
-    die $exception_text if $exception_text;
-
-    if ($res == 0) {
-      @res = ();
-      last;
-    }
-    @_ = map {&$_} @getvals;
-    if ($res == 1) {
-      @res = (1,@_);
-      last;
-    }
-#     Gimp->file_load(&Gimp::RUN_INTERACTIVE,"","");
+    push @setvals, $sv;
+    push @getvals, $gv;
+    push @lastvals, $value;
+    push @defaults, $default;
+    $sv->($value);
+    my $label = new Gtk2::Label "$desc: ";
+    $label->set_alignment(1.0,0.5);
+    $table->attach($label, 0, 1, $row, $row+1, ["expand","fill"], ["expand","fill"], 4, 2);
+    set_tip $t $a,$desc;
+    my $halign = new Gtk2::HBox 0,0;
+    $halign->pack_start($a,0,0,0);
+    $table->attach($halign, 1, 2, $row, $row+1, ["expand","fill"], ["expand","fill"], 4, 2);
+    $row++;
   }
-  @getvals = @setvals = @lastvals = ();
-  @res;
+  my $sw = new Gtk2::ScrolledWindow undef,undef;
+  $sw->set_policy (-automatic, -automatic);
+  $sw->add_with_viewport($table);
+  $w->vbox->add($sw);
+
+  my $button = $w->add_button('gtk-help', 3);
+  $button = $w->add_button('gimp-reset', 2);
+  set_tip $t $button,__"Reset all values to their default";
+  $button = $w->add_button('gtk-cancel', 0);
+  can_default $button 1;
+  $button = $w->add_button('gtk-ok', 1);
+  can_default $button 1;
+  grab_default $button;
+
+  show_all $w;
+  $sw->set_size_request(
+    min(0.75*$sw->get_screen->get_width, $table->size_request->width + 30),
+    min(0.6*$sw->get_screen->get_height, $table->size_request->height + 5)
+  );
+  while (1) {
+    my $res = $w->run;
+    die $exception_text if $exception_text;
+    if ($res < 2) {
+      hide $w;
+      return if $res == 0;
+      return (1, map {&$_} @getvals);
+    }
+    help_window($helpwin, $w, $title, $help) if $res == 3;
+    map { $setvals[$_]->($defaults[$_]); } (0..$#defaults) if $res == 2
+  }
 }
 
 1;
