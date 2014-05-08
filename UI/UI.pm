@@ -398,10 +398,17 @@ my %PF2INFO = (
     $a->add ($s);
     my $b = new Gtk2::Button __"Browse";
     $a->add ($b);
-    my $f = new Gtk2::FileSelection $desc;
-    $b->signal_connect(clicked => sub { $f->set_filename ($s->get_text); $f->show_all });
-    $f->ok_button->signal_connect(clicked => sub { $f->hide; $s->set_text($f->get_filename) });
-    $f->cancel_button->signal_connect(clicked => sub { $f->hide });
+    $b->signal_connect(clicked => sub {
+      my $f = new Gtk2::FileChooserDialog
+	sprintf(__"Choose %s", $name),
+	undef, 'save', 'gtk-cancel' => 'cancel', 'gtk-ok' => 'ok';
+      $f->set_filename('.');
+      $f->set_current_name($s->get_text);
+      $f->show_all;
+      $s->set_text($f->get_filename) if $f->run eq 'ok';
+      $f->destroy;
+      1;
+    });
     ($a, $set, $get);
   },
   &PF_ADJUSTMENT => sub {
@@ -570,23 +577,25 @@ my %PF2INFO = (
       system 'gedit', $tmp;
       $sv->(io($tmp)->utf8->all);
     });
-    my $f = new Gtk2::FileSelection sprintf __"Fileselector for %s", $name;
-    $f->set_filename ('.');
-    $f->cancel_button->signal_connect (clicked => sub { $f->hide });
-    my $lf = sub { $f->hide; $sv->(io($f->get_filename)->utf8->all); };
-    my $sf = sub { $f->hide; io($f->get_filename)->utf8->print(&$gv); };
-    my $lshandle;
     $load->signal_connect (clicked => sub {
-      $f->set_title(sprintf __"Load %s", $name);
-      $f->ok_button->signal_handler_disconnect($lshandle) if $lshandle;
-      $lshandle=$f->ok_button->signal_connect (clicked => $lf);
+      my $f = new Gtk2::FileChooserDialog
+	sprintf(__"Load %s", $name),
+	undef, 'open', 'gtk-cancel' => 'cancel', 'gtk-open' => 'ok';
+      $f->set_filename ('.');
       $f->show_all;
+      $sv->(io($f->get_filename)->utf8->all) if $f->run eq 'ok';
+      $f->destroy;
+      1;
     });
     $save->signal_connect (clicked => sub {
-      $f->set_title(sprintf __"Save %s", $name);
-      $f->ok_button->signal_handler_disconnect($lshandle) if $lshandle;
-      $lshandle=$f->ok_button->signal_connect (clicked => $sf);
+      my $f = new Gtk2::FileChooserDialog
+	sprintf(__"Save %s", $name),
+	undef, 'save', 'gtk-cancel' => 'cancel', 'gtk-save' => 'ok';
+      $f->set_filename ('.');
       $f->show_all;
+      io($f->get_filename)->utf8->print(&$gv) if $f->run eq 'ok';
+      $f->destroy;
+      1;
     });
     ($a, $sv, $gv);
   },
