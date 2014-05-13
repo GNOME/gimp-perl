@@ -37,7 +37,7 @@ podregister {
 
 # <Xach> sjburges: meanwhile, back at the pixelized image, bumpmap it with
 #           itself and a depth of about 5. do this twice.
-  gimp_selection_load($selection);
+  $image->select_item(CHANNEL_OP_REPLACE, $selection);
   $drawable->bump_map($drawable, 135, 45, 5, 0, 0, 0, 0, 1, 0, 0);
   $drawable->bump_map($drawable, 135, 45, 5, 0, 0, 0, 0, 1, 0, 0);
   $drawable->bump_map($gridlayer, 135, 45, 5, 0, 0, 0, 0, 1, 0, 0);
@@ -49,7 +49,7 @@ podregister {
   $image->insert_layer($cleangrid,0,0);
   gimp_edit_fill($cleangrid, BACKGROUND_FILL);
   $cleangrid->grid(1, $blocksize, 0, [0,0,0], 255, 1, $blocksize, 0, [0,0,0], 255, 0, 0, 0, [0,0,0], 0);
-  gimp_selection_load($selection);
+  $image->select_item(CHANNEL_OP_REPLACE, $selection);
   $drawable->bump_map($cleangrid, 135, 45, 3, 0, 0, 0, 0, 1, 0, 0);
   $image->selection_all;
 
@@ -57,7 +57,7 @@ podregister {
 
   $image->remove_layer($cleangrid);
   $image->remove_layer($gridlayer);
-  gimp_selection_load($selection);
+  $image->select_item(CHANNEL_OP_REPLACE, $selection);
   if ($selection_flag ==1) {
     $image->selection_none;
   }

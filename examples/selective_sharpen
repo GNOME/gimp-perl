@@ -49,13 +49,13 @@ podregister {
   $selchan->edit_paste(1);
   $image->get_floating_sel->anchor;
   $selchan->combine_masks($saved_selection, CHANNEL_OP_INTERSECT, 0, 0);
-  $selchan->selection_load;
+  $image->select_item(CHANNEL_OP_REPLACE, $selchan);
 
   # 7) then use unsharp mask to that selection (scratch the gray layer)
   $drawable->unsharp_mask($sharpen_radius, $sharpen_amt, $threshold);
 
   # cleanup
-  $saved_selection->selection_load;
+  $image->select_item(CHANNEL_OP_REPLACE, $saved_selection);
   $image->remove_channel($saved_selection);
   $image->remove_channel($selchan);
   $image->remove_layer($edge_layer);

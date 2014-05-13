@@ -22,7 +22,7 @@ podregister {
   my $sel = $image->selection_save;
   $image->select_rectangle(CHANNEL_OP_REPLACE,$x1,$y1,$w,$h);
   $drawable->edit_copy;
-  $sel->selection_load;
+  $image->select_item(CHANNEL_OP_REPLACE, $sel);
   $sel->remove_channel;
   my $copy = new Gimp::Image($w, $h, $image->base_type);
   $copy->undo_disable;

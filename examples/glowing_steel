@@ -112,7 +112,7 @@ sub perl_fu_add_glow {
   gimp_image_select_item($image, CHANNEL_OP_REPLACE, $drawable);
   gimp_edit_clear($glow);
 
-  gimp_selection_load($old_sel);
+  $image->select_item(CHANNEL_OP_REPLACE, $old_sel);
   gimp_floating_sel_anchor($drawable) if $is_float;
   gimp_image_set_active_layer($image,$old_draw);
   gimp_image_undo_group_end($image);
@@ -166,9 +166,8 @@ sub perl_fu_brushed_metal {
   plug_in_noisify($image, $templ, 0, 0.3, 0.3, 0.3, 0);
   plug_in_mblur($image, $templ, 0, $length, $angle, 0.0, 0.0);
 
-
   # Now put it into the target layer
-  gimp_selection_load($target_select);
+  $image->select_item(CHANNEL_OP_REPLACE, $target_select);
   gimp_edit_copy($templ);
   my $float = gimp_edit_paste($drawable, 0);
   gimp_layer_set_offsets($float, $x1+$length, $y1+$length);
@@ -231,7 +230,7 @@ sub perl_fu_highlight_edges {
   gimp_image_select_item($image, CHANNEL_OP_REPLACE, $drawable);
   gimp_edit_clear($white);
 
-  gimp_selection_load($old_sel);
+  $image->select_item(CHANNEL_OP_REPLACE, $old_sel);
   gimp_floating_sel_anchor($drawable) if $is_float;
   # gimp_image_set_active_layer($image,$old_draw);
   gimp_image_undo_group_end($image);
