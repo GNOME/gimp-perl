@@ -6,7 +6,7 @@ use Gimp::Extension;
 
 #$Gimp::verbose = 1;
 #Gimp::set_trace(TRACE_ALL);
-my $persist = 6;
+my $persist;
 
 register_temp
   'extension_test_temp',
@@ -24,7 +24,7 @@ register_temp
     $persist;
   };
 
-podregister { Gtk2->main; };
+podregister { $persist = $_[1]; Gtk2->main; };
 
 exit main;
 __END__
@@ -39,12 +39,21 @@ extension_test - test Gimp::Extension
 
 =head1 DESCRIPTION
 
-Description.
+Installs a temporary procedure, C<extension_test_temp>. This takes args
+of C<$run_mode, $number>, adds the number to the extension's persistent
+data number, and returns its new value.
+
+The extension itself's C<num> parameter is the initial value of the
+persistent storage number, if given. The number does not persist across
+runs of GIMP.
+
+See L<examples/example-extension-tester> for a small L<Gimp::Fu> plugin
+that exercises this extension.
 
 =head1 PARAMETERS
 
  [&Gimp::PDB_INT32, "run_mode", "Interactive:0=yes,1=no"],
- [&Gimp::PDB_INT32, "num", "internal flags (must be 0)"],
+ [&Gimp::PDB_INT32, "num", "Initial number value"],
 
 =head1 RETURN VALUES
 

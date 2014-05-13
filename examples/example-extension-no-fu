@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl -w
+#!/usr/bin/perl -w
 
 BEGIN { $Gimp::verbose = 1; }
 use Gimp;
@@ -49,3 +49,36 @@ Gimp::on_query {
 };
 
 exit Gimp::main;
+__END__
+
+=head1 NAME
+
+extension_gp_test - Demo Gimp::Extension
+
+=head1 SYNOPSIS
+
+<None>
+
+=head1 DESCRIPTION
+
+Example extension that does not use L<Gimp::Extension>.
+
+=head1 PARAMETERS
+
+ # none
+
+=head1 RETURN VALUES
+
+ # none
+
+=head1 AUTHOR
+
+Ed J
+
+=head1 DATE
+
+2014-05-03
+
+=head1 LICENSE
+
+Same terms as Gimp-Perl.
