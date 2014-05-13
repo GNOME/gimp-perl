@@ -49,7 +49,7 @@ sub layer_create {
   $tcol = Gimp->palette_get_background ();
   Gimp->palette_set_background ($color);
   Gimp->drawable_fill ($layer,&BACKGROUND_FILL);
-  Gimp->image_add_layer($image, $layer, $pos);
+  Gimp->image_insert_layer($image, $layer, 0, $pos);
   Gimp->palette_set_background ($tcol); # reset
   $layer;
   }
@@ -75,7 +75,7 @@ sub text_draw {
   Gimp->layer_set_preserve_trans($text_layer, &FALSE);
 
   # add text to image
-  Gimp->image_add_layer($image, $text_layer, 0);
+  $image->insert_layer($text_layer, 0, 0);
   # merge white and text
   Gimp->image_merge_visible_layers ($image,1);
   # cleanup the left over layer (!)
@@ -162,7 +162,7 @@ sub gimp_image_add_new_layer {
       100, &NORMAL_MODE
    );
    $layer->fill (defined $filltype ? $filltype : &BACKGROUND_FILL);
-   $image->add_layer ($layer, $index*1);
+   $image->insert_layer ($layer, 0, $index*1);
    $layer;
 }
 
@@ -170,7 +170,7 @@ sub gimp_image_set_visible {
    my $image = shift;
    my %layers; @layers{map $$_,@_}=(1) x @_;
    for ($image->get_layers) {
-      $_->drawable_set_visible ($layers{$$_});
+      $_->set_visible ($layers{$$_});
    }
 }
 
@@ -178,7 +178,7 @@ sub gimp_image_set_invisible {
    my $image = shift;
    my %layers; @layers{map $$_,@_}=(1) x @_;
    for ($image->get_layers) {
-      $_->drawable_set_visible (!$layers{$$_});
+      $_->set_visible (!$layers{$$_});
    }
 }
 
