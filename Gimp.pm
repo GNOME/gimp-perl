@@ -281,11 +281,12 @@ sub ignore_functions(@) {
    @ignore_function{@_}++;
 }
 
-sub recroak {
+sub recroak { $_[0] =~ /\n$/ ? die shift : croak shift; }
+sub exception_strip {
   my ($file, $e) = @_;
-  $file =~ s#\.[^\.]*$##; # cheat to allow Gimp[.pm] to match from Gimp/Net
-  die $e unless $e =~ s# at $file\S* line \d+\.\n\Z##;
-  croak $e;
+  $file =~ s#\..*##;
+  $e =~ s# at $file\S+ line \d+\.\n\Z##;
+  $e;
 }
 sub AUTOLOAD {
   my ($class,$name) = $AUTOLOAD =~ /^(.*)::(.*?)$/;
@@ -300,7 +301,7 @@ sub AUTOLOAD {
       *{$AUTOLOAD} = sub {
 	shift unless ref $_[0];
 	my @r = eval { &$ref };
-	recroak __FILE__, $@ if $@; wantarray ? @r : $r[0];
+	recroak exception_strip(__FILE__, $@) if $@; wantarray ? @r : $r[0];
       };
       goto &$AUTOLOAD;
     } elsif (UNIVERSAL::can($interface_pkg,$sub)) {
@@ -308,7 +309,7 @@ sub AUTOLOAD {
       *{$AUTOLOAD} = sub {
 	shift unless ref $_[0];
 	my @r = eval { &$ref };
-	recroak __FILE__, $@ if $@; wantarray ? @r : $r[0];
+	recroak exception_strip(__FILE__, $@) if $@; wantarray ? @r : $r[0];
       };
       goto &$AUTOLOAD;
     } elsif (gimp_procedural_db_proc_exists($sub)) {
@@ -318,7 +319,7 @@ sub AUTOLOAD {
 	unshift @_, $sub;
 	warn "$$-gimp_call_procedure{1}(@_)" if $Gimp::verbose;
 	my @r = eval { gimp_call_procedure (@_) };
-	recroak __FILE__, $@ if $@; wantarray ? @r : $r[0];
+	recroak exception_strip(__FILE__, $@) if $@; wantarray ? @r : $r[0];
       };
       goto &$AUTOLOAD;
     }

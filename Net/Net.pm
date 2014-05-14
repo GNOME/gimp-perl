@@ -102,7 +102,7 @@ sub gimp_call_procedure {
 	 print $trace_res $trace;
       }
    }
-   Gimp::recroak(__FILE__, $die_text) if $die_text;
+   Gimp::recroak(Gimp::exception_strip(__FILE__, $die_text)) if $die_text;
    wantarray ? @response : $response[0];
 }
 
@@ -321,7 +321,7 @@ sub handle_request($) {
 	    $trace_res = "";
 	 }
          @args = eval { Gimp->$function(@args) };
-	 unshift @args, $@;
+	 unshift @args, Gimp::exception_strip(__FILE__, $@);
 	 unshift @args, $trace_res if $req eq "TRCE";
 	 senddata $fh, args2net(1, @args);
          Gimp::set_trace(0) if $req eq "TRCE";
