@@ -58,6 +58,7 @@ sub podregister (&) {
       Gimp->extension_enable;
       goto &$code;
    };
+   $menupath = undef if $menupath eq '<None>';
    @register_params = (
       $function, $blurb, $help, $author, $copyright, $date, $menupath,
       $imagetypes, &Gimp::EXTENSION, $params, $results
@@ -119,17 +120,10 @@ extensions.
 
 Your main interface for using C<Gimp::Extension> is the C<podregister>
 function. This works in exactly the same way as L<Gimp::Fu/PODREGISTER>,
-including declaring/receiving your variables for you.
+including declaring/receiving your variables for you, with a few crucial
+differences. See below for those differences.
 
-It is different in that parameters and return values are not added
-for you, and your function name will not be changed but passed to GIMP
-verbatim.
-
-Another difference is that the C<run_mode> is passed on to your function,
-rather than being stripped off as with Gimp::Fu.
-
-Finally, before control is passed to your function, these procedures
-are called:
+Before control is passed to your function, these procedures are called:
 
   Gimp::gtk_init; # sets up Gtk2, ready for event loop
   Gimp->extension_ack; # GIMP hangs till this is called
@@ -159,6 +153,15 @@ be started as soon as GIMP starts up.
 If you need to clean up on exit, just register a callback with
 C<Gimp::on_quit>. This is how C<Perl-Server> removes its Unix-domain
 socket on exit.
+
+=head2 PODREGISTER DIFFERENCES
+
+The C<podregister> function here is different from in L<Gimp::Fu>
+in that parameters and return values are not added for you, and your
+function name will not be changed but passed to GIMP verbatim.
+
+The C<run_mode> is passed on to your function, rather than being stripped
+off as with Gimp::Fu.
 
 =head1 FUNCTIONS AVAILABLE TO EXTENSIONS
 
