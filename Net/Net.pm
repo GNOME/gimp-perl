@@ -158,6 +158,7 @@ sub start_server {
    push @exec_args, "--no-data" if $opt=~s/(^|:)no-?data//;
    push @exec_args, "-i" unless $opt=~s/(^|:)gui//;
    push @exec_args, "--verbose" if $Gimp::verbose;
+   push @exec_args, qw(--pdb-compat-mode off);
    push @exec_args, qw(--batch-interpreter plug-in-script-fu-eval -b);
    push @exec_args, "(if (defined? '$PROC_SF) ($PROC_SF $args)) (gimp-quit 0)";
    warn __"$$-exec @exec_args\n" if $Gimp::verbose;
