@@ -4,59 +4,61 @@ use constant { PI => 3.14159 };
 use Gimp;
 use Gimp::Fu;
 use Gimp::Util;
+use List::Util qw(max);
+use strict;
 
 #Gimp::set_trace(TRACE_ALL);
 
 sub saw {  # a sawtooth function on PI
-  ($val) = @_;
+  my ($val) = @_;
   if ($val < PI/2.0) {
-    return ($val/PI);
+    return $val/PI;
   } elsif ($val < PI) {
-    return (-1+$val/PI);
+    return $val/PI - 1;
   } elsif ($val < PI*1.5) {
-    return ($val/PI);
+    return $val/PI;
   } else {
-    return (-1+$val/PI);
+    return $val/PI - 1;
   }
 }
 
 sub spin_layer { # the function for actually spinning the layer
-  my ($img, $spin, $destination, $numframes, $prp) = @_;
+  my ($img, $source, $destination, $numframes, $prp) = @_;
   my ($floater,  # The transformed image
      $framelay, # The background color
      $frameno);  # The current frame
   # Now let's spin it!
-  $stepsize = PI/$numframes; # in radians
+  my $stepsize = PI/$numframes; # in radians
   $frameno = 0;
-  for ($i=0; $i<=PI; $i+=$stepsize) {
+  for (my $i=0; $i<=PI; $i+=$stepsize) {
     Gimp->progress_update ($i/PI);
     # create a new layer for spinning
-    $framelay = ($i < PI/2.0) ? $spin->copy(1) : $destination->copy(1);
+    $framelay = ($i < PI/2.0) ? $source->copy(1) : $destination->copy(1);
     $img->insert_layer($framelay, 0, 0);
     $floater = $framelay->copy(1);
     $img->insert_layer($floater, 0, 0);
     # spin it a step
-    $img->selection_all();
-    @x = $img->selection_bounds();
-    $img->selection_none();
+    $img->selection_all;
+    my @x = $img->selection_bounds;
+    $img->selection_none;
     # x[1],x[2]                  x[3],x[2]
     # x[1],x[4]                  x[3],x[4]
-    my($y1, $y3);
-    $y1 = int($x[2]+$spin->height *sin($i)/2);
-    $y3 = int($x[4]-$spin->height *sin($i)/2);
+    my $height_sin_i2 = $source->height *sin($i)/2;
+    my $y1 = int($x[2]+$height_sin_i2);
+    my $y3 = int($x[4]-$height_sin_i2);
     # height must be != 0
     $y3++ if ($y1 == $y3);
-    # the drawable version (deprecated) has different params
+    my $saw_prp_width = saw($i)*$prp*$framelay->width;
     $floater = $floater->Gimp::Item::transform_perspective(
-      $x[1]+saw($i)*$prp*$framelay->width,$y1,
-      $x[3]-saw($i)*$prp*$framelay->width,$y1,
-      $x[1]-saw($i)*$prp*$framelay->width,$y3,
-      $x[3]+saw($i)*$prp*$framelay->width,$y3,
+      $x[1]+$saw_prp_width,$y1,
+      $x[3]-$saw_prp_width,$y1,
+      $x[1]-$saw_prp_width,$y3,
+      $x[3]+$saw_prp_width,$y3,
     );
-    $framelay->fill(1); # BG-IMAGE-FILL
+    $framelay->fill(BACKGROUND_FILL);
     # merge the two layers together before we continue
-    $img->set_visible($floater, $framelay);
-    $framelay = $img->merge_visible_layers(0);
+    $img->set_visible($floater, $framelay); # all others invis
+    $framelay = $img->merge_visible_layers(EXPAND_AS_NECESSARY);
     $frameno++;
     $framelay->set_name("Spin Layer $frameno (50ms)");
   }
@@ -67,42 +69,40 @@ podregister {
   Gimp::Context->set_background($color);
   $perspective /= 255.0; # PF_SLIDER doesn't work right for < 1
   Gimp->progress_init(__"Seth Spin...");
-  # Copy souce and destination to new image
-  $maxwide = ($drawable->width > $destination->width) ? $drawable->width : $destination->width;
-  $maxhigh = ($drawable->height > $destination->height) ? $drawable->height: $destination->height;
-  $img = Gimp->image_new($maxwide, $maxhigh, RGB);
-  $tmpimglayer = $img->add_new_layer(0,3,1); # have to have a layer before displaying
+  # Copy source and destination to new image
+  my $maxwide = max($drawable->width, $destination->width);
+  my $maxhigh = max($drawable->height, $destination->height);
+  my $img = Gimp->image_new($maxwide, $maxhigh, RGB);
+  my $tmpimglayer = $img->add_new_layer(0,3,1); # have to have a layer before displaying
   $img->display_new;
-  $drawable->edit_copy();
-  $spinlayer = $tmpimglayer->edit_paste(1);
-  $spinlayer->floating_sel_to_layer();
-  $destination->edit_copy();
-  $destlayer = $tmpimglayer->edit_paste(1);
-  $destlayer->floating_sel_to_layer();
+  $drawable->edit_copy;
+  my $spinlayer = $tmpimglayer->edit_paste(1);
+  $spinlayer->floating_sel_to_layer;
+  $destination->edit_copy;
+  my $destlayer = $tmpimglayer->edit_paste(1);
+  $destlayer->floating_sel_to_layer;
   $tmpimglayer->remove_layer;                # remove temporary layer.
   # set the layer size to be the full layer for each copied layer
   $spinlayer->resize($maxwide, $maxhigh, $spinlayer->offsets);
   $destlayer->resize($maxwide, $maxhigh, $destlayer->offsets);
+  $img->set_invisible($img->get_layers); # so they don't get merged
   # need an even number of frames for spinback
   if ($frames%2 && $spinback) {
     $frames++;
     Gimp->message(__"An even number of frames is needed for spin back.\nAdjusted frames up to $frames");
   }
-  spin_layer($img, $spinlayer, $destlayer, $spinback ? $frames/2 : $frames, $perspective);
+  spin_layer($img, $spinlayer, $destlayer, $frames/($spinback ? 2 : 1), $perspective);
   # go back from destination to spinlayer if spinning back
   spin_layer($img, $destlayer, $spinlayer, $frames/2, $perspective) if $spinback;
-  # remove the original 2 pasted layers
   $img->remove_layer($destlayer);
   $img->remove_layer($spinlayer);
-  # unhide and name layers (Give timings)
-  # (note that image_set_visible used here is a Gimp::Util function)
-  @all_layers = $img->get_layers;
-  $img->set_visible(@all_layers);
+  $img->set_invisible(); # sets all visible
+  my @all_layers = $img->get_layers;
   $all_layers[$frames/2-1]->set_name(__"Spin Layer DEST (250ms)") if $spinback;
   $all_layers[$frames-1]->set_name(__"Spin Layer SRC (250ms)");
   $img->convert_indexed(1,MAKE_PALETTE,255,0,1,"buffy") if $indexed;
   Gimp::Context->pop;
-  return();
+  return $img;
 };
 
 exit main;
@@ -129,6 +129,10 @@ another image.  I made it for easy web buttons.
   [PF_SLIDER, "perspective", "How much perspective effect to get", 40, [0,255,5]],
   [PF_TOGGLE, "spinback", "Spin back" , 1],
   [PF_TOGGLE, "indexed", "Convert to indexed", 1],
+
+=head1 RETURN VALUES
+
+  [PF_IMAGE, "output","Output image"],
 
 =head1 IMAGE TYPES
 
