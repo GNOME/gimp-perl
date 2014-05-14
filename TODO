@@ -7,7 +7,7 @@ Items as of 2014-04-29 (by Ed J)
   - issue with removing menus, probably stored in _plug_in data
   PDB call added in tools/pdbgen/pdb/gimp.pdb
 * <Load> and <Save> need any registration as such done in Gimp::Fu - see pod and e/dataurl
-* Gimp::Fu no -o needs give warning
+* Test Gimp::Fu menupath <Load>/<Save>/<Image>/<Toolbox>/<None>
 * e/fade-alpha should generate buttons, not hardcode
 * Gimp/Lib.xs is huge, and not very XS-y - lots of it is manually
   pushing GIMP data structures onto perl stack and vice versa. Figure
@@ -21,7 +21,6 @@ Items as of 2014-04-29 (by Ed J)
   - gimp/plug-ins/script-fu/script-fu-console.c
   base on this:
   http://gtk2-perl.sourceforge.net/doc/gtk2-perl-study-guide/x3661.html
-* Test Gimp::Fu menupath <Load>/<Save>/<Image>/<Toolbox>/<None>
 * "IGNORE THIS MESSAGE" - $in_top - whole quiet_die probably needs to go too
 * PS flags are obsolete - replace with verbose - set_trace may also be obsolete
 * interactive collab image-editing:
