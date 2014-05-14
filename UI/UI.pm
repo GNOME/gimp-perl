@@ -720,6 +720,10 @@ C<examples/example-no-fu>.
  $button = new Gimp::UI::BrushSelect;
  $button = new Gimp::UI::GradientSelect;
 
+ @new_vals = Gimp::UI::interact(
+   $function,$blurb,$help,$params,$menupath,@previous_vals
+ );
+
 =back
 
 =head1 AUTHOR
