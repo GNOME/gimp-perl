@@ -145,7 +145,7 @@ my ($latest_image, $latest_imagefile);
 
 sub string2pf($$) {
    my ($s, $type, $name, $desc) = ($_[0], @{$_[1]});
-   if($pf2info{$type}->[2]) {
+   if($pf2info{$type}->[2] or $type == PF_RADIO) {
       $s;
    } elsif($pf2info{$type}->[0] =~ /integer/) {
       die __"$s: not an integer\n" unless $s==int($s);
@@ -201,6 +201,7 @@ sub mangle_key {
 }
 
 Gimp::on_net {
+   *{Gimp::UI::export_image} = sub ($$$$) { &Gimp::EXPORT_IGNORE };
    require Getopt::Long;
    my $this = this_script;
    my(%mangleparam2index,@args);
