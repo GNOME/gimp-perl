@@ -253,7 +253,6 @@ Gimp::on_net {
 	       $path=~s/\.(?=[^.]*$)/$i./; # insert number before last dot
 	    }
 	    save_image($images[$i],$path);
-	    $images[$i]->delete;
 	 }
       } elsif ($input_image) {
 	 save_image($input_image, sprintf $outputfile, 0);
@@ -415,8 +414,7 @@ sub register($$$$$$$$$;@) {
 sub save_image($$) {
    my($img,$path)=@_;
    print "saving image $path\n" if $Gimp::verbose;
-   my($flatten,$type);
-
+   my $flatten=undef;
    my $interlace=0;
    my $quality=0.75;
    my $smooth=0;
@@ -427,18 +425,20 @@ sub save_image($$) {
    my $noextra=0;
 
    $_=$path=~s/^([^:]+):// ? $1 : "";
-   $type=uc($1) if $path=~/\.([^.]+)$/;
+   my $type=uc($1) if $path=~/\.([^.]+)$/;
    $type=uc($1) if s/^(GIF|JPG|JPEG|PNM|PNG)//i;
+   # animation standard support: jpg no, pnm no, gif yes, png yes
+   # animation file-*-save support: none
    while($_ ne "") {
-      $interlace=$1 eq "+",	next if s/^([-+])[iI]//;
-      $flatten=$1 eq "+",	next if s/^([-+])[fF]//;
-      $noextra=$1 eq "+",	next if s/^([-+])[eE]//;
-      $smooth=$1 eq "+",	next if s/^([-+])[sS]//;
-      $quality=$1*0.01,		next if s/^-[qQ](\d+)//;
-      $compress=$1,		next if s/^-[cC](\d+)//;
-      $loop=$1 eq "+",		next if s/^([-+])[lL]//;
-      $delay=$1,		next if s/^-[dD](\d+)//;
-      $dispose=$1,		next if s/^-[pP](\d+)//;
+      $interlace=$1 eq "+",	next if s/^([-+])I//i;
+      $flatten=$1 eq "+",	next if s/^([-+])F//i;
+      $noextra=$1 eq "+",	next if s/^([-+])E//i;
+      $smooth=$1 eq "+",	next if s/^([-+])S//i;
+      $quality=$1*0.01,		next if s/^-Q(\d+)//i;
+      $compress=$1,		next if s/^-C(\d+)//i;
+      $loop=$1 eq "+",		next if s/^([-+])L//i;
+      $delay=$1,		next if s/^-D(\d+)//i;
+      $dispose=$1,		next if s/^-P(\d+)//i;
       croak __"$_: unknown/illegal file-save option";
    }
    $flatten=(()=$img->get_layers)>1 unless defined $flatten;
