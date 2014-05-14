@@ -414,7 +414,7 @@ sub register($$$$$$$$$;@) {
 sub save_image($$) {
    my($img,$path)=@_;
    print "saving image $path\n" if $Gimp::verbose;
-   my $flatten=undef;
+   my $flatten=0;
    my $interlace=0;
    my $quality=0.75;
    my $smooth=0;
@@ -424,9 +424,10 @@ sub save_image($$) {
    my $dispose=0;
    my $noextra=0;
 
-   $_=$path=~s/^([^:]+):// ? $1 : "";
+   $_ = $path =~ s/^([^:]+):// ? $1 : "";
    my $type=uc($1) if $path=~/\.([^.]+)$/;
-   $type=uc($1) if s/^(GIF|JPG|JPEG|PNM|PNG)//i;
+   $type = 'XCF' unless defined $type;
+   $type = 'JPG' if $type eq 'JPEG';
    # animation standard support: jpg no, pnm no, gif yes, png yes
    # animation file-*-save support: none
    while($_ ne "") {
@@ -441,20 +442,18 @@ sub save_image($$) {
       $dispose=$1,		next if s/^-P(\d+)//i;
       croak __"$_: unknown/illegal file-save option";
    }
-   $flatten=(()=$img->get_layers)>1 unless defined $flatten;
-
    $img->flatten if $flatten;
 
    # always save the active layer
    my $layer = $img->get_active_layer;
 
-   if ($type eq "JPG" or $type eq "JPEG") {
-      eval { $layer->file_jpeg_save($path,$path,$quality,$smooth,1) };
-      $layer->file_jpeg_save($path,$path,$quality,$smooth,1,$interlace,"",0,1,0,0) if $@;
+   if ($type eq "JPG") {
+      $layer->file_jpeg_save(
+	 $path, $path, $quality, $smooth, 1, $interlace, "", 0, 1, 0, 0
+      );
    } elsif ($type eq "GIF") {
       unless ($layer->is_indexed) {
-         eval { $img->convert_indexed(1,256) };
-         $img->convert_indexed(2,Gimp::MAKE_PALETTE,256,1,1,"") if $@;
+         $img->convert_indexed(2, Gimp::MAKE_PALETTE, 256, 1, 1, "");
       }
       $layer->file_gif_save($path,$path,$interlace,$loop,$delay,$dispose);
    } elsif ($type eq "PNG") {
@@ -1003,18 +1002,16 @@ undefined or false, making the register call itself much shorter.
 This is the internal function used to save images, which does more than
 C<gimp_file_save>.
 
-The C<img> is the image you want to save (which might get changed during
-the operation!), C<options_and_path> denotes the filename and optional
-options. If there are no options, C<save_image> tries to deduce the filetype
-from the extension. The syntax for options is
+The C<img> is the GIMP image you want to save (which might get changed
+during the operation!), C<options_and_path> denotes the filename and
+possibly options. If there are no options, C<save_image> tries to deduce
+the filetype from the extension. The syntax for options is
 
- [IMAGETYPE[OPTIONS...]:]filespec
-
-IMAGETYPE is one of GIF, JPG, JPEG, PNM or PNG, options include
+ [OPTIONS...:]filespec
 
  options valid for all images
- +F	flatten the image (default depends on the image)
- -F	do not flatten the image
+ +F	flatten the image
+ -F	do not flatten the image (default)
 
  options for GIF and PNG images
  +I	do save as interlaced
@@ -1036,13 +1033,13 @@ IMAGETYPE is one of GIF, JPG, JPEG, PNM or PNG, options include
  -S	do not smooth (default)
  +S	smooth before saving
 
-some examples:
+Some examples:
 
- test.jpg		save the image as a simple jpeg
- JPG:test.jpg		the same
- JPG-Q70:test.jpg	the same but force a quality of 70
- GIF-I-F:test.jpg	save a gif image(!) named test.jpg
-			non-interlaced and without flattening
+ test.jpg	save the image as a simple JPEG
+ -Q70:test.jpg	the same but force a quality of 70
+ -I-F:test.gif	save a GIF image, non-interlaced and without flattening
+
+You can specify a file with extension C<.xcf>, which will save in XCF format.
 
 =back
 
@@ -1091,6 +1088,10 @@ from zero). From the command line, C<image> may be specified either as
 If interactive mode is chosen (either by specifying the command-line
 flag, or not giving all the arguments), and no output file is given,
 Gimp::Fu will add a parameter to get an output file.
+
+If the C<--output> option is given, the argument will be passed to
+C<save_image>. This means you can specify various options on how you
+want the image to be saved/converted, as part of the "filename".
 
 =head1 AUTHOR
 
