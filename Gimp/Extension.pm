@@ -41,7 +41,7 @@ sub podregister (&) {
       warn "$$-Gimp::Extension sub: $function(@_)" if $Gimp::verbose;
       for my $tp (@temp_procs) {
 	 my (
-	    $tfunction, $tblurb, $tmenupath, $timagetypes, $thelp,
+	    $tfunction, $tblurb, $thelp, $tmenupath, $timagetypes,
 	    $tparams, $tretvals, $tcallback,
 	 ) = @$tp;
 	 Gimp::register_callback $tfunction => $tcallback;
