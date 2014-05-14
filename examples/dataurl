@@ -5,46 +5,54 @@ use Gimp::Fu;
 use Gimp::UI;
 use MIME::Base64;
 use IO::All;
+use List::Util qw(max);
+
+my %filetype2info = (
+  0 => [
+    EXPORT_CAN_HANDLE_INDEXED|EXPORT_CAN_HANDLE_ALPHA,
+    "gif",
+    'file_gif_save', [ 0, 0, 0, 0 ],
+  ],
+  1 => [
+    EXPORT_CAN_HANDLE_RGB|EXPORT_CAN_HANDLE_GRAY,
+    "jpeg",
+    'file_jpeg_save', [ 0.7, 0, 1, 0, "", 0, 1, 0, 0 ],
+  ],
+  2 => [
+    EXPORT_CAN_HANDLE_RGB|EXPORT_CAN_HANDLE_GRAY|EXPORT_CAN_HANDLE_INDEXED,
+    "png",
+    'file_png_save', [ 0, 7, 0, 0, 0, 0, 0 ],
+  ],
+);
 
 podregister {
-  my($new_image,$new_drawable);
-  my $max;
+  my $max = 0;
+  my ($flags, $media, $method, $args) = @{$filetype2info{$filetype}};
   my $export = Gimp::UI::export_image(
-    $new_image=$image, $new_drawable=$drawable,
-    "DATAURL",
-    $filetype==0 ? EXPORT_CAN_HANDLE_INDEXED|EXPORT_CAN_HANDLE_ALPHA
-    : $filetype==1 ? EXPORT_CAN_HANDLE_RGB|EXPORT_CAN_HANDLE_GRAY
-    : $filetype==2 ? EXPORT_CAN_HANDLE_RGB|EXPORT_CAN_HANDLE_GRAY|EXPORT_CAN_HANDLE_INDEXED
-    : 0
+    my $new_image=$image, my $new_drawable=$drawable, "DATAURL", $flags,
   );
-  die __"export failed" if $export == EXPORT_CANCEL;
+  return if $export == EXPORT_CANCEL;
   my ($w,$h) = ($new_drawable->width, $new_drawable->height);
   my $tmp = Gimp->temp_name(".img~");
   my $fh = io($filename);
   die __"Unable to open '$filename' for writing: $!\n"
     unless $fh->print("<html><body>\n");
   Gimp::Progress->init(__"Saving '$filename' as DATAURL...");
-  my $media = $filetype==0 ? "gif"
-	    : $filetype==1 ? "jpeg"
-	    : $filetype==2 ? "png"
-	    :            "";
   append $fh "<table width=$w cellspacing=0 cellpadding=0 border=0>";
   for (my $y=0; $y<$h; $y+=$tile_y) {
     my $wy = $h-$y < $tile_y ? $h-$y : $tile_y;
     append $fh "<tr>";
-    for(my $x=0; $x<$w; $x+=$tile_x) {
+    for (my $x=0; $x<$w; $x+=$tile_x) {
       my $wx = $w-$x < $tile_x ? $w-$x : $tile_x;
       my $image = $new_image->duplicate;
       $image->crop($wx,$wy,$x,$y);
-      ($image->get_layers)[0]->file_gif_save  (($tmp)x2, 0, 0, 0, 0)                   if $filetype==0;
-      ($image->get_layers)[0]->file_jpeg_save (($tmp)x2, 0.7, 0, 1, 0, "", 0, 1, 0, 0) if $filetype==1;
-      ($image->get_layers)[0]->file_png_save  (($tmp)x2, 0, 7, 0, 0, 0, 0, 0)          if $filetype==2;
+      ($image->get_layers)[0]->$method(($tmp)x2, @$args);
       $image->delete;
       my $data = io($tmp)->all
 	or die __"Unable to read temporary image tile $tmp: $!";
       unlink $tmp;
       $url = "data:image/$media;base64,".(encode_base64 $data);
-      $max = length($url) if length($url) > $max;
+      $max = max($max, length($url));
       append $fh "<td><img src=\"", $url, "\">";
       Gimp::Progress->update(($y*$w+$x*$tile_y)/($w*$h));
     }
@@ -57,10 +65,6 @@ podregister {
   ();
 };
 
-Gimp::on_query {
-   Gimp->register_save_handler("file_dataurl_save", "dataurl", "");
-};
-
 exit main;
 __END__
 
@@ -70,7 +74,7 @@ file_dataurl_save - Saves the image as many small tiles using data:-urls
 
 =head1 SYNOPSIS
 
-<Save>/DATAURL
+<Save>/HTML with many small tiles using data:-urls/html
 
 =head1 DESCRIPTION
 
@@ -264,14 +268,12 @@ Browser compatibility list:
 
 =head1 AUTHOR
 
-Marc Lehmann
+Marc Lehmann <pcg@goof.com>
 
 =head1 DATE
 
 1999-11-20
 
 =head1 LICENSE
-
-Marc Lehmann <pcg@goof.com>
 
 Distributed under the same terms as Gimp-Perl.

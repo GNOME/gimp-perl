@@ -298,9 +298,17 @@ EOF
             if !@{$p[9]} or $p[9]->[0]->[0] != PF_IMAGE;
       }
    } elsif ($p[6] =~ /^<Load>\//) {
+      my ($start, $label, $fileext, $prefix) = split '/', $p[6];
+      $prefix = '' unless $prefix;
+      Gimp::on_query { Gimp->register_load_handler($p[0], $fileext, $prefix); };
+      $p[6] = join '/', $start, $label;
       unshift @{$p[8]}, @load_params;
       unshift @{$p[9]}, $image_retval;
-   } elsif ($p[6] =~ /^<Save>\//) {
+   } elsif ($p[6] =~ /^<Save>\/(.*)/) {
+      my ($start, $label, $fileext, $prefix) = split '/', $p[6];
+      $prefix = '' unless $prefix;
+      Gimp::on_query { Gimp->register_save_handler($p[0], $fileext, $prefix); };
+      $p[6] = join '/', $start, $label;
       unshift @{$p[8]}, @save_params;
    } elsif ($p[6] =~ m#^<Toolbox>/Xtns/#) {
       undef $p[7];
@@ -686,7 +694,12 @@ value if the first return value is not a C<PF_IMAGE>.
 In any case, the plugin will be installed in the specified menu location;
 almost always under C<File/Create> or C<Filters>.
 
-=item <Load>/FILETYPE
+=item <Load>/Text describing input/file-extensions[/prefixes]
+
+The file-extensions are comma-separated. The prefixes are optional.
+
+Gimp::Fu will automatically register the plugin as a load-handler using
+C<Gimp-E<gt>register_load_handler>.
 
 L<Gimp::Fu> will B<supply parameters>:
 
@@ -698,15 +711,17 @@ L<Gimp::Fu> will B<supply parameters>:
 
 =back
 
-as the first parameters to the plugin.
+as the first parameters to the plugin. It will also automatically add
+a return-value which is a C<PF_IMAGE>, unless there is already such a
+value as first return value.
 
-If the script is an export-handler. Make sure you also have something like:
+=item <Save>/Text describing output/file-extensions[/prefixes]
 
- Gimp::on_query {
-   Gimp->register_save_handler("file_filetype_save", "filetype", "");
- };
+The file-extensions are comma-separated. The prefixes are optional.
 
-=item <Save>/FILETYPE
+Gimp::Fu will automatically register the plugin as a save-handler using
+C<Gimp-E<gt>register_save_handler>. This is not (in GIMP 2.8 terms)
+a save-handler anymore, but an export-handler.
 
 L<Gimp::Fu> will B<supply parameters>:
 
@@ -724,11 +739,19 @@ L<Gimp::Fu> will B<supply parameters>:
 
 as the first parameters to the plugin.
 
-If the script is an export-handler. Make sure you also have something like:
+Outline:
 
- Gimp::on_query {
-   Gimp->register_save_handler("file_filetype_save", "filetype", "");
- };
+  podregister {
+    my $export = Gimp::UI::export_image(
+      my $new_image=$image,
+      my $new_drawable=$drawable,
+      "COLORHTML",
+      EXPORT_CAN_HANDLE_RGB
+    );
+    return if $export == EXPORT_CANCEL;
+    # ...
+    $new_image->delete if $export == EXPORT_EXPORT;
+  };
 
 =item <Toolbox>/Xtns/Label
 

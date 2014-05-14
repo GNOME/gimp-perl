@@ -11,14 +11,13 @@ my %replace = (
 );
 
 podregister {
-  my($new_image,$new_drawable);
   my $export = Gimp::UI::export_image(
-    $new_image=$image,
-    $new_drawable=$drawable,
+    my $new_image=$image,
+    my $new_drawable=$drawable,
     "COLORHTML",
     EXPORT_CAN_HANDLE_RGB
   );
-  die __"Export cancelled" if $export == EXPORT_CANCEL;
+  return if $export == EXPORT_CANCEL;
   my ($w,$h) = ($new_drawable->width, $new_drawable->height);
   Gimp->tile_cache_ntiles($w / Gimp->tile_width + 1);
   my $io = io($filename) or die __"write '$filename': $!\n";
@@ -101,7 +100,6 @@ HEADER
 	  "<font color=".unpack("H*",$1).">".shift(@chars).$closetag;
        }ges;
     }
-
     $io->print($pel,"\n");
     Gimp::Progress->update($y/$h);
   }
@@ -110,9 +108,6 @@ HEADER
   ();
 };
 
-Gimp::on_query {
-   Gimp->register_save_handler("file_colorhtml_save", "colorhtml", "");
-};
 exit main;
 __END__
 
@@ -122,7 +117,7 @@ file_colorhtml_save - Saves the image as coloured html text
 
 =head1 SYNOPSIS
 
-<Save>/COLORHTML
+<Save>/HTML with text coloured to match image/html
 
 =head1 DESCRIPTION
 
@@ -149,13 +144,10 @@ and will disturb the current font colour.
 
 =head1 PARAMETERS
 
-  [PF_RADIO,	"character_source", "Where to take characters from", 0,
-		[sourcecode => 0, textfile => 1, textblock => 2]],
-  [
-    PF_FILE,	"characters",
-    "Filename to read or characters to use", ""
-  ],
-  [PF_STRING, "font_size", "HTML font size (1..7 or -7 .. +7)", 2, ],
+  [PF_RADIO, "character_source", "Where to take characters from", 0,
+    [sourcecode => 0, textfile => 1, textblock => 2]],
+  [PF_FILE, "characters", "Filename to read or characters to use", ""],
+  [PF_STRING, "font_size", "HTML font size (1..7 or -7 .. +7)", 2,],
   [PF_BOOL, "use_css", "Use CSS", 1],
   [PF_BOOL, "compatible", "HTML-4.0 compliance", 1],
   [PF_BOOL, "closetag", "Add closing tag", 1],

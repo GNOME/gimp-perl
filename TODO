@@ -5,8 +5,6 @@ Items as of 2014-04-29 (by Ed J)
   is ./app/plug-in/gimppluginmanager.c:gimp_plug_in_manager_exit
   - issue with removing menus, probably stored in _plug_in data
   PDB call added in tools/pdbgen/pdb/gimp.pdb
-* <Load> and <Save> need any registration as such done in Gimp::Fu - see pod and e/dataurl
-* Test Gimp::Fu menupath <Load>/<Save>/<Image>/<Toolbox>/<None>
 * jpegoptim and pngcrush save-handlers
 * e/fade-alpha should generate buttons, not hardcode
 * Gimp/Lib.xs is huge, and not very XS-y - lots of it is manually
