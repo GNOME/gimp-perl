@@ -142,7 +142,7 @@ if (@ARGV) {
          if (/^-h$|^--?help$|^-\?$/) {
             $Gimp::help=1;
             print __<<EOF;
-Usage: $0 [gimp-args..] [interface-args..] [script-args..]
+Usage: $basename [gimp-args...] [interface-args...] [script-args...]
        gimp-arguments are
            -h | -help | --help | -?   print some help
            -v | --verbose             be more verbose in what you do
