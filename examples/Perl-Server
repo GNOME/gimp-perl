@@ -2,11 +2,9 @@
 
 use strict;
 #BEGIN { $Gimp::verbose = 1; }
-use Gimp qw(__ N_);
-use Gimp::Net ();
+use Gimp;
+use Gimp::Net;
 use Gimp::Extension;
-
-N_"/Xtns/Perl"; # workaround for i18n weirdnesses
 
 Gimp::set_trace(\$Gimp::Net::trace_res);
 Gimp::ignore_functions(qw(gimp_progress_init gimp_progress_update));

@@ -1,5 +1,5 @@
 Items as of 2014-04-29 (by Ed J)
-* possible killer app: https://mail.gnome.org/archives/gimp-developer-list/2014-April/msg00017.html
+* possible killer app: https://mail.gnome.org/archives/gimp-developer-list/2014-April/msg00017.html - also 53
 * gimp-plugins-refresh: load is
   app/plug-in/gimppluginmanager.c:gimp_plug_in_manager_query_new, closedown
   is ./app/plug-in/gimppluginmanager.c:gimp_plug_in_manager_exit
