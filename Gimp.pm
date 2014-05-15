@@ -5,8 +5,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK $AUTOLOAD %EXPORT_TAGS @EXPORT_FAIL
             $interface_pkg $interface_type
             @PREFIXES
             $function $basename $spawn_opts
-            $in_quit $no_SIG
-            $host $in_top);
+            $host);
 use subs qw(init end lock unlock);
 
 BEGIN {
@@ -126,10 +125,7 @@ sub gtk_init() {
 # section on command-line handling/interface selection
 
 ($basename = $0) =~ s/^.*[\\\/]//;
-
 $spawn_opts = "";
-
-$in_quit=0;
 ($function)=$0=~/([^\/\\]+)$/;
 
 $Gimp::verbose=0 unless defined $Gimp::verbose;
@@ -166,22 +162,6 @@ EOF
 }
 
 # section on error-handling
-
-# this needs to be improved
-sub quiet_die {
-   $in_top ? exit(1) : die "IGNORE THIS MESSAGE\n";
-}
-
-unless($no_SIG) {
-   $SIG{__DIE__} = sub {
-      if ($^S || !defined $^S || $in_quit) {
-         die $_[0];
-      } else {
-         warn $_[0];
-         initialized() ? &quiet_die : exit quiet_main();
-      }
-   };
-}
 
 # section on callbacks
 
@@ -221,7 +201,6 @@ sub callback {
     die __"required callback 'query' not found for $function\n" unless @cb;
     for (@cb) { &$_ }
   } elsif ($type eq "-quit") {
-    local $in_quit = 1;
     @cb = cbchain(qw(quit));
     for (@cb) { &$_ }
   }
@@ -240,11 +219,6 @@ sub on_quit  (&) { register_callback "quit"  , $_[0] }
 
 sub main {
    &{"$interface_pkg\::gimp_main"};
-}
-
-# same as main, but callbacks are ignored
-sub quiet_main {
-   main;
 }
 
 # section on interface_pkg

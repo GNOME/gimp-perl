@@ -194,7 +194,6 @@ sub try_connect {
 }
 
 sub gimp_init {
-   $Gimp::in_top=1;
    warn "$$-gimp_init(@_)" if $Gimp::verbose;
    if (@_) {
       $server_fh = try_connect ($_[0]);
@@ -207,16 +206,13 @@ sub gimp_init {
    }
    defined $server_fh or croak __"could not connect to the gimp server (make sure Perl-Server is running)";
    { my $fh = select $server_fh; $|=1; select $fh }
-
    my @r = response;
-
    die __"expected perl-server at other end of socket, got @r\n"
       unless $r[0] eq "PERL-SERVER";
    shift @r;
    die __"expected protocol version $PROTOCOL_VERSION, but server uses $r[0]\n"
       unless $r[0] eq $PROTOCOL_VERSION;
    shift @r;
-
    for(@r) {
       if($_ eq "AUTH") {
          die __"server requests authorization, but no authorization available\n"
@@ -226,7 +222,6 @@ sub gimp_init {
          print __"authorization ok, but: $r[1]\n" if $Gimp::verbose and $r[1];
       }
    }
-
    $initialized = 1;
    warn "$$-Finished gimp_init(@_)" if $Gimp::verbose;
 }
@@ -244,9 +239,8 @@ sub gimp_end {
 
 sub gimp_main {
    no strict 'refs';
-   $Gimp::in_top=0;
    eval { Gimp::callback("-net") };
-   if($@ && $@ ne "IGNORE THIS MESSAGE\n") {
+   if ($@) {
       chomp(my $exception = $@);
       warn "$0 exception: $exception\n";
       gimp_end;

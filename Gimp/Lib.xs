@@ -442,6 +442,7 @@ dump_params (int nparams, GimpParam *args, GimpParamDef *params)
 	  case GIMP_PDB_STRING:		trace_printf ("\"%s\"", args[i].data.d_string ? args[i].data.d_string : "[null]"); break;
 	  case GIMP_PDB_DISPLAY:	trace_printf ("%d", args[i].data.d_display); break;
 	  case GIMP_PDB_IMAGE:		trace_printf ("%d", args[i].data.d_image); break;
+	  case GIMP_PDB_ITEM:		trace_printf ("%d", args[i].data.d_item); break;
 	  case GIMP_PDB_LAYER:		trace_printf ("%d", args[i].data.d_layer); break;
 	  case GIMP_PDB_CHANNEL:	trace_printf ("%d", args[i].data.d_channel); break;
 	  case GIMP_PDB_DRAWABLE:	trace_printf ("%d", args[i].data.d_drawable); break;
@@ -1208,16 +1209,7 @@ static void pii_run(const gchar *name,
   SPAGAIN;
 
   if (SvTRUE (ERRSV)) {
-    if (strEQ ("IGNORE THIS MESSAGE\n", SvPV_nolen (ERRSV))) {
-      nreturn_vals = 1;
-      return_vals = g_new (GimpParam, nreturn_vals);
-      return_vals->type = GIMP_PDB_STATUS;
-      return_vals->data.d_status = GIMP_PDB_SUCCESS;
-      *xnreturn_vals = nreturn_vals;
-      *xreturn_vals = return_vals;
-    } else {
-      err_msg = g_strdup (SvPV_nolen (ERRSV));
-    }
+    err_msg = g_strdup (SvPV_nolen (ERRSV));
   } else {
     char errmsg [MAX_STRING];
     errmsg [0] = 0;
