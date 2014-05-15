@@ -126,19 +126,17 @@ sub interact {
    goto &Gimp::UI::interact;
 }
 
-sub this_script {
+sub find_script {
    return $scripts[0] if @scripts == 1;
-   # well, not-so-easy-day today
-   require File::Basename;
-   my ($exe) = File::Basename::fileparse($RealScript, qr/\.[^.]*/);
    my @names;
    for my $this (@scripts) {
       my $fun = $this->[0];
       $fun =~ s/^(?:perl_fu|plug_in)_//;
-      return $this if lc($exe) eq lc($fun);
-      push(@names,$fun);
+      return $this if lc($_[0] // '') eq lc($fun);
+      push @names, $fun;
    }
-   die __"function '$exe' not found in this script (must be one of ".join(", ",@names).")\n";
+   die "Must specify proc with -p flag (one of @names)\n" unless defined $_[0];
+   die __"function '$_[0]' not found in this script (must be one of @names)\n";
 }
 
 my ($latest_image, $latest_imagefile);
@@ -203,7 +201,11 @@ sub mangle_key {
 Gimp::on_net {
    *{Gimp::UI::export_image} = sub ($$$$) { &Gimp::EXPORT_IGNORE };
    require Getopt::Long;
-   my $this = this_script;
+   my $proc;
+   Getopt::Long::Configure('pass_through');
+   Getopt::Long::GetOptions('p=s' => \$proc);
+   Getopt::Long::Configure('default');
+   my $this = find_script($proc);
    my(%mangleparam2index,@args);
    my ($interact, $outputfile) = 1;
    my ($function,$blurb,$help,$author,$copyright,$date,
@@ -476,14 +478,21 @@ sub save_image($$) {
 
 sub main {
    return Gimp::main unless $Gimp::help;
-   my $this=this_script;
+   require Getopt::Long;
+   my $proc;
+   Getopt::Long::Configure('pass_through');
+   Getopt::Long::GetOptions('p=s' => \$proc);
+   my $this = defined($proc) ? find_script($proc) : undef;
    print __<<EOF;
        interface-arguments are
            -o | --output <filespec>   write image to disk
            -i | --interact            let the user edit the values first
 EOF
-   print "       script-arguments are\n" if @{$this->[9]};
-   for(@{$this->[9]}) {
+   print "           -p <procedure> (one of @{[
+      map { my $s = $_->[0]; $s =~ s/^(?:perl_fu|plug_in)_//; $s } @scripts
+   ]})\n" if @scripts > 1;
+   print "       script-arguments are\n" if @{($this // [])->[9] // []};
+   for(@{($this // [])->[9] // []}) {
       my $type=$pf2info{$_->[0]}->[0];
       my $key=mangle_key($_->[1]);
       my $default_text = defined $_->[3]

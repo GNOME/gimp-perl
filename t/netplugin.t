@@ -8,7 +8,8 @@ BEGIN {
   # most minimal and elegant would be to symlink sandbox gimp-dir's
   # plug-ins to our blib/plugins dir, but not portable to windows
   my $blibdir = 'blib/plugins';
-  my @plugins = map { "$blibdir/$_" } qw(dots glowing_steel map_to_gradient);
+  my @plugins = map { "$blibdir/$_" }
+    qw(dots glowing_steel map_to_gradient redeye);
   map {
     warn "inst $_\n" if $Gimp::verbose;
     write_plugin($DEBUG, $_, io($_)->all);
@@ -25,11 +26,10 @@ use Symbol 'gensym';
 use IO::Select; # needed because output can be big and it can block!
 #Gimp::set_trace(TRACE_ALL);
 
-our @testbench;
-our %proc2file;
+our (@testbench, %proc2file, %file2procs);
 require 't/examples-api.pl';
 
-my %plug2yes = map { ($_=>1) } qw(dots glowing_steel ); # map_to_gradient redeye
+my %plug2yes = map { ($_=>1) } qw(dots glowing_steel map_to_gradient red_eye);
 @testbench = grep { $plug2yes{$_->[0]} } @testbench;
 my @duptest = @{$testbench[0]};
 $duptest[3] = [ @{$duptest[3]} ]; # don't change original
@@ -49,6 +49,7 @@ for my $test (@testbench) {
   my $output = "$scratchdir/out.xcf";
   unshift @$actualparams, '--output', $output;
   unshift @$actualparams, '-v' if $Gimp::verbose;
+  unshift @$actualparams, '-p', $name if @{$file2procs{$proc2file{$name}}} > 1;
   my @perl = ($^X, '-Mblib');
 #use Data::Dumper;warn Dumper(Gimp->procedural_db_proc_info("perl_fu_$name"));
   my ($wtr, $rdr, $err, @outlines, @errlines) = (undef, undef, gensym);
@@ -66,8 +67,8 @@ for my $test (@testbench) {
       }
     }
   }
-  is(join('', @errlines), '', "$name error empty");
-  is(join('', @outlines), '', "$name output empty");
+  is(join('', @errlines), '', "$name stderr empty");
+  is(join('', @outlines), '', "$name stdout empty");
   waitpid($pid, 0);
   is($? >> 8, 0, "$file exit=0");
   ok(-f $output, "$file output exists");
