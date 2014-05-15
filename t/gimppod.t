@@ -1,5 +1,5 @@
 use Test::More;
-#$Gimp::verbose = 1;
+$Gimp::verbose = $Gimp::verbose = 0; # normally done in Gimp.pm
 require Gimp::Pod;
 
 my $p = Gimp::Pod->new;
