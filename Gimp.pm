@@ -1,11 +1,11 @@
 package Gimp;
 
 use strict 'vars';
-use vars qw($VERSION @ISA @EXPORT @EXPORT_OK $AUTOLOAD %EXPORT_TAGS @EXPORT_FAIL
-            $interface_pkg $interface_type
-            @PREFIXES
-            $function $basename $spawn_opts
-            $host);
+our (
+  $VERSION, @ISA, $AUTOLOAD, @EXPORT, @EXPORT_OK, %EXPORT_TAGS, @EXPORT_FAIL,
+  $interface_pkg, $interface_type, @PREFIXES,
+  $function, $basename, $spawn_opts, $host,
+);
 use subs qw(init end lock unlock);
 
 BEGIN {
