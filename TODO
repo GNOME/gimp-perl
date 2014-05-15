@@ -12,7 +12,8 @@ Items as of 2014-04-29 (by Ed J)
   way to pass GIMP data back and forth directly via typemap system. May
   involve a gimp-perl "wrapper" data structure that pairs an SV with its
   GimpParam counterpart - Gimp::Lib::Data?
-* Get gimp PDL objects working right over Gimp::Net - infrastructure is there
+* use Glib array for above
+* unify typemaps and C INCs, for more accurate EU::D support
 * Restructure dirs so all libs under lib/ using ExtUtils::MakeMaker::BigHelper
 * http://search.cpan.org/dist/Glib-Object-Introspection/
 * Add a gtk2 gimp-perl console - cf http://registry.gimp.org/node/29348

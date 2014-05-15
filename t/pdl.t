@@ -35,8 +35,7 @@ sub iterate {
     my $dst = Gimp::PixelRgn->new($l,@bounds,1,1);
     my $iter = Gimp->pixel_rgns_register($dst);
     do {
-      my ($x,$y,$w,$h)=($dst->x,$dst->y,$dst->w,$dst->h);
-      my $pdl = $src->get_rect($x,$y,$w,$h);
+      my $pdl = $src->get_rect($dst->x,$dst->y,$dst->w,$dst->h);
       $pdl += $inc;
       $dst->data($pdl);
     } while (Gimp->pixel_rgns_process($iter));
@@ -115,12 +114,12 @@ ok(
 ok(!$i->insert_layer($l,0,0), 'insert layer');
 
 my $fgcolour = [ 255, 128, 0 ];
-Gimp::Context->push;
-Gimp::Context->set_foreground($fgcolour);
-$l->fill(FOREGROUND_FILL);
-
 my @setcoords = (1, 1);
 my $setcolour = [ 16, 16, 16 ];
+Gimp::Context->push;
+Gimp::Context->set_foreground($fgcolour);
+
+$l->fill(FOREGROUND_FILL);
 is_deeply(
   [ @{$l->test_pdl_getpixel(@setcoords)}[0..2] ],
   Gimp::canonicalize_color($fgcolour),
@@ -143,6 +142,32 @@ is_deeply(
   Gimp::canonicalize_color([ map { $_+3 } @$setcolour ]),
   'getpixel colour after iterate'
 );
+
+eval $pdl_operations;
+$l->fill(FOREGROUND_FILL);
+is_deeply(
+  Gimp::canonicalize_color(getpixel($i, $l, @setcoords)),
+  Gimp::canonicalize_color($fgcolour),
+  'net getpixel initial colour'
+);
+setpixel($i, $l, @setcoords, Gimp::canonicalize_color($setcolour));
+is_deeply(
+  Gimp::canonicalize_color(getpixel($i, $l, @setcoords)),
+  Gimp::canonicalize_color($setcolour),
+  'net getpixel colour after setpixel'
+);
+is_deeply(
+  Gimp::canonicalize_color(getpixel($i, $l, map { $_+1 } @setcoords)),
+  Gimp::canonicalize_color($fgcolour),
+  'net getpixel other pixel after setpixel'
+);
+iterate($i, $l, 3);
+is_deeply(
+  Gimp::canonicalize_color(getpixel($i, $l, @setcoords)),
+  Gimp::canonicalize_color([ map { $_+3 } @$setcolour ]),
+  'net getpixel colour after iterate'
+);
+
 Gimp::Context->pop;
 
 Gimp::Net::server_quit;

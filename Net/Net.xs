@@ -1,8 +1,5 @@
 #include "config.h"
 
-/* dunno where this comes from */
-#undef VOIDUSED
-
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
@@ -10,13 +7,6 @@
 
 #if !defined(PERLIO_IS_STDIO) && defined(HASATTRIBUTE)
 # undef printf
-#endif
-
-#if 0 /* optimized away ;) */
-#include <glib.h>
-#endif
-
-#if !defined(PERLIO_IS_STDIO) && defined(HASATTRIBUTE)
 # define printf PerlIO_stdoutf
 #endif
 
@@ -57,7 +47,7 @@ static void destroy_object (SV *sv)
  * b stash sv		blessed reference
  * r			simple reference
  * h len (key sv)*	hash (not yet supported!)
- * p			piddle (not yet supported!)
+ * P pv			passed as a string which has been PDL::IO::Dumper-ed
  *
  */
 
@@ -72,6 +62,30 @@ static void sv2net (int deobjectify, SV *s, SV *sv)
       if (SvOBJECT (rv))
         {
           char *name = HvNAME (SvSTASH (rv));
+
+	  if (strEQ (name, "PDL"))
+	    {
+	      char *str;
+	      STRLEN len;
+	      require_pv ("PDL/IO/Dumper.pm");
+	      dSP;
+	      ENTER;
+	      SAVETMPS;
+	      PUSHMARK(SP);
+	      XPUSHs(sv);
+	      PUTBACK;
+	      if (perl_call_pv ("PDL::IO::Dumper::sdump", G_SCALAR) != 1)
+		croak (__("Failed to sdump PDL object"));
+	      SPAGAIN;
+	      sv = POPs;
+	      str = SvPV(sv,len);
+	      sv_catpvf (s, "P%x:", (int)len);
+	      sv_catpvn (s, str, len);
+	      PUTBACK;
+	      FREETMPS;
+	      LEAVE;
+              return;
+	    }
 
           sv_catpvf (s, "b%x:%s", (unsigned int)strlen (name), name);
 
@@ -148,6 +162,21 @@ static SV *net2sv (int objectify, char **_s)
         sv = newSVpvn (s, (STRLEN)ui);
         s += ui;
         break;
+
+      case 'P':
+	{
+	  char *tmp;
+	  sscanf (s, "%x:%n", &ui, &n); s += n;
+	  tmp = strndup (s, ui);
+	  s += ui;
+	  require_pv ("PDL.pm");
+	  require_pv ("PDL/IO/Dumper.pm");
+	  (void)eval_pv ("import PDL;", G_VOID);
+	  sv = eval_pv (tmp, G_SCALAR);
+	  SvREFCNT_inc (sv);
+	  free (tmp);
+	  break;
+	}
 
       case 'r':
         sv = newRV_noinc (net2sv (objectify, &s));

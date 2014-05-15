@@ -216,10 +216,8 @@ static GHashTable *gdrawable_cache;
 static int gdrawable_free (pTHX_ SV *obj, MAGIC *mg)
 {
   GimpDrawable *gdr = (GimpDrawable *)SvIV(obj);
-
   g_hash_table_remove (gdrawable_cache, GINT_TO_POINTER(gdr->drawable_id));
   gimp_drawable_detach (gdr);
-
   return 0;
 }
 
@@ -229,30 +227,22 @@ static SV *new_gdrawable (gint32 id)
 {
    static HV *stash;
    SV *sv;
-
    if (!gdrawable_cache)
      gdrawable_cache = g_hash_table_new (g_direct_hash, g_direct_equal);
-
    assert (sizeof (gpointer) >= sizeof (id));
-
    if ((sv = (SV*)g_hash_table_lookup (gdrawable_cache, GINT_TO_POINTER(id)))) {
      SvREFCNT_inc (sv);
    } else {
      GimpDrawable *gdr = gimp_drawable_get (id);
-
      if (!gdr)
        croak (__("unable to convert Gimp::Drawable into Gimp::GimpDrawable (id %d)"), id);
-
      if (!stash)
        stash = gv_stashpv (PKG_GDRAWABLE, 1);
-
      sv = newSViv ((IV) gdr);
      sv_magic (sv, 0, '~', 0, 0);
      mg_find (sv, '~')->mg_virtual = &vtbl_gdrawable;
-
      g_hash_table_insert (gdrawable_cache, GINT_TO_POINTER(id), (void *)sv);
    }
-
    return sv_bless (newRV_noinc (sv), stash);
 }
 
@@ -2083,7 +2073,6 @@ gimp_gdrawable_get_tile(gdrawable, shadow, row, col)
 	gint	row
 	gint	col
 	CODE:
-	need_pdl ();
 	RETVAL = new_tile (gimp_drawable_get_tile (old_gdrawable (gdrawable), shadow, row, col), gdrawable);
 	OUTPUT:
 	RETVAL
@@ -2095,7 +2084,6 @@ gimp_gdrawable_get_tile2(gdrawable, shadow, x, y)
 	gint	x
 	gint	y
 	CODE:
-	need_pdl ();
 	RETVAL = new_tile (gimp_drawable_get_tile2 (old_gdrawable (gdrawable), shadow, x, y), gdrawable);
 	OUTPUT:
 	RETVAL
