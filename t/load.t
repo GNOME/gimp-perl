@@ -7,7 +7,7 @@ BEGIN {
   $DEBUG = 0;
   require 't/gimpsetup.pl';
 }
-BEGIN { use_ok('Gimp', qw(:auto canonicalise_color net_init=spawn/)); }
+BEGIN { use_ok('Gimp', qw(:consts canonicalise_color net_init=spawn/)); }
 #Gimp::set_trace(TRACE_ALL);
 
 my %CONST_DATA = (

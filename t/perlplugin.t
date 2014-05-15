@@ -12,7 +12,7 @@ BEGIN {
     "\nBEGIN { \$Gimp::verbose = ".int($Gimp::verbose||0).'; }'.<<'EOF');
 
 use strict;
-use Gimp qw(:auto __ N_);
+use Gimp;
 use Gimp::Fu;
 
 sub boilerplate_params {
@@ -167,7 +167,7 @@ sub boilerplate_params {
 exit main;
 EOF
 }
-use Gimp qw(:auto), "net_init=spawn/";
+use Gimp qw(:DEFAULT net_init=spawn/);
 #Gimp::set_trace(TRACE_ALL);
 
 ok((my $i = Gimp::Image->new(10,10,RGB)), 'new image');

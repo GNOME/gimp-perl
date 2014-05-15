@@ -1,7 +1,7 @@
 # only one "test" result - 'gimp set up' at bottom
 # relies on caller having first done:
 #    use Test::*; # to make available ok()
-#    use Gimp qw(:auto);
+#    use Gimp;
 #    our $dir;
 #    our $blibplugins; # where plugins are built to - #! line correct
 # if encounters problems, does a die()
