@@ -40,7 +40,7 @@ sub sections { $_[0]->_cache =~ /^\S.*$/mg; }
 
 sub section {
    my $self = shift;
-   warn __PACKAGE__."::section(@_)" if $Gimp::verbose;
+   warn __PACKAGE__."::section(@_)" if $Gimp::verbose >= 2;
    return unless defined(my $doc = $self->_cache);
    ($doc) = $doc =~ /^$_[0]\n(.*?)(?:^[A-Z]|\Z)/sm;
    if ($doc) {
@@ -50,7 +50,7 @@ sub section {
       $doc =~ s/^    //mg;
       chomp $doc;
    }
-   warn __PACKAGE__."::section returning '$doc'" if $Gimp::verbose;
+   warn __PACKAGE__."::section returning '$doc'" if $Gimp::verbose >= 2;
    $doc;
 }
 
@@ -95,7 +95,7 @@ sub make_arg_line {
    return '' unless @{$p[8]};
    die "$0: parameter had empty string\n" if grep { !length $_->[1] } @{$p[8]};
    my $myline = 'my ('.join(',', map { '$'.$_->[1] } @{$p[8]}).') = @_;';
-   warn __PACKAGE__."::make_arg_line: $myline" if $Gimp::verbose;
+   warn __PACKAGE__."::make_arg_line: $myline" if $Gimp::verbose >= 2;
    $myline;
 }
 

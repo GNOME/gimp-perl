@@ -161,7 +161,7 @@ sub start_server {
 
 sub try_connect {
    local $_=$_[0];
-   warn "$$-".__PACKAGE__."::try_connect(@_)" if $Gimp::verbose;
+   warn "$$-".__PACKAGE__."::try_connect(@_)" if $Gimp::verbose >= 2;
    my $fh;
    $auth = s/^(.*)\@// ? $1 : "";	# get authorization
    if ($_ eq "") {
@@ -212,11 +212,11 @@ sub gimp_init {
             unless $auth;
          my @r = command "AUTH", $auth;
          die __"authorization failed: $r[1]\n" unless $r[0];
-         print __"authorization ok, but: $r[1]\n" if $Gimp::verbose and $r[1];
+         print __"authorization ok, but: $r[1]\n" if $Gimp::verbose >= 2 and $r[1];
       }
    }
    $initialized = 1;
-   warn "$$-Finished gimp_init(@_)" if $Gimp::verbose;
+   warn "$$-Finished gimp_init(@_)" if $Gimp::verbose >= 2;
 }
 
 sub gimp_end {
@@ -290,7 +290,7 @@ sub handle_request($) {
       read($fh,$req,4) == 4 or die "4\n";
       read($fh,$data,$length-4) == $length-4 or die "5\n";
    };
-   warn "$$-handle_request got '$@'" if $@ and $Gimp::verbose;
+   warn "$$-handle_request got '$@'" if $@ and $Gimp::verbose >= 2;
    return 0 if $@;
    my @args = net2args(($req eq "TRCE" or $req eq "EXEC"), $data);
    if(!$auth or $authorized[fileno($fh)]) {
@@ -359,7 +359,7 @@ sub on_accept {
 }
 
 sub on_input {
-  warn "$$-on_input(@_)" if $Gimp::verbose;
+  warn "$$-on_input(@_)" if $Gimp::verbose >= 2;
   my ($fd, $condition, $fh) = @_;
   if (handle_request($fh)) {
     return ++$stats{$fd}[0]; # non-false!

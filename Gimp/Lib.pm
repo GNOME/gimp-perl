@@ -17,7 +17,7 @@ use subs qw(
 );
 
 sub gimp_init {
-   Gimp::croak Gimp::_("gimp_init not implemented for the Lib interface");
+   Gimp::croak Gimp::__("gimp_init not implemented for the Lib interface");
 }
 
 sub gimp_end {
@@ -80,7 +80,7 @@ sub gimp_drawable_bounds {
    (@b[0,1],$b[2]-$b[0],$b[3]-$b[1]);
 }
 
-warn "$$-Finished loading ".__PACKAGE__ if $Gimp::verbose;
+warn "$$-Finished loading ".__PACKAGE__ if $Gimp::verbose >= 2;
 
 1;
 __END__

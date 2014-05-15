@@ -110,7 +110,7 @@ FILTER {
    return unless /$podreg_re/;
    my $myline = make_arg_line(insert_params(fixup_args(('') x 9, 1)));
    s/$podreg_re/$1\n$myline/;
-   warn __PACKAGE__."::FILTER: found: '$1'" if $Gimp::verbose;
+   warn __PACKAGE__."::FILTER: found: '$1'" if $Gimp::verbose >= 2;
 };
 
 @EXPORT_OK = qw($run_mode save_image);
@@ -266,7 +266,7 @@ Gimp::on_net {
 };
 
 sub datatype(@) {
-   warn __PACKAGE__."::datatype(@_)" if $Gimp::verbose;
+   warn __PACKAGE__."::datatype(@_)" if $Gimp::verbose >= 2;
    for(@_) {
       return Gimp::PDB_STRING unless /^([+-]?)(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?$/; # perlfaq4
       return Gimp::PDB_FLOAT  unless /^[+-]?\d+$/; # again
@@ -371,7 +371,7 @@ sub register($$$$$$$$$;@) {
 	    die __"menupath _must_ start with <Image>, <Load>, <Save>, <Toolbox>/Xtns/, or <None>!";
          }
       }
-      warn "perlsub: rm=$run_mode" if $Gimp::verbose;
+      warn "perlsub: rm=$run_mode" if $Gimp::verbose >= 2;
       if ($run_mode == Gimp::RUN_INTERACTIVE
           || $run_mode == Gimp::RUN_WITH_LAST_VALS) {
          my $fudata = $Gimp::Data{"$function/_fu_data"};
@@ -380,7 +380,7 @@ sub register($$$$$$$$$;@) {
 	    my $script_savetime = stat("$RealBin/$RealScript")->mtime;
 	    undef $fudata if $script_savetime > $data_savetime;
 	 }
-	 if ($Gimp::verbose) {
+	 if ($Gimp::verbose >= 2) {
 	    require Data::Dumper;
 	    warn "$$-retrieved fudata: ", Data::Dumper::Dumper($fudata);
 	 }
@@ -405,14 +405,14 @@ sub register($$$$$$$$$;@) {
          die __"run_mode must be INTERACTIVE, NONINTERACTIVE or RUN_WITH_LAST_VALS\n";
       }
 
-      if ($Gimp::verbose) {
+      if ($Gimp::verbose >= 2) {
 	 require Data::Dumper;
 	 warn "$$-storing fudata: ", Data::Dumper::Dumper(\@_);
       }
       $Gimp::Data{"$function/_fu_data"}=[time, @_];
 
       warn "$$-Gimp::Fu-generated sub: $function(",join(",",(@pre,@_)),")\n"
-	 if $Gimp::verbose;
+	 if $Gimp::verbose >= 2;
 
       my @retvals = $code->(@pre,@_);
       Gimp->displays_flush;
@@ -424,7 +424,7 @@ sub register($$$$$$$$$;@) {
 
 sub save_image($$) {
    my($img,$path)=@_;
-   print "saving image $path\n" if $Gimp::verbose;
+   warn "saving image $path\n" if $Gimp::verbose;
    my $flatten=0;
    my $interlace=0;
    my $quality=0.75;

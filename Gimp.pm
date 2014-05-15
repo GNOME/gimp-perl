@@ -38,7 +38,7 @@ my $net_init;
 
 sub import($;@) {
    my $pkg = shift;
-   warn "$$-$pkg->import(@_)" if $Gimp::verbose;
+   warn "$$-$pkg->import(@_)" if $Gimp::verbose >= 2;
    my $up = caller;
    my @export;
 
@@ -52,7 +52,7 @@ sub import($;@) {
    # do this here as not guaranteed access to GIMP before
    require Gimp::Constant;
    if (not defined &{$Gimp::Constant::EXPORT[-1]}) {
-     warn "$$-Loading constants" if $Gimp::verbose;
+     warn "$$-Loading constants" if $Gimp::verbose >= 2;
      # now get constants from GIMP
      import Gimp::Constant;
    }
@@ -145,7 +145,7 @@ if (@ARGV) {
 Usage: $basename [gimp-args...] [interface-args...] [script-args...]
        gimp-arguments are
            -h | -help | --help | -?   print some help
-           -v | --verbose             be more verbose in what you do
+           -v | --verbose             verbose flag (ok more than once)
            --host|--tcp HOST[:PORT]   connect to HOST (optionally using PORT)
                                       (for more info, see Gimp::Net(3))
 EOF
@@ -172,7 +172,7 @@ sub cbchain {
 }
 
 sub callback {
-  warn "$$-Gimp::callback(@_)" if $Gimp::verbose;
+  warn "$$-Gimp::callback(@_)" if $Gimp::verbose >= 2;
   my $type = shift;
   my @cb;
   if ($type eq "-run") {
@@ -184,7 +184,7 @@ sub callback {
     for (@cb) {
       @retvals = &$_;
     }
-    warn "$$-Gimp::callback returning(@retvals)" if $Gimp::verbose;
+    warn "$$-Gimp::callback returning(@retvals)" if $Gimp::verbose >= 2;
     @retvals;
   } elsif ($type eq "-net") {
     @cb = cbchain(qw(run net));
@@ -194,7 +194,7 @@ sub callback {
     for (@cb) {
       @retvals = &$_;
     }
-    warn "$$-Gimp::callback returning(@retvals)" if $Gimp::verbose;
+    warn "$$-Gimp::callback returning(@retvals)" if $Gimp::verbose >= 2;
     @retvals;
   } elsif ($type eq "-query") {
     @cb = cbchain(qw(query));
@@ -208,7 +208,7 @@ sub callback {
 
 sub register_callback($$) {
    push @{$callback{$_[0]}}, $_[1];
-   warn "$$-register_callback(@_)" if $Gimp::verbose;
+   warn "$$-register_callback(@_)" if $Gimp::verbose >= 2;
 }
 
 sub on_query(&) { register_callback "query", $_[0] }
@@ -234,7 +234,7 @@ warn "$$-Using interface '$interface_type'" if $Gimp::verbose;
 
 eval "require $interface_pkg" or croak $@;
 $interface_pkg->import;
-warn "$$-Finished loading '$interface_pkg'" if $Gimp::verbose;
+warn "$$-Finished loading '$interface_pkg'" if $Gimp::verbose >= 2;
 
 # create some common aliases
 for(qw(gimp_procedural_db_proc_exists gimp_call_procedure set_trace initialized)) {
@@ -264,7 +264,7 @@ sub exception_strip {
 }
 sub AUTOLOAD {
   my ($class,$name) = $AUTOLOAD =~ /^(.*)::(.*?)$/;
-  warn "$$-AUTOLOAD $AUTOLOAD(@_)" if $Gimp::verbose;
+  warn "$$-AUTOLOAD $AUTOLOAD(@_)" if $Gimp::verbose >= 2;
   for(@{"$class\::PREFIXES"}) {
     my $sub = $_.$name;
     if (exists $ignore_function{$sub}) {
@@ -288,7 +288,7 @@ sub AUTOLOAD {
       goto &$AUTOLOAD;
     } elsif (gimp_procedural_db_proc_exists($sub)) {
       *{$AUTOLOAD} = sub {
-	warn "$$-gimp_call_procedure{0}(@_)" if $Gimp::verbose;
+	warn "$$-gimp_call_procedure{0}(@_)" if $Gimp::verbose >= 2;
 	shift unless ref $_[0];
 	unshift @_, $sub;
 	warn "$$-gimp_call_procedure{1}(@_)" if $Gimp::verbose;
@@ -1054,13 +1054,17 @@ How to debug your scripts:
 
 =item $Gimp::verbose
 
-If set to true, will make Gimp-Perl say what it's doing on STDOUT. It will
-also stop L<Gimp::Net>'s normal behaviour of the server-side closing
-STDIN, STDOUT and STDERR. If you want it to be set during loading C<Gimp.pm>,
-make sure to do so in a prior C<BEGIN> block:
+If set to true, will make Gimp-Perl say what it's doing on STDERR.
+If you want it to be set during loading C<Gimp.pm>, make sure to do so
+in a prior C<BEGIN> block:
 
  BEGIN { $Gimp::verbose = 1; }
  use Gimp;
+
+Currently two levels of verbosity are supported:
+
+  1: some info - generally things done only once
+  2: all the info
 
 =item Gimp::set_trace (tracemask)
 
