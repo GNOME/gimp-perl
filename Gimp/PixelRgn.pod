@@ -22,7 +22,7 @@ get a C<Gimp::GimpDrawable> from a C<Gimp::Drawable>. You can then
 get either a C<Gimp::Tile> or C<Gimp::PixelRgn> object, and work with
 that. Since the tile interface is very low-level, it is not further
 documented here. The C<Gimp::PixelRgn> methods take and return L<PDL>
-objects to handle the data.
+objects to handle the data, with a few exceptions.
 
 =head1 COLOURS
 
@@ -127,7 +127,7 @@ RGB layer:
     return unpdl $piddle;
   }
 
-=head2 Iterators
+=head2 ITERATORS
 
 GIMP uses "tiles" as a way of breaking drawables into smaller
 chunks. This allows a potentially very large image to be process in
@@ -176,6 +176,16 @@ the right data, C<$drawable-E<gt>merge_shadow($undo)> is called. C<$undo>
 is a boolean telling GIMP "whether to add an undo step for the operation".
 
 =back
+
+=head1 NON-PDL METHODS
+
+These functions take/return not PDL objects, but Perl scalars:
+
+  gimp_gdrawable_get_tile2
+  gimp_pixel_rgn_get_col2
+  gimp_pixel_rgn_get_rect2
+  gimp_pixel_rgn_set_rect2
+  gimp_pixel_rgn_get_row2
 
 =head1 AUTHOR
 
