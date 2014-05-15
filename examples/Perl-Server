@@ -31,6 +31,10 @@ If activated by the user, allows Gimp-Perl scripts to connect to the
 running GIMP instance. Also provides a working example of a GIMP extension
 in Gimp-Perl.
 
+If C<run_mode> is C<RUN_NONINTERACTIVE>, will run in "batch mode" and
+expect the C<filehandle> argument to be correct to communicate with the
+client. If C<RUN_INTERACTIVE>, expects to wait for connections.
+
 There is a security advisory about GIMP scripting servers. This program
 will only allow TCP connections if a password is specified (the "auth"
 option), thereby eliminating any network-related security risk.
@@ -38,8 +42,7 @@ option), thereby eliminating any network-related security risk.
 =head1 PARAMETERS
 
  [&Gimp::PDB_INT32, "run_mode", "Interactive:0=yes,1=no"],
- [&Gimp::PDB_INT32, "flags", "internal flags (must be 0)"],
- [&Gimp::PDB_INT32, "extra", "multi-purpose"],
+ [&Gimp::PDB_INT32, "filehandle", "Batch file-handle"],
  [&Gimp::PDB_INT32, "verbose", "Gimp verbose var"],
 
 =head1 AUTHOR

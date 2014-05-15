@@ -38,11 +38,6 @@ use Gimp::Extension;
 $VERSION = 2.3002;
 bootstrap Gimp::Net $VERSION;
 
-use constant {
-  PS_FLAG_QUIET => 1 << 0, # do not output messages
-  PS_FLAG_BATCH => 1 << 1, # started via Gimp::Net, extra = filehandle
-};
-
 my $PROTOCOL_VERSION = 4; # protocol version
 my ($server_fh, $gimp_pid, $trace_level, $auth);
 
@@ -148,10 +143,8 @@ sub start_server {
    fcntl $gimp_fh, F_SETFD, 0;
    delete $ENV{GIMP_HOST};
    open STDIN,"</dev/null";
-   my $flags = PS_FLAG_BATCH | ($Gimp::verbose ? 0 : PS_FLAG_QUIET);
    my $args = join ' ',
      &Gimp::RUN_NONINTERACTIVE,
-     $flags,
      fileno($gimp_fh),
      int($Gimp::verbose);
    my @exec_args = ($Gimp::Config{GIMP}, qw(--no-splash --console-messages));
@@ -280,7 +273,7 @@ $server_quit = 0;
 my $max_pkt = 1024*1024*8;
 
 sub slog {
-  return if $ps_flags & PS_FLAG_QUIET;
+  return unless $Gimp::verbose;
   print localtime.": $$-slog(",@_,")\n";
 }
 
@@ -290,17 +283,12 @@ sub handle_request($) {
    my($fh)=@_;
    my ($req, $data);
    eval {
-      local $SIG{ALRM}=sub { die "1\n" };
-      #alarm(6) unless $ps_flags & PS_FLAG_BATCH;
       my $length;
       read($fh,$length,4) == 4 or die "2\n";
       $length=unpack("N",$length);
       $length>0 && $length<$max_pkt or die "3\n";
-      #alarm(6) unless $ps_flags & PS_FLAG_BATCH;
       read($fh,$req,4) == 4 or die "4\n";
-      #alarm(20) unless $ps_flags & PS_FLAG_BATCH;
       read($fh,$data,$length-4) == $length-4 or die "5\n";
-      #alarm(0);
    };
    warn "$$-handle_request got '$@'" if $@ and $Gimp::verbose;
    return 0 if $@;
@@ -409,19 +397,17 @@ sub setup_listen_tcp {
 }
 
 sub perl_server_run {
-  (my $run_mode, $ps_flags, my $extra, $Gimp::verbose) = @_;
+  (my $run_mode, my $filehandle, $Gimp::verbose) = @_;
   warn "$$-".__PACKAGE__."::perl_server_run(@_)\n" if $Gimp::verbose;
   if ($run_mode == &Gimp::RUN_NONINTERACTIVE) {
-     if ($ps_flags & PS_FLAG_BATCH) {
-	die __"unable to open Gimp::Net communications socket: $!\n"
-	   unless open my $fh,"+<&$extra";
-	$fh->autoflush;
-	on_accept($fh);
-	Glib::IO->add_watch(fileno($fh), 'in', \&on_input, $fh);
-	Gtk2->main;
-        Gimp->quit(0);
-        exit(0);
-     }
+      die __"unable to open Gimp::Net communications socket: $!\n"
+	 unless open my $fh,"+<&$filehandle";
+      $fh->autoflush;
+      on_accept($fh);
+      Glib::IO->add_watch(fileno($fh), 'in', \&on_input, $fh);
+      Gtk2->main;
+      Gimp->quit(0);
+      exit(0);
   } else {
      $ps_flags=0;
   }
