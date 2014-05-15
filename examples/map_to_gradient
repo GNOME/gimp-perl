@@ -72,7 +72,7 @@ greyscale value.
 
 =head1 PARAMETERS
 
-  [PF_GRADIENT, "gradient", "The gradient to map to"],
+  [PF_GRADIENT, "gradient", "The gradient to map to", 'FG to BG (RGB)'],
 
 =head1 IMAGE TYPES
 
