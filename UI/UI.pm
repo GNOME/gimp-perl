@@ -656,6 +656,7 @@ sub interact($$$$@) {
   $sw->add_with_viewport($table);
   $w->vbox->add($sw);
 
+  my $mainloop = Glib::MainLoop->new;
   my $button = $w->add_button('gtk-help', 3);
   $button->signal_connect(clicked => sub {
     help_window($helpwin, $w, $title, $help);
@@ -668,17 +669,17 @@ sub interact($$$$@) {
   my $res = 0;
   $button = $w->add_button('gtk-cancel', 0);
   $button->signal_connect(clicked => sub {
-    Gtk2->main_quit;
+    $mainloop->quit;
   });
   can_default $button 1;
   $button = $w->add_button('gtk-ok', 1);
   $button->signal_connect(clicked => sub {
     $res = 1;
-    Gtk2->main_quit;
+    $mainloop->quit;
   });
   can_default $button 1;
   grab_default $button;
-  $w->signal_connect(destroy => sub { Gtk2->main_quit; });
+  $w->signal_connect(destroy => sub { $mainloop->quit; });
 
   show_all $table;
   show_all $sw;
@@ -687,10 +688,12 @@ sub interact($$$$@) {
     min(0.6*$sw->get_screen->get_height, $table->size_request->height + 5)
   );
   show_all $w;
-  Gtk2->main;
+  $mainloop->run;
   die $exception_text if $exception_text;
-  return if $res == 0;
-  return (1, map {&$_} @getvals);
+  my @retvals = map {&$_} @getvals if $res;
+  $w->destroy;
+  return unless $res;
+  return (1, @retvals);
 }
 
 1;
