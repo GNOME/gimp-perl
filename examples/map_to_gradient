@@ -3,6 +3,7 @@
 use Gimp;
 use Gimp::Fu;
 use PDL::LiteF;
+#BEGIN { $Gimp::verbose = 3; }
 
 # convert to greyscale. could be improved, but should still be fast!
 sub togrey {

@@ -4,8 +4,6 @@ use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 use Gimp::Util;
 
-# Gimp::set_trace(TRACE_ALL);
-
 podregister {
   die "Must have alpha channel\n" unless $drawable->has_alpha;
   Gimp::Context->push();

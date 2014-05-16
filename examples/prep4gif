@@ -3,8 +3,6 @@
 use Gimp qw(:auto N_ __);
 use Gimp::Fu;
 
-# Gimp::set_trace(TRACE_ALL);
-
 podregister {
   my $out = $image->duplicate; # only work on duplicate
   my @layers = gimp_image_get_layers($out);

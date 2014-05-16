@@ -5,7 +5,6 @@ use Gimp qw(:auto __ N_);
 use Gimp::Extension;
 
 #$Gimp::verbose = 1;
-#Gimp::set_trace(TRACE_ALL);
 my $persist;
 
 register_temp

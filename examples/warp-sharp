@@ -21,7 +21,6 @@ podregister {
   my $bump_yoff;
   my $version=1;
 
-#    Gimp::set_trace(TRACE_ALL);
   $image->undo_group_start;
   if ($has_selection) {
       $old_selection=$image->selection_save;

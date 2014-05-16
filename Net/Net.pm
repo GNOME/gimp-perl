@@ -9,14 +9,12 @@ package Gimp::Net;
 #
 # length_of_packet cmd
 #
-# cmd			response		description
-# AUTH password		ok [message]		authorize yourself
+# cmd				response	description
+# AUTH password			ok [message]	authorize yourself
 # QUIT						quit server
-# EXEC func args	status return-vals	run simple command
-# TRCE func trace args	trace status return-vals	run simple command (with tracing)
-# TEST procname		bool			check for procedure existance
+# EXEC verbose func args	$@ return-vals	run simple command
+# TEST procname			bool		check for procedure existence
 # DTRY in-args					destroy all argument objects
-# RSET						reset server (NYI)
 #
 # args is "number of arguments" arguments preceded by length
 # type is first character
@@ -27,7 +25,7 @@ package Gimp::Net;
 BEGIN { warn "$$-Loading ".__PACKAGE__ if $Gimp::verbose; }
 
 use strict 'vars';
-use vars qw($VERSION $trace_res);
+our $VERSION;
 use subs qw(gimp_call_procedure);
 use base qw(DynaLoader);
 use IO::Socket;
@@ -38,15 +36,12 @@ use Gimp::Extension;
 $VERSION = 2.3002;
 bootstrap Gimp::Net $VERSION;
 
-my $PROTOCOL_VERSION = 4; # protocol version
-my ($server_fh, $gimp_pid, $trace_level, $auth);
+my $PROTOCOL_VERSION = 5; # protocol version
+my ($server_fh, $gimp_pid, $auth);
 
 my $DEFAULT_TCP_PORT  = 10009;
 my $DEFAULT_UNIX_DIR  = "/tmp/gimp-perl-serv-uid-$>/";
 my $DEFAULT_UNIX_SOCK = "gimp-perl-serv";
-
-$trace_res = *STDERR;
-$trace_level = 0;
 
 my $initialized = 0;
 
@@ -84,19 +79,9 @@ sub import {
 }
 
 sub gimp_call_procedure {
-   warn "$$-Net::gimp_call_procedure[$trace_level](@_)" if $Gimp::verbose;
-   my $func = shift;
-   unshift @_, $trace_level if $trace_level;
-   my @response = command($trace_level ? "TRCE" : "EXEC", $func, @_);
-   my $trace = shift @response if $trace_level;
+   warn "$$-Net::gimp_call_procedure(@_)" if $Gimp::verbose;
+   my @response = command("EXEC", $Gimp::verbose, @_);
    my $die_text = shift @response;
-   if ($trace_level) {
-      if (ref $trace_res eq "SCALAR") {
-	 $$trace_res = $trace;
-      } else {
-	 print $trace_res $trace;
-      }
-   }
    Gimp::recroak(Gimp::exception_strip(__FILE__, $die_text)) if $die_text;
    wantarray ? @response : $response[0];
 }
@@ -108,17 +93,6 @@ sub server_wait {
    croak __"server_wait called but gimp_pid undefined"
       unless defined $gimp_pid;
    waitpid $gimp_pid, 0;
-}
-
-sub set_trace {
-   my($trace)=@_;
-   my $old_level = $trace_level;
-   if(ref $trace) {
-      $trace_res=$trace;
-   } elsif (defined $trace) {
-      $trace_level=$trace;
-   }
-   $old_level;
 }
 
 my $PROC_SF = 'extension-perl-server';
@@ -257,23 +231,19 @@ END {
 }
 
 # start of server-used block
-use vars qw($use_unix $use_tcp $trace_res $server_quit $max_pkt $unix $tcp
-            $ps_flags $auth @authorized $rm $saved_rm %stats);
+our ($use_unix, $use_tcp, @authorized, %stats);
 # you can enable unix sockets, tcp sockets, or both (or neither...)
-#
 # enabling tcp sockets can be a security risk. If you don't understand why,
 # you shouldn't enable it!
-#
 $use_unix	= 1;
 $use_tcp	= 1;	# tcp is enabled only when authorization is available
 my $unix_path;
 
-$server_quit = 0;
-
 my $max_pkt = 1024*1024*8;
+my $run_mode;
 
 sub slog {
-  return unless $Gimp::verbose;
+  return if $run_mode == &Gimp::RUN_NONINTERACTIVE;
   print localtime.": $$-slog(",@_,")\n";
 }
 
@@ -292,21 +262,18 @@ sub handle_request($) {
    };
    warn "$$-handle_request got '$@'" if $@ and $Gimp::verbose >= 2;
    return 0 if $@;
-   my @args = net2args(($req eq "TRCE" or $req eq "EXEC"), $data);
+   my @args = net2args(($req eq "EXEC"), $data);
    if(!$auth or $authorized[fileno($fh)]) {
-      if ($req eq "TRCE" or $req eq "EXEC") {
+      if ($req eq "EXEC") {
          no strict 'refs';
+	 my $old_v = $Gimp::verbose;
+	 $Gimp::verbose = shift @args;
 	 my $function = shift @args;
-         if ($req eq "TRCE") {
-	    my $trace_level = shift @args;
-	    Gimp::set_trace($trace_level);
-	    $trace_res = "";
-	 }
-         @args = eval { Gimp->$function(@args) };
-	 unshift @args, Gimp::exception_strip(__FILE__, $@);
-	 unshift @args, $trace_res if $req eq "TRCE";
-	 senddata $fh, args2net(1, @args);
-         Gimp::set_trace(0) if $req eq "TRCE";
+	 warn "$$-Net:Gimp->$function(@args)" if $Gimp::verbose >= 2;
+         my @retvals = eval { Gimp->$function(@args) };
+	 $Gimp::verbose = $old_v;
+	 unshift @retvals, Gimp::exception_strip(__FILE__, $@);
+	 senddata $fh, args2net(1, @retvals);
       } elsif ($req eq "TEST") {
          no strict 'refs';
          reply $fh,
@@ -397,7 +364,7 @@ sub setup_listen_tcp {
 }
 
 sub perl_server_run {
-  (my $run_mode, my $filehandle, $Gimp::verbose) = @_;
+  ($run_mode, my $filehandle, $Gimp::verbose) = @_;
   warn "$$-".__PACKAGE__."::perl_server_run(@_)\n" if $Gimp::verbose;
   if ($run_mode == &Gimp::RUN_NONINTERACTIVE) {
       die __"unable to open Gimp::Net communications socket: $!\n"
@@ -408,8 +375,6 @@ sub perl_server_run {
       Gtk2->main;
       Gimp->quit(0);
       exit(0);
-  } else {
-     $ps_flags=0;
   }
   my $host = $ENV{'GIMP_HOST'};
   $auth = $host=~s/^(.*)\@// ? $1 : undef;	# get authorization

@@ -3,8 +3,6 @@
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 
-#Gimp::set_trace(TRACE_ALL);
-
 podregister {
   $nw = int(gimp_image_width($image) + 2 * $marg + $diameter);
   $nh = int(gimp_image_height($image) + 2 * $marg + $diameter);

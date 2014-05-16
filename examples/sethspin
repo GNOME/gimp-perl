@@ -7,8 +7,6 @@ use Gimp::Util;
 use List::Util qw(max);
 use strict;
 
-#Gimp::set_trace(TRACE_ALL);
-
 sub saw {  # a sawtooth function on PI
   my ($val) = @_;
   if ($val < PI/2.0) {

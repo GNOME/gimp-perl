@@ -4,8 +4,6 @@ use Gimp;
 use Gimp::Fu;
 use strict;
 
-# Gimp::set_trace(TRACE_ALL);
-
 podregister {
   # sanity stuff
   die "Can only operate on layers" unless $drawable->is_layer;

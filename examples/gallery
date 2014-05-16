@@ -4,8 +4,6 @@ use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 use Gimp::Util;
 
-#Gimp::set_trace(TRACE_ALL);
-
 sub printHeader {
   my ($rf,$gf,$bf,$r,$g,$b, $htmlFile,$gallerytitle)=@_;
   printf $htmlFile "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\">";

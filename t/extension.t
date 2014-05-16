@@ -57,7 +57,6 @@ Same terms as Gimp-Perl.
 EOF
 }
 use Gimp "net_init=spawn/";
-#Gimp::set_trace(TRACE_ALL);
 
 is(Gimp::Plugin->extension_test(Gimp::RUN_NONINTERACTIVE, 7), 8, 'return val');
 

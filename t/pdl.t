@@ -104,7 +104,6 @@ exit main;
 EOF
 }
 use Gimp qw(:DEFAULT net_init=spawn/);
-#Gimp::set_trace(TRACE_ALL);
 
 ok((my $i = Gimp::Image->new(10,10,RGB)), 'new image');
 ok(

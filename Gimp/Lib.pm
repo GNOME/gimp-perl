@@ -10,12 +10,6 @@ BEGIN {
    warn "$$-Loading ".__PACKAGE__ if $Gimp::verbose;
 }
 
-use subs qw(
-	gimp_call_procedure		gimp_main	gimp_init
-	gimp_procedural_db_proc_exists	set_trace	gimp_end
-        initialized
-);
-
 sub gimp_init {
    Gimp::croak Gimp::__("gimp_init not implemented for the Lib interface");
 }

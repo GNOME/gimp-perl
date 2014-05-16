@@ -3,8 +3,6 @@
 use Gimp;
 use Gimp::Fu;
 
-#Gimp::set_trace(TRACE_ALL);
-
 podregister {
   $thresh /= 255;
   $image = $image->duplicate if $new;

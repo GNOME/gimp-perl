@@ -52,7 +52,6 @@ use Gimp::Util;
 podregister {
   $length *= 0.75;
   set_seed $seed;
-  # Gimp::set_trace(TRACE_ALL);
   my ($w, $h) = ($image->width, $image->height);
   $image->undo_group_start;
   Gimp::Context->push;

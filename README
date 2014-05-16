@@ -102,7 +102,7 @@ use Gimp::Fu;
 
 podregister {
   # no input parameters line - source filter inserts. See Gimp::Fu docs.
-  Gimp::set_trace(TRACE_CALL); # remove this to stop debugging output
+  $Gimp::verbose = 1; # remove this to stop debugging output
   Gimp::Context->push; # store current settings, so present ones preserved
   my $img = Gimp::Image->new($width, $height, RGB);
   $img->undo_group_start; # so all actions can be undone in one step
@@ -146,6 +146,8 @@ descriptive help message here!
   [PF_SPINNER	, "height"	, "Image height"	, 100, [100, 200]],
   [PF_STRING	, "text"	, "Message"		, "example text"],
   [PF_TEXT	, "longtext"	, "Longer text"		, "more example text"],
+  [PF_FILE	, "file"	, "File"		, "/tmp"],
+  [PF_INT8	, "int8"	, "8-bit int"		, 10],
   [PF_INT32	, "bordersize"	, "Border size"		, 10],
   [PF_FLOAT	, "borderwidth"	, "Border width"	, 1/5],
   [PF_FONT	, "font"	, "Font"],

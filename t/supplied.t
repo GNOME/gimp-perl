@@ -23,7 +23,6 @@ BEGIN {
     );
 }
 use Gimp qw(:consts), "net_init=spawn/";
-#Gimp::set_trace(TRACE_ALL);
 
 our @testbench;
 require 't/examples-api.pl';

@@ -4,8 +4,6 @@ use Gimp;
 
 use strict 'vars';
 
-# Gimp::set_trace(TRACE_ALL);
-
 # 2014/04/20 Ed J: bit of a stir, still same really
 # 12/5/03: <sjburges@gimp.org>
 #  s/->mask/->get_mask

@@ -92,16 +92,16 @@ static void sv2net (int deobjectify, SV *s, SV *sv)
           if (deobjectify && is_dynamic (name))
             {
               object_id++;
-
               SvREFCNT_inc(sv);
               (void)hv_store (object_cache, (char *)&object_id, sizeof(object_id), sv, 0);
-
               sv_catpvf (s, "i%d:", object_id);
-              return; /* well... */
+              return;
             }
         }
       else
-        sv_catpvn (s, "r", 1);
+	{
+	  sv_catpvn (s, "r", 1);
+	}
 
       if (SvTYPE(rv) == SVt_PVAV)
         {
@@ -120,7 +120,9 @@ static void sv2net (int deobjectify, SV *s, SV *sv)
   else if (SvOK(sv))
     {
       if (SvIOK(sv))
-        sv_catpvf (s,"i%ld:", (long)SvIV(sv));
+	{
+	  sv_catpvf (s,"i%ld:", (long)SvIV(sv));
+	}
       else
         {
           char *str;
@@ -133,7 +135,9 @@ static void sv2net (int deobjectify, SV *s, SV *sv)
         }
     }
   else
-    sv_catpvn (s, "u", 1);
+    {
+      sv_catpvn (s, "u", 1);
+    }
 }
 
 static SV *net2sv (int objectify, char **_s)
@@ -171,10 +175,14 @@ static SV *net2sv (int objectify, char **_s)
 	  s += ui;
 	  require_pv ("PDL.pm");
 	  require_pv ("PDL/IO/Dumper.pm");
-	  (void)eval_pv ("import PDL;", G_VOID);
-	  sv = eval_pv (tmp, G_SCALAR);
+	  ENTER;
+	  SAVETMPS;
+	  (void)eval_pv ("import PDL;", TRUE);
+	  sv = eval_pv (tmp, TRUE);
 	  SvREFCNT_inc (sv);
 	  free (tmp);
+	  FREETMPS;
+	  LEAVE;
 	  break;
 	}
 
@@ -233,39 +241,38 @@ PROTOTYPES: ENABLE
 
 SV *
 args2net(deobjectify,...)
-	int	deobjectify
-	CODE:
-        int index;
-
-        if (deobjectify) init_object_cache;
-
-        RETVAL = newSVpv ("", 0);
-        (void) SvUPGRADE (RETVAL, SVt_PV);
-        SvGROW (RETVAL, INITIAL_PV);
-
-	for (index = 1; index < items; index++)
-          sv2net (deobjectify, RETVAL, ST(index));
-
-        OUTPUT:
-        RETVAL
+int deobjectify
+CODE:
+  int index;
+  if (deobjectify) init_object_cache;
+  RETVAL = newSVpv ("", 0);
+  (void) SvUPGRADE (RETVAL, SVt_PV);
+  SvGROW (RETVAL, INITIAL_PV);
+  for (index = 1; index < items; index++)
+    sv2net (deobjectify, RETVAL, ST(index));
+OUTPUT:
+  RETVAL
 
 void
 net2args(objectify,s)
-	int	objectify
-	char *	s
-        PPCODE:
-
-        if (objectify) init_object_cache;
-
-        /* this depends on a trailing zero! */
-        while (*s)
-	  XPUSHs (sv_2mortal (net2sv (objectify, &s)));
+int	objectify
+char *	s
+PPCODE:
+  if (objectify) init_object_cache;
+  /* this depends on a trailing zero! */
+  while (*s)
+    {
+      SV *sv;
+      PUTBACK; // this is necessary due to eval_pv in net2sv
+      sv = net2sv (objectify, &s);
+      SPAGAIN; // works without, but recommended by perl expert - leaving in
+      XPUSHs (sv_2mortal (sv));
+    }
 
 void
 destroy_objects(...)
-	CODE:
-        int index;
-
-        for (index = 0; index < items; index++)
-          destroy_object (ST(index));
+CODE:
+  int index;
+  for (index = 0; index < items; index++)
+    destroy_object (ST(index));
 

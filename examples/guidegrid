@@ -3,8 +3,6 @@
 use Gimp;
 use Gimp::Fu;
 
-# Gimp::set_trace(TRACE_ALL);
-
 podregister {
   # Remove all existing guides (this is optional)
   if($remove_old_guides) {

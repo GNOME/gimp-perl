@@ -48,8 +48,6 @@
 
 #define PKG_ANY		((char *)0)
 
-static int trace = TRACE_NONE;
-
 typedef GimpPixelRgn GimpPixelRgn_PDL;
 
 static Core* PDL; /* Structure hold core C functions */
@@ -142,51 +140,36 @@ typedef gint32 ITEM;
 typedef gint32 COLOR;
 typedef gpointer GimpPixelRgnIterator;
 
-/* tracing stuff. put at top so immediately available! */
-static SV *trace_var = 0;
-static PerlIO *trace_file = 0; /* FIXME: unportable.  */
-
-static void
-trace_init ()
-{
-  if (!trace_file)
-    SvCUR_set (trace_var, 0);
-}
+#define verbose_level SvIV(get_sv("Gimp::verbose", TRUE))
 
 #ifndef __STDC__
 #error You need to compile with an ansi-c compiler!!!
 #error Remove these lines to continue at your own risk!
 #endif
 
-#if __STDC_VERSION__ > 199900
-#define trace_printf(...) \
+#if __STDC_VERSION__ > 199900 || __GNUC__
+#define verbose_printf(level, ...) \
 	do { \
-		if (trace_file) PerlIO_printf (trace_file, __VA_ARGS__); \
-		else		sv_catpvf (trace_var, __VA_ARGS__); \
+	  if (verbose_level >= level) PerlIO_printf (PerlIO_stderr (), __VA_ARGS__); \
 	} while(0)
-#elif __GNUC__
-#define trace_printf(frmt,args...) \
-	do { \
-		if (trace_file) PerlIO_printf (trace_file, frmt, ## args); \
-		else		sv_catpvf (trace_var, frmt, ## args); \
-	} while(0)
+
 #elif defined(__STDC__)
 
 /* sigh */
 #include <stdarg.h>
-static void trace_printf (char *frmt, ...)
+static void verbose_printf (int level, char *frmt, ...)
 {
   va_list args;
   char buffer[MAX_STRING]; /* sorry... */
 
+  if (verbose_level < level) return;
   va_start (args, frmt);
 #ifdef HAVE_VSNPRINTF
   vsnprintf (buffer, sizeof buffer, frmt, args);
 #else
   vsprintf (buffer, frmt, args);
 #endif
-  if (trace_file) PerlIO_printf (trace_file, "%s", buffer);
-  else		  sv_catpv (trace_var, buffer);
+  PerlIO_printf (PerlIO_stderr (), "%s", buffer);
 }
 
 #endif
@@ -246,11 +229,32 @@ static SV *new_gdrawable (gint32 id)
    return sv_bless (newRV_noinc (sv), stash);
 }
 
+static void check_object(SV *sv, char *pkg)
+{
+  SV *rv;
+  char *name;
+  if (!SvOK(sv))
+    croak (__("argument is undef"));
+  if (!SvROK(sv))
+    croak (__("argument is not a ref: '%s'"), SvPV_nolen(sv));
+  rv = SvRV(sv);
+  if (!SvOBJECT (rv))
+    croak (__("argument is not an object: '%s'"), SvPV_nolen(sv));
+  if (!(sv_derived_from (sv, pkg)))
+    {
+      name = HvNAME (SvSTASH (rv));
+      croak (
+	__("argument is not of type %s, instead: %s='%s'"),
+	pkg,
+	name,
+	SvPV_nolen(sv)
+      );
+    }
+}
+
 static GimpDrawable *old_gdrawable (SV *sv)
 {
-  if (!(sv_derived_from (sv, PKG_GDRAWABLE)))
-    croak (__("argument is not of type %s"), PKG_GDRAWABLE);
-
+  check_object(sv, PKG_GDRAWABLE);
   /* the next line lacks any type of checking.  */
   return (GimpDrawable *)SvIV(SvRV(sv));
 }
@@ -271,8 +275,7 @@ SV *new_tile (GimpTile *tile, SV *gdrawable)
 
 static GimpTile *old_tile (SV *sv)
 {
-  if (!sv_derived_from (sv, PKG_TILE))
-    croak (__("argument is not of type %s"), PKG_TILE);
+  check_object(sv, PKG_TILE);
 
   /* the next line lacks any type of checking.  */
   return (GimpTile *)SvIV(*(hv_fetch ((HV*)SvRV(sv), "_tile", 5, 0)));
@@ -327,8 +330,7 @@ static SV *new_gpixelrgn (SV *gdrawable, int x, int y, int width, int height, in
 
 static GimpPixelRgn *old_pixelrgn (SV *sv)
 {
-  if (!sv_derived_from (sv, PKG_PIXELRGN))
-    croak (__("argument is not of type %s"), PKG_PIXELRGN);
+  check_object(sv, PKG_PIXELRGN);
 
   return (GimpPixelRgn *)SvPV_nolen(SvRV(sv));
 }
@@ -380,16 +382,16 @@ perl_paramdef_count (GimpParamDef *arg, int count)
 /* horrors!  c wasn't designed for this!  */
 #define dump_printarray(args,index,ctype,datatype,frmt) {\
   int j; \
-  trace_printf ("["); \
+  verbose_printf (1, "["); \
   if (args[index].data.datatype || !args[index-1].data.d_int32) \
     { \
       for (j = 0; j < args[index-1].data.d_int32; j++) \
-	trace_printf (frmt "%s", (ctype) args[index].data.datatype[j], \
+	verbose_printf (1, frmt "%s", (ctype) args[index].data.datatype[j], \
 		      j < args[index-1].data.d_int32 - 1 ? ", " : ""); \
     } \
   else \
-    trace_printf (__("(UNINITIALIZED)")); \
-  trace_printf ("]"); \
+    verbose_printf (1, __("(UNINITIALIZED)")); \
+  verbose_printf (1, "]"); \
 }
 
 static void
@@ -405,45 +407,41 @@ dump_params (int nparams, GimpParam *args, GimpParamDef *params)
   };
   int i;
 
-  trace_printf ("(");
+  if (verbose_level < 1) return;
+  verbose_printf (1, "(");
 
-  if ((trace & TRACE_DESC) == TRACE_DESC)
-    trace_printf ("\n\t");
+  verbose_printf (2, "\n\t");
 
   for (i = 0; i < nparams; i++)
     {
-      if ((trace & TRACE_TYPE) == TRACE_TYPE)
-	{
-	  if ((unsigned int)params[i].type < GIMP_PDB_END+1)
-	    trace_printf ("%s ", ptype[params[i].type]);
-	  else
-	    trace_printf ("T%d ", params[i].type);
-	}
+      if ((unsigned int)params[i].type < GIMP_PDB_END+1)
+	verbose_printf (2, "%s ", ptype[params[i].type]);
+      else
+	verbose_printf (2, "T%d ", params[i].type);
 
-      if ((trace & TRACE_NAME) == TRACE_NAME)
-	trace_printf ("%s=", params[i].name);
+      verbose_printf (2, "%s=", params[i].name);
 
       switch (args[i].type)
 	{
-	  case GIMP_PDB_INT32:		trace_printf ("%d", args[i].data.d_int32); break;
-	  case GIMP_PDB_INT16:		trace_printf ("%d", args[i].data.d_int16); break;
-	  case GIMP_PDB_INT8:		trace_printf ("%d", (guint8) args[i].data.d_int8); break;
-	  case GIMP_PDB_FLOAT:		trace_printf ("%f", args[i].data.d_float); break;
-	  case GIMP_PDB_STRING:		trace_printf ("\"%s\"", args[i].data.d_string ? args[i].data.d_string : "[null]"); break;
-	  case GIMP_PDB_DISPLAY:	trace_printf ("%d", args[i].data.d_display); break;
-	  case GIMP_PDB_IMAGE:		trace_printf ("%d", args[i].data.d_image); break;
-	  case GIMP_PDB_ITEM:		trace_printf ("%d", args[i].data.d_item); break;
-	  case GIMP_PDB_LAYER:		trace_printf ("%d", args[i].data.d_layer); break;
-	  case GIMP_PDB_CHANNEL:	trace_printf ("%d", args[i].data.d_channel); break;
-	  case GIMP_PDB_DRAWABLE:	trace_printf ("%d", args[i].data.d_drawable); break;
-	  case GIMP_PDB_SELECTION:	trace_printf ("%d", args[i].data.d_selection); break;
+	  case GIMP_PDB_INT32:		verbose_printf (1, "%d", args[i].data.d_int32); break;
+	  case GIMP_PDB_INT16:		verbose_printf (1, "%d", args[i].data.d_int16); break;
+	  case GIMP_PDB_INT8:		verbose_printf (1, "%d", (guint8) args[i].data.d_int8); break;
+	  case GIMP_PDB_FLOAT:		verbose_printf (1, "%f", args[i].data.d_float); break;
+	  case GIMP_PDB_STRING:		verbose_printf (1, "\"%s\"", args[i].data.d_string ? args[i].data.d_string : "[null]"); break;
+	  case GIMP_PDB_DISPLAY:	verbose_printf (1, "%d", args[i].data.d_display); break;
+	  case GIMP_PDB_IMAGE:		verbose_printf (1, "%d", args[i].data.d_image); break;
+	  case GIMP_PDB_ITEM:		verbose_printf (1, "%d", args[i].data.d_item); break;
+	  case GIMP_PDB_LAYER:		verbose_printf (1, "%d", args[i].data.d_layer); break;
+	  case GIMP_PDB_CHANNEL:	verbose_printf (1, "%d", args[i].data.d_channel); break;
+	  case GIMP_PDB_DRAWABLE:	verbose_printf (1, "%d", args[i].data.d_drawable); break;
+	  case GIMP_PDB_SELECTION:	verbose_printf (1, "%d", args[i].data.d_selection); break;
 	  case GIMP_PDB_COLORARRAY:
 		{
 		  int j;
-		  trace_printf ("[");
+		  verbose_printf (1, "[");
 		  if (args[i].data.d_colorarray || !args[i-1].data.d_int32) {
 		    for (j = 0; j < args[i-1].data.d_int32; j++)
-		      trace_printf (
+		      verbose_printf (1, 
 			"[%f,%f,%f,%f]%s",
 			((GimpRGB) args[i].data.d_colorarray[j]).r,
 			((GimpRGB) args[i].data.d_colorarray[j]).g,
@@ -452,12 +450,12 @@ dump_params (int nparams, GimpParam *args, GimpParamDef *params)
 			j < args[i-1].data.d_int32 - 1 ? ", " : ""
 		      );
 		  } else
-		    trace_printf (__("(UNINITIALIZED)"));
-		  trace_printf ("]");
+		    verbose_printf (1, __("(UNINITIALIZED)"));
+		  verbose_printf (1, "]");
 		}
 		break;
-	  case GIMP_PDB_VECTORS:	trace_printf ("%d", args[i].data.d_vectors); break;
-	  case GIMP_PDB_STATUS:		trace_printf ("%d", args[i].data.d_status); break;
+	  case GIMP_PDB_VECTORS:	verbose_printf (1, "%d", args[i].data.d_vectors); break;
+	  case GIMP_PDB_STATUS:		verbose_printf (1, "%d", args[i].data.d_status); break;
 	  case GIMP_PDB_INT32ARRAY:	dump_printarray (args, i, gint32, d_int32array, "%d"); break;
 	  case GIMP_PDB_INT16ARRAY:	dump_printarray (args, i, gint16, d_int16array, "%d"); break;
 	  case GIMP_PDB_INT8ARRAY:	dump_printarray (args, i, guint8, d_int8array , "%d"); break;
@@ -465,7 +463,7 @@ dump_params (int nparams, GimpParam *args, GimpParamDef *params)
 	  case GIMP_PDB_STRINGARRAY:	dump_printarray (args, i, char* , d_stringarray, "'%s'"); break;
 
 	  case GIMP_PDB_COLOR:
-	    trace_printf ("[%f,%f,%f,%f]",
+	    verbose_printf (1, "[%f,%f,%f,%f]",
 			  args[i].data.d_color.r,
 			  args[i].data.d_color.g,
 			  args[i].data.d_color.b,
@@ -478,39 +476,39 @@ dump_params (int nparams, GimpParam *args, GimpParamDef *params)
 
 	      if (args[i].data.d_parasite.name)
 		{
-		 trace_printf ("[%s, ", args[i].data.d_parasite.name);
+		 verbose_printf (1, "[%s, ", args[i].data.d_parasite.name);
 		 if (args[i].data.d_parasite.flags & GIMP_PARASITE_PERSISTENT)
 		   {
-		     trace_printf ("GIMP_PARASITE_PERSISTENT");
+		     verbose_printf (1, "GIMP_PARASITE_PERSISTENT");
 		     found |= GIMP_PARASITE_PERSISTENT;
 		   }
 
 		 if (args[i].data.d_parasite.flags & ~found)
 		   {
 		     if (found)
-		       trace_printf ("|");
-		     trace_printf ("%d", args[i].data.d_parasite.flags & ~found);
+		       verbose_printf (1, "|");
+		     verbose_printf (1, "%d", args[i].data.d_parasite.flags & ~found);
 		   }
 
-		 trace_printf (__(", %d bytes data]"), args[i].data.d_parasite.size);
+		 verbose_printf (1, __(", %d bytes data]"), args[i].data.d_parasite.size);
 	       }
 	      else
-		trace_printf (__("[undefined]"));
+		verbose_printf (1, __("[undefined]"));
 	    }
 	    break;
 
 	  default:
-	    trace_printf ("(?%d?)", args[i].type);
+	    verbose_printf (1, "(?%d?)", args[i].type);
 	}
 
-      if ((trace & TRACE_DESC) == TRACE_DESC)
-	trace_printf ("\t\"%s\"\n\t", params[i].description);
+      if (verbose_level >= 2)
+	verbose_printf (2, "\t\"%s\"\n\t", params[i].description);
       else if (i < nparams - 1)
-	trace_printf (", ");
+	verbose_printf (1, ", ");
 
     }
 
-  trace_printf (")");
+  verbose_printf (1, ")");
 }
 
 static int
@@ -1270,42 +1268,6 @@ MODULE = Gimp::Lib	PACKAGE = Gimp::Lib
 
 PROTOTYPES: ENABLE
 
-#
-# usage:
-# set_trace (int new_trace_mask);
-# set_trace (\$variable_to_trace_into);
-# set_trace (*STDOUT);
-#
-I32
-set_trace (var)
-	CODE:
-	{
-		SV *sv = ST (0);
-
-		RETVAL = trace;
-
-		if (SvROK (sv) || SvTYPE (sv) == SVt_PVGV)
-		  {
-		    if (trace_var)
-		      SvREFCNT_dec (trace_var), trace_var = 0;
-
-		    if (SvTYPE (sv) == SVt_PVGV) /* pray it's a filehandle!  */
-		      trace_file = IoOFP (GvIO (sv));
-		    else
-		      {
-			trace_file = 0;
-			sv = SvRV (sv);
-			SvREFCNT_inc (sv);
-			(void) SvUPGRADE (sv, SVt_PV);
-			trace_var = sv;
-		      }
-		  }
-		else
-		  trace = SvIV (ST (0));
-	}
-	OUTPUT:
-	RETVAL
-
 SV *
 _autobless (sv,type)
 	SV *	sv
@@ -1489,11 +1451,7 @@ PPCODE:
   // do this here as at BOOT causes error
   gimp_plugin_set_pdb_error_handler (GIMP_PDB_ERROR_HANDLER_PLUGIN);
 
-  if (trace)
-    trace_init ();
-
-  if (trace & TRACE_CALL)
-    trace_printf ("%s", proc_name);
+  verbose_printf (1, "%s", proc_name);
 
   if (
     gimp_procedural_db_proc_info(
@@ -1549,23 +1507,17 @@ PPCODE:
     }
 
     if (croak_str [0]) {
-      if (trace & TRACE_CALL) {
-	dump_params (i, args, params);
-	trace_printf (__(" = [argument error]\n"));
-      }
-
+      dump_params (i, args, params);
+      verbose_printf (1, __(" = [argument error]\n"));
       goto error;
     }
   }
 
-  if (trace & TRACE_CALL) {
-    dump_params (i, args, params);
-    trace_printf (" = ");
-  }
+  dump_params (i, args, params);
+  verbose_printf (1, " = ");
 
   if (i < nparams || j < items) {
-    if (trace & TRACE_CALL)
-      trace_printf (__("[unfinished]\n"));
+    verbose_printf (1, __("[unfinished]\n"));
 
     sprintf(
       croak_str,
@@ -1600,13 +1552,11 @@ PPCODE:
     } else
       // just try gimp_get_pdb_error()
       sprintf (croak_str, "%s: %s", proc_name, gimp_get_pdb_error ());
-    if (trace & TRACE_CALL) {
-      trace_printf ("(");
-      if ((trace & TRACE_DESC) == TRACE_DESC) trace_printf ("\n\t");
-      trace_printf (__("EXCEPTION: \"%s\""), croak_str);
-      if ((trace & TRACE_DESC) == TRACE_DESC) trace_printf ("\n\t");
-      trace_printf (")\n");
-    }
+    verbose_printf (1, "(");
+    verbose_printf (2, "\n\t");
+    verbose_printf (1, __("EXCEPTION: \"%s\""), croak_str);
+    verbose_printf (2, "\n\t");
+    verbose_printf (1, ")\n");
     goto error;
   }
   if (values[0].data.d_status != GIMP_PDB_SUCCESS) {
@@ -1614,10 +1564,8 @@ PPCODE:
     goto error;
   }
 
-  if (trace & TRACE_CALL) {
-    dump_params (nvalues-1, values+1, return_vals);
-    trace_printf ("\n");
-  }
+  dump_params (nvalues-1, values+1, return_vals);
+  verbose_printf (1, "\n");
 
   EXTEND(SP, perl_paramdef_count (return_vals, nvalues-1));
   PUTBACK;
@@ -2251,7 +2199,6 @@ BOOT:
 #if (GLIB_MAJOR_VERSION < 2 || (GLIB_MAJOR_VERSION == 2 && GLIB_MINOR_VERSION < 36))
 	g_type_init();
 #endif
-	trace_file = PerlIO_stderr ();
 	g_log_set_handler(
 	  "LibGimp",
 	  G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_ERROR | G_LOG_FLAG_FATAL,

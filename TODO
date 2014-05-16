@@ -20,7 +20,6 @@ Items as of 2014-04-29 (by Ed J)
   - gimp/plug-ins/script-fu/script-fu-console.c
   base on this:
   http://gtk2-perl.sourceforge.net/doc/gtk2-perl-study-guide/x3661.html
-* set_trace may also be obsolete
 * interactive collab image-editing:
   http://users.telenet.be/blendix/verse/#gimp_plugin
   https://github.com/verse/verse/wiki/Tutorial-Simple-C-Verse-Client

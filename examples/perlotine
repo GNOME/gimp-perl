@@ -6,7 +6,6 @@ use Gimp::Fu;
 use Gimp::Util;
 
 #$Gimp::verbose = 1;
-# Gimp::set_trace(TRACE_ALL);
 
 sub get_guides {
   my $image = shift;

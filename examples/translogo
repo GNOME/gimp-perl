@@ -3,7 +3,6 @@
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 use Gimp::Util;
-#Gimp::set_trace(TRACE_CALL);
 
 podregister {
   Gimp::Context->push();

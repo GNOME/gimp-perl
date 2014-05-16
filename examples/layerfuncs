@@ -2,7 +2,6 @@
 
 use Gimp;
 use Gimp::Fu;
-# Gimp::set_trace(TRACE_ALL);
 
 podregister {
   die "Must have layer selected\n" unless $drawable->is_layer;

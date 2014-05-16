@@ -6,8 +6,6 @@ use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 use Gimp::Util;
 
-# Gimp::set_trace(TRACE_ALL);
-
 podregister {
   my($image,$drawable,$round) = @_;
   $image->undo_group_start;

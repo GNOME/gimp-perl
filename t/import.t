@@ -7,7 +7,6 @@ BEGIN {
   require 't/gimpsetup.pl';
 }
 use Gimp qw(:DEFAULT net_init=spawn/);
-#Gimp::set_trace(TRACE_ALL);
 
 eval { Image->new(10,10,RGB); };
 ok($@, 'polluting version should fail');

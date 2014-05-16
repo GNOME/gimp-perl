@@ -237,7 +237,7 @@ $interface_pkg->import;
 warn "$$-Finished loading '$interface_pkg'" if $Gimp::verbose >= 2;
 
 # create some common aliases
-for(qw(gimp_procedural_db_proc_exists gimp_call_procedure set_trace initialized)) {
+for(qw(gimp_procedural_db_proc_exists gimp_call_procedure initialized)) {
    *$_ = \&{"$interface_pkg\::$_"};
 }
 
@@ -1061,65 +1061,11 @@ in a prior C<BEGIN> block:
  BEGIN { $Gimp::verbose = 1; }
  use Gimp;
 
-Currently two levels of verbosity are supported:
+Currently three levels of verbosity are supported:
 
+  0: silence
   1: some info - generally things done only once
   2: all the info
-
-=item Gimp::set_trace (tracemask)
-
-You can switch on tracing to see which parameters are used to call PDB
-functions, so you can at least see what was called to cause the error:
-
- Gimp::set_trace(TRACE_ALL);
-
-This function is never exported, so you have to qualify it when calling.
-
-C<libgimp> functions can't be traced (and won't be traceable in the
-foreseeable future).
-
-C<tracemask> is any number of the following flags or'ed together:
-
-=over 4
-
-=item TRACE_NONE
-
-nothing is printed (default).
-
-=item TRACE_CALL
-
-all PDB calls (and only PDB calls!) are printed
-with arguments and return values.
-
-=item TRACE_TYPE
-
-the parameter types are printed additionally.
-
-=item TRACE_NAME
-
-the parameter names are printed.
-
-=item TRACE_DESC
-
-the parameter descriptions.
-
-=item TRACE_ALL
-
-all of the above.
-
-=back
-
-C<set_trace> returns the old tracemask.
-
-=item Gimp::set_trace(\$tracevar)
-
-write trace into $tracevar instead of printing it to STDERR. $tracevar only
-contains the last command traces, i.e. it's cleared on every PDB invocation
-invocation.
-
-=item Gimp::set_trace(*FILEHANDLE)
-
-write trace to FILEHANDLE instead of STDERR.
 
 =item GLib debugging
 
@@ -1163,7 +1109,7 @@ or [233,40,40]), a X11-like string ("#rrggbb") or a colour name
 =item DISPLAY, IMAGE, LAYER, CHANNEL, DRAWABLE, SELECTION, VECTORS, ITEM
 
 these will be mapped to corresponding objects (IMAGE => Gimp::Image). In
-trace output you will see small integers (the image/layer/etc..-ID)
+verbose output you will see small integers (the image/layer/etc..-ID)
 
 =item PARASITE
 

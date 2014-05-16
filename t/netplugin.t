@@ -24,7 +24,6 @@ use Gimp::Fu qw(save_image);
 use IPC::Open3;
 use Symbol 'gensym';
 use IO::Select; # needed because output can be big and it can block!
-#Gimp::set_trace(TRACE_ALL);
 
 our (@testbench, %proc2file, %file2procs);
 require 't/examples-api.pl';

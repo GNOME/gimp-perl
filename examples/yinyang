@@ -3,7 +3,6 @@
 use Gimp;
 use Gimp::Fu;
 #$Gimp::verbose = 1;
-#Gimp::set_trace(TRACE_ALL);
 
 my @BUCKET_ARGS = (FG_BUCKET_FILL,NORMAL_MODE,100,0,0,0,0);
 

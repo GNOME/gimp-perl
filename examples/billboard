@@ -7,7 +7,6 @@ use Gimp::Util;
 use constant PI => 3.14159;
 
 # Uncomment below to spew forth much data about whats going on.
-#Gimp::set_trace(TRACE_ALL);
 
 sub saw {  # a sawtooth function on PI
   my $val = @_;

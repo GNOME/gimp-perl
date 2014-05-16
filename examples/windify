@@ -3,8 +3,6 @@
 use Gimp;
 use Gimp::Fu;
 
-#Gimp::set_trace(TRACE_CALL);
-
 podregister {
   Gimp::Context->push();
   my $xsize = $drawable->width;

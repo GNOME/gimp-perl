@@ -8,7 +8,6 @@ BEGIN {
   require 't/gimpsetup.pl';
 }
 use Gimp qw(:DEFAULT net_init=spawn/);
-#Gimp::set_trace(TRACE_ALL);
 
 ok((my $i = new Gimp::Image(10,10,RGB)), 'OO Syntax for new image');
 ok(

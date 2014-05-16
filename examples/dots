@@ -4,7 +4,6 @@
 use Gimp;
 use Gimp::Fu;
 use strict;
-#Gimp::set_trace(TRACE_ALL);
 
 podregister {
   my $has_noselection;

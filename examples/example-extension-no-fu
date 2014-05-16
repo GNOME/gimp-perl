@@ -2,7 +2,6 @@
 
 BEGIN { $Gimp::verbose = 1; }
 use Gimp;
-Gimp::set_trace(TRACE_ALL);
 
 my $OTHER_EVENTLOOP = 0;
 

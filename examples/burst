@@ -3,7 +3,6 @@
 use Gimp;
 use Gimp::Fu;
 use Gimp::Util;
-# Gimp::set_trace(TRACE_ALL);
 use constant PI => 3.1415926;
 
 # find an equivalent polar value in the range of 0 to 2 pi

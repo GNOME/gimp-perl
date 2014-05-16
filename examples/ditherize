@@ -4,8 +4,6 @@ use strict;
 use Gimp;
 use Gimp::Fu;
 
-#Gimp::set_trace(TRACE_ALL);
-
 my %imagetype2layertype = (
    RGB,		RGB_IMAGE,
    GRAY,	GRAY_IMAGE,
