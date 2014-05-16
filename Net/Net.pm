@@ -33,7 +33,7 @@ use Carp 'croak';
 use Fcntl qw(F_SETFD);
 use Gimp::Extension;
 
-$VERSION = 2.3002;
+$VERSION = 2.3003;
 bootstrap Gimp::Net $VERSION;
 
 my $PROTOCOL_VERSION = 5; # protocol version

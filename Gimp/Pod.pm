@@ -8,7 +8,7 @@ use File::Basename;
 use base 'Exporter';
 
 our @EXPORT = qw(fixup_args make_arg_line);
-our $VERSION = 2.3002;
+our $VERSION = 2.3003;
 
 warn "$$-Loading ".__PACKAGE__ if $Gimp::verbose;
 
