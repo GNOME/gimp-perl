@@ -721,7 +721,7 @@ C<examples/example-no-fu>.
  $button = new Gimp::UI::GradientSelect;
 
  @new_vals = Gimp::UI::interact(
-   $function,$blurb,$help,$params,$menupath,@previous_vals
+   $functionname, $blurb, $help, $params, $menupath, @previous_vals
  );
 
 =back
