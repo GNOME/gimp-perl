@@ -229,6 +229,22 @@ All as per L<Gimp/Gimp-E<gt>install_procedure>.
 
 =back
 
+=head1 TODO
+
+ =head1 TEMPORARY PROCEDURES
+ =head2 autosave_configure - blurb text
+
+ Longer help text.
+
+ =head3 PARAMETERS
+
+ # gets interpolated vars per Gimp::Fu
+ podregister_ui 'autosave_configure' => sub { ... };
+
+ podregister will have interpolated vars too, and
+ add vars based on menupath, etc
+ menupath <Autostart> - die if get any params/retvals
+
 =head1 AUTHOR
 
 Ed J
