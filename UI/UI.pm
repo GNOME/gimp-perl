@@ -720,9 +720,9 @@ C<examples/example-no-fu>.
  $button = new Gimp::UI::BrushSelect;
  $button = new Gimp::UI::GradientSelect;
 
- @new_vals = Gimp::UI::interact(
+ ($result, @new_vals) = Gimp::UI::interact(
    $functionname, $blurb, $help, $params, $menupath, @previous_vals
- );
+ ); # $result = true if "Ok", false if "Cancel"
 
 =back
 
