@@ -1716,6 +1716,9 @@ const char *
 gimp_directory()
 
 const char *
+gimp_get_pdb_error()
+
+const char *
 gimp_data_directory()
 
 SV *
