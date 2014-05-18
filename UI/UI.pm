@@ -355,7 +355,7 @@ sub _instrument {
 }
 
 sub drawable_box {
-  my $class = 'Gimp::UI::Combo::Layer';
+  my $class = shift;
   my $a = Gtk2::HBox->new(0,5);
   my $b = $class->new;
   $a->pack_start($b, 1, 1, 0);
