@@ -380,7 +380,7 @@ sub new($$$$)		{ shift; [@_] }
 {
 package Gimp::Base;
 use overload '""' => sub { ref($_[0]).'->existing('.${$_[0]}.')'; };
-sub existing($$)	{ bless \$_[1], $_[0]; }
+sub existing($$)	{ my $id = $_[1]; bless \$id, $_[0]; }
 sub become($$)		{ bless $_[0], $_[1]; }
 }
 
