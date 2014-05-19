@@ -6,6 +6,7 @@ use strict;
 use FindBin qw($RealBin $RealScript);
 use File::Basename;
 use base 'Exporter';
+use Pod::Simple::SimpleTree;
 
 our @EXPORT = qw(fixup_args make_arg_line);
 our $VERSION = 2.3003;
@@ -13,13 +14,6 @@ our $VERSION = 2.3003;
 warn "$$-Loading ".__PACKAGE__ if $Gimp::verbose;
 
 sub __ ($) { goto &Gimp::__ }
-
-{
-package Gimp::Pod::Parser;
-use base 'Pod::Text';
-sub output { shift->{gpp_text} .= join '', @_; }
-sub get_text { $_[0]->{gpp_text} }
-}
 
 sub new {
    return unless -f "$RealBin/$RealScript";
@@ -29,29 +23,32 @@ sub new {
 sub _cache {
    my $self = shift;
    return $self->{doc} if $self->{doc};
-   my $parser = Gimp::Pod::Parser->new;
-   $parser->parse_from_file($self->{path});
-   $self->{doc} = $parser->get_text;
+   $self->{doc} = Pod::Simple::SimpleTree->new->parse_file($self->{path})->root;
 }
 
-sub format { $_[0]->_cache; }
+sub sections {
+  map $_->[2], grep { ref eq 'ARRAY' and $_->[0] eq 'head1' } @{$_[0]->_cache};
+}
 
-sub sections { $_[0]->_cache =~ /^\S.*$/mg; }
+sub _flatten_para {
+   my $para = shift;
+   join '', map { ref($_) ? _flatten_para($_) : $_ } @{$para}[2..$#{$para}];
+}
 
 sub section {
    my $self = shift;
    warn __PACKAGE__."::section(@_)" if $Gimp::verbose >= 2;
    return unless defined(my $doc = $self->_cache);
-   ($doc) = $doc =~ /^$_[0]\n(.*?)(?:^[A-Z]|\Z)/sm;
-   if ($doc) {
-      $doc =~ y/\r//d;
-      $doc =~ s/^\s*\n//;
-      $doc =~ s/[\s]+$/\n/;
-      $doc =~ s/^    //mg;
-      chomp $doc;
-   }
-   warn __PACKAGE__."::section returning '$doc'" if $Gimp::verbose >= 2;
-   $doc;
+   my $i = 2; # skip 'Document' and initial attrs
+   $i++ until
+      $i >= @$doc or ($doc->[$i]->[0] eq 'head1' and $doc->[$i]->[2] eq $_[0]);
+   return if $i >= @$doc;
+   my $i2 = ++$i;
+   $i2++ until $i2 >= @$doc or $doc->[$i2]->[0] =~ /^head/;
+   $i2--;
+   my $text = join "\n\n", map { _flatten_para($_) } @{$doc}[$i..$i2];
+   warn __PACKAGE__."::section returning '$text'" if $Gimp::verbose >= 2;
+   $text;
 }
 
 my %IND2SECT = (
@@ -110,7 +107,6 @@ Gimp::Pod - Evaluate pod documentation embedded in scripts.
 
   use Gimp::Pod;
   my $pod = Gimp::Pod->new;
-  my $text = $pod->format;
   my $synopsis = $pod->section('SYNOPSIS');
   my @sections = $pod->sections;
 
@@ -210,11 +206,6 @@ an empty string).
 Return a new Gimp::Pod object representing the current script or undef, if
 an error occured.
 
-=item format
-
-Return the embedded pod documentation in text format, or undef if no
-documentation can be found.
-
 =item section($header)
 
 Return the section with the header C<$header>, or undef if not
@@ -222,7 +213,7 @@ found. There is no trailing newline on the returned string.
 
 =item sections
 
-Returns a list of paragraph titles found in the pod.
+Returns a list of section titles found in the pod.
 
 =back
 
