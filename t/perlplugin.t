@@ -3,7 +3,7 @@ use Test::More;
 our ($dir, $DEBUG);
 my $tpf_name;
 BEGIN {
-#  $Gimp::verbose = 1;
+#  $Gimp::verbose = 3;
   $DEBUG = 0;
   require 't/gimpsetup.pl';
   use Config;
@@ -15,156 +15,130 @@ use strict;
 use Gimp;
 use Gimp::Fu;
 
-sub boilerplate_params {
-  my ($testing, $menuloc, $imagetypes) = @_;
-  (
-    ("exercise gimp-perl filter testing $testing") x 2,
-    ("boilerplate id") x 2,
-    "20140310",
-    N_$menuloc,
-    $imagetypes // "*",
-  );
-}
-
-# & to dodge annoying prototype preventing use of boilerplate_params!
-&register(
-  "test_dies",
-  boilerplate_params('exceptions', '<None>'),
+register
+  "test_dies", 'blurb', '', '', '', '', '<None>', '',
   [ [ PF_STRING, "text", "Input text", 'default' ], ],
-  sub { die $_[0] }
-);
+  sub { die $_[0] };
 
-&register(
-  "test_pf_adjustment",
-  boilerplate_params('returning text', '<None>'),
+register
+  "test_pf_adjustment", 'blurb', '', '', '', '', '<None>', '',
   [ [ PF_ADJUSTMENT, "input", "input", [100, 2, 1000, 1, 10, 0, 1]  ], ],
   [ [ PF_INT32, "num", "Output number", ], ],
-  sub { @_ }
-);
+  sub { @_ };
 
-&register(
-  "test_return_text",
-  boilerplate_params('returning text', '<None>'),
+register
+  "test_return_text", 'blurb', '', '', '', '', '<None>', '',
   [ [ PF_STRING, "text", "Input text", 'default' ], ],
   [ [ PF_STRING, "text", "Output text", ], ],
-  sub { @_ }
-);
+  sub { @_ };
 
-&register(
-  "test_return_colour",
-  boilerplate_params('returning color', '<None>'),
-  [ [ PF_COLOR, "colour", "Input colour", [ 5, 5, 5 ], ], ],
-  [ [ PF_COLOR, "colour", "Output colour", ], ],
-  sub { @_ }
-);
+podregister { $colour };
 
-&register(
-  "test_return_int32array",
-  boilerplate_params('returning array', '<None>'),
+register
+  "test_return_int32array", 'blurb', '', '', '', '', '<None>', '',
   [],
   [
     [ PDB_INT32ARRAY, "array1", "Output array1", ],
     [ PDB_INT32ARRAY, "array2", "Output array1", ],
   ],
-  sub { ([1, 2], [3, 4]) }
-);
+  sub { ([1, 2], [3, 4]) };
 
-&register(
-  "test_return_str_not_int",
-  boilerplate_params('param exception on return val', '<None>'),
+register
+  "test_return_str_not_int", 'blurb', '', '', '', '', '<None>', '',
   [],
   [
     [ PF_INT16, "int", "Output int", ],
   ],
-  sub { 'verbiage' }
-);
+  sub { 'verbiage' };
 
-&register(
-  "test_float_in",
-  boilerplate_params('in param float', '<None>'),
-  [
-    [ PF_FLOAT, "float", "Input float", ],
-  ],
+register
+  "test_float_in", 'blurb', '', '', '', '', '<None>', '',
+  [ [ PF_FLOAT, "float", "Input float", ], ],
   [],
-  sub { }
-);
+  sub { };
 
-&register(
-  "test_return_image",
-  boilerplate_params('return image', '<None>'),
+register
+  "test_return_image", 'blurb', '', '', '', '', '<None>', '',
   [],
-  [
-    [ PF_IMAGE, "image", "Output image", ],
-  ],
-  sub { 1 }
-);
+  [ [ PF_IMAGE, "image", "Output image", ], ],
+  sub { 1 };
 
-&register(
-  "test_return_toomany",
-  boilerplate_params('return toomany', '<None>'),
+register
+  "test_return_toomany", 'blurb', '', '', '', '', '<None>', '',
   [],
-  [
-    [ PF_IMAGE, "image", "Output image", ],
-  ],
-  sub { (1, 2) }
-);
+  [ [ PF_IMAGE, "image", "Output image", ], ],
+  sub { (1, 2) };
 
-&register(
-  "test_return_toofew",
-  boilerplate_params('return toofew', '<None>'),
+register
+  "test_return_toofew", 'blurb', '', '', '', '', '<None>', '',
   [],
-  [
-    [ PF_IMAGE, "image", "Output image", ],
-  ],
-  sub { }
-);
+  [ [ PF_IMAGE, "image", "Output image", ], ],
+  sub { };
 
-&register(
-  "test_no_params",
-  boilerplate_params('no params', '<None>'),
+register
+  "test_no_params", 'blurb', '', '', '', '', '<None>', '',
   [],
-  [
-    [ PF_INT32, "int", "Output int", ],
-  ],
-  sub { 1 }
-);
+  [ [ PF_INT32, "int", "Output int", ], ],
+  sub { 1 };
 
-&register(
-  "test_create_return_image",
-  boilerplate_params('retval addition', '<Image>/File/Create/x1', ''),
+register
+  "test_create_return_image", 'blurb', '', '', '', '', '<Image>/File/Create/x1', '',
   [],
-  [
-  ],
-  sub { Gimp::Image->new(20, 20, RGB) }
-);
+  [], # if leave out, uses POD which has a retval
+  sub { Gimp::Image->new(20, 20, RGB) };
 
-&register(
-  "test_create_return_int_image",
-  boilerplate_params('retval addition', '<Image>/File/Create/x1', ''),
+register
+  "test_create_return_int_image", 'blurb', '', '', '', '', '<Image>/File/Create/x1', '',
   [],
-  [
-    [ PF_INT32, "int", "Output int", ],
-  ],
-  sub { (Gimp::Image->new(20, 20, RGB), 2) }
-);
+  [ [ PF_INT32, "int", "Output int", ], ],
+  sub { (Gimp::Image->new(20, 20, RGB), 2) };
 
-&register(
-  "test_perl_filter",
-  boilerplate_params('filter', '<Image>/Filters'),
+register
+  "test_perl_filter", 'blurb', '', '', '', '', '<Image>/Filters', '*',
   [ [PF_STRING, "text", "Text to name layer", "hello"], ],
+  [], # if leave out, uses POD which has a retval
   sub {
-    # returns a value despite such not being declared
-    # previously, excess returns were a fatal error, but none were ever returned
-    # now not an error
     my ($i, $drawable, $text) = @_;
     my $tl = $i->text_layer_new("hi", "Arial", 8, 3);
     $i->insert_layer($tl, 0, 0);
     $tl->set_name($text);
     return;
-  }
-);
+  };
 
 exit main;
+__END__
+
+=head1 NAME
+
+test_return_colour - returns colour
+
+=head1 SYNOPSIS
+
+<None>
+
+=head1 DESCRIPTION
+
+Description.
+
+=head1 AUTHOR
+
+boilerplate ID
+
+=head1 DATE
+
+20010601
+
+=head1 PARAMETERS
+
+  [ PF_COLOR, "colour", "Input colour", [ 5, 5, 5 ], ],
+
+=head1 RETURN VALUES
+
+  [ PF_COLOR, "colour", "Output colour", ],
+
+=head1 LICENSE
+
+Licence.
 EOF
 }
 use Gimp qw(:DEFAULT net_init=spawn/);
