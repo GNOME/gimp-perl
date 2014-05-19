@@ -1,5 +1,5 @@
 Items as of 2014-04-29 (by Ed J)
-* possible killer app: https://mail.gnome.org/archives/gimp-developer-list/2014-April/msg00017.html - also 53
+* possible killer app: http://wiki.gimp.org/index.php/Hacking:Plugin_registry
 * gimp-plugins-refresh: load is
   app/plug-in/gimppluginmanager.c:gimp_plug_in_manager_query_new, closedown
   is ./app/plug-in/gimppluginmanager.c:gimp_plug_in_manager_exit
@@ -14,12 +14,10 @@ Items as of 2014-04-29 (by Ed J)
   GimpParam counterpart - Gimp::Lib::Data?
 * use Glib array for above
 * unify typemaps and C INCs, for more accurate EU::D support
+* Net.xs should implement own PDL serialise/deser. Use Lib.xs new_pdl?
 * Restructure dirs so all libs under lib/ using ExtUtils::MakeMaker::BigHelper
 * http://search.cpan.org/dist/Glib-Object-Introspection/
-* Add a gtk2 gimp-perl console - cf http://registry.gimp.org/node/29348
-  - gimp/plug-ins/script-fu/script-fu-console.c
-  base on this:
-  http://gtk2-perl.sourceforge.net/doc/gtk2-perl-study-guide/x3661.html
+* Add Browse to console - cf http://registry.gimp.org/node/29348
 * interactive collab image-editing:
   http://users.telenet.be/blendix/verse/#gimp_plugin
   https://github.com/verse/verse/wiki/Tutorial-Simple-C-Verse-Client

@@ -1,0 +1,164 @@
+#!/usr/bin/perl -w
+
+use strict;
+#BEGIN { $Gimp::verbose = 1; }
+use Gimp;
+use Gimp::Pod;
+use Gtk2::Gdk::Keysyms;
+
+my $INIT_TEXT = "Gimp-Perl Console v1.0\n\n";
+my $TITLE = "Perl Console";
+my %KEYVAL2HANDLER = (
+  $Gtk2::Gdk::Keysyms{Return} => \&key_return,
+  $Gtk2::Gdk::Keysyms{KP_Enter} => \&key_return,
+  $Gtk2::Gdk::Keysyms{ISO_Enter} => \&key_return,
+  $Gtk2::Gdk::Keysyms{KP_Up} => \&key_up,
+  $Gtk2::Gdk::Keysyms{Up} => \&key_up,
+  $Gtk2::Gdk::Keysyms{KP_Down} => \&key_down,
+  $Gtk2::Gdk::Keysyms{Down} => \&key_down,
+);
+my @history;
+my $history_index = 0;
+
+my $pod = Gimp::Pod->new;
+my ($proc, $blurb) = $pod->section('NAME') =~ /(.*?)\s*-\s*(.*)/;
+
+Gimp::register_callback $proc => sub {
+  Gimp::gtk_init;
+  my $window = Gtk2::Window->new('toplevel');
+  $window->signal_connect('delete_event' => sub { Gtk2->main_quit; });
+  $window->set_border_width(5);
+  $window->set_title($TITLE);
+  $window->add(ret_vbox($INIT_TEXT));
+  $window->show;
+  Gtk2->main;
+};
+
+Gimp::on_net { Gimp::callback($proc); };
+
+Gimp::on_query {
+  Gimp->install_procedure(
+    $proc, $blurb,
+    (map $pod->section($_), qw(DESCRIPTION AUTHOR LICENSE DATE SYNOPSIS)),
+    undef, &Gimp::PLUGIN,
+    [[PDB_INT32, 'run_mode', "Run-mode"]],
+    [],
+  );
+};
+
+exit Gimp::main;
+
+sub key_return {
+  my ($e, $buffer) = @_;
+  my $line = $e->get_text;
+  $e->set_text("");
+  $e->grab_focus;
+  return if $line =~ m/^\s*$/; # ignore empty lines
+  push @history, $line unless @history > 0 and $line eq $history[-1];
+  $history_index = @history;
+  $buffer->insert($buffer->get_end_iter, "\n".process_input($line)); 
+}
+
+sub entry_newtext {
+  my ($e, $text) = @_;
+  $e->set_text($text);
+  $e->set_position(length $text);
+}
+
+sub key_up {
+  my ($e, $buffer) = @_;
+  return if $history_index == 0;
+  entry_newtext($e, $history[--$history_index] // '');
+}
+
+sub key_down {
+  my ($e, $buffer) = @_;
+  return if $history_index >= @history;
+  entry_newtext($e, $history[++$history_index] // '');
+}
+
+sub ret_vbox {
+  my ($text) = @_;
+  my $vbox = Gtk2::VBox->new(FALSE,0);
+
+    my $sw = Gtk2::ScrolledWindow->new (undef, undef);
+    $sw->set_policy ('automatic', 'automatic');
+    $sw->set_size_request (500, 300);
+    $sw->set_border_width(5);
+
+      my $tview = Gtk2::TextView->new;
+      $tview->set_editable(FALSE);
+      $tview->set_cursor_visible(FALSE);
+      $tview->set_wrap_mode('word');
+      my $buffer = $tview->get_buffer;
+      $buffer->insert($buffer->get_end_iter, $text);
+      $buffer->create_mark ('end', $buffer->get_end_iter, FALSE);
+      $buffer->signal_connect (insert_text => sub {
+	# textview idle updates - we must too
+	Glib::Idle->add(sub {
+	  $tview->scroll_to_mark ($buffer->get_mark ('end'), 0.0, TRUE, 0, 0.5);
+	  0;
+	});
+      });
+
+    $sw->add($tview);
+  $vbox->pack_start($sw,TRUE,TRUE,4);
+    #--------------------------------------
+    my $hbox = Gtk2::HBox->new;
+
+      my $entry = Gtk2::Entry->new;
+    $hbox->pack_start($entry,TRUE,TRUE,0);
+
+      $entry->signal_connect('key_press_event'=> sub {
+	my ($widget,$event) = @_;
+	return 0 unless my $func = $KEYVAL2HANDLER{$event->keyval};
+	$func->($entry, $buffer);
+	1;
+      });
+
+    # $hbox->pack_end($btn_send,FALSE,TRUE,0); will be browse
+  #--------------------------------------
+  $vbox->pack_start($hbox,FALSE,TRUE,4);
+  $vbox->set_focus_child($hbox);
+  $vbox->show_all;
+  return $vbox;
+}
+
+sub process_input {
+  my ($input)= @_;
+  my @out = eval("no strict;no warnings;\n#line 1 \"code\"\n".$input);
+  my $output = $@ || join ' ', @out;
+  chomp $output;
+  "> $input\n$output";
+}
+__END__
+
+=head1 NAME
+
+perl_fu_console - Gimp-Perl console
+
+=head1 SYNOPSIS
+
+<Image>/Filters/Languages/_Perl/_Console
+
+=head1 DESCRIPTION
+
+Console for running Gimp-Perl commands and seeing output.
+
+Try this:
+
+ $i = Gimp::Plugin->inner_bevel('Arial', 80, "Perl", 'red', 'purple', 132, 30, 7, 2)
+ Gimp::Display->new($i)
+ $i->get_layers
+
+=head1 AUTHOR
+
+Ed J
+
+=head1 DATE
+
+2014-05-19
+
+=head1 LICENSE
+
+Same terms as Gimp-Perl.

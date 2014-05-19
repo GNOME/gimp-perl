@@ -7,6 +7,7 @@ require '../config.pl';
 # list of standard plugins
 @pins = qw(
   Perl-Server
+  Perl-Console
   dataurl
   example-fu
   exceptiontest
