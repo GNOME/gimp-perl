@@ -6,7 +6,8 @@ my $p = Gimp::Pod->new;
 ok($p, 'obj init');
 is_deeply(
   [ $p->sections ],
-  [ ('NAME', 'SPACE NAME', 'VERBATIM', 'OTHER') ], 'sections'
+  [ 'NAME', 'SPACE NAME', 'VERBATIM', 'TEMPORARY PROCEDURES', 'OTHER' ],
+  'sections'
 );
 is($p->section('NAME'), 'test - Run some tests', 'sect name');
 is(
@@ -21,6 +22,16 @@ is(
 );
 is($p->section('OTHER'), 'Other text.', 'sect at eof');
 is($p->section('NOT THERE'), undef, 'sect not there');
+is_deeply(
+  [ $p->sections('TEMPORARY PROCEDURES') ],
+  [ 'p1 - text', 'p2 - other' ],
+  'sub-sections'
+);
+is(
+  $p->section('TEMPORARY PROCEDURES', 'p1 - text', 'PARAMETERS'),
+  ' p1 params',
+  'sub-section'
+);
 
 done_testing;
 __END__
@@ -41,6 +52,22 @@ Second para.
  verbatim2 
 
  new verbatim para
+
+=head1 TEMPORARY PROCEDURES
+
+=head2 p1 - text
+
+p1 description.
+
+=head3 PARAMETERS
+
+ p1 params
+
+=head3 SYNOPSIS
+
+<Image>/Menu
+
+=head2 p2 - other
 
 =head1 OTHER
 

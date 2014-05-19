@@ -27,28 +27,46 @@ sub _cache {
 }
 
 sub sections {
-  map $_->[2], grep { ref eq 'ARRAY' and $_->[0] eq 'head1' } @{$_[0]->_cache};
+  my ($self, $sub) = @_;
+  my $doc = $self->_cache;
+  if (defined $sub) {
+    my $i = 2; # skip 'Document' and initial attrs
+    $i++ until
+      $i >= @$doc or ($doc->[$i]->[0] eq 'head1' and $doc->[$i]->[2] eq $sub);
+    return if $i >= @$doc;
+    my $i2 = ++$i;
+    $i2++ until $i2 >= @$doc or $doc->[$i2]->[0] =~ /^head1/;
+    $i2--;
+    map { $_->[2] } grep { ref and $_->[0] eq 'head2' } @{$doc}[$i..$i2];
+  } else {
+    map $_->[2], grep { ref eq 'ARRAY' and $_->[0] eq 'head1' } @$doc;
+  }
 }
 
 sub _flatten_para {
-   my $para = shift;
-   join '', map { ref($_) ? _flatten_para($_) : $_ } @{$para}[2..$#{$para}];
+  my $para = shift;
+  join '', map { ref($_) ? _flatten_para($_) : $_ } @{$para}[2..$#{$para}];
 }
 
 sub section {
-   my $self = shift;
-   warn __PACKAGE__."::section(@_)" if $Gimp::verbose >= 2;
-   return unless defined(my $doc = $self->_cache);
-   my $i = 2; # skip 'Document' and initial attrs
-   $i++ until
-      $i >= @$doc or ($doc->[$i]->[0] eq 'head1' and $doc->[$i]->[2] eq $_[0]);
-   return if $i >= @$doc;
-   my $i2 = ++$i;
-   $i2++ until $i2 >= @$doc or $doc->[$i2]->[0] =~ /^head/;
-   $i2--;
-   my $text = join "\n\n", map { _flatten_para($_) } @{$doc}[$i..$i2];
-   warn __PACKAGE__."::section returning '$text'" if $Gimp::verbose >= 2;
-   $text;
+  my $self = shift;
+  warn __PACKAGE__."::section(@_)" if $Gimp::verbose >= 2;
+  return unless defined(my $doc = $self->_cache);
+  my $i = 2; # skip 'Document' and initial attrs
+  my $depth = 0;
+  while (defined(my $sec = shift)) {
+    $depth++;
+    $i++ until
+      $i >= @$doc or
+      ($doc->[$i]->[0] eq "head$depth" and $doc->[$i]->[2] eq $sec);
+    return if $i >= @$doc;
+  }
+  my $i2 = ++$i;
+  $i2++ until $i2 >= @$doc or $doc->[$i2]->[0] eq "head$depth";
+  $i2--;
+  my $text = join "\n\n", map { _flatten_para($_) } @{$doc}[$i..$i2];
+  warn __PACKAGE__."::section returning '$text'" if $Gimp::verbose >= 2;
+  $text;
 }
 
 my %IND2SECT = (
@@ -108,7 +126,8 @@ Gimp::Pod - Evaluate pod documentation embedded in scripts.
   use Gimp::Pod;
   my $pod = Gimp::Pod->new;
   my $synopsis = $pod->section('SYNOPSIS');
-  my @sections = $pod->sections;
+  my @temp_procs = $pod->sections('TEMPORARY PROCEDURES');
+  my $text = $pod->section('TEMPORARY PROCEDURES', 'p1 - x', 'PARAMETERS');
 
   my @args = fixup_args(@register_args);
 
@@ -206,14 +225,16 @@ an empty string).
 Return a new Gimp::Pod object representing the current script or undef, if
 an error occured.
 
-=item section($header)
+=item section(@headers)
 
-Return the section with the header C<$header>, or undef if not
-found. There is no trailing newline on the returned string.
+Return the section with the header described by C<@headers>, the first
+being a C<head1>, the second <head2>, etc, or undef if not found. There
+is no trailing newline on the returned string.
 
-=item sections
+=item sections(@headers)
 
-Returns a list of section titles found in the pod.
+Returns a list of section titles found in the pod, described similarly
+to above.
 
 =back
 
