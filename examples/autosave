@@ -1,0 +1,214 @@
+#!/usr/local/bin/perl
+
+use strict;
+use Gimp;
+# use Gimp::UI;
+use Gimp::Fu;
+use Gimp::Extension;
+use Glib;
+use Gtk2;
+use Cwd 'abs_path';
+use File::Path 'make_path';
+use File::Basename;
+
+my %C = (
+  active => 1,
+  interval => 5,
+  saved_file_pattern => '%F~',
+  new_file_pattern => '%~/.gimp-autosave/%N.%D.%B.%Wx%H');
+
+sub autosave_real {
+  # warn "calling autosave_real";
+  my $sfp = ($C{saved_file_pattern} || '%F~');
+  my $nfp = ($C{new_file_pattern} || '%~/.gimp-autosave/%N.%D.%B.%Wx%H');
+
+  for my $img (Gimp::Image->list) {
+    if ($img->is_valid) {
+      my $saved=0;
+      my $file;
+
+      if (($file = $img->get_filename) && index ($file, 'Untitled') == -1) {
+        $saved=1;
+      } else {
+        $file = ($img->get_name || $$img);
+      }
+
+      if ($img->is_dirty) {
+        my @date = (localtime) [5,4,3];
+        $date[0]+=1900; $date[1]+=1;
+        my $fname;
+
+        if ($saved) {
+          $fname = $sfp;
+          $fname =~ s{%(?:(~)|(B)|(C)|(D)|(F)|(N)|(W)|(H)|%)}{
+            $1    ? $ENV{HOME}
+            : $2  ? qw(RGB GRAY INDEXED) [$img->base_type]
+             : $3 ? dirname ($file)
+             : $4 ? join ('', @date)
+             : $5 ? (index ($file, '.xcf') == (length ($file) - 4)
+                     ? $file : "$file.xcf")
+             : $6 ? $img->get_name
+             : $7 ? $img->width
+             : $8 ? $img->height
+             : '%' }xeg;
+        } elsif ($img->get_filename) {
+          $fname = $img->get_filename;
+        } else {
+          $fname = $nfp;
+          $fname =~ s{%(?:(~)|(B)|(D)|(N)|(W)|(H)|(%))}{
+            $1    ? $ENV{HOME}
+            : $2  ? qw(RGB GRAY INDEXED) [$img->base_type]
+             : $3 ? join ('', @date)
+             : $4 ? ($img->get_name().'-<<x>>')
+             : $5 ? $img->width
+             : $6 ? $img->height
+             : '%' }xeg;
+
+          $fname =~ s/(?:\.xcf)?$/.xcf/;
+
+          unless ($img->get_name =~ /Untitled-\d+/) {
+            my $c = 0;
+            my @fname = split '<<x>>', $fname, 2;
+            my @fs = glob "$fname[0]*";
+            $c++ while grep /$fname[0]$c\b/, @fs;
+            $fname = "$fname[0]$c$fname[1]";
+            $img->set_filename ($fname);
+          }
+        }
+
+        my $savedir = dirname $fname;
+        if (!-e $savedir) {
+          warn "could not make directory '$savedir'" if !make_path $savedir;
+        } else {
+          warn "'$savedir' exists, but isn't a directory, can't save"
+           if !-d $savedir;
+        }
+        # warn "saving '$fname'";
+        undef $@;
+        my $res = eval {
+          Gimp->xcf_save(0, $img, ($img->get_layers)[0], $fname, $fname);
+        };
+        if ($@) {
+          warn "couldn't save '$fname': $@";
+        }
+      }
+    }
+  }
+  1
+}
+
+sub autosave_configure {
+  my ($ok, $tog, $int, $sfp, $nfp) = Gimp::Fu::interact 'autosave-configure',
+  <<EOF,
+Edit autosave settings
+
+You can use the special identifiers:
+%~ => user\'s home directory
+%B => image base type (RGB/GRAY/INDEXED)
+%C => current directory of the file *
+%D => date file was opened
+%F => filename (full path) *
+%N => filename (basename)
+%W => image width
+%H => image height
+
+* not available for unsaved files
+EOF
+  "Edit Autosave Settings",
+  [[PF_TOGGLE, 'active', 'Set whether or not autosave is active', 1],
+   [PF_SPINNER, 'interval', "Autosave interval in minutes", 5, [1, 120, 1]],
+   [PF_STRING, 'saved_file_pattern', 'Path and filename pattern for saved files',
+    '%F~'],
+   [PF_STRING, 'new_file_pattern',
+    'Path and filename pattern for new (unsaved) files',
+    '%~/.gimp-autosave/%N.%D.%M.%Wx%H']],
+  'Configure Autosave',
+  @C{qw(active interval saved_file_pattern new_file_pattern)};
+
+  unless ($ok) {
+    # warn "config cancelled";
+    return;
+  }
+  # warn "got $tog, $int, $sfp, $nfp";
+
+  Gimp->gimprc_set ('autosave_active', $tog);
+  Gimp->gimprc_set ('autosave_interval', $int);
+  Gimp->gimprc_set ('autosave_saved_file_pattern', $sfp);
+  Gimp->gimprc_set ('autosave_new_file_pattern', $nfp);
+
+  Glib::Source->remove(delete $C{t})
+   if $C{t} && ($int != $C{interval} || !$tog);
+
+  $C{active} = $tog;
+  $C{interval} = $int//0 < 1 ? 1 : $int > 120 ? 120 : $int;
+  $C{saved_file_pattern} = $sfp;
+  $C{new_file_pattern} = $nfp;
+
+  $C{t} = Glib::Timeout->add_seconds(60*$C{interval}, \&autosave_real)
+   if $tog && !$C{t};
+ ()
+}
+
+register_temp
+ 'autosave_configure',                                           # Name
+ 'Edit autosave settings',                                       # Blurb
+ "Update autosave settings\nAll files are saved as .xcf",        # Help
+ N_"<Image>/File/Autosave",                                      # Menu
+ undef,                                                          # Image types
+ [[PDB_INT32, 'run_mode', 'interactive, [non-interactive]', 0]], # Params
+ [],                                                             # Return
+ \&autosave_configure;
+
+podregister {
+  for (keys %C) {
+    my $x = eval { Gimp->gimprc_query ("autosave_$_") };
+    $C{$_} = $x if length $x;
+  }
+  if (($C{interval}//0) < 1) {
+    Gimp->gimprc_set ('autosave_interval', $C{interval} = 1);
+  } elsif ($C{interval} > 120) {
+    Gimp->gimprc_set ('autosave_interval', $C{interval} = 120);
+  }
+  if ($C{active}) {
+    $C{t} = Glib::Timeout->add_seconds (60*$C{interval}, \&autosave_real);
+  }
+  Gtk2->main
+};
+exit Gimp::main;
+__END__
+
+=head1 NAME
+
+extension_autosave - periodically save all open documents with unsaved changes to a temporary file
+
+=head1 SYNOPSIS
+
+<None>
+
+=head1 DESCRIPTION
+
+Open images that haven't been saved to at all yet, will be saved in the home
+directory (or the cwd, or a configurable directory, using the time the image was
+started, and some random/distinguishing property)
+
+=head1 AUTHOR
+
+Rain <rain AT terminaldeficit DOT com>
+
+=head1 DATE
+
+2014-05-08
+
+=head1 LICENSE
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <http://www.gnu.org/licenses/>.
