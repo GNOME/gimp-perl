@@ -16,7 +16,7 @@ use Gimp;
 use Gimp::Extension;
 
 podregister {
-  $num + 1;
+  (0, $num + 1);
 };
 
 exit main;
@@ -58,7 +58,7 @@ EOF
 }
 use Gimp "net_init=spawn/";
 
-is(Gimp::Plugin->extension_test(Gimp::RUN_NONINTERACTIVE, 7), 8, 'return val');
+is((Gimp::Plugin->extension_test(7))[1], 8, 'return val');
 
 Gimp::Net::server_quit;
 Gimp::Net::server_wait;

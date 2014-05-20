@@ -69,6 +69,47 @@ sub section {
   $text;
 }
 
+sub lazy_image_params { ([&Gimp::PDB_IMAGE, "image", "Input image"],
+  [&Gimp::PDB_DRAWABLE, "drawable", "Input drawable", '%a']); }
+sub lazy_load_params  { ([&Gimp::PDB_STRING, "filename", "Filename"],
+  [&Gimp::PDB_STRING, "raw_filename", "User-given filename"]); }
+sub lazy_save_params  { (&lazy_image_params, &lazy_load_params); }
+sub lazy_image_retval { [&Gimp::PDB_IMAGE, "image", "Output image"]; }
+sub insert_params {
+   my @p = @_;
+   die __<<EOF unless $p[6] =~ /^<(?:Image|Load|Save|Toolbox|None)>/;
+Menupath must start with <Image>, <Load>, <Save>, <Toolbox>, or <None>!
+(got '$p[6]')
+EOF
+   if ($p[6] =~ /^<Image>\//) {
+      if ($p[7]) {
+         unshift @{$p[8]}, &lazy_image_params;
+      } else {
+         # undef or ''
+         unshift @{$p[9]}, &lazy_image_retval
+            if !@{$p[9]} or $p[9]->[0]->[0] != &Gimp::PDB_IMAGE;
+      }
+   } elsif ($p[6] =~ /^<Load>\//) {
+      my ($start, $label, $fileext, $prefix) = split '/', $p[6];
+      $prefix = '' unless $prefix;
+      Gimp::on_query { Gimp->register_load_handler($p[0], $fileext, $prefix); };
+      $p[6] = join '/', $start, $label;
+      unshift @{$p[8]}, &lazy_load_params;
+      unshift @{$p[9]}, &lazy_image_retval;
+   } elsif ($p[6] =~ /^<Save>\/(.*)/) {
+      my ($start, $label, $fileext, $prefix) = split '/', $p[6];
+      $prefix = '' unless $prefix;
+      Gimp::on_query { Gimp->register_save_handler($p[0], $fileext, $prefix); };
+      $p[6] = join '/', $start, $label;
+      unshift @{$p[8]}, &lazy_save_params;
+   } elsif ($p[6] =~ m#^<Toolbox>/Xtns/#) {
+      undef $p[7];
+   } elsif ($p[6] =~ /^<None>/) {
+      undef $p[6]; undef $p[7];
+   }
+   @p;
+}
+
 my %IND2SECT = (
    2 => 'DESCRIPTION', 3 => 'AUTHOR', 4 => 'LICENSE',
    5 => 'DATE', 6 => 'SYNOPSIS', 7 => 'IMAGE TYPES',
@@ -102,7 +143,7 @@ sub fixup_args {
       carp __"$p[0]: argument name '$val->[1]' contains illegal characters, only 0-9, a-z and _ allowed"
 	unless $val->[1]=~/^[0-9a-z_]+$/;
    }
-   @p;
+   insert_params(@p);
 }
 
 sub make_arg_line {
