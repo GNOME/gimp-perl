@@ -327,13 +327,6 @@ sub register($$$$$$$$$;@) {
    no strict 'refs';
    my ($function, $blurb, $help, $author, $copyright, $date, $menupath,
        $imagetypes, $params, $results, $code) = insert_params(fixup_args(@_));
-   for my $p (@$params,@$results) {
-      next unless ref $p;
-      croak __"$function: argument/return value '$p->[1]' has illegal type '$p->[0]'"
-	unless int($p->[0]) eq $p->[0];
-      carp(__"$function: argument name '$p->[1]' contains illegal characters, only 0-9, a-z and _ allowed")
-	unless $p->[1]=~/^[0-9a-z_]+$/;
-   }
 
    $function="perl_fu_".$function unless $function =~ /^(?:perl_fu_|extension_|plug_in_|file_)/ || $function =~ s/^\+//;
    $function=~/^[0-9a-z_]+(-ALT)?$/ or carp(__"$function: function name contains unusual characters, good style is to use only 0-9, a-z and _");
