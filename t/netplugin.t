@@ -2,7 +2,7 @@ use strict;
 use Test::More;
 our ($dir, $DEBUG);
 BEGIN {
-#  $Gimp::verbose = 1;
+#  $Gimp::verbose = 3;
   $DEBUG = 0;
   require 't/gimpsetup.pl';
   # most minimal and elegant would be to symlink sandbox gimp-dir's
@@ -47,7 +47,7 @@ for my $test (@testbench) {
   }
   my $output = "$scratchdir/out.xcf";
   unshift @$actualparams, '--output', $output;
-  unshift @$actualparams, '-v' if $Gimp::verbose;
+  unshift @$actualparams, ('-v') x $Gimp::verbose;
   unshift @$actualparams, '-p', $name if @{$file2procs{$proc2file{$name}}} > 1;
   my @perl = ($^X, '-Mblib');
 #use Data::Dumper;warn Dumper(Gimp->procedural_db_proc_info("perl_fu_$name"));
