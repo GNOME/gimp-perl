@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
-#BEGIN { $Gimp::verbose = 1; }
+#BEGIN { $Gimp::verbose = 3; }
 use Gimp;
 use Gimp::Net;
 use Gimp::Extension;
