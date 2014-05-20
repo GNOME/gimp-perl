@@ -149,7 +149,7 @@ sub string2pf($$) {
    } elsif($type == PF_IMAGE) {
       my $image;
       if ((my $arg) = $s =~ /%(.+)/) {
-	 die "Image % argument not integer - if file, put './' in front\n"
+	 die "Image %argument '$arg' not integer - if file, put './' in front\n"
 	    unless $arg eq int $arg;
 	 $image = Gimp::Image->existing($arg);
 	 die "'$arg' not a valid image - need to run Perl Server?\n"
@@ -271,7 +271,8 @@ Gimp::on_query {
 	 next if $p->[0] < Gimp::PDB_END;
 	 $p->[0] = $pf2info{$p->[0]}->[1] // datatype(values %{+{@{$p->[4]}}});
       }
-      unshift @{$s->[9]}, [Gimp::PDB_INT32,"run_mode","Interactive:0=yes,1=no"];
+      unshift @{$s->[9]}, [&Gimp::PDB_INT32,"run_mode","Interactive:0=yes,1=no"]
+	 if defined $s->[6];
       Gimp->install_procedure(@$s);
    }
 };
@@ -288,7 +289,7 @@ sub register($$$$$$$$$;@) {
       if $function =~ y/-//;
 
    Gimp::register_callback $function => sub {
-      $run_mode = shift;	# global!
+      $run_mode = defined($menupath) ? shift : undef;	# global!
       my(@pre,@defaults,@lastvals);
 
       Gimp::ignore_functions(@Gimp::GUI_FUNCTIONS)
@@ -321,7 +322,9 @@ sub register($$$$$$$$$;@) {
          }
       }
       warn "perlsub: rm=$run_mode" if $Gimp::verbose >= 2;
-      if ($run_mode == Gimp::RUN_INTERACTIVE
+      if ($run_mode == Gimp::RUN_NONINTERACTIVE or not defined $run_mode) {
+         # nop
+      } elsif ($run_mode == Gimp::RUN_INTERACTIVE
           || $run_mode == Gimp::RUN_WITH_LAST_VALS) {
          my $fudata = $Gimp::Data{"$function/_fu_data"};
 	 if ($fudata) {
@@ -348,8 +351,6 @@ sub register($$$$$$$$$;@) {
                unshift @$params, @hide;
             }
          }
-      } elsif ($run_mode == Gimp::RUN_NONINTERACTIVE) {
-         # nop
       } else {
          die __"run_mode must be INTERACTIVE, NONINTERACTIVE or RUN_WITH_LAST_VALS\n";
       }

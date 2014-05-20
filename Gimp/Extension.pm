@@ -21,24 +21,24 @@ FILTER {
 };
 
 our @EXPORT = qw(podregister main add_listener register_temp);
+our $run_mode;
 
 my @register_params;
 my @temp_procs;
-Gimp::on_query { Gimp->install_procedure(@register_params); };
+my @pod_temp_procs;
+Gimp::on_query {
+   unshift @{$register_params[9]}, [&Gimp::PDB_INT32,"run_mode","Interactive:0=yes,1=no"]
+      if defined $register_params[6];
+   Gimp->install_procedure(@register_params);
+};
 
 sub podregister (&) {
    no strict 'refs';
    my ($function, $blurb, $help, $author, $copyright, $date, $menupath,
        $imagetypes, $params, $results, $code) = fixup_args(('')x9, @_);
-   for my $p (@$params,@$results) {
-      next unless ref $p;
-      croak __"$function: argument/return value '$p->[1]' has illegal type '$p->[0]'"
-	unless int($p->[0]) eq $p->[0];
-      carp(__"$function: argument name '$p->[1]' contains illegal characters, only 0-9, a-z and _ allowed")
-	unless $p->[1]=~/^[0-9a-z_]+$/;
-   }
    Gimp::register_callback $function => sub {
       warn "$$-Gimp::Extension sub: $function(@_)" if $Gimp::verbose;
+      $run_mode = defined($menupath) ? shift : undef;
       for my $tp (@temp_procs) {
 	 my (
 	    $tfunction, $tblurb, $thelp, $tmenupath, $timagetypes,
@@ -58,7 +58,6 @@ sub podregister (&) {
       Gimp->extension_enable;
       goto &$code;
    };
-   $menupath = undef if $menupath eq '<None>';
    @register_params = (
       $function, $blurb, $help, $author, $copyright, $date, $menupath,
       $imagetypes, &Gimp::EXTENSION, $params, $results
@@ -81,9 +80,8 @@ sub add_listener {
    }, $listen_socket);
 }
 
-sub register_temp ($$$$$$$&) {
-   push @temp_procs, [ @_ ];
-}
+sub register_temp ($$$$$$$&) { push @temp_procs, [ @_ ]; }
+sub podregister_temp { push @pod_temp_procs, [ @_ ]; }
 
 1;
 __END__
@@ -197,6 +195,33 @@ one time with the new socket as a parameter, possibly logging and/or
 sending an initial message down that socket.
 
 =back
+
+=head2 podregister_temp
+
+  podregister_temp perl_fu_procname => sub {
+    ...
+  };
+
+  =head1 TEMPORARY PROCEDURES
+
+  =head2 perl_fu_procname - blurb
+
+  Longer help text.
+
+  =head3 SYNOPSIS
+
+  <Image>/File/Label...
+
+  =head3 PARAMETERS
+
+    # params...
+
+Registers a temporary procedure, reading from the POD the SYNOPSIS,
+PARAMETERS, RETURN VALUES, IMAGE TYPES, etc, as for L<Gimp::Fu>. As
+you can see above, the temporary procedure's relevant information is in
+similarly-named sections, but at level 3, not 1, within the suitably-named
+level 2 section. Like C<podregister>, it will not interpolate variables
+for you.
 
 =head2 register_temp
 

@@ -39,7 +39,6 @@ option), thereby eliminating any network-related security risk.
 
 =head1 PARAMETERS
 
- [&Gimp::PDB_INT32, "run_mode", "Interactive:0=yes,1=no"],
  [&Gimp::PDB_INT32, "filehandle", "Batch file-handle"],
  [&Gimp::PDB_INT32, "verbose", "Gimp verbose var"],
 

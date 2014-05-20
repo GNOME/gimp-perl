@@ -3,7 +3,7 @@ use Test::More;
 our ($dir, $DEBUG);
 my $tpf_name;
 BEGIN {
-#  $Gimp::verbose = 1;
+#  $Gimp::verbose = 3;
   $DEBUG = 0;
   require 't/gimpsetup.pl';
   use Config;
@@ -36,7 +36,6 @@ Description.
 
 =head1 PARAMETERS
 
- [&Gimp::PDB_INT32, "run_mode", "Interactive:0=yes,1=no"],
  [&Gimp::PDB_INT32, "num", "internal flags (must be 0)"],
 
 =head1 RETURN VALUES
