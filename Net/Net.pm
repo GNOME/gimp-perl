@@ -31,7 +31,6 @@ use base qw(DynaLoader);
 use IO::Socket;
 use Carp 'croak';
 use Fcntl qw(F_SETFD);
-use Gimp::Extension;
 
 $VERSION = 2.3003;
 bootstrap Gimp::Net $VERSION;
@@ -344,7 +343,7 @@ sub setup_listen_unix {
   my $dir = dirname($host);
   mkdir $dir, 0700 unless -d $dir;
   unlink $host if -e $host;
-  add_listener(IO::Socket::UNIX->new(
+  Gimp::Extension::add_listener(IO::Socket::UNIX->new(
     Type => SOCK_STREAM, Local => $host, Listen => 5
   ), \&on_input, \&on_accept);
   slog __"accepting connections in $host";
@@ -356,7 +355,7 @@ sub setup_listen_tcp {
   my $host = shift;
   ($host, my $port)=split /:/,$host;
   $port = $DEFAULT_TCP_PORT unless $port;
-  add_listener(IO::Socket::INET->new(
+  Gimp::Extension::add_listener(IO::Socket::INET->new(
     Type => SOCK_STREAM, LocalPort => $port, Listen => 5, ReuseAddr => 1,
     ($host ? (LocalAddr => $host) : ()),
   ), \&on_input, \&on_accept);
