@@ -283,11 +283,6 @@ sub register($$$$$$$$$;@) {
    my ($function, $blurb, $help, $author, $copyright, $date, $menupath,
        $imagetypes, $params, $results, $code) = fixup_args(@_);
 
-   $function="perl_fu_".$function unless $function =~ /^(?:perl_fu_|extension_|plug_in_|file_)/ || $function =~ s/^\+//;
-   $function=~/^[0-9a-z_]+(-ALT)?$/ or carp(__"$function: function name contains unusual characters, good style is to use only 0-9, a-z and _");
-   carp __"function name contains dashes instead of underscores\n"
-      if $function =~ y/-//;
-
    Gimp::register_callback $function => sub {
       $run_mode = defined($menupath) ? shift : undef;	# global!
       my(@pre,@defaults,@lastvals);

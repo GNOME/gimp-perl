@@ -143,6 +143,10 @@ sub fixup_args {
       carp __"$p[0]: argument name '$val->[1]' contains illegal characters, only 0-9, a-z and _ allowed"
 	unless $val->[1]=~/^[0-9a-z_]+$/;
    }
+   $p[0]="perl_fu_".$p[0] unless $p[0] =~ /^(?:perl_fu_|extension_|plug_in_|file_)/ || $p[0] =~ s/^\+//;
+   $p[0]=~/^[0-9a-z_]+(-ALT)?$/ or carp(__"$p[0]: function name contains unusual characters, good style is to use only 0-9, a-z and _");
+   carp __"function name contains dashes instead of underscores\n"
+      if $p[0] =~ y/-//;
    insert_params(@p);
 }
 
