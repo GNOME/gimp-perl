@@ -113,6 +113,7 @@ EOF
 my %IND2SECT = (
    2 => 'DESCRIPTION', 3 => 'AUTHOR', 4 => 'LICENSE',
    5 => 'DATE', 6 => 'SYNOPSIS', 7 => 'IMAGE TYPES',
+   8 => 'PARAMETERS', 9 => 'RETURN VALUES',
 );
 sub _getpod { $_[0] ||= new __PACKAGE__; $_[0]->section($_[1]); }
 sub _patchup_eval ($$) {
@@ -124,7 +125,7 @@ sub _patchup_eval ($$) {
 sub fixup_args {
    my @p = @_;
    my $pod;
-   splice @p, 9, 0, [ _patchup_eval 'RETURN VALUES', _getpod($pod, 'RETURN VALUES') ] if @p == 10;
+   splice @p, 9, 0, '' if @p == 10;
    croak sprintf
       __"register given wrong number of arguments: wanted 11, got %d(%s)",
       scalar(@p),
@@ -133,7 +134,10 @@ sub fixup_args {
    @p[0,1] = (_getpod($pod,'NAME')//'') =~ /(.*?)\s*-\s*(.*)/ unless $p[0] or $p[1];
    ($p[0]) = File::Basename::fileparse($RealScript, qr/\.[^.]*/) unless $p[0];
    while (my ($k, $v) = each %IND2SECT) { $p[$k] ||= _getpod($pod, $v); }
-   $p[8] ||= [ _patchup_eval 'PARAMETERS', _getpod($pod, 'PARAMETERS') ];
+   for my $i (8, 9) {
+      my $s = $IND2SECT{$i};
+      $p[$i] = $p[$i] ? ref $p[$i] ? $p[$i] : [ _patchup_eval $s, $p[$i] ] : [];
+   }
    for my $i (0..6, 10) {
       croak "$0: Need arg $i (or POD ".($IND2SECT{$i}//'')." section)" unless $p[$i]
    }
@@ -237,13 +241,16 @@ Defaults to the "PARAMETERS" section of the POD, passed to C<eval>, e.g.:
     [ PF_FONT, 'font', 'Font', 'Arial' ],
 
 You don't B<have> to indent it so that POD treats it as verbatim, but
-it will be more readable in any POD viewer if you do.
+it will be more readable in any POD viewer if you do. If you pass in a
+true non-ref value, it will be evaluated as though it had been read from
+the POD.
 
 =item $results
 
 Defaults to the "RETURN VALUES" section of the POD, passed to C<eval>.
 Not providing the relevant POD section is perfectly valid, so long as
-you intend to return no values.
+you intend to return no values. As above, if passed a true non-ref value,
+it will be evaluated.
 
 =item $other
 
