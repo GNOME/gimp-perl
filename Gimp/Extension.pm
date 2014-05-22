@@ -84,7 +84,8 @@ sub podregister_temp {
    my $tparams =  $pod->section($TP, $t, 'PARAMETERS');
    my $tretvals =  $pod->section($TP, $t, 'RETURN VALUES');
    ($tfunction, $tmenupath, $timagetypes, $tparams, $tretvals) = (fixup_args(
-      $tfunction, ('fake') x 5, $tmenupath, $timagetypes, $tparams, $tretvals, 1
+      $tfunction, ('fake') x 5, $tmenupath, $timagetypes,
+      ($tparams || '#'), ($tretvals || '#'), 1
    ))[0, 6..9];
    push @temp_procs, [
       $tfunction, $tblurb, $thelp, $tmenupath, $timagetypes,
