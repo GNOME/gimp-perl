@@ -4,12 +4,12 @@ use Gimp::Data;
 use Gimp::Pod;
 use strict;
 use Carp qw(croak carp);
-use vars qw($run_mode @EXPORT_OK @EXPORT %EXPORT_TAGS);
 use base 'Exporter';
 use Filter::Simple;
 use FindBin qw($RealBin $RealScript);
 use File::stat;
 
+our $run_mode;
 our $VERSION = 2.3003;
 
 # manual import
@@ -104,11 +104,11 @@ FILTER {
    warn __PACKAGE__."::FILTER: found: '$1'" if $Gimp::verbose >= 2;
 };
 
-@EXPORT_OK = qw($run_mode save_image);
-%EXPORT_TAGS = (
+our @EXPORT_OK = qw($run_mode save_image);
+our %EXPORT_TAGS = (
    params => [ keys %pfname2info ]
 );
-@EXPORT = (qw(podregister register main), @{$EXPORT_TAGS{params}});
+our @EXPORT = (qw(podregister register main), @{$EXPORT_TAGS{params}});
 
 my @scripts;
 
@@ -265,26 +265,36 @@ sub datatype(@) {
    return Gimp::PDB_INT32;
 }
 
+sub param_gimpify {
+   my $p = shift;
+   return $p if $p->[0] < Gimp::PDB_END;
+   my @c = @$p; # copy as modifying
+   $c[0] = $pf2info{$p->[0]}->[1] // datatype(values %{+{@{$p->[4]}}});
+   \@c;
+}
+
+sub procinfo2installable {
+   my @c = @_;
+   $c[9] = [ map { param_gimpify($_) } @{$c[9]} ];
+   unshift @{$c[9]}, [&Gimp::PDB_INT32,"run_mode","Interactive:0=yes,1=no"]
+      if defined $c[6];
+   @c;
+}
+
 Gimp::on_query {
-   for my $s (@scripts) {
-      for my $p (@{$s->[9]}) {
-	 next if $p->[0] < Gimp::PDB_END;
-	 $p->[0] = $pf2info{$p->[0]}->[1] // datatype(values %{+{@{$p->[4]}}});
-      }
-      unshift @{$s->[9]}, [&Gimp::PDB_INT32,"run_mode","Interactive:0=yes,1=no"]
-	 if defined $s->[6];
-      Gimp->install_procedure(@$s);
-   }
+   for my $s (@scripts) { Gimp->install_procedure(procinfo2installable(@$s)); }
 };
 
-sub podregister (&) { unshift @_, ('') x 9; goto &register; }
-sub register($$$$$$$$$;@) {
-   no strict 'refs';
+sub make_ui_closure {
    my ($function, $blurb, $help, $author, $copyright, $date, $menupath,
-       $imagetypes, $params, $results, $code) = fixup_args(@_);
-
-   Gimp::register_callback $function => sub {
-      $run_mode = defined($menupath) ? shift : undef;	# global!
+       $imagetypes, $params, $results, $code) = @_;
+   warn "$$-Gimp::Fu::make_ui_closure(@_)\n" if $Gimp::verbose >= 2;
+   die "Params must be array, instead: $params\n" unless ref $params eq 'ARRAY';
+   die "Retvals must be array, instead: $results\n" unless ref $results eq 'ARRAY';
+   die "Callback must be code, instead: $code\n" unless ref $code eq 'CODE';
+   sub {
+      warn "$$-Gimp::Fu closure: (@_)\n" if $Gimp::verbose >= 2;
+      $run_mode = defined($menupath) ? shift : Gimp::RUN_NONINTERACTIVE;
       my(@pre,@defaults,@lastvals);
 
       Gimp::ignore_functions(@Gimp::GUI_FUNCTIONS)
@@ -299,7 +309,9 @@ sub register($$$$$$$$$;@) {
       }
 
       for($menupath) {
-         if (/^<Image>\//) {
+         if (not defined $_ or m#^<Toolbox>/Xtns/#) {
+	    # no-op
+         } elsif (/^<Image>\//) {
 	    if (defined $imagetypes and length $imagetypes) {
 	       @_ >= 2 or die __"<Image> plug-in called without both image and drawable arguments!\n";
 	       @pre = (shift,shift);
@@ -310,8 +322,6 @@ sub register($$$$$$$$$;@) {
          } elsif (/^<Save>\//) {
             @_ >= 4 or die __"<Save> plug-in called without the 5 standard arguments!\n";
             @pre = (shift,shift,shift,shift);
-	 } elsif (m#^<Toolbox>/Xtns/#) {
-	    # no-op
          } elsif (defined $_) {
 	    die __"menupath _must_ start with <Image>, <Load>, <Save>, <Toolbox>/Xtns/, or <None>!";
          }
@@ -326,6 +336,8 @@ sub register($$$$$$$$$;@) {
 	    my $data_savetime = shift @$fudata;
 	    my $script_savetime = stat("$RealBin/$RealScript")->mtime;
 	    undef $fudata if $script_savetime > $data_savetime;
+	 } else {
+	    undef $fudata;
 	 }
 	 if ($Gimp::verbose >= 2) {
 	    require Data::Dumper;
@@ -363,8 +375,13 @@ sub register($$$$$$$$$;@) {
       Gimp->displays_flush;
       wantarray ? @retvals : $retvals[0];
    };
-   push(@scripts,[$function,$blurb,$help,$author,$copyright,$date,
-		$menupath,$imagetypes,Gimp::PLUGIN,$params,$results]);
+}
+
+sub podregister (&) { unshift @_, ('') x 9; goto &register; }
+sub register($$$$$$$$$;@) {
+   my @procinfo = fixup_args(@_);
+   Gimp::register_callback $procinfo[0] => make_ui_closure(@procinfo);
+   push @scripts, [ @procinfo[0..7], Gimp::PLUGIN, @procinfo[8,9] ];
 }
 
 sub save_image($$) {

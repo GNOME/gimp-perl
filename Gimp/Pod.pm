@@ -50,7 +50,7 @@ sub _flatten_para {
 
 sub section {
   my $self = shift;
-  warn __PACKAGE__."::section(@_)" if $Gimp::verbose >= 2;
+  warn "$$-".__PACKAGE__."::section(@_)" if $Gimp::verbose >= 2;
   return unless defined(my $doc = $self->_cache);
   my $i = 2; # skip 'Document' and initial attrs
   my $depth = 0;
@@ -62,10 +62,10 @@ sub section {
     return if $i >= @$doc;
   }
   my $i2 = ++$i;
-  $i2++ until $i2 >= @$doc or $doc->[$i2]->[0] eq "head$depth";
+  $i2++ until $i2 >= @$doc or $doc->[$i2]->[0] =~ /^head/;
   $i2--;
   my $text = join "\n\n", map { _flatten_para($_) } @{$doc}[$i..$i2];
-  warn __PACKAGE__."::section returning '$text'" if $Gimp::verbose >= 2;
+  warn "$$-".__PACKAGE__."::section returning '$text'" if $Gimp::verbose >= 2;
   $text;
 }
 
@@ -118,6 +118,7 @@ my %IND2SECT = (
 sub _getpod { $_[0] ||= new __PACKAGE__; $_[0]->section($_[1]); }
 sub _patchup_eval ($$) {
    my ($label, $text) = @_;
+   no strict;
    my @result = eval "package main;\n#line 0 \"$0 $label\"\n" . ($text // '');
    die $@ if $@;
    @result;
@@ -159,7 +160,7 @@ sub make_arg_line {
    return '' unless @{$p[8]};
    die "$0: parameter had empty string\n" if grep { !length $_->[1] } @{$p[8]};
    my $myline = 'my ('.join(',', map { '$'.$_->[1] } @{$p[8]}).') = @_;';
-   warn __PACKAGE__."::make_arg_line: $myline" if $Gimp::verbose >= 2;
+   warn "$$-".__PACKAGE__."::make_arg_line: $myline" if $Gimp::verbose >= 2;
    $myline;
 }
 

@@ -241,7 +241,7 @@ my $unix_path;
 my $max_pkt = 1024*1024*8;
 
 sub slog {
-  return if $Gimp::Extension::run_mode == &Gimp::RUN_NONINTERACTIVE;
+  return if $Gimp::Fu::run_mode == &Gimp::RUN_NONINTERACTIVE;
   print localtime.": $$-slog(",@_,")\n";
 }
 
@@ -364,7 +364,7 @@ sub setup_listen_tcp {
 sub perl_server_run {
   (my $filehandle, $Gimp::verbose) = @_;
   warn "$$-".__PACKAGE__."::perl_server_run(@_)\n" if $Gimp::verbose;
-  if ($Gimp::Extension::run_mode == &Gimp::RUN_NONINTERACTIVE) {
+  if ($Gimp::Fu::run_mode == &Gimp::RUN_NONINTERACTIVE) {
       die __"unable to open Gimp::Net communications socket: $!\n"
 	 unless open my $fh,"+<&$filehandle";
       $fh->autoflush;

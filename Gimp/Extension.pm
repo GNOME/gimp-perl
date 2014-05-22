@@ -3,8 +3,8 @@ package Gimp::Extension;
 use strict;
 use Carp qw(croak carp);
 use base 'Exporter';
-use Filter::Simple;
 use Gimp::Pod;
+require Gimp::Fu;
 use autodie;
 use Gtk2;
 
@@ -12,56 +12,47 @@ use Gtk2;
 sub __ ($) { goto &Gimp::__ }
 sub main { goto &Gimp::main; }
 
-my $podreg_re = qr/(\bpodregister\s*{)/;
-FILTER {
-   return unless /$podreg_re/;
-   my $myline = make_arg_line(fixup_args(('') x 9, 1));
-   s/$podreg_re/$1\n$myline/;
-   warn __PACKAGE__."::FILTER: found: '$1'" if $Gimp::verbose;
-};
+our $VERSION = 2.3003;
+our @EXPORT = qw(podregister main add_listener register_temp podregister_temp);
 
-our @EXPORT = qw(podregister main add_listener register_temp);
-our $run_mode;
+# this is to avoid warnings from importing main etc from Gimp::Fu AND here
+sub import {
+   my $p = \%::;
+   $p = $p->{"${_}::"} for split /::/, caller;
+   map { delete $p->{$_} if defined &{caller."::$_"}; } @_ == 1 ? @EXPORT : @_;
+   __PACKAGE__->export_to_level(1, @_);
+}
+
+my $TP = 'TEMPORARY PROCEDURES';
 
 my @register_params;
 my @temp_procs;
-my @pod_temp_procs;
 Gimp::on_query {
-   unshift @{$register_params[9]}, [&Gimp::PDB_INT32,"run_mode","Interactive:0=yes,1=no"]
-      if defined $register_params[6];
-   Gimp->install_procedure(@register_params);
+   Gimp->install_procedure(Gimp::Fu::procinfo2installable(@register_params));
 };
 
 sub podregister (&) {
-   no strict 'refs';
-   my ($function, $blurb, $help, $author, $copyright, $date, $menupath,
-       $imagetypes, $params, $results, $code) = fixup_args(('')x9, @_);
-   Gimp::register_callback $function => sub {
-      warn "$$-Gimp::Extension sub: $function(@_)" if $Gimp::verbose;
-      $run_mode = defined($menupath) ? shift : undef;
+   my @procinfo = fixup_args(('')x9, @_);
+   Gimp::register_callback $procinfo[0] => sub {
+      warn "$$-Gimp::Extension sub: $procinfo[0](@_)" if $Gimp::verbose;
       for my $tp (@temp_procs) {
-	 my (
-	    $tfunction, $tblurb, $thelp, $tmenupath, $timagetypes,
-	    $tparams, $tretvals, $tcallback,
-	 ) = @$tp;
-	 Gimp::register_callback $tfunction => $tcallback;
-	 Gimp->install_temp_proc(
-	    $tfunction, $tblurb, $thelp,
-	    $author, $copyright, $date,
-	    $tmenupath, $timagetypes,
+	 my @tpinfo = (
+	    @{$tp}[0..2],
+	    @procinfo[3..5],
+	    @{$tp}[3,4],
 	    &Gimp::TEMPORARY,
-	    $tparams, $tretvals,
+	    @{$tp}[5..7],
 	 );
+	 Gimp->install_temp_proc(Gimp::Fu::procinfo2installable(@tpinfo[0..10]));
+	 Gimp::register_callback
+	    $tpinfo[0] => Gimp::Fu::make_ui_closure(@tpinfo[0..7,9..11]);
       }
       Gimp::gtk_init;
       Gimp->extension_ack;
       Gimp->extension_enable;
-      goto &$code;
+      Gimp::Fu::make_ui_closure(@procinfo)->(@_);
    };
-   @register_params = (
-      $function, $blurb, $help, $author, $copyright, $date, $menupath,
-      $imagetypes, &Gimp::EXTENSION, $params, $results
-   );
+   @register_params = (@procinfo[0..7], &Gimp::EXTENSION, @procinfo[8,9]);
 }
 
 sub add_listener {
@@ -81,7 +72,25 @@ sub add_listener {
 }
 
 sub register_temp ($$$$$$$&) { push @temp_procs, [ @_ ]; }
-sub podregister_temp { push @pod_temp_procs, [ @_ ]; }
+sub podregister_temp {
+   my ($tfunction, $tcallback) = @_;
+   my $pod = Gimp::Pod->new;
+   my ($t) = grep { /^$tfunction\s*-/ } $pod->sections($TP);
+   croak "No POD found for temporary procedure '$tfunction'" unless $t;
+   my ($tblurb) = $t =~ m#$tfunction\s*-\s*(.*)#;
+   my $thelp = $pod->section($TP, $t);
+   my $tmenupath = $pod->section($TP, $t, 'SYNOPSIS');
+   my $timagetypes = $pod->section($TP, $t, 'IMAGE TYPES');
+   my $tparams =  $pod->section($TP, $t, 'PARAMETERS');
+   my $tretvals =  $pod->section($TP, $t, 'RETURN VALUES');
+   ($tfunction, $tmenupath, $timagetypes, $tparams, $tretvals) = (fixup_args(
+      $tfunction, ('fake') x 5, $tmenupath, $timagetypes, $tparams, $tretvals, 1
+   ))[0, 6..9];
+   push @temp_procs, [
+      $tfunction, $tblurb, $thelp, $tmenupath, $timagetypes,
+      $tparams, $tretvals, $tcallback,
+   ];
+}
 
 1;
 __END__
@@ -93,6 +102,7 @@ Gimp::Extension - Easy framework for Gimp-Perl extensions
 =head1 SYNOPSIS
 
   use Gimp;
+  use Gimp::Fu; # necessary for variable insertion and param constants
   use Gimp::Extension;
   podregister {
     # your code
@@ -118,8 +128,7 @@ extensions.
 
 Your main interface for using C<Gimp::Extension> is the C<podregister>
 function. This works in exactly the same way as L<Gimp::Fu/PODREGISTER>,
-including declaring/receiving your variables for you, with a few crucial
-differences. See below for those differences.
+including declaring/receiving your variables for you.
 
 Before control is passed to your function, these procedures are called:
 
@@ -146,20 +155,12 @@ Another benefit is that you can respond to events outside of GIMP,
 such as network connections (this is how the Perl-Server is implemented).
 
 Additionally, if no parameters are specified, then the extension will
-be started as soon as GIMP starts up.
+be started as soon as GIMP starts up. Make sure you specify menupath
+<None>, so no parameters will be added for you.
 
 If you need to clean up on exit, just register a callback with
 C<Gimp::on_quit>. This is how C<Perl-Server> removes its Unix-domain
 socket on exit.
-
-=head2 PODREGISTER DIFFERENCES
-
-The C<podregister> function here is different from in L<Gimp::Fu>
-in that parameters and return values are not added for you, and your
-function name will not be changed but passed to GIMP verbatim.
-
-The C<run_mode> is passed on to your function, rather than being stripped
-off as with Gimp::Fu.
 
 =head1 FUNCTIONS AVAILABLE TO EXTENSIONS
 
@@ -204,7 +205,7 @@ sending an initial message down that socket.
 
   =head1 TEMPORARY PROCEDURES
 
-  =head2 perl_fu_procname - blurb
+  =head2 procname - blurb
 
   Longer help text.
 
@@ -219,9 +220,9 @@ sending an initial message down that socket.
 Registers a temporary procedure, reading from the POD the SYNOPSIS,
 PARAMETERS, RETURN VALUES, IMAGE TYPES, etc, as for L<Gimp::Fu>. As
 you can see above, the temporary procedure's relevant information is in
-similarly-named sections, but at level 3, not 1, within the suitably-named
-level 2 section. Like C<podregister>, it will not interpolate variables
-for you.
+similarly-named sections, but at level 2 or 3, not 1, within the
+suitably-named level 2 section. Unlike C<podregister>, it will not
+interpolate variables for you.
 
 =head2 register_temp
 
@@ -253,22 +254,6 @@ All as per L<Gimp/Gimp-E<gt>install_procedure>.
 =item \&callback
 
 =back
-
-=head1 TODO
-
- =head1 TEMPORARY PROCEDURES
- =head2 autosave_configure - blurb text
-
- Longer help text.
-
- =head3 PARAMETERS
-
- # gets interpolated vars per Gimp::Fu
- podregister_ui 'autosave_configure' => sub { ... };
-
- podregister will have interpolated vars too, and
- add vars based on menupath, etc
- menupath <Autostart> - die if get any params/retvals
 
 =head1 AUTHOR
 

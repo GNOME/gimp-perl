@@ -9,14 +9,20 @@ BEGIN {
   use Config;
   $tpf_name = "test_perl_extension";
   write_plugin($DEBUG, $tpf_name, $Config{startperl}.
-    "\nBEGIN { \$Gimp::verbose = ".int($Gimp::verbose||0).'; }'.<<'EOF');
+    " -w\nBEGIN { \$Gimp::verbose = ".int($Gimp::verbose||0).'; }'.<<'EOF');
 
 use strict;
 use Gimp;
+use Gimp::Fu;
 use Gimp::Extension;
 
 podregister {
   (0, $num + 1);
+};
+
+podregister_temp test_temp => sub {
+  my ($image, $drawable, $v1) = @_;
+  ();
 };
 
 exit main;
@@ -41,6 +47,24 @@ Description.
 =head1 RETURN VALUES
 
  [&Gimp::PDB_INT32, "retnum", "Number returned"],
+
+=head1 TEMPORARY PROCEDURES
+
+=head2 test_temp - blurb
+
+Longer help text.
+
+=head3 SYNOPSIS
+
+<Image>/File/Label...
+
+=head3 IMAGE TYPES
+
+*
+
+=head3 PARAMETERS
+
+  [ PF_TOGGLE, 'var', 'Var description' ],
 
 =head1 AUTHOR
 
