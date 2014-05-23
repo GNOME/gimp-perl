@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 use constant { PI => 3.14159 };
 use Gimp;
@@ -6,6 +6,7 @@ use Gimp::Fu;
 use Gimp::Util;
 use List::Util qw(max);
 use strict;
+#$Gimp::verbose = 3;
 
 sub saw {  # a sawtooth function on PI
   my ($val) = @_;

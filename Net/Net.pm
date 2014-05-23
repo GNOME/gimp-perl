@@ -24,7 +24,8 @@ package Gimp::Net;
 
 BEGIN { warn "$$-Loading ".__PACKAGE__ if $Gimp::verbose; }
 
-use strict 'vars';
+use strict;
+use warnings;
 our $VERSION;
 use subs qw(gimp_call_procedure);
 use base qw(DynaLoader);

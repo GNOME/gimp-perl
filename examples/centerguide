@@ -1,8 +1,4 @@
-#!/usr/bin/perl
-
-# 7/15/03 <sjburges@gimp.org>
-# Changed spot that its registered from <Image>/Guides to <Image>/Image/Guides
-# to reduce horizontal clutter on menubar
+#!/usr/bin/perl -w
 
 use Gimp;
 use Gimp::Fu;
@@ -38,6 +34,12 @@ Physical center = width/2 and height/2; Optical center = the Golden Mean.
 =head1 IMAGE TYPES
 
 *
+
+=head1 HISTORY
+
+ 7/15/03 <sjburges@gimp.org>
+ Changed spot that its registered from <Image>/Guides to <Image>/Image/Guides
+ to reduce horizontal clutter on menubar
 
 =head1 AUTHOR
 

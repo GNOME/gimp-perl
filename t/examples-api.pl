@@ -50,7 +50,7 @@ our @testbench = (
 ["guide_to_selection"  , 1, REQ_GUIDE, [CHANNEL_OP_REPLACE,0,0] ],
 ["highlight_edges"     , 1, REQ_ALPHA, [ 10] ],
 ["inner_bevel"         , 0, REQ_NONE , ["URW Bookman L, Bold",80,"INNERBEVEL",$color1,$color2,132,30,7,2] ],
-["layer_apply"         , 1, REQ_NONE , ['$d->gauss_rle($P*100+1,1,1)',""] ],
+["layer_apply"         , 1, REQ_NONE , ['$d->gauss_rle($P*100+1,1,1)',0] ],
 ["layer_reorder"       , 3, REQ_ALPHA, [1,""] ],
 ["make_bevel_logos"    , 1, REQ_ALPHA, [$white,$color1,$color2,45,4,0] ],
 ["make_trans_logos"    , 1, REQ_ALPHA, [0,$gradient1,$color1] ],

@@ -3,6 +3,7 @@ package Gimp::Fu;
 use Gimp::Data;
 use Gimp::Pod;
 use strict;
+use warnings;
 use Carp qw(croak carp);
 use base 'Exporter';
 use Filter::Simple;

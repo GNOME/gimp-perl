@@ -1,11 +1,10 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 use Gimp;
 use Gimp::Fu;
 use strict;
 
 podregister {
-  my($image,$drawable,$function,$custom) = @_;
   $custom = "-i"            if $function == 1;
   $custom = "(i+$custom)%n" if $function == 2;
   my @layers = $image->get_layers;

@@ -1,6 +1,7 @@
 package Gimp::Lib;
 
 use strict;
+use warnings;
 use vars qw($VERSION @ISA);
 
 BEGIN {

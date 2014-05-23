@@ -47,7 +47,7 @@ EOF
 
   use Config;
   write_plugin($DEBUG, "test_pdl_filter", $Config{startperl}.
-    "\nBEGIN { \$Gimp::verbose = ".int($Gimp::verbose||0).'; }'.
+    " -w\nBEGIN { \$Gimp::verbose = ".int($Gimp::verbose||0).'; }'.
     <<'EOF'.$pdl_operations);
 
 use strict;

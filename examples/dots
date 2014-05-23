@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 #BEGIN { $Gimp::verbose = 1; }
 use Gimp;

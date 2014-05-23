@@ -1,5 +1,8 @@
 package Gimp::Data;
 
+use strict;
+use warnings;
+
 sub freeze($) {
    my $data = shift;
    if (ref $data

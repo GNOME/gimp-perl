@@ -11,6 +11,8 @@ BEGIN {
   write_plugin($DEBUG, $tpf_name, $Config{startperl}.
     "\nBEGIN { \$Gimp::verbose = ".int($Gimp::verbose||0).'; }'.<<'EOF');
 
+# would be -w but that triggers warnings on intentional strings instead of num
+
 use strict;
 use Gimp;
 use Gimp::Fu;

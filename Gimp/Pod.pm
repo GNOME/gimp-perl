@@ -3,6 +3,7 @@ package Gimp::Pod;
 use Config;
 use Carp qw(croak carp);
 use strict;
+use warnings;
 use FindBin qw($RealBin $RealScript);
 use File::Basename;
 use base 'Exporter';

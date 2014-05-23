@@ -5,7 +5,7 @@ use strict;
 use Test::More;
 our ($dir, $DEBUG);
 BEGIN {
-#  $Gimp::verbose = 1;
+#  $Gimp::verbose = 3;
   $DEBUG = 0;
   require 't/gimpsetup.pl';
   # most minimal and elegant would be to symlink sandbox gimp-dir's

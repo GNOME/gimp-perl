@@ -6,6 +6,7 @@ use Gtk2;
 use IO::All;
 use List::Util qw(min);
 use strict;
+use warnings;
 
 our (@ISA, $VERSION);
 BEGIN {
