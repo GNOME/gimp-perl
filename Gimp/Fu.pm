@@ -310,7 +310,7 @@ sub make_ui_closure {
       }
 
       for($menupath) {
-         if (not defined $_ or m#^<Toolbox>/Xtns/#) {
+         if (not defined $_ or m#^<Toolbox>#) {
 	    # no-op
          } elsif (/^<Image>\//) {
 	    if (defined $imagetypes and length $imagetypes) {
@@ -324,7 +324,7 @@ sub make_ui_closure {
             @_ >= 4 or die __"<Save> plug-in called without the 5 standard arguments!\n";
             @pre = (shift,shift,shift,shift);
          } elsif (defined $_) {
-	    die __"menupath _must_ start with <Image>, <Load>, <Save>, <Toolbox>/Xtns/, or <None>!";
+	    die __"menupath _must_ start with <Image>, <Load>, <Save>, <Toolbox>, or <None>!";
          }
       }
       warn "perlsub: rm=$run_mode" if $Gimp::verbose >= 2;
@@ -725,11 +725,10 @@ Outline:
     $new_image->delete if $export == EXPORT_EXPORT;
   };
 
-=item <Toolbox>/Xtns/Label
+=item <Toolbox>/Label
 
-This will place the plugin in a special section (as of GIMP 2.8) of the
-"Filters" menu. This type of plugin will also not have the image and
-drawable passed, nor will it require it.
+This type of plugin will not have the image and drawable passed, nor
+will it require (or return) it. It I<will> still have a C<run_mode> added.
 
 =item <None>
 
