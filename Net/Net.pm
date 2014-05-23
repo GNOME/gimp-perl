@@ -395,6 +395,7 @@ sub perl_server_run {
      setup_listen_tcp(":$DEFAULT_TCP_PORT") if $use_tcp && $auth;
   }
   Gtk2->main;
+  ();
 }
 
 sub perl_server_quit {

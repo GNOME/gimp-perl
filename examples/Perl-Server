@@ -19,7 +19,7 @@ extension_perl_server - Gimp-Perl scripts net server
 
 =head1 SYNOPSIS
 
-<Image>/Filters/Languages/_Perl/_Server
+<Toolbox>/Filters/Languages/_Perl/_Server
 
 =head1 DESCRIPTION
 

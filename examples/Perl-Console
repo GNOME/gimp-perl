@@ -3,7 +3,7 @@
 use strict;
 #BEGIN { $Gimp::verbose = 1; }
 use Gimp;
-use Gimp::Pod;
+use Gimp::Fu;
 use Gtk2::Gdk::Keysyms;
 
 my $INIT_TEXT = "Gimp-Perl Console v1.0\n\n";
@@ -20,10 +20,7 @@ my %KEYVAL2HANDLER = (
 my @history;
 my $history_index = 0;
 
-my $pod = Gimp::Pod->new;
-my ($proc, $blurb) = $pod->section('NAME') =~ /(.*?)\s*-\s*(.*)/;
-
-Gimp::register_callback $proc => sub {
+podregister {
   Gimp::gtk_init;
   my $window = Gtk2::Window->new('toplevel');
   $window->signal_connect('delete_event' => sub { Gtk2->main_quit; });
@@ -34,19 +31,7 @@ Gimp::register_callback $proc => sub {
   Gtk2->main;
 };
 
-Gimp::on_net { Gimp::callback($proc); };
-
-Gimp::on_query {
-  Gimp->install_procedure(
-    $proc, $blurb,
-    (map $pod->section($_), qw(DESCRIPTION AUTHOR LICENSE DATE SYNOPSIS)),
-    undef, &Gimp::PLUGIN,
-    [[PDB_INT32, 'run_mode', "Run-mode"]],
-    [],
-  );
-};
-
-exit Gimp::main;
+exit main;
 
 sub key_return {
   my ($e, $buffer) = @_;
@@ -140,7 +125,7 @@ perl_fu_console - Gimp-Perl console
 
 =head1 SYNOPSIS
 
-<Image>/Filters/Languages/_Perl/_Console
+<Toolbox>/Filters/Languages/_Perl/_Console
 
 =head1 DESCRIPTION
 
