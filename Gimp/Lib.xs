@@ -733,10 +733,10 @@ gotit:
    string constants here, and check for common typoes. */
 static int check_num (char *croak_str, SV *sv)
 {
-  if (SvTYPE (sv) == SVt_PV && !SvIOKp(sv))
+  if (SvIOKp(sv) || SvNOKp(sv)) return 1;
+  if (SvTYPE (sv) == SVt_PV)
     {
       char *p = SvPV_nolen (sv);
-
       if (*p
 	  && *p != '0' && *p != '1' && *p != '2' && *p != '3' && *p != '4'
 	  && *p != '5' && *p != '6' && *p != '7' && *p != '8' && *p != '9'
@@ -911,8 +911,8 @@ push_gimp_sv (const GimpParam *arg, int array_as_ref)
 	if (SvROK(sv)) \
 	  sprintf (croak_str, __("Unable to convert a reference to type '%s'"), str);
 #define sv_getnum(sv, func, lvalue, typestr) \
-	sv_croak_ref(sv, typestr); \
-	check_num(croak_str, sv); \
+	sv_croak_ref(sv, typestr); if (*croak_str) return 1; \
+	check_num(croak_str, sv); if (*croak_str) return 1; \
 	lvalue = func(sv);
 
 /*
