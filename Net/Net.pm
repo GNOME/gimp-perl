@@ -73,7 +73,7 @@ sub import {
    *Gimp::PixelRgn::DESTROY=
    *Gimp::GimpDrawable::DESTROY=sub {
       # is synchronous which avoids deadlock from using non sys*-type functions
-      command "DTRY", @_;
+      command "DTRY", @_ if $server_fh;
    };
 }
 
