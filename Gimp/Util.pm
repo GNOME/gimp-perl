@@ -1,19 +1,18 @@
-package      Gimp::Util;
+package Gimp::Util;
 
 use Exporter 'import';
 use strict;
+use warnings;
 use File::Basename;
-our @EXPORT    = qw(
-                layer_create
-                text_draw
-                image_create_text
-                layer_add_layer_as_mask
-               );
-#@EXPORT_OK = qw();
+Gimp->import;
+our @EXPORT_OK = qw(
+  layer_create
+  text_draw
+  image_create_text
+  layer_add_layer_as_mask
+);
 
-import Gimp;
-# manual "import" to shut perl -cw up
-sub __ ($);
+sub __ ($); # declare - defined in Gimp
 
 our $VERSION = 2.3003;
 
@@ -170,7 +169,7 @@ sub gimp_image_set_visible {
    my $image = shift;
    my %layers; @layers{map $$_,@_}=(1) x @_;
    for ($image->get_layers) {
-      $_->set_visible ($layers{$$_});
+      $_->set_visible ($layers{$$_} // 0);
    }
 }
 
@@ -178,7 +177,7 @@ sub gimp_image_set_invisible {
    my $image = shift;
    my %layers; @layers{map $$_,@_}=(1) x @_;
    for ($image->get_layers) {
-      $_->set_visible (!$layers{$$_});
+      $_->set_visible (!$layers{$$_} // 0);
    }
 }
 

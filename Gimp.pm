@@ -1,6 +1,7 @@
 package Gimp;
 
-use strict 'vars';
+use strict;
+use warnings;
 our (
   $VERSION, @ISA, $AUTOLOAD, @EXPORT, @EXPORT_OK, %EXPORT_TAGS, @EXPORT_FAIL,
   $interface_pkg, $interface_type, @PREFIXES,
@@ -37,6 +38,7 @@ my @POLLUTE_CLASSES;
 my $net_init;
 
 sub import($;@) {
+   no strict 'refs';
    my $pkg = shift;
    warn "$$-$pkg->import(@_)" if $Gimp::verbose >= 2;
    my $up = caller;
@@ -45,6 +47,7 @@ sub import($;@) {
    # make sure we can call GIMP functions - start net conn if required
    map { $net_init = $1 if /net_init=(\S+)/; } @_;
    if ($interface_type eq "net" and not &Gimp::Net::initialized) {
+      no strict 'refs';
       map { *{"Gimp::$_"} = \&{"Gimp::Constant::$_"} }
 	 qw(RUN_INTERACTIVE RUN_NONINTERACTIVE);
       Gimp::Net::gimp_init(grep {defined} $net_init);
@@ -218,6 +221,7 @@ sub on_run  (&) { register_callback "run"  , $_[0] }
 sub on_quit  (&) { register_callback "quit"  , $_[0] }
 
 sub main {
+   no strict 'refs';
    &{"$interface_pkg\::gimp_main"};
 }
 
@@ -238,6 +242,7 @@ warn "$$-Finished loading '$interface_pkg'" if $Gimp::verbose >= 2;
 
 # create some common aliases
 for(qw(gimp_procedural_db_proc_exists gimp_call_procedure initialized)) {
+   no strict 'refs';
    *$_ = \&{"$interface_pkg\::$_"};
 }
 
@@ -263,6 +268,8 @@ sub exception_strip {
   $e;
 }
 sub AUTOLOAD {
+  no strict 'refs';
+  goto &$AUTOLOAD if defined &$AUTOLOAD; # happens if :auto, not if method call
   my ($class,$name) = $AUTOLOAD =~ /^(.*)::(.*?)$/;
   warn "$$-AUTOLOAD $AUTOLOAD(@_)" if $Gimp::verbose >= 2;
   for(@{"$class\::PREFIXES"}) {
@@ -270,7 +277,7 @@ sub AUTOLOAD {
     if (exists $ignore_function{$sub}) {
       *{$AUTOLOAD} = sub { () };
       goto &$AUTOLOAD;
-    } elsif (UNIVERSAL::can(Gimp::Util,$sub)) {
+    } elsif (UNIVERSAL::can('Gimp::Util',$sub)) {
       my $ref = \&{"Gimp::Util::$sub"};
       *{$AUTOLOAD} = sub {
 	shift unless ref $_[0];
@@ -306,6 +313,7 @@ sub AUTOLOAD {
 sub _pseudoclass {
   my ($class, @prefixes)= @_;
   unshift @prefixes,"";
+  no strict 'refs';
   *{"Gimp::$class\::AUTOLOAD"} = \&AUTOLOAD;
   push @{"Gimp::$class\::PREFIXES"}, @prefixes;
   push @{"Gimp::$class\::ISA"}, 'Gimp::Base';
