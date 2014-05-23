@@ -17,7 +17,7 @@ Items as of 2014-04-29 (by Ed J)
 * Net.xs should implement own PDL serialise/deser. Use Lib.xs new_pdl?
 * Restructure dirs so all libs under lib/ using ExtUtils::MakeMaker::BigHelper
 * http://search.cpan.org/dist/Glib-Object-Introspection/
-* Add Browse to console - cf http://registry.gimp.org/node/29348
+* Add Browse to console - plug-ins/script-fu/script-fu-console.c
 * interactive collab image-editing:
   http://users.telenet.be/blendix/verse/#gimp_plugin
   https://github.com/verse/verse/wiki/Tutorial-Simple-C-Verse-Client
