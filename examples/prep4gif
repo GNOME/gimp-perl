@@ -9,7 +9,7 @@ podregister {
   die __"You need at least 2 layers to perform prep4gif\n" if @layers < 2;
 
 # Show the image early - this makes debugging a breeze
-  my $newdisplay = Gimp::Display->new($out);
+  eval { Gimp::Display->new($out); };
 # Hide the bottom layer, so it doesn't get into the merge visible later.
   my $bottomlayer = $layers[$#layers];
   gimp_item_set_visible($bottomlayer, 0);

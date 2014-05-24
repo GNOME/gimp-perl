@@ -25,7 +25,7 @@ podregister {
   gimp_selection_none($img);
 # here, at last, comes the clever part! :-)
   $layer->offset(1, 0, -($diameter / 2), -($diameter / 2));
-  gimp_display_new($img);
+  eval { gimp_display_new($img); };
   return $img;
 };
 

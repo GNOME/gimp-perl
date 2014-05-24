@@ -73,7 +73,7 @@ podregister {
   my $maxhigh = max($drawable->height, $destination->height);
   my $img = Gimp->image_new($maxwide, $maxhigh, RGB);
   my $tmpimglayer = $img->add_new_layer(0,3,1); # have to have a layer before displaying
-  $img->display_new;
+  eval { Gimp::Display->new($img); };
   $drawable->edit_copy;
   my $spinlayer = $tmpimglayer->edit_paste(1);
   $spinlayer->floating_sel_to_layer;

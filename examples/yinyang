@@ -9,7 +9,7 @@ my @BUCKET_ARGS = (FG_BUCKET_FILL,NORMAL_MODE,100,0,0,0,0);
 podregister {
   # Create new image
   my $img = Gimp::Image->new($width,$height,0);
-  Gimp::Display->new($img);
+  eval { Gimp::Display->new($img); };
   my $layer = $img->layer_new($width,$height,1,"Yin/Yang",100,0);
   $img->insert_layer($layer,0,0);
   $img->set_active_layer($layer);

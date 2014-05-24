@@ -12,7 +12,7 @@ Gimp::on_net {
   my $img=Gimp::Image->new(600,300,RGB);
   my $bg=$img->layer_new(30,20,RGB_IMAGE,"Background",100,NORMAL_MODE);
   $img->insert_layer($bg,0,1); # you have to add a layer after you create it
-  Gimp::Display->new($img); # Show it (this slows things down)
+  eval { Gimp::Display->new($img); }; # Show it (this slows things down)
 # do a bunch of operations just as a speed test, flushing in between
   Gimp::Context->push;
   for $i (0..255) {

@@ -79,7 +79,7 @@ podregister {
   $img = gimp_image_new($maxwide, $maxhigh, RGB);
 
   $tmpimglayer = $img->add_new_layer(0,3,1);
-  $img->display_new;
+  eval { Gimp::Display->new($img); };
   Gimp::Progress->init("Billboard...",-1);
   Gimp::Context->push();
   Gimp::Context->set_background($background);

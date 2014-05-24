@@ -74,7 +74,7 @@ podregister {
   $newdrawable->merge_shadow(1);
   $newdrawable->update(0,0,$width, $height);
 
-  Gimp->display_new($newimage);
+  eval { Gimp::Display->new($newimage); };
 
   #Original pic => original state
   if ($camerapos==3){

@@ -51,10 +51,10 @@ podregister {
 
   Gimp::Progress->update(1.0);
 
-  Gimp::Display->new($image) if $work_on_copy;
+  eval { Gimp::Display->new($image) if $work_on_copy; };
   $image->selection_none;
   $image->undo_enable;
-  Gimp->displays_flush();
+  ();
 };
 
 exit main;

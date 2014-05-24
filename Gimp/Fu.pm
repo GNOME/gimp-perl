@@ -301,9 +301,6 @@ sub make_ui_closure {
       $run_mode = defined($menupath) ? shift : Gimp::RUN_NONINTERACTIVE;
       my(@pre,@defaults,@lastvals);
 
-      Gimp::ignore_functions(@Gimp::GUI_FUNCTIONS)
-	 unless $run_mode == Gimp::RUN_INTERACTIVE;
-
       # set default arguments
       for (0..$#{$params}) {
          next if defined $_[$_];

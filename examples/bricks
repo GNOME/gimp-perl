@@ -11,7 +11,7 @@ podregister {
   $imageh = abs($imageh); $imageh = 256 if (($imageh < 32) || ($imageh > 4096));
   #print "Creating texture $imagew"."x$imageh\n";
   my $image = Gimp::Image->new($imagew,$imageh,RGB);
-  Gimp::Display->new($image);
+  eval { Gimp::Display->new($image); };
   # make background
   Gimp::Context->set_pattern($pattern);
   my $layerpat = $image->add_new_layer(0,0,0);

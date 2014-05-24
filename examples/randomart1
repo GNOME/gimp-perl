@@ -73,7 +73,7 @@ podregister {
 
    $image->selection_none;
    $image->undo_enable;
-   Gimp::Display->new($image);
+   eval { Gimp::Display->new($image); };
 
    # Gib das neu erzeugte Bild zurück, damit es angezeigt wird.
    $image;

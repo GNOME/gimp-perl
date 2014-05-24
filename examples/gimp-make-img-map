@@ -189,7 +189,7 @@ sub decoration_drop_shadow {
     $tiled_img->insert_layer($tiled_background,0,-1);
     $tiled_img->insert_layer($tiled_shadow,0,-1);
     $tiled_img->insert_layer($tiled_drw,0,-1);
-    gimp_display_new($tiled_img);
+    eval { gimp_display_new($tiled_img); };
 
     my $xpos = 0;
 
@@ -268,7 +268,7 @@ sub decoration_sunken_windows {
     $tiled_img->insert_layer($tiled_punch_stencil,0,-1);
     $tiled_img->insert_layer($tiled_drw,0,-1);
     $tiled_img->insert_layer($tiled_punch_layer,0,-1);
-    gimp_display_new($tiled_img);
+    eval { gimp_display_new($tiled_img); };
 
     my $xpos = 0;
 

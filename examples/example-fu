@@ -21,7 +21,7 @@ podregister {
   Gimp::Context->set_foreground("green");
   $img->undo_group_end; # close the undo group
   Gimp::Context->pop; # restore original context
-  Gimp::Display->new($img);
+  eval { Gimp::Display->new($img); };
   $img; # return image, as Gimp::Fu added that to our output parameters
         # because no-image-input
 };

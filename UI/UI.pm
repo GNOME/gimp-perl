@@ -515,7 +515,7 @@ my %PF2INFO = (
       my $result = $f->run;
       if ($result eq 'ok') {
 	my $i = Gimp->file_load($f->get_filename, $f->get_filename);
-	Gimp::Display->new($i);
+	eval { Gimp::Display->new($i); };
 	$b->reload;
       }
       $f->destroy;

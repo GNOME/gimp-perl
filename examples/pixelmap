@@ -87,7 +87,7 @@ register "pixelgen",
       $image->delete;
       die $error;
    };
-   Gimp::Display->new($image);
+   eval { Gimp::Display->new($image); };
    $image;
 };
 

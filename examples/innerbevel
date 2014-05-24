@@ -21,7 +21,7 @@ podregister {
   # -- step 2 --
   $img->add_new_layer(0,TRANSPARENT_FILL);
   $img->text_fontname(-1, 10, 10, $text, 0, 1, $fontsize, PIXELS, $font);
-  Gimp::Display->new($img);  # display the image early
+  eval { Gimp::Display->new($img); }; # display the image early
   $layer = $img->merge_visible_layers(EXPAND_AS_NECESSARY);
   @pt1 = ($layer->width * 0.5 -1, 0);
   @pt2 = ($layer->width * 0.5 +1, $layer->height);
