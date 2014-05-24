@@ -2250,6 +2250,9 @@ _gimp_progress_init (message)
 DISPLAY
 gimp_default_display()
 
+const char *
+gimp_display_name()
+
 # functions using different calling conventions:
 #void
 #gimp_channel_get_color(channel_ID, red, green, blue)
