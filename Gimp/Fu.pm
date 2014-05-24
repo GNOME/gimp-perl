@@ -191,7 +191,10 @@ sub mangle_key {
 }
 
 Gimp::on_net {
-   *{Gimp::UI::export_image} = sub ($$$$) { &Gimp::EXPORT_IGNORE };
+   require Gimp::UI;
+   # hash-walking in Gimp::Extension deletes aliases, this is real sub
+   undef &Gimp::UI::export_image;
+   *{Gimp::UI::export_image} = sub { &Gimp::EXPORT_IGNORE };
    require Getopt::Long;
    my $proc;
    Getopt::Long::Configure('pass_through');
@@ -222,7 +225,7 @@ Gimp::on_net {
       die __"parameter '$entry->[1]' is not optional\n"
 	 unless defined $args[$i] or $interact>0;
    }
-   $interact = $interact > 0;
+   $interact = @$params && $interact > 0;
    for my $i (0..$#args) {
       eval { $args[$i] = string2pf($args[$i], $params->[$i]); };
       die $@ if $@ and not $interact;
@@ -252,7 +255,7 @@ Gimp::on_net {
       } elsif ($input_image) {
 	 save_image($input_image, sprintf $outputfile, 0);
       } else {
-	 die "$0: outputfile specified but plugin returned no image and no input image\n";
+	 die "$0: outputfile specified but plugin returned no image and no input image\n" unless $menupath =~ /^<Toolbox>/;
       }
    }
 };
