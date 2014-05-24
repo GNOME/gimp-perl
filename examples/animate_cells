@@ -3,8 +3,8 @@
 use Gimp;
 use Gimp::Fu;
 use Gimp::Util;
-
 use strict;
+use warnings;
 
 sub fix_cell_layer {
   my $image = shift; # The image

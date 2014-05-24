@@ -2,17 +2,19 @@
 
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
+use strict;
+use warnings;
 
 podregister {
-  $long = int(($short * 1.618) + 0.5);
-  $width = $short;
-  $height = $long;
+  my $long = int(($short * 1.618) + 0.5);
+  my $width = $short;
+  my $height = $long;
   if ($type == 1) {
     $width = $long;
     $height = $short;
   }
-  $img = gimp_image_new($width, $height, RGB);
-  $layer = gimp_layer_new($img, $width, $height, RGB_IMAGE, "Layer 1", 100, NORMAL_MODE);
+  my $img = gimp_image_new($width, $height, RGB);
+  my $layer = gimp_layer_new($img, $width, $height, RGB_IMAGE, "Layer 1", 100, NORMAL_MODE);
   gimp_image_insert_layer($layer, 0, -1);
   Gimp::Context->push();
   $layer->gimp_edit_fill(BACKGROUND_FILL);

@@ -2,6 +2,8 @@
 
 BEGIN { $Gimp::verbose = 1; }
 use Gimp;
+use strict;
+use warnings;
 
 my $OTHER_EVENTLOOP = 0;
 

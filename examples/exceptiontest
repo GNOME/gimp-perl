@@ -2,6 +2,8 @@
 
 use Gimp;
 use Gimp::Fu;
+use strict;
+use warnings;
 #BEGIN { $Gimp::verbose = 1; }
 
 podregister { die "I DIED\n" };

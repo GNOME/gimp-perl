@@ -9,6 +9,8 @@
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 use PDL::LiteF;
+use strict;
+use warnings;
 
 podregister {
   #gimp_tile_cache_size(20000);

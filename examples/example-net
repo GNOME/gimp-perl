@@ -1,6 +1,8 @@
 #!/usr/bin/perl -w
 
 use Gimp;
+use strict;
+use warnings;
 
 Gimp::on_lib {
    die "Not intended to be run from within GIMP!\n";

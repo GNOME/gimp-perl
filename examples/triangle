@@ -2,6 +2,8 @@
 
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
+use strict;
+use warnings;
 
 podregister {
   $w = $image->width();

@@ -3,6 +3,7 @@
 use Gimp;
 use Gimp::Fu;
 use strict;
+use warnings;
 
 # XPM's that I removed the $ and the @'s from (they get interpreted in
 # strings, which makes for nasty problems).

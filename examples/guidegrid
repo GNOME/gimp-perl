@@ -2,6 +2,8 @@
 
 use Gimp;
 use Gimp::Fu;
+use strict;
+use warnings;
 
 podregister {
   # Remove all existing guides (this is optional)

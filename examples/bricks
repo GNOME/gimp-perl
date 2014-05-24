@@ -3,6 +3,8 @@
 use Gimp;
 use Gimp::Fu;
 use Gimp::Util;
+use strict;
+use warnings;
 #$Gimp::verbose = 1;
 
 podregister {
@@ -42,7 +44,7 @@ podregister {
   # make a copy of it for bump mapping
   $image->selection_all;
   $layer->edit_copy();
-  $border = $image->add_new_layer(0,0,0);
+  my $border = $image->add_new_layer(0,0,0);
   #print "$border\n";
   $border->edit_paste(0)->floating_sel_anchor;
   $image->selection_none;
@@ -55,7 +57,7 @@ podregister {
   while ($h < $imageh) {
     $w = 0; $wo = 0; $wo = ($brickw / 2) if ($j == 1);
     while ($w < $imagew) {
-      $r = int(rand ($skew) - ($skew / 1));
+      my $r = int(rand ($skew) - ($skew / 1));
       if ($r != 0) {
 	Gimp::Context->set_foreground ("#ffffff") if ($r > 0);
 	Gimp::Context->set_foreground ("#000000") if ($r < 0);
@@ -74,7 +76,7 @@ podregister {
   }
   $image->undo_group_end;
   Gimp::Context->set_background ($color);
-  $layerb = $image->image_add_new_layer(1,BACKGROUND_FILL,0);
+  my $layerb = $image->image_add_new_layer(1,BACKGROUND_FILL,0);
   $image->selection_all;
   if ($borderpatuse) {
     Gimp::Context->set_pattern($borderpattern);
@@ -82,7 +84,7 @@ podregister {
   }
   $border->edit_copy();
   $layerb->add_alpha;
-  $mask = $layerb->create_mask(0);
+  my $mask = $layerb->create_mask(0);
   $layerb->add_mask($mask);
   $mask->edit_paste(0)->floating_sel_anchor;
   $image->selection_none;

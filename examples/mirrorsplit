@@ -4,6 +4,7 @@ use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 use Gimp::Util;
 use strict;
+use warnings;
 
 podregister {
   my $w = $drawable->width();

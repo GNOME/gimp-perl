@@ -6,6 +6,8 @@ use Gimp::UI;
 use MIME::Base64;
 use IO::All;
 use List::Util qw(max);
+use strict;
+use warnings;
 
 my %filetype2info = (
   0 => [
@@ -51,7 +53,7 @@ podregister {
       my $data = io($tmp)->all
 	or die __"Unable to read temporary image tile $tmp: $!";
       unlink $tmp;
-      $url = "data:image/$media;base64,".(encode_base64 $data);
+      my $url = "data:image/$media;base64,".(encode_base64 $data);
       $max = max($max, length($url));
       append $fh "<td><img src=\"", $url, "\">";
       Gimp::Progress->update(($y*$w+$x*$tile_y)/($w*$h));

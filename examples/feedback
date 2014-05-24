@@ -2,6 +2,8 @@
 
 use Gimp;
 use Gimp::Fu;
+use strict;
+use warnings;
 
 podregister {
   $image->undo_group_start;

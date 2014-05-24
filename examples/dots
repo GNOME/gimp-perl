@@ -4,6 +4,7 @@
 use Gimp;
 use Gimp::Fu;
 use strict;
+use warnings;
 
 podregister {
   my $has_noselection;

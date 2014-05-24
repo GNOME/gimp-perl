@@ -2,6 +2,8 @@
 
 use Gimp;
 use Gimp::Fu;
+use strict;
+use warnings;
 #$Gimp::verbose = 1;
 
 my @BUCKET_ARGS = (FG_BUCKET_FILL,NORMAL_MODE,100,0,0,0,0);

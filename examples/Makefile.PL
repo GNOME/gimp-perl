@@ -1,11 +1,14 @@
 require 5.008;
 use ExtUtils::MakeMaker;
 use File::Basename;
+use strict;
+use warnings;
 
 require '../config.pl';
 
 # list of standard plugins
-@pins = qw(
+our %cfg;
+my @pins = qw(
   Perl-Server
   Perl-Console
   dataurl
@@ -59,7 +62,8 @@ $dest : $plugin \$(INST_PLUGINS)\$(DFSEP).exists
 EOF
 }
 
-sub MY::postamble {
+undef &MY::postamble; # suppress warning
+*MY::postamble = sub {
    my $self=shift;
    my $UT = "$cfg{GIMPTOOL} --uninstall-admin-bin";
    <<EOF;
@@ -88,7 +92,7 @@ uninstall ::
 	cd \$(INST_PLUGINS); for plugin in *; do $UT "\$\$plugin"; done
 
 EOF
-}
+};
 
 WriteMakefile(
     'NAME'	=> 'Gimp',

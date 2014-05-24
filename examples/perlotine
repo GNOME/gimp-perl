@@ -4,6 +4,8 @@ use File::Path;
 use Gimp;
 use Gimp::Fu;
 use Gimp::Util;
+use strict;
+use warnings;
 
 #$Gimp::verbose = 1;
 
@@ -31,8 +33,8 @@ sub get_orientguides {
 sub dosel {
   my ($image, $savepath, $imgpath, $imgbasename, $extension, $l,$r,$t,$b, $i,$j) = @_;
 #    $filename =~ m/^(.*)\.[^\.]*$/ ;
-  $imgname = "$imgbasename-$i-$j.$extension";
-  $tmpimage = $image->duplicate;
+  my $imgname = "$imgbasename-$i-$j.$extension";
+  my $tmpimage = $image->duplicate;
   # print "Cropping from $l to $r, $t to $b\n";
   $tmpimage->crop($r-$l, $b-$t, $l, $t);
   # Make sure that gif and jpg are of proper type before proceeding.
@@ -51,7 +53,7 @@ sub dosel {
 # HTML Table Generation Functions
 sub html_table_start {
   my ($fn,$cellpadding,$cellspacing,$border,$capitalize_tags) = @_;
-  $str = $capitalize_tags ?
+  my $str = $capitalize_tags ?
 "<TABLE CELLSPACING=$cellspacing CELLPADDING=$cellpadding BORDER=$border>\n" :
 "<table cellspacing=$cellspacing cellpadding=$cellpadding border=$border>\n" ;
   print $fn $str;
@@ -59,13 +61,13 @@ sub html_table_start {
 
 sub html_table_row_start {
   my ($fn, $capitalize_tags) = @_;
-  $str = $capitalize_tags ? "\t<TR>\n" : "\t<tr>\n";
+  my $str = $capitalize_tags ? "\t<TR>\n" : "\t<tr>\n";
   print $fn $str;
 }
 
 sub html_table_entry {
   my ($fn, $imgname, $width, $height, $capitalize_tags) = @_;
-  $str = $capitalize_tags ?
+  my $str = $capitalize_tags ?
 "\t\t<TD><IMG ALT=\" \" SRC=\"$imgname\" WIDTH=\"$width\" HEIGHT=\"$height\"></TD>\n" :
 "\t\t<td><img alt=\" \" src=\"$imgname\" width=\"$width\" height=\"$height\"></td>\n";
   print $fn $str;
@@ -73,13 +75,13 @@ sub html_table_entry {
 
 sub html_table_row_end {
   my ($fn, $capitalize_tags) = @_;
-  $str = $capitalize_tags ? "\t</TR>\n" : "\t</tr>\n";
+  my $str = $capitalize_tags ? "\t</TR>\n" : "\t</tr>\n";
   print $fn $str;
 }
 
 sub html_table_end {
   my ($fn, $capitalize_tags) = @_;
-  $str = $capitalize_tags ? "</TABLE>\n":"</table>\n";
+  my $str = $capitalize_tags ? "</TABLE>\n":"</table>\n";
   print $fn $str;
 }
 
@@ -89,8 +91,8 @@ podregister {
   my @horz = get_orientguides($o2gp2g, &Gimp::ORIENTATION_HORIZONTAL);
   die __"Abort: no horizontal or vertical guides found.\n" unless @vert + @horz;
   Gimp->progress_init("Perl-o-Tine");
-  $progress_increment = 1/( (scalar(@horz)+1) * (scalar(@vert)+1) );
-  $progress = 0.0;
+  my $progress_increment = 1/( (scalar(@horz)+1) * (scalar(@vert)+1) );
+  my $progress = 0.0;
   # (Debugging info for the guide functions)
   # print @vert, " LEN = ", scalar(@vert), "\n";
   # print @horz, " LEN = ", scalar(@horz), "\n";
@@ -102,18 +104,18 @@ podregister {
   $imgpath = "" unless $separate;
   mkpath($savepath . $imgpath);
   open FILE, ">$savepath$htmlname" or die "Couldn't open $savepath$htmlname: $!\n";
-  $top=0;
+  my $top=0;
   html_table_start(\*FILE,0,$cellspacing,0,$capitalize_tags);
-  for ($i=0; $i<=scalar(@horz); $i++) {
-    $bot = ($i>$#horz) ? $image->height : $image->get_guide_position($horz[$i]);
+  for (my $i=0; $i<=scalar(@horz); $i++) {
+    my $bot = ($i>$#horz) ? $image->height : $image->get_guide_position($horz[$i]);
     html_table_row_start(\*FILE, $capitalize_tags);
-    $left=0;
-    for ($j=0; $j<=scalar(@vert); $j++) {
-      $right = ($j>$#vert) ? $image->width : $image->get_guide_position($vert[$j]);
+    my $left=0;
+    for (my $j=0; $j<=scalar(@vert); $j++) {
+      my $right = ($j>$#vert) ? $image->width : $image->get_guide_position($vert[$j]);
       # protect against 0 width/height guide selections
       if ($left!=$right && $top!=$bot) {
         # perform cropping, table entry
-        $imgname = dosel($image, $savepath, $imgpath, $imgbasename, $extension, $left, $right, $top, $bot, $i, $j);
+        my $imgname = dosel($image, $savepath, $imgpath, $imgbasename, $extension, $left, $right, $top, $bot, $i, $j);
         html_table_entry(\*FILE, $imgname, $right-$left, $bot-$top, $capitalize_tags);
       }
       $left = $right + $cellspacing;

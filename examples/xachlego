@@ -2,6 +2,8 @@
 
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
+use strict;
+use warnings;
 
 podregister {
   my $selection_flag = 0;
@@ -14,13 +16,13 @@ podregister {
   Gimp::Context->push();
 # Now the fun begins :)
 
-  $selection = $image->selection_save;
+  my $selection = $image->selection_save;
 
 #1. Pixelize the photo
   $drawable->pixelize($blocksize);
 # 2. in a new white layer, render a grid
 #           at the same resolution as the pixelize, then blur it.
-  $gridlayer = $image->layer_new($image->width, $image->height, RGBA_IMAGE, "Grid 1", 100, 0);
+  my $gridlayer = $image->layer_new($image->width, $image->height, RGBA_IMAGE, "Grid 1", 100, 0);
   $image->insert_layer($gridlayer,0,0);
   $image->selection_all;
   gimp_edit_clear($gridlayer);
@@ -44,7 +46,7 @@ podregister {
 
 # <Xach> then create a new, clean grid, and bumpmap the pixelized layer with it
   $image->selection_all;
-  $cleangrid = $image->layer_new($image->width, $image->height,
+  my $cleangrid = $image->layer_new($image->width, $image->height,
 			   RGBA_IMAGE, "Grid 2", 100, 0);
   $image->insert_layer($cleangrid,0,0);
   gimp_edit_fill($cleangrid, BACKGROUND_FILL);

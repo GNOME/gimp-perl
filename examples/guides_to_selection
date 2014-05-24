@@ -3,13 +3,15 @@
 use Gimp;
 use Gimp::Fu;
 use Gimp::Util;
+use strict;
+use warnings;
 
 podregister {
   my($W,$H) = ($image->width, $image->height);
   Gimp::Context->push;
   Gimp::Context->set_feather($feather);
   Gimp::Context->set_feather_radius($radius, $radius);
-  $i = $image->find_next_guide(0);
+  my $i = $image->find_next_guide(0);
   while ($i) {
     my ($x,$y,$w,$h);
     $x = $image->get_guide_position($i);

@@ -3,6 +3,8 @@
 use Gimp;
 use Gimp::Fu;
 use Gimp::Util;
+use strict;
+use warnings;
 
 # Erzeuge ein neues "scratchlayer", d.h. eine Ebene, die graue
 # Streifen einer bestimmten Richtung enthält. Dazu wird ein

@@ -4,6 +4,7 @@ use Gimp qw(:auto N_);
 use Gimp::Fu;
 use Gimp::Util;
 use strict;
+use warnings;
 
 N_"/Xtns/Render"; N_"/Xtns/Render/Logos"; # i18n workaround
 

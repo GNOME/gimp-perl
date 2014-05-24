@@ -2,6 +2,8 @@
 
 use Gimp;
 use Gimp::Fu;
+use strict;
+use warnings;
 
 podregister {
   die "Must have layer selected\n" unless $drawable->is_layer;
@@ -17,20 +19,20 @@ podregister {
 $image->selection_all;
 # Now the fun begins :)
   $drawable->pixelize($blocksize);
-  $shadowlayer = $drawable->layer_copy(0);
+  my $shadowlayer = $drawable->layer_copy(0);
   $image->insert_layer($shadowlayer,0,0);
-  $checkmask = $shadowlayer->create_mask(ADD_WHITE_MASK);
+  my $checkmask = $shadowlayer->create_mask(ADD_WHITE_MASK);
   $shadowlayer->add_mask($checkmask);
   $image->checkerboard($checkmask, 0, $blocksize);
 
-  $frontlayer = $shadowlayer->layer_copy(0);
+  my $frontlayer = $shadowlayer->layer_copy(0);
   $image->insert_layer($frontlayer,0,0);
   Gimp::Context->set_background([0,0,0]);
   $shadowlayer->fill(BACKGROUND_FILL);
   $checkmask->gauss_iir(0.3*$blocksize, 1, 1);
   $checkmask->offset (1, 0, 0.2*$blocksize, 0.2*$blocksize);
 
-  $gridlayer = $image->layer_new($image->width, $image->height, RGBA_IMAGE, "Grid 1", 100, 0);
+  my $gridlayer = $image->layer_new($image->width, $image->height, RGBA_IMAGE, "Grid 1", 100, 0);
   $image->insert_layer($gridlayer,0,0);
   $image->selection_all;
   $gridlayer->edit_clear;

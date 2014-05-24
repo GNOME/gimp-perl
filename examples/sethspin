@@ -6,6 +6,7 @@ use Gimp::Fu;
 use Gimp::Util;
 use List::Util qw(max);
 use strict;
+use warnings;
 #$Gimp::verbose = 3;
 
 sub saw {  # a sawtooth function on PI

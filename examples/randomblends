@@ -3,6 +3,8 @@
 use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 use Gimp::Util;
+use strict;
+use warnings;
 
 sub randint {
     my ($int) = @_;
@@ -12,12 +14,11 @@ sub randint {
 podregister {
     eval { $image->undo_group_start };
     Gimp::Context->push();
-    my $sel;
-    ($sel,$x1,$y1,$x2,$y2) = $image->gimp_selection_bounds;
+    my ($sel,$x1,$y1,$x2,$y2) = $image->gimp_selection_bounds;
     srand();
-    @gradientlist = gimp_gradients_get_list("");
+    my @gradientlist = gimp_gradients_get_list("");
     Gimp->progress_init("Random blends...");
-    for ($i=0; $i<$numgradients; $i++) {
+    for (my $i=0; $i<$numgradients; $i++) {
         Gimp::Context->set_gradient(@gradientlist[randint($#gradientlist)]);
 	$drawable->edit_blend(CUSTOM_MODE,
                        DIFFERENCE_MODE,

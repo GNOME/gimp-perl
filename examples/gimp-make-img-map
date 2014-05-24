@@ -1,5 +1,8 @@
 #!/usr/bin/perl -w
 
+use strict;
+use warnings;
+
 BEGIN {
   # Defaults
   $max_height = 64;

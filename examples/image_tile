@@ -4,11 +4,11 @@ use Gimp qw(:auto __ N_);
 use Gimp::Fu;
 use Fcntl qw(O_RDWR O_CREAT O_TRUNC);
 use DB_File;
-# use strict;
-# use vars qw($DO_HSV $debug);
+use strict;
+use warnings;
 
-$DO_HSV = 0;
-$debug = 0;
+my $DO_HSV = 0;
+my $debug = 0;
 
 podregister {
   my $subimages = 0;

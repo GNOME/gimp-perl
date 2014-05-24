@@ -3,6 +3,7 @@
 use Gimp;
 use Gimp::Fu;
 use strict;
+use warnings;
 
 podregister {
   $custom = "-i"            if $function == 1;

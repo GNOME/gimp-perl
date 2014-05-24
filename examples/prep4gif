@@ -2,6 +2,8 @@
 
 use Gimp qw(:auto N_ __);
 use Gimp::Fu;
+use strict;
+use warnings;
 
 podregister {
   my $out = $image->duplicate; # only work on duplicate
