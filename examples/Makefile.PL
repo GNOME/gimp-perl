@@ -14,7 +14,7 @@ require '../config.pl';
   colorhtml
   fade-alpha
   animate_cells
-  blended2 blowinout bricks burst
+  blowinout bricks burst
   centerguide
   ditherize dots dust
   frame_filter frame_reshuffle
@@ -23,9 +23,8 @@ require '../config.pl';
   layerfuncs mirrorsplit
   map_to_gradient
   perlotine prep4gif
-  repdup roundsel
+  repdup
   scratches sethspin stamps
-  translogo
   randomart1 randomblends
   selective_sharpen
   warp-sharp webify windify
