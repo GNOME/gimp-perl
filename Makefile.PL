@@ -4,6 +4,7 @@ use Data::Dumper qw(Dumper);
 use ExtUtils::MakeMaker;
 use IO::All;
 
+our %cfg;
 require './config.pl';
 
 sub MY::postamble {

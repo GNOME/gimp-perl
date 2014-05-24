@@ -35,9 +35,10 @@ UI/UI.xs
 config.pl
 examples/Makefile.PL
 examples/Perl-Server
+examples/Perl-Console
 examples/animate_cells
+examples/autosave2
 examples/billboard
-examples/blended2
 examples/blowinout
 examples/bricks
 examples/burst
@@ -48,7 +49,6 @@ examples/ditherize
 examples/dots
 examples/dust
 examples/example-extension
-examples/example-extension-tester
 examples/example-extension-no-fu
 examples/example-fu
 examples/example-net
@@ -79,14 +79,12 @@ examples/randomblends
 examples/README
 examples/redeye
 examples/repdup
-examples/roundsel
 examples/scratches
 examples/selective_sharpen
 examples/sethspin
 examples/stampify
 examples/stamps
 examples/tex-to-float
-examples/translogo
 examples/triangle
 examples/view3d
 examples/warp-sharp
@@ -122,7 +120,6 @@ po/nl.po
 po/no.po
 po/oc.po
 po/pl.po
-po/pm_to_blib
 po/POTFILES.in
 po/pt_BR.po
 po/pt.po
@@ -144,7 +141,6 @@ t/gimppod.t
 t/gimpsetup.pl
 t/import.t
 t/load.t
-t/loadlib.t
 t/netplugin.t
 t/pdl.t
 t/perlplugin.t

@@ -10,7 +10,7 @@ our (
 use subs qw(init end lock unlock);
 
 BEGIN {
-   $VERSION = 2.3003; # going forward: 2.xx, or 2.xx_yy for dev
+   $VERSION = 2.3004; # going forward: 2.xx, or 2.xx_yy for dev
    eval {
       require XSLoader;
       XSLoader::load Gimp $VERSION;
@@ -257,6 +257,7 @@ my %ignore_function = (DESTROY => 1);
 @PREFIXES=("gimp_", "");
 
 sub ignore_functions(@) {
+   warn "$$-IGNORING(@_)" if $Gimp::verbose;
    @ignore_function{@_}++;
 }
 
@@ -411,7 +412,7 @@ Gimp - Write GIMP extensions/plug-ins/load- and save-handlers in Perl
     );
     $image->insert_layer($bg, 1, 0);
     $image->edit_fill($bg, FOREGROUND_FILL);
-    Gimp::Display->new($image);
+    eval { Gimp::Display->new($image); };
     $image;
   };
 
