@@ -14,7 +14,7 @@ sub freeze($) {
 
 sub thaw {
    my $data = shift;
-   if ($data =~ /^\$VAR1 = \[/) {
+   if ($data =~ /^\$VAR1 =/) {
       my $VAR1;
       no warnings;
       return eval $data;
