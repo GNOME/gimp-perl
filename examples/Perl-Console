@@ -114,7 +114,7 @@ sub process_input {
   my ($input)= @_;
   $input = 'Gtk2->main_quit' if $input eq 'exit';
   my @out = eval("no strict;no warnings;\n#line 1 \"code\"\n".$input);
-  my $output = $@ || join ' ', @out;
+  my $output = $@ || join ' ', map { $_ // '(undef)' } @out;
   chomp $output;
   "> $input\n$output";
 }
