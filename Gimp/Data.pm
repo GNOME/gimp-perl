@@ -5,29 +5,19 @@ use warnings;
 
 sub freeze($) {
    my $data = shift;
-   if (ref $data
-       or $data =~ /^\$VAR1 = \[/) {
-      if ( eval { require Data::Dumper } ) {
-         $data = new Data::Dumper [$data];
-         $data->Purity(1)->Terse(0);
-         return $data->Dump;
-      } else {
-         return;
-      }
-   }
-   $data;
+   return $data unless ref $data;
+   require Data::Dumper;
+   $data = Data::Dumper->new([$data]);
+   $data->Purity(1)->Terse(0);
+   return $data->Dump;
 }
 
 sub thaw {
    my $data = shift;
    if ($data =~ /^\$VAR1 = \[/) {
-      if (eval { require Data::Dumper }) {
-         my $VAR1; # Data::Dumper is braindamaged
-         local $^W=0; # perl -w is braindamaged
-         return eval $data;
-      } else {
-         return;
-      }
+      my $VAR1;
+      no warnings;
+      return eval $data;
    }
    $data;
 }
@@ -35,19 +25,18 @@ sub thaw {
 sub TIEHASH {
    my $pkg = shift;
    my $self;
-
    bless \$self, $pkg;
 }
 
 sub FETCH {
-   thaw eval { Gimp->parasite_find ($_[1])->data }
-        || ($@ ? Gimp->get_data ($_[1]) : ());
+   my $p = eval { Gimp->get_parasite($_[1]) };
+   return if $@;
+   thaw($p->data);
 }
 
 sub STORE {
-   my $data = freeze $_[2];
-   eval { Gimp->parasite_attach ([$_[1], Gimp::PARASITE_PERSISTENT, $data]) };
-   Gimp->set_data ($_[1], $data) if $@;
+   my $data = freeze($_[2]);
+   Gimp->attach_parasite ([$_[1], Gimp::PARASITE_PERSISTENT, $data]);
 }
 
 sub EXISTS {
