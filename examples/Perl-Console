@@ -137,6 +137,12 @@ Try this:
  Gimp::Display->new($i)
  $i->get_layers
 
+You can run the console from the command line, and it will work in
+"batch mode" (the C<-o> flag is because Gimp::Fu offers a UI to fill in
+an output file if none specified, which this suppresses):
+
+  <path-to-plugins>/Perl-Console -o '/'
+
 =head1 AUTHOR
 
 Ed J
