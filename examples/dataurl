@@ -34,6 +34,15 @@ podregister {
     my $new_image=$image, my $new_drawable=$drawable, "DATAURL", $flags,
   );
   return if $export == EXPORT_CANCEL;
+  if (
+    $export == EXPORT_IGNORE and
+    !($flags & EXPORT_CAN_HANDLE_RGB) and
+    !$new_drawable->is_indexed
+  ) {
+    $new_image = $image->duplicate;
+    $new_image->convert_indexed(0, 0, 256, 1, 1, '');
+    $new_drawable = $new_image->get_active_layer;
+  }
   my ($w,$h) = ($new_drawable->width, $new_drawable->height);
   my $tmp = Gimp->temp_name(".img~");
   my $fh = io($filename);
