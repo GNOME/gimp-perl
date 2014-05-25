@@ -445,7 +445,7 @@ sub main {
    my $proc;
    Getopt::Long::Configure('pass_through');
    Getopt::Long::GetOptions('p=s' => \$proc);
-   my $this = defined($proc) ? find_script($proc) : undef;
+   my $this = find_script($proc);
    print __<<EOF;
        interface-arguments are
            -o | --output <filespec>   write image to disk
