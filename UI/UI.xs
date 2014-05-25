@@ -152,7 +152,10 @@ export_image(image_ID, drawable_ID, format_name, capabilities)
         CODE:
           image = SvIV (SvRV (image_ID));
           drawable = SvIV (SvRV (drawable_ID));
-          RETVAL = gimp_export_image (&image, &drawable, format_name, capabilities);
+	  if (gimp_display_name())
+	    RETVAL = gimp_export_image (&image, &drawable, format_name, capabilities);
+	  else
+	    RETVAL = GIMP_EXPORT_IGNORE; /* fake if no UI */
           sv_setiv (SvRV (image_ID), image);
           sv_setiv (SvRV (drawable_ID), drawable);
 	OUTPUT:

@@ -191,10 +191,6 @@ sub mangle_key {
 }
 
 Gimp::on_net {
-   require Gimp::UI;
-   # hash-walking in Gimp::Extension deletes aliases, this is real sub
-   undef &Gimp::UI::export_image;
-   *{Gimp::UI::export_image} = sub { &Gimp::EXPORT_IGNORE };
    require Getopt::Long;
    my $proc;
    Getopt::Long::Configure('pass_through');
