@@ -35,7 +35,6 @@ my @_procs = ('__', 'N_');
 #my @_default = (@_procs, ':consts' ,':_auto2');
 my @_default = (@_procs, ':consts');
 my @POLLUTE_CLASSES;
-my $net_init;
 
 sub import($;@) {
    no strict 'refs';
@@ -45,9 +44,9 @@ sub import($;@) {
    my @export;
 
    # make sure we can call GIMP functions - start net conn if required
+   my $net_init;
    map { $net_init = $1 if /net_init=(\S+)/; } @_;
    if ($interface_type eq "net" and not &Gimp::Net::initialized) {
-      no strict 'refs';
       map { *{"Gimp::$_"} = \&{"Gimp::Constant::$_"} }
 	 qw(RUN_INTERACTIVE RUN_NONINTERACTIVE);
       Gimp::Net::gimp_init(grep {defined} $net_init);
@@ -67,16 +66,6 @@ sub import($;@) {
          push @export,@Gimp::Constant::EXPORT,@_procs;
          *{"$up\::AUTOLOAD"} = sub {
             croak "Cannot call '$AUTOLOAD' at this time" unless initialized();
-            my ($class,$name) = $AUTOLOAD =~ /^(.*)::(.*?)$/;
-            *{$AUTOLOAD} = sub { unshift @_, 'Gimp'; $AUTOLOAD = "Gimp::$name"; goto &AUTOLOAD };
-            #*{$AUTOLOAD} = sub { Gimp->$name(@_) }; # old version
-            goto &$AUTOLOAD;
-         };
-      } elsif ($_ eq ":_auto2") {
-         push @export,@Gimp::Constant::EXPORT,@_procs;
-         *{"$up\::AUTOLOAD"} = sub {
-            warn __"$function: calling $AUTOLOAD without specifying the :auto import tag is deprecated!\n";
-            croak __"Cannot call '$AUTOLOAD' at this time" unless initialized();
             my ($class,$name) = $AUTOLOAD =~ /^(.*)::(.*?)$/;
             *{$AUTOLOAD} = sub { unshift @_, 'Gimp'; $AUTOLOAD = "Gimp::$name"; goto &AUTOLOAD };
             #*{$AUTOLOAD} = sub { Gimp->$name(@_) }; # old version
