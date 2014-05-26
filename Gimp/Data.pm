@@ -5,16 +5,18 @@ use warnings;
 
 sub freeze($) {
    my $data = shift;
-   return $data unless ref $data;
+   return $data unless ref $data or _looks_frozen($data);
    require Data::Dumper;
    $data = Data::Dumper->new([$data]);
    $data->Purity(1)->Terse(0);
    return $data->Dump;
 }
 
+sub _looks_frozen { shift =~ /^\$VAR1 =/; }
+
 sub thaw {
    my $data = shift;
-   if ($data =~ /^\$VAR1 =/) {
+   if (_looks_frozen($data)) {
       my $VAR1;
       no warnings;
       return eval $data;
@@ -81,7 +83,7 @@ like your plug-in's name. As an example, the Gimp::Fu module uses
 As of L<Gimp> version 2.3 (and GIMP 2.8), your data B<will> survive a
 restart of the Gimp application.
 
-C<Gimp::Data> will try to freeze your data when you pass in a reference. On
+C<Gimp::Data> will freeze your data when you pass in a reference. On
 retrieval, the data is thawed again. See L<Data::Dumper> for more info.
 
 =head1 PERSISTENCE
@@ -103,8 +105,8 @@ Thaw (unserialize) the dsata and return the original reference.
 
 =head1 LIMITATIONS
 
-You cannot store references, and you cannot (yet) iterate through the keys
-(with C<keys>, C<values> or C<each>).
+You cannot (yet) iterate through the keys (with C<keys>, C<values>
+or C<each>).
 
 =head1 AUTHOR
 
