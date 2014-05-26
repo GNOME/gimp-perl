@@ -21,12 +21,22 @@ for my $pair (@DATA) {
   is_deeply($Gimp::Data{$pair->[0]}, $pair->[1], "stored $pair->[0]");
 }
 
+my @found = grep { $_ eq $DATA[0]->[0] } keys %Gimp::Data;
+is(scalar(@found), 1, 'keys %Gimp::Data');
+@found = grep { $_ eq $DATA[0]->[1] } values %Gimp::Data;
+is(scalar(@found), 1, 'values %Gimp::Data');
+
 Gimp::Net::gimp_end;
 Gimp->import(qw(net_init=spawn/));
 
 for my $pair (@DATA) {
   is_deeply([ $Gimp::Data{$pair->[0]} ], [ $pair->[1] ], "still $pair->[0]");
 }
+
+my $pair = $DATA[0];
+is_deeply(delete $Gimp::Data{$pair->[0]}, $pair->[1], "delete $pair->[0]");
+ok(!exists $Gimp::Data{$pair->[0]}, "exists $pair->[0]");
+
 
 Gimp::Net::gimp_end;
 
