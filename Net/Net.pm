@@ -87,7 +87,7 @@ sub gimp_call_procedure {
 }
 
 sub gimp_procedural_db_proc_exists { command 'TEST', @_; }
-sub server_quit { command 'QUIT'; undef $server_fh; }
+sub server_quit { command 'QUIT'; undef $server_fh; $initialized = 0; }
 
 sub server_wait {
    croak __"server_wait called but gimp_pid undefined"
@@ -109,7 +109,6 @@ sub start_server {
    $gimp_pid = fork;
    croak __"unable to fork: $!" if $gimp_pid < 0;
    if ($gimp_pid > 0) {
-      Gimp::ignore_functions(@Gimp::GUI_FUNCTIONS) unless $opt=~s/(^|:)gui//;
       return $server_fh;
    }
    undef $gimp_pid;
@@ -205,7 +204,6 @@ sub gimp_end {
 }
 
 sub gimp_main {
-   no strict 'refs';
    eval { Gimp::callback("-net") };
    if ($@) {
       chomp(my $exception = $@);
