@@ -748,7 +748,21 @@ Gimp-Perl uses some tricks to map the procedural PDB functions onto full
 classes, with methods. These effectively implement object-oriented C,
 not coincidentally in the style of Glib Objects. GIMP plans to move to
 fully supporting Glib Objects, which may mean some (or no) changes to
-the Gimp-Perl programming interface.
+the Gimp-Perl programming interface. The OO interface may well become
+stricter than the current quite thin mapping. This is why the C<:auto>
+method of accessing GIMP functions is deprecated.
+
+Therefore, the guidance is that if you can do it as an object method, do
+- and use the shortest method name that works; no C<gimp_>, no
+C<gimp_layer_>, etc. The key indication is whether the first argument
+is an object of the classes given below, and the GIMP function call:
+C<gimp_image_*> is always either an image object method, or a class
+method. If the first two arguments are an image and a drawable, call the
+method on the drawable, with the exception of C<gimp_image_insert_layer>,
+which we can tell from the prefix is an image method.
+
+If you can't, use a deeper class than just C<Gimp>: C<Gimp::Context>, etc.
+Otherwise, you have to use C<Gimp-E<gt>>, and that's fine.
 
 =head2 AVAILABLE CLASSES
 
