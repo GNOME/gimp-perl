@@ -10,7 +10,7 @@ use warnings;
 
 our (@ISA, $VERSION);
 BEGIN {
-   $VERSION = 2.3004;
+   $VERSION = 2.3005;
    eval {
       require XSLoader;
       XSLoader::load Gimp::UI $VERSION;
