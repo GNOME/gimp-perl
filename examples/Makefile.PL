@@ -12,6 +12,7 @@ my @pins = qw(
   Perl-Server
   Perl-Console
   registry_viewer
+  blended2 translogo
   dataurl
   example-fu
   exceptiontest

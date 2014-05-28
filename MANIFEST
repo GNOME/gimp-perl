@@ -39,6 +39,7 @@ examples/Perl-Console
 examples/animate_cells
 examples/autosave2
 examples/billboard
+examples/blended2
 examples/blowinout
 examples/bricks
 examples/burst
@@ -86,6 +87,7 @@ examples/sethspin
 examples/stampify
 examples/stamps
 examples/tex-to-float
+examples/translogo
 examples/triangle
 examples/view3d
 examples/warp-sharp
