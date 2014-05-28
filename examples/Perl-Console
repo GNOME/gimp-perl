@@ -145,10 +145,9 @@ Try this:
  $i->get_layers
 
 You can run the console from the command line, and it will work in
-"batch mode" (the C<-o> flag is because Gimp::Fu offers a UI to fill in
-an output file if none specified, which this suppresses):
+"batch mode":
 
-  <path-to-plugins>/Perl-Console -o '/'
+  <path-to-plugins>/Perl-Console
 
 =head1 AUTHOR
 
