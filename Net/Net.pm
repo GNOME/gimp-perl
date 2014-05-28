@@ -33,7 +33,7 @@ use IO::Socket;
 use Carp 'croak';
 use Fcntl qw(F_SETFD);
 
-$VERSION = 2.3005;
+$VERSION = "2.30_05";
 bootstrap Gimp::Net $VERSION;
 
 my $PROTOCOL_VERSION = 5; # protocol version
