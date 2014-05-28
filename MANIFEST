@@ -138,6 +138,7 @@ po/vi.po
 po/zh_CN.po
 po/zh_TW.po
 pxgettext
+t/data.t
 t/examples-api.pl
 t/extension.t
 t/gimppod.t
