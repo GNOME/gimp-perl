@@ -11,6 +11,7 @@ our %cfg;
 my @pins = qw(
   Perl-Server
   Perl-Console
+  registry_viewer
   dataurl
   example-fu
   exceptiontest

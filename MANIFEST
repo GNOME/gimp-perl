@@ -78,6 +78,7 @@ examples/randomart1
 examples/randomblends
 examples/README
 examples/redeye
+examples/registry_viewer
 examples/repdup
 examples/scratches
 examples/selective_sharpen

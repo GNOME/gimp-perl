@@ -52,6 +52,7 @@ WriteMakefile(
     ExtUtils::PkgConfig	=> 0,
     Gtk2::Ex::PodViewer	=> 0,
     IO::Scalar		=> 0,
+    Web::Scraper	=> 0,
   },
   META_MERGE => {
     "meta-spec" => { version => 2 },
