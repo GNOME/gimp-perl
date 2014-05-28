@@ -8,6 +8,8 @@ use warnings;
 podregister {
   my $selection_flag = 0;
   $image->undo_group_start;
+  die "Not a layer\n" unless $drawable->is_layer;
+  $drawable->become('Gimp::Layer');
   $drawable->add_alpha unless $drawable->has_alpha;
   if ($image->selection_is_empty) {
     $image->selection_all;
