@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-use Gimp qw(:auto __ N_);
+use Gimp;
 use Gimp::Fu;
 use strict;
 use warnings;
@@ -20,27 +20,27 @@ podregister {
 
   my $selection = $image->selection_save;
 
-#1. Pixelize the photo
+# 1. Pixelize the photo
   $drawable->pixelize($blocksize);
 # 2. in a new white layer, render a grid
-#           at the same resolution as the pixelize, then blur it.
+# at the same resolution as the pixelize, then blur it.
   my $gridlayer = $image->layer_new($image->width, $image->height, RGBA_IMAGE, "Grid 1", 100, 0);
   $image->insert_layer($gridlayer,0,0);
   $image->selection_all;
-  gimp_edit_clear($gridlayer);
+  $gridlayer->edit_clear;
   Gimp::Context->set_background([255,255,255]);
-  gimp_edit_fill($gridlayer, BACKGROUND_FILL);
+  $gridlayer->edit_fill(BACKGROUND_FILL);
   $gridlayer->grid(1, $blocksize, 0, [0,0,0], 255, 1, $blocksize, 0, [0,0,0], 255, 0, 0, 0, [0,0,0], 0);
   $gridlayer->gauss_iir(0.7*$blocksize, 1, 1);
 
-#	threshold the
+#   threshold the
 #   grid until you get a roundish blob in the center of each square (you
 #   may need to repeat a few times).
 
   $gridlayer->levels(0, 196, 234, $knobfactor/100.0 , 0, 255);
 
 # <Xach> sjburges: meanwhile, back at the pixelized image, bumpmap it with
-#           itself and a depth of about 5. do this twice.
+# itself and a depth of about 5. do this twice.
   $image->select_item(CHANNEL_OP_REPLACE, $selection);
   $drawable->bump_map($drawable, 135, 45, 5, 0, 0, 0, 0, 1, 0, 0);
   $drawable->bump_map($drawable, 135, 45, 5, 0, 0, 0, 0, 1, 0, 0);
@@ -51,7 +51,7 @@ podregister {
   my $cleangrid = $image->layer_new($image->width, $image->height,
 			   RGBA_IMAGE, "Grid 2", 100, 0);
   $image->insert_layer($cleangrid,0,0);
-  gimp_edit_fill($cleangrid, BACKGROUND_FILL);
+  $cleangrid->edit_fill(BACKGROUND_FILL);
   $cleangrid->grid(1, $blocksize, 0, [0,0,0], 255, 1, $blocksize, 0, [0,0,0], 255, 0, 0, 0, [0,0,0], 0);
   $image->select_item(CHANNEL_OP_REPLACE, $selection);
   $drawable->bump_map($cleangrid, 135, 45, 3, 0, 0, 0, 0, 1, 0, 0);
@@ -115,8 +115,8 @@ or Artistic liscence, whichever makes you happier.
  <Xach> <Xach> render a grid at 10x10, gaussian blur at 7, then set levels to
            196 1.00 234
 
- Revision - 1.1:	added a gimp_displays_flush() for 1.0.x users
-			stopped deleting the layers after removal - it was
+ Revision - 1.1:   added a gimp_displays_flush() for 1.0.x users
+		   stopped deleting the layers after removal - it was
                    causing bad things to happen with refcounts.  I hope
                    gimp is cleaning up this memory on its own...
             1.2:   Fixed buggy selection handling - oops ;)
