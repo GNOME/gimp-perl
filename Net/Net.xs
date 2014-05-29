@@ -4,6 +4,7 @@
 #include "perl.h"
 #include "XSUB.h"
 #include "gppport.h"
+#include <locale.h>
 
 #if !defined(PERLIO_IS_STDIO) && defined(HASATTRIBUTE)
 # undef printf
@@ -250,17 +251,24 @@ MODULE = Gimp::Net	PACKAGE = Gimp::Net
 
 PROTOTYPES: ENABLE
 
+BOOT:
+#ifdef ENABLE_NLS
+        setlocale (LC_ALL, "");
+#endif
+
 SV *
 args2net(deobjectify,...)
 int deobjectify
 CODE:
   int index;
+  char* previous_locale = setlocale(LC_NUMERIC, "C");
   if (deobjectify) init_object_cache;
   RETVAL = newSVpv ("", 0);
   (void) SvUPGRADE (RETVAL, SVt_PV);
   SvGROW (RETVAL, INITIAL_PV);
   for (index = 1; index < items; index++)
     sv2net (deobjectify, RETVAL, ST(index));
+  setlocale(LC_NUMERIC, previous_locale);
 OUTPUT:
   RETVAL
 
@@ -271,6 +279,7 @@ char *	s
 PPCODE:
   if (objectify) init_object_cache;
   /* this depends on a trailing zero! */
+  char* previous_locale = setlocale(LC_NUMERIC, "C");
   while (*s)
     {
       SV *sv;
@@ -279,6 +288,7 @@ PPCODE:
       SPAGAIN; // works without, but recommended by perl expert - leaving in
       XPUSHs (sv_2mortal (sv));
     }
+  setlocale(LC_NUMERIC, previous_locale);
 
 void
 destroy_objects(...)
