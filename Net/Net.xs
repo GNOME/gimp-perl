@@ -44,6 +44,7 @@ static void destroy_object (SV *sv)
  * a num sv*		array
  * p len cont		pv
  * i int		iv
+ * n double		nv
  * b stash sv		blessed reference
  * r			simple reference
  * h len (key sv)*	hash (not yet supported!)
@@ -123,6 +124,10 @@ static void sv2net (int deobjectify, SV *s, SV *sv)
 	{
 	  sv_catpvf (s,"i%ld:", (long)SvIV(sv));
 	}
+      else if (SvNOK(sv))
+        {
+	  sv_catpvf (s,"n%.20lf:", (double)SvNV(sv));
+	}
       else
         {
           char *str;
@@ -148,12 +153,18 @@ static SV *net2sv (int objectify, char **_s)
   unsigned int ui, n;
   int i, j;
   long l;
+  double d;
   char str[64];
 
   switch (*s++)
     {
       case 'u':
         sv = newSVsv (&PL_sv_undef);
+        break;
+
+      case 'n':
+        sscanf (s, "%lf:%n", &d, &n); s += n;
+        sv = newSVnv ((NV)d);
         break;
 
       case 'i':
