@@ -16,6 +16,9 @@ Items as of 2014-04-29 (by Ed J)
 * Restructure dirs so all libs under lib/ using ExtUtils::MakeMaker::BigHelper
 * http://search.cpan.org/dist/Glib-Object-Introspection/
 * Add Browse to console - plug-ins/script-fu/script-fu-console.c
+* registry_viewer should use threads: http://www.perlmonks.org/?node_id=470661
+  http://perldoc.perl.org/perlthrtut.html#Controlling-access:-lock%28%29
+  http://gtk2-perl.sourceforge.net/doc/pod/Gtk2.html#INITIALIZATION
 * interactive collab image-editing:
   http://users.telenet.be/blendix/verse/#gimp_plugin
   https://github.com/verse/verse/wiki/Tutorial-Simple-C-Verse-Client
