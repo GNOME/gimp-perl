@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-use Gimp qw(:auto N_);
+use Gimp;
 use Gimp::Fu;
 use Gimp::Util;
 use strict;
@@ -19,21 +19,21 @@ sub perl_fu_glowing_steel {
   my $do_highl = shift;
   my $antialias = shift;
 
-  gimp_context_push();
+  Gimp::Context->push();
 
-  my $image = gimp_image_new(100, 100, RGB);
-  gimp_image_undo_disable($image);
-  my $textlayer = gimp_text_fontname($image, -1, $radius*2,
+  my $image = Gimp::Image->new(100, 100, RGB_IMAGE);
+  $image->undo_disable;
+  my $textlayer = $image->text_fontname(-1, $radius*2,
 				     $radius*2, $string, 0, $antialias,
 				     $size, $units, $font);
   my $width = $textlayer->width+$radius*4;
   my $height = $textlayer->height+$radius*4;
-  gimp_image_resize($image, $width, $height, 0, 0);
-  my $backlayer = gimp_layer_new($image, $width, $height, RGBA_IMAGE,
+  $image->resize($width, $height, 0, 0);
+  my $backlayer = $image->layer_new($width, $height, RGBA_IMAGE,
 				 "Background", 100, NORMAL_MODE);
-  gimp_image_insert_layer($image, $backlayer, 0, 1);
+  $image->insert_layer($backlayer, 0, 1);
 
-  gimp_layer_set_lock_alpha($textlayer,1);
+  $textlayer->set_lock_alpha(1);
 
   perl_fu_brushed_metal($image, $textlayer, 25, 135);
 
@@ -41,26 +41,25 @@ sub perl_fu_glowing_steel {
     perl_fu_highlight_edges($image, $textlayer, 1);
     # Merge in the highlight so that the glow shape will include the 1-pixel
     # highlight
-    my $hl_layer = (gimp_image_get_layers($image))[0];
-    $textlayer = gimp_image_merge_down($image, $hl_layer, EXPAND_AS_NECESSARY);
+    my $hl_layer = ($image->get_layers)[0];
+    $textlayer = $image->merge_down($hl_layer, EXPAND_AS_NECESSARY);
   }
-  gimp_item_set_name($textlayer, "Text");
+  $textlayer->set_name("Text");
 
   # Fill the background
-  gimp_selection_all($image);
-  gimp_context_set_foreground($background);
-  gimp_edit_bucket_fill($backlayer, FG_BUCKET_FILL, NORMAL_MODE, 100, 0, 1, 0, 0);
+  $image->selection_all;
+  Gimp::Context->set_foreground($background);
+  $backlayer->bucket_fill(FG_BUCKET_FILL, NORMAL_MODE, 100, 0, 1, 0, 0);
 
   # Make the glow:
   perl_fu_add_glow($image, $textlayer, $glow, $radius);
 
-  gimp_image_undo_enable($image);
-  gimp_selection_none($image);
-  gimp_image_set_active_layer($image,$backlayer);
+  $image->undo_enable;
+  $image->selection_none;
+  $image->set_active_layer($backlayer);
 
-  gimp_context_pop();
-  eval { gimp_display_new($image); };
-
+  Gimp::Context->pop();
+  eval { Gimp::Display->new($image) };
   return $image;
 }
 
@@ -71,53 +70,51 @@ sub perl_fu_add_glow {
   my $radius = shift;
   my $old_draw = $drawable;
   my $is_float = 0;
-  my $old_sel = gimp_selection_save($image);
+  my $old_sel = $image->selection_save;
 
-  gimp_image_undo_group_start($image);
+  $image->undo_group_start;
 
-  if (!gimp_item_is_layer($drawable)) {
+  if (!$drawable->is_layer) {
     die("add_glow: Only layers can have glow added");
   }
 
-  if (!gimp_drawable_has_alpha($drawable)) {
-    my($sel,$x1,$y1,$x2,$y2) = gimp_selection_bounds($image);
+  if (!$drawable->has_alpha) {
+    my($sel, $x1, $y1, $x2, $y2) = $image->selection_bounds;
     if ($sel) {
       $is_float = 1;
-      $drawable = gimp_selection_float($drawable,0,0);
+      $drawable = $drawable->selection_float(0, 0);
     } else {
       die("add_glow: Need a selection to work on");
     }
   }
 
-  my $type = gimp_drawable_type($drawable);
-  my $glow = gimp_layer_new($image, gimp_image_width($image),
-			    gimp_image_height($image), $type, "Glow layer",
+  my $type = $drawable->type;
+  my $glow = $image->layer_new($image->width,
+			    $image->height, $type, "Glow layer",
 			    100, NORMAL_MODE);
   my $lnum = $image->get_item_position($drawable);
-  gimp_image_insert_layer($image, $glow, 0, $lnum);
+  $image->insert_layer($glow, 0, $lnum);
 
   # Clear out the new layer
-  gimp_selection_all($image);
-  gimp_edit_clear($glow);
+  $image->selection_all;
+  $glow->edit_clear;
   # Add the glow
 
-  gimp_context_push();
+  Gimp::Context->push();
 
-  gimp_context_set_foreground($color);
-  gimp_image_select_item($image, CHANNEL_OP_REPLACE, $drawable);
-  gimp_selection_grow($image, $radius);
-  gimp_selection_feather($image, $radius*1.5);
-  gimp_edit_bucket_fill($glow,FG_BUCKET_FILL,NORMAL_MODE,100,255,0,0,0);
-  gimp_image_select_item($image, CHANNEL_OP_REPLACE, $drawable);
-  gimp_edit_clear($glow);
-
+  Gimp::Context->set_foreground($color);
+  $image->select_item(CHANNEL_OP_REPLACE, $drawable);
+  $image->selection_grow($radius);
+  $image->selection_feather($radius*1.5);
+  $glow->edit_bucket_fill(FG_BUCKET_FILL, NORMAL_MODE, 100, 255, 0, 0, 0);
+  $image->select_item(CHANNEL_OP_REPLACE, $drawable);
+  $glow->edit_clear;
   $image->select_item(CHANNEL_OP_REPLACE, $old_sel);
-  gimp_floating_sel_anchor($drawable) if $is_float;
-  gimp_image_set_active_layer($image,$old_draw);
-  gimp_image_undo_group_end($image);
-
-  gimp_context_pop();
-  gimp_displays_flush();
+  $drawable->floating_sel_anchor if $is_float;
+  $image->set_active_layer($old_draw);
+  $image->undo_group_end;
+  Gimp::Context->pop();
+  Gimp::Display->displays_flush();
 }
 
 sub perl_fu_brushed_metal {
@@ -128,19 +125,19 @@ sub perl_fu_brushed_metal {
   my $use_gradient = shift;
   my $gradient = shift;
 
-  gimp_image_undo_group_start($image);
+  $image->undo_group_start;
 
   # A whole lot of layer fiddling to get around the fact that
   # plug_in_mblur does the wrong thing with borders....
-  my($bset, $x1, $y1, $x2, $y2) = gimp_selection_bounds($image);
+  my($bset, $x1, $y1, $x2, $y2) = $image->selection_bounds;
   if (!$bset) {
-    if(gimp_drawable_has_alpha($drawable)) {
-      gimp_image_select_item($image, CHANNEL_OP_REPLACE, $drawable);
+    if($drawable->has_alpha) {
+      $image->select_item(CHANNEL_OP_REPLACE, $drawable);
     } else {
-      gimp_selection_all($image);
+      $image->selection_all;
     }
     my $ignore;
-    ($ignore, $x1, $y1, $x2, $y2) = gimp_selection_bounds($image);
+    ($ignore, $x1, $y1, $x2, $y2) = $image->selection_bounds;
   }
   $x1-=$length;
   $y1-=$length;
@@ -148,35 +145,32 @@ sub perl_fu_brushed_metal {
   $y2+=$length;
   my $width = abs($x2-$x1);
   my $height = abs($y2-$y1);
-  my $templ = gimp_layer_new($image, $width, $height, RGBA_IMAGE, "Temp",
+  my $templ = $image->layer_new($width, $height, RGBA_IMAGE, "Temp",
 			     100, NORMAL_MODE);
-  gimp_image_insert_layer($image, $templ, 0, 0);
-  gimp_layer_set_offsets($templ, $x1+$length, $y1+$length);
-  my $target_select = gimp_selection_save($image);
-  gimp_selection_none($image);
+  $image->insert_layer($templ, 0, 0);
+  $templ->set_offsets($x1+$length, $y1+$length);
+  my $target_select = $image->selection_save;
+  $image->selection_none;
 
   # Render the actual effect into our temporary layer
-  plug_in_solid_noise($image, $templ, 0, 0, time(), 1, 1.5, 2.5);
+  $image->solid_noise($templ, 0, 0, time(), 1, 1.5, 2.5);
 
-  perl_fu_map_to_gradient($image, $templ, $gradient)
+  $image->map_to_gradient($templ, $gradient)
     if $use_gradient && defined($gradient) && $gradient ne '';
 
-  gimp_brightness_contrast($templ, 50, 0);
-  plug_in_noisify($image, $templ, 0, 0.3, 0.3, 0.3, 0);
-  plug_in_mblur($image, $templ, 0, $length, $angle, 0.0, 0.0);
+  $templ->brightness_contrast(50, 0);
+  $image->noisify($templ, 0, 0.3, 0.3, 0.3, 0);
+  $image->mblur($templ, 0, $length, $angle, 0.0, 0.0);
 
   # Now put it into the target layer
   $image->select_item(CHANNEL_OP_REPLACE, $target_select);
-  gimp_edit_copy($templ);
-  my $float = gimp_edit_paste($drawable, 0);
-  gimp_layer_set_offsets($float, $x1+$length, $y1+$length);
-  gimp_floating_sel_anchor($float);
-  gimp_image_remove_layer($image,$templ);
-  # gimp_item_delete($templ);
-
-  gimp_image_undo_group_end($image);
-
-  gimp_displays_flush();
+  $templ->edit_copy;
+  my $float = $drawable->edit_paste(0);
+  $float->set_offsets($x1+$length, $y1+$length);
+  $float->floating_sel_anchor;
+  $image->remove_layer($templ);
+  $image->undo_group_end;
+  Gimp::Display->displays_flush();
 }
 
 sub perl_fu_highlight_edges {
@@ -185,57 +179,55 @@ sub perl_fu_highlight_edges {
   my $pixels = shift;
   my $old_draw = $drawable;
   my $is_float = 0;
-  my $old_sel = gimp_selection_save($image);
+  my $old_sel = $image->selection_save;
 
-  gimp_image_undo_group_start($image);
+  $image->undo_group_start;
 
-  if (!gimp_item_is_layer($drawable)) {
+  if (! $drawable->is_layer) {
     gimp_message("highlight_edges: Only layers can be highlighted!");
     return;
   }
 
-  if (!gimp_item_get_visible($drawable)) {
+  if (!$drawable->get_visible) {
     gimp_message("highlight_edges: The active layer must be visible!");
     return;
   }
 
-  if (!gimp_drawable_has_alpha($drawable)) {
-    my($sel,$x1,$y1,$x2,$y2) = gimp_selection_bounds($image);
+  if (!$drawable->has_alpha) {
+    my($sel,$x1,$y1,$x2,$y2) = $image->selection_bounds;
     if ($sel) {
       $is_float = 1;
-      $drawable = gimp_selection_float($drawable,0,0);
+      $drawable = $drawable->selection_float(0,0);
     } else {
       die("highlight_edges: Need a selection (or alpha layer) to work on");
     }
   }
 
-  gimp_image_select_item($image, CHANNEL_OP_REPLACE, $drawable);
-  my $white = gimp_layer_copy($drawable,0);
-  my $black = gimp_layer_copy($drawable,0);
+ $image->select_item(CHANNEL_OP_REPLACE, $drawable);
+  my $white = $drawable->copy(0);
+  my $black = $drawable->copy(0);
   my $lnum = $image->get_item_position($drawable);
-  gimp_image_insert_layer($image, $black, 0, $lnum);
-  gimp_image_insert_layer($image, $white, 0, $lnum);
+  $image->insert_layer($black, 0, $lnum);
+  $image->insert_layer($white, 0, $lnum);
 
-  gimp_context_push();
+  Gimp::Context->push();
 
-  gimp_context_set_foreground([255,255,255]);
-  gimp_edit_bucket_fill($white,FG_BUCKET_FILL,NORMAL_MODE,100,255,0,0,0);
-  gimp_context_set_foreground([0,0,0]);
-  gimp_edit_bucket_fill($black,FG_BUCKET_FILL,NORMAL_MODE,100,255,0,0,0);
-  gimp_layer_translate($white, -1*$pixels, -1*$pixels);
-  gimp_layer_translate($black, 1*$pixels, 1*$pixels);
-  $white = gimp_image_merge_down($image, $white, EXPAND_AS_NECESSARY);
-  gimp_item_set_name($white, "Edge Highlight");
-  gimp_image_select_item($image, CHANNEL_OP_REPLACE, $drawable);
-  gimp_edit_clear($white);
-
+  Gimp::Context->set_foreground([255,255,255]);
+  $white->edit_bucket_fill(FG_BUCKET_FILL, NORMAL_MODE, 100, 255, 0, 0, 0);
+  Gimp::Context->set_foreground([0,0,0]);
+  $black->bucket_fill(FG_BUCKET_FILL, NORMAL_MODE, 100, 255, 0, 0, 0);
+  $white->translate(-1*$pixels, -1*$pixels);
+  $black->translate(1*$pixels, 1*$pixels);
+  $white = $image->merge_down($white, EXPAND_AS_NECESSARY);
+  $white->set_name("Edge Highlight");
+  $image->select_item(CHANNEL_OP_REPLACE, $drawable);
+  $white->edit_clear;
   $image->select_item(CHANNEL_OP_REPLACE, $old_sel);
-  gimp_floating_sel_anchor($drawable) if $is_float;
+  $drawable->floating_sel_anchor if $is_float;
   # gimp_image_set_active_layer($image,$old_draw);
-  gimp_image_undo_group_end($image);
-
-  gimp_context_pop();
-  gimp_displays_flush();
+  $image->undo_group_end;
+  Gimp::Context->pop();
+  Gimp::Display->displays_flush();
 }
 
 # Register the plug-ins:
