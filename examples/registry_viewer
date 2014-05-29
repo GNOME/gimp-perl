@@ -327,8 +327,6 @@ Currently only shows scriptfu scripts compatible with Gimp 2.8.
 
 Requires Web::Scraper.
 
-=head1 PARAMETERS
-
 =head1 AUTHOR
 
 Rain <rain AT terminaldefect DOT com>
