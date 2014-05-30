@@ -526,14 +526,14 @@ this would require more code than I want to write right now.
 =head1 HISTORY
 
   TODO:
- 	o Fix undo
- 	o Handle input drawable correctly (for working on selections)
- 	o Find faster ways to sample sub-images.
- 	o More control over cropping
- 	o Scaling vs cropping of sub-images
- 	o Better color matching algorithms
- 	o Test (fix?) non-interactive use...
- 	o Allow tile aspect selection independant of base image
+	o Fix undo
+	o Handle input drawable correctly (for working on selections)
+	o Find faster ways to sample sub-images.
+	o More control over cropping
+	o Scaling vs cropping of sub-images
+	o Better color matching algorithms
+	o Test (fix?) non-interactive use...
+	o Allow tile aspect selection independant of base image
  
   DONE:
         o 04-22-2001, peter@kirchgessner.net: fix problems with functions
