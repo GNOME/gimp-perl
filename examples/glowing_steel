@@ -203,7 +203,7 @@ sub perl_fu_highlight_edges {
     }
   }
 
- $image->select_item(CHANNEL_OP_REPLACE, $drawable);
+  $image->select_item(CHANNEL_OP_REPLACE, $drawable);
   my $white = $drawable->copy(0);
   my $black = $drawable->copy(0);
   my $lnum = $image->get_item_position($drawable);
