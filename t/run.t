@@ -46,6 +46,20 @@ cmp_ok(ref($vectors), 'eq', 'Gimp::Vectors', 'vectors object returned');
 my $vectorstring = $vectors->export_to_string; # takes VECTORS as input - QED
 like($vectorstring, qr/<path id="hi"/, 'vector string plausible');
 
+my $i2 = $i->duplicate;
+eval { $i2->become('Gimp::Channel') };
+ok($@, 'image become channel exception');
+isa_ok($i2, 'Gimp::Image', 'still image');
+eval { $i2->become('Gimp::Image') };
+is($@, '', 'image become image succeeds');
+
+my $l2 = $i->get_active_layer;
+eval { $l2->become('Gimp::Layer') };
+is($@, '', 'layer become layer succeeds');
+eval { $l2->become('Gimp::Channel') };
+ok($@, 'layer become channel exception');
+
+$i2->delete;
 ok(!$i->delete, 'remove image');
 
 Gimp::Net::server_quit;
