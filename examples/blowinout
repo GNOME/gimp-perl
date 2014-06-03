@@ -7,7 +7,6 @@ use strict;
 use warnings;
 
 podregister {
-  die "Not a layer\n" unless $drawable->is_layer;
   $drawable->become('Gimp::Layer');
   return if $image->selection_is_empty == 0;
   $image->undo_group_start;

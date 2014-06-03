@@ -786,10 +786,6 @@ sub avg { ($_[0] + $_[1]) / 2 }
 sub do_fade {
   my ($image, $drawable) = @_;
 
-  die <<EOF unless $drawable->is_layer;
-$plugin: Can only operate on layers. Check that you don't have a channel
-or floating selection currently selected.
-EOF
   $drawable->become('Gimp::Layer');
 
   $image->undo_group_start;

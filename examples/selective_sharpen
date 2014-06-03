@@ -7,8 +7,6 @@ use strict;
 use warnings;
 
 podregister {
-  # sanity stuff
-  die "Can only operate on layers" unless $drawable->is_layer;
   $drawable->become('Gimp::Layer');
 
   $image->undo_group_start;

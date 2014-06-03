@@ -772,7 +772,6 @@ our @arr = (
 sub avg { ($_[0] + $_[1]) / 2 }
 
 podregister {
-  die "Can only operate on layers\n" unless $drawable->is_layer;
   $drawable->become('Gimp::Layer');
   $image->undo_group_start;
   my @bounds = $image->selection_bounds;

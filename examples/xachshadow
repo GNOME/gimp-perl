@@ -6,7 +6,6 @@ use strict;
 use warnings;
 
 podregister {
-  die "Must have layer selected\n" unless $drawable->is_layer;
   $drawable->become('Gimp::Layer');
   $image->undo_group_start;
   Gimp::Context->push();
