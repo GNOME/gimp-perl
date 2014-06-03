@@ -49,7 +49,7 @@ sub perl_fu_glowing_steel {
   # Fill the background
   $image->selection_all;
   Gimp::Context->set_foreground($background);
-  $backlayer->bucket_fill(FG_BUCKET_FILL, NORMAL_MODE, 100, 0, 1, 0, 0);
+  $backlayer->edit_bucket_fill(FG_BUCKET_FILL, NORMAL_MODE, 100, 0, 1, 0, 0);
 
   # Make the glow:
   perl_fu_add_glow($image, $textlayer, $glow, $radius);
@@ -69,29 +69,23 @@ sub perl_fu_add_glow {
   my $color = shift;
   my $radius = shift;
   my $old_draw = $drawable;
+  $drawable->become('Gimp::Layer');
   my $is_float = 0;
   my $old_sel = $image->selection_save;
 
   $image->undo_group_start;
 
-  if (!$drawable->is_layer) {
-    die("add_glow: Only layers can have glow added");
-  }
-
   if (!$drawable->has_alpha) {
     my($sel, $x1, $y1, $x2, $y2) = $image->selection_bounds;
-    if ($sel) {
-      $is_float = 1;
-      $drawable = $drawable->selection_float(0, 0);
-    } else {
-      die("add_glow: Need a selection to work on");
-    }
+    die "add_glow: Need a selection to work on" unless $sel;
+    $is_float = 1;
+    $drawable = $drawable->selection_float(0, 0);
   }
 
   my $type = $drawable->type;
-  my $glow = $image->layer_new($image->width,
-			    $image->height, $type, "Glow layer",
-			    100, NORMAL_MODE);
+  my $glow = $image->layer_new(
+    $image->width, $image->height, $type, "Glow layer", 100, NORMAL_MODE
+  );
   my $lnum = $image->get_item_position($drawable);
   $image->insert_layer($glow, 0, $lnum);
 
@@ -177,30 +171,22 @@ sub perl_fu_highlight_edges {
   my $image = shift;
   my $drawable = shift;
   my $pixels = shift;
+  $drawable->become('Gimp::Layer');
   my $old_draw = $drawable;
   my $is_float = 0;
   my $old_sel = $image->selection_save;
 
   $image->undo_group_start;
 
-  if (! $drawable->is_layer) {
-    gimp_message("highlight_edges: Only layers can be highlighted!");
-    return;
-  }
-
-  if (!$drawable->get_visible) {
-    gimp_message("highlight_edges: The active layer must be visible!");
-    return;
-  }
+  die "highlight_edges: The active layer must be visible!"
+    unless $drawable->get_visible;
 
   if (!$drawable->has_alpha) {
     my($sel,$x1,$y1,$x2,$y2) = $image->selection_bounds;
-    if ($sel) {
-      $is_float = 1;
-      $drawable = $drawable->selection_float(0,0);
-    } else {
-      die("highlight_edges: Need a selection (or alpha layer) to work on");
-    }
+    die "highlight_edges: Need a selection (or alpha layer) to work on"
+      unless $sel;
+    $is_float = 1;
+    $drawable = $drawable->selection_float(0,0);
   }
 
   $image->select_item(CHANNEL_OP_REPLACE, $drawable);
@@ -215,7 +201,7 @@ sub perl_fu_highlight_edges {
   Gimp::Context->set_foreground([255,255,255]);
   $white->edit_bucket_fill(FG_BUCKET_FILL, NORMAL_MODE, 100, 255, 0, 0, 0);
   Gimp::Context->set_foreground([0,0,0]);
-  $black->bucket_fill(FG_BUCKET_FILL, NORMAL_MODE, 100, 255, 0, 0, 0);
+  $black->edit_bucket_fill(FG_BUCKET_FILL, NORMAL_MODE, 100, 255, 0, 0, 0);
   $white->translate(-1*$pixels, -1*$pixels);
   $black->translate(1*$pixels, 1*$pixels);
   $white = $image->merge_down($white, EXPAND_AS_NECESSARY);
