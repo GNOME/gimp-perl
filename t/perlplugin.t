@@ -156,9 +156,11 @@ my ($tl) = $i->get_layers;
 is($tl->get_name, 'value', 'layer name');
 is(Gimp::Plugin->test_return_text('text'), 'text', 'return text');
 my $incolour = [6, 6, 6, 1];
-is_deeply(
-  Gimp::Plugin->test_return_colour($incolour),
-  Gimp::canonicalize_color($incolour),
+ok(
+  cmp_colour(
+    Gimp::Plugin->test_return_colour($incolour),
+    Gimp::canonicalize_color($incolour),
+  ),
   'return colour'
 );
 my $send_text = 'exception';

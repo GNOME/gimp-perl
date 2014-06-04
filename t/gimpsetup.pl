@@ -76,4 +76,11 @@ EOF
   }
 }
 
+my $EPSILON = 1e-6;
+# true if same within $EPSILON
+sub cmp_colour {
+  my ($c1, $c2) = @_;
+  !grep { abs(($c1->[$_]//0) - ($c2->[$_]//0)) > $EPSILON } (0..3);
+}
+
 1;

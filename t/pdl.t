@@ -119,51 +119,67 @@ Gimp::Context->push;
 Gimp::Context->set_foreground($fgcolour);
 
 $l->fill(FOREGROUND_FILL);
-is_deeply(
-  [ @{$l->test_pdl_getpixel(@setcoords)}[0..2] ],
-  Gimp::canonicalize_color($fgcolour),
+ok(
+  cmp_colour(
+    [ @{$l->test_pdl_getpixel(@setcoords)}[0..2] ],
+    Gimp::canonicalize_color($fgcolour),
+  ),
   'getpixel initial colour'
 );
 $l->test_pdl_setpixel(@setcoords, $setcolour);
-is_deeply(
-  [ @{$l->test_pdl_getpixel(@setcoords)}[0..2] ],
-  Gimp::canonicalize_color($setcolour),
+ok(
+  cmp_colour(
+    [ @{$l->test_pdl_getpixel(@setcoords)}[0..2] ],
+    Gimp::canonicalize_color($setcolour),
+  ),
   'getpixel colour after setpixel'
 );
-is_deeply(
-  [ @{$l->test_pdl_getpixel(map { $_+1 } @setcoords)}[0..2] ],
-  Gimp::canonicalize_color($fgcolour),
+ok(
+  cmp_colour(
+    [ @{$l->test_pdl_getpixel(map { $_+1 } @setcoords)}[0..2] ],
+    Gimp::canonicalize_color($fgcolour),
+  ),
   'getpixel other pixel after setpixel'
 );
 $l->test_pdl_iterate(3);
-is_deeply(
-  [ @{$l->test_pdl_getpixel(@setcoords)}[0..2] ],
-  Gimp::canonicalize_color([ map { $_+3 } @$setcolour ]),
+ok(
+  cmp_colour(
+    [ @{$l->test_pdl_getpixel(@setcoords)}[0..2] ],
+    Gimp::canonicalize_color([ map { $_+3 } @$setcolour ]),
+  ),
   'getpixel colour after iterate'
 );
 
 eval $pdl_operations;
 $l->fill(FOREGROUND_FILL);
-is_deeply(
-  Gimp::canonicalize_color(getpixel($i, $l, @setcoords)),
-  Gimp::canonicalize_color($fgcolour),
+ok(
+  cmp_colour(
+    Gimp::canonicalize_color(getpixel($i, $l, @setcoords)),
+    Gimp::canonicalize_color($fgcolour),
+  ),
   'net getpixel initial colour'
 );
 setpixel($i, $l, @setcoords, Gimp::canonicalize_color($setcolour));
-is_deeply(
-  Gimp::canonicalize_color(getpixel($i, $l, @setcoords)),
-  Gimp::canonicalize_color($setcolour),
+ok(
+  cmp_colour(
+    Gimp::canonicalize_color(getpixel($i, $l, @setcoords)),
+    Gimp::canonicalize_color($setcolour),
+  ),
   'net getpixel colour after setpixel'
 );
-is_deeply(
-  Gimp::canonicalize_color(getpixel($i, $l, map { $_+1 } @setcoords)),
-  Gimp::canonicalize_color($fgcolour),
+ok(
+  cmp_colour(
+    Gimp::canonicalize_color(getpixel($i, $l, map { $_+1 } @setcoords)),
+    Gimp::canonicalize_color($fgcolour),
+  ),
   'net getpixel other pixel after setpixel'
 );
 iterate($i, $l, 3);
-is_deeply(
-  Gimp::canonicalize_color(getpixel($i, $l, @setcoords)),
-  Gimp::canonicalize_color([ map { $_+3 } @$setcolour ]),
+ok(
+  cmp_colour(
+    Gimp::canonicalize_color(getpixel($i, $l, @setcoords)),
+    Gimp::canonicalize_color([ map { $_+3 } @$setcolour ]),
+  ),
   'net getpixel colour after iterate'
 );
 
