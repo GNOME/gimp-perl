@@ -35,7 +35,7 @@ podregister {
   };
   $image->select_rectangle(&Gimp::CHANNEL_OP_REPLACE, @xywh);
   $temp1->edit_copy;
-  my $temp2 = $drawable->edit_paste(1)->floating_sel_anchor;
+  $drawable->edit_paste(1)->floating_sel_anchor;
   $image->remove_layer($temp1);
   $image->selection_none;
   $image->undo_group_end;
