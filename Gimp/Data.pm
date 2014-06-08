@@ -2,14 +2,18 @@ package Gimp::Data;
 
 use strict;
 use warnings;
+use POSIX qw(locale_h);
 
 sub freeze($) {
    my $data = shift;
    return $data unless ref $data or _looks_frozen($data);
    require Data::Dumper;
+   my $locale = setlocale(LC_NUMERIC); setlocale(LC_NUMERIC, "C");
    $data = Data::Dumper->new([$data]);
    $data->Purity(1)->Terse(0);
-   return $data->Dump;
+   my $frozen = $data->Dump;
+   setlocale(LC_NUMERIC, $locale);
+   return $frozen;
 }
 
 sub _looks_frozen { shift =~ /^\$VAR1 =/; }
