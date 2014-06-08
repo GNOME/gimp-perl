@@ -2,7 +2,11 @@ package Gimp::UI;
 
 use Gimp ('__');
 use Gimp::Fu;
+use POSIX qw(locale_h);
+my $locale;
+BEGIN { $locale = setlocale(LC_NUMERIC); setlocale(LC_NUMERIC, "C"); }
 use Gtk2;
+BEGIN { setlocale(LC_NUMERIC, $locale); }
 use IO::All;
 use List::Util qw(min);
 use strict;
@@ -10,6 +14,7 @@ use warnings;
 
 our (@ISA, $VERSION);
 BEGIN {
+   no locale;
    $VERSION = "2.30_05";
    eval {
       require XSLoader;
