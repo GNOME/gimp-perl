@@ -5,26 +5,25 @@ use Gimp::Fu;
 use strict;
 use warnings;
 
+#$Gimp::verbose = 3;
+
 podregister {
   $drawable->become('Gimp::Layer');
-  my $drawable_width=$drawable->width;
-  my $drawable_height=$drawable->height;
-  my $drawable_type=($drawable->type);
+  my $width=$drawable->width;
+  my $height=$drawable->height;
+  my $type=($drawable->type);
+  $image->undo_group_start;
   my $edge_layer = $drawable->copy(FALSE);
   my $x_displace_layer=
-    $image->layer_new($drawable_width, $drawable_height,
-		    $drawable_type, "Displace X", 100, 0);
+    $image->layer_new($width, $height, $type, "Displace X", 100, 0);
   my $y_displace_layer=
-    $image->layer_new($drawable_width, $drawable_height,
-		    $drawable_type, "Displace Y", 100, 0);
+    $image->layer_new($width, $height, $type, "Displace Y", 100, 0);
   my @selection_info=$image->selection_bounds;
   my $has_selection=$selection_info[0];
   my $old_selection;
-  my $bump_xoff;
-  my $bump_yoff;
+  my $bump_xoff = 0;
+  my $bump_yoff = 0;
   my $version=1;
-
-  $image->undo_group_start;
   if ($has_selection) {
       $old_selection=$image->selection_save;
       $image->selection_grow($blur_strength + $bump_depth + $displace_amount);
@@ -36,23 +35,18 @@ podregister {
   $image->insert_layer($edge_layer,0,-1);
   $image->insert_layer($x_displace_layer,0,-1);
   $image->insert_layer($y_displace_layer,0,-1);
-
 # added another parameter in edge detect plugin... I'm assuming it was
 # previously differential?
 # TODO: add warp type enums
-
   $image->edge($edge_layer,$edge_strength,1,4);
   $image->gauss_iir($edge_layer, $blur_strength, 1, 1) if $blur_strength >= 1;
   $image->bump_map($x_displace_layer,$edge_layer, 0, 30,
 		   $bump_depth, $bump_xoff, $bump_yoff, 0,0,0,0,0);
   $image->bump_map($y_displace_layer,$edge_layer, 270, 30,
 		   $bump_depth, $bump_xoff, $bump_yoff, 0,0,0,0,0);
-
   if ($has_selection) {
     $image->select_item(CHANNEL_OP_REPLACE, $old_selection);
     $old_selection->remove_channel;
-    # will cause a crash:
-    # $old_selection->delete;
   }
   $image->displace($drawable, $displace_amount, $displace_amount, 1, 1, $x_displace_layer, $y_displace_layer, 1);
   $image->remove_layer($edge_layer);
