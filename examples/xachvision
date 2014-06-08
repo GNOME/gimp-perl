@@ -6,11 +6,12 @@ use strict;
 use warnings;
 
 podregister {
+  $drawable->become('Gimp::Layer');
   $image->undo_group_start;
   Gimp::Context->push();
-  my $midlayer = $drawable->gimp_layer_copy(1);
+  my $midlayer = $drawable->copy(TRUE);
   $image->insert_layer($midlayer, 0, 0);
-  my $toplayer = $drawable->gimp_layer_copy(1);
+  my $toplayer = $drawable->copy(TRUE);
   $image->insert_layer($toplayer, 0, 0);
   Gimp::Context->set_background($color);
   $toplayer->edit_fill(BACKGROUND_FILL);

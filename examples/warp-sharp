@@ -6,10 +6,11 @@ use strict;
 use warnings;
 
 podregister {
+  $drawable->become('Gimp::Layer');
   my $drawable_width=$drawable->width;
   my $drawable_height=$drawable->height;
   my $drawable_type=($drawable->type);
-  my $edge_layer = $drawable->copy(0);
+  my $edge_layer = $drawable->copy(FALSE);
   my $x_displace_layer=
     $image->layer_new($drawable_width, $drawable_height,
 		    $drawable_type, "Displace X", 100, 0);

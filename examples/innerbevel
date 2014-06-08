@@ -1,11 +1,10 @@
 #!/usr/bin/perl -w
 
-use Gimp qw(:auto __ N_);
+use Gimp;
 use Gimp::Fu;
 use Gimp::Util;
 use strict;
 use warnings;
-#$Gimp::verbose = 1;
 
 N_"/Xtns/Render"; N_"/Xtns/Render/Logos"; # i18n workaround
 
@@ -15,7 +14,7 @@ podregister {
   Gimp::Context->set_background($color1);
   Gimp::Context->set_foreground($color2);
   my @dims = Gimp->text_get_extents_fontname($text, $fontsize, PIXELS,$font);
-  my $img = gimp_image_new($dims[0]+30, $dims[1]+10, RGB);
+  my $img = Gimp::Image->new($dims[0]+30, $dims[1]+10, RGB_IMAGE);
 
   # none of the macro's did quite what I was looking for here.
   # i.e. create a text layer on transparent only...
@@ -52,7 +51,7 @@ podregister {
   $img->add_new_layer(2);
   $img->gimp_selection_none();
   Gimp::Context->pop();
-  return($img);
+  return $img
 };
 
 exit main;

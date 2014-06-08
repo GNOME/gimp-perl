@@ -35,7 +35,7 @@ podregister {
   $img->insert_layer($bump_lay,0,0);
   if ($color_or_pattern == 1) {
     Gimp::Context->set_pattern ($pattern);
-    $bump_lay->bucket_fill(PATTERN_BUCKET_FILL, NORMAL_MODE, 100, 0, 0, 0, 0);
+    $bump_lay->edit_bucket_fill(PATTERN_BUCKET_FILL, NORMAL_MODE, 100, 0, 0, 0, 0);
   } else {
     Gimp::Context->set_background ($txt_col);
     $bump_lay->edit_fill(BACKGROUND_FILL);
