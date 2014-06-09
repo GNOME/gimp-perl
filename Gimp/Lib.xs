@@ -1426,6 +1426,30 @@ PPCODE:
 }
 
 void
+gimp_procedural_db_query(name, blurb, help, author, copyright, date, proc_type)
+  const char *name
+  const char *blurb
+  const char *help
+  const char *author
+  const char *copyright
+  const char *date
+  const char *proc_type
+INIT:
+  gint num_matches;
+  const gchar **procedure_names;
+  int i;
+PPCODE:
+  if (!gimp_procedural_db_query (
+    name, blurb, help, author, copyright, date, proc_type, &num_matches,
+    &procedure_names
+  )) croak (__("gimp_procedural_db_proc_query failed"));
+  if (!num_matches) XSRETURN_EMPTY;
+  EXTEND (SP, num_matches);
+  for (i = 0; i < num_matches; i++) {
+    PUSHs (sv_2mortal(newSVpv(procedure_names[i], 0)));
+  }
+
+void
 gimp_call_procedure (proc_name, ...)
   utf8_str	proc_name
 PPCODE:
