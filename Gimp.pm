@@ -250,6 +250,26 @@ sub ignore_functions(@) {
    @ignore_function{@_}++;
 }
 
+my %proc2deprecated = (
+  # needed to get the Perl-Server up and running
+  gimp_procedural_db_query => 0,
+  gimp_procedural_db_proc_exists => 0,
+  gimp_enums_get_type_names => 0,
+  gimp_enums_list_type => 0,
+  gimp_install_procedure => 0,
+);
+my $deprecations_loaded = 0;
+sub deprecated {
+  warn "$$-deprecated(@_)" if $Gimp::verbose >= 2;
+  my $proc = shift;
+  unless ($deprecations_loaded or defined $proc2deprecated{$proc}) {
+    $deprecations_loaded = 1;
+    map { s#-#_#g; $proc2deprecated{$_}++ }
+      Gimp->procedural_db_query('.*', '.*deprecated.*', ('.*') x 5);
+  }
+  $proc2deprecated{$proc} = !!$proc2deprecated{$proc};
+}
+
 sub recroak { $_[0] =~ /\n$/ ? die shift : croak shift; }
 sub exception_strip {
   my ($file, $e) = @_;
@@ -258,33 +278,34 @@ sub exception_strip {
   $e;
 }
 sub AUTOLOAD {
+  my $autoload_copy = $AUTOLOAD; # needed as if autoload inside, not restored
+  warn "$$-AUTOLOAD $autoload_copy(@_)" if $Gimp::verbose >= 2;
   no strict 'refs';
-  goto &$AUTOLOAD if defined &$AUTOLOAD; # happens if :auto, not if method call
-  my ($class,$name) = $AUTOLOAD =~ /^(.*)::(.*?)$/;
-  warn "$$-AUTOLOAD $AUTOLOAD(@_)" if $Gimp::verbose >= 2;
+  goto &$autoload_copy if defined &$autoload_copy; # happens if :auto, not if method call
+  my ($class,$name) = $autoload_copy =~ /^(.*)::(.*?)$/;
   for(@{"$class\::PREFIXES"}) {
     my $sub = $_.$name;
     if (exists $ignore_function{$sub}) {
-      *{$AUTOLOAD} = sub { () };
-      goto &$AUTOLOAD;
+      *{$autoload_copy} = sub { () };
+      goto &$autoload_copy;
     } elsif (UNIVERSAL::can('Gimp::Util',$sub)) {
       my $ref = \&{"Gimp::Util::$sub"};
-      *{$AUTOLOAD} = sub {
+      *{$autoload_copy} = sub {
 	shift unless ref $_[0];
 	my @r = eval { &$ref };
 	recroak exception_strip(__FILE__, $@) if $@; wantarray ? @r : $r[0];
       };
-      goto &$AUTOLOAD;
+      goto &$autoload_copy;
     } elsif (UNIVERSAL::can($interface_pkg,$sub)) {
       my $ref = \&{"$interface_pkg\::$sub"};
-      *{$AUTOLOAD} = sub {
+      *{$autoload_copy} = sub {
 	shift unless ref $_[0];
 	my @r = eval { &$ref };
 	recroak exception_strip(__FILE__, $@) if $@; wantarray ? @r : $r[0];
       };
-      goto &$AUTOLOAD;
-    } elsif (gimp_procedural_db_proc_exists($sub)) {
-      *{$AUTOLOAD} = sub {
+      goto &$autoload_copy;
+    } elsif (not deprecated($sub) and gimp_procedural_db_proc_exists($sub)) {
+      *{$autoload_copy} = sub {
 	warn "$$-gimp_call_procedure{0}(@_)" if $Gimp::verbose >= 2;
 	shift unless ref $_[0];
 	unshift @_, $sub;
@@ -292,7 +313,7 @@ sub AUTOLOAD {
 	my @r = eval { gimp_call_procedure (@_) };
 	recroak exception_strip(__FILE__, $@) if $@; wantarray ? @r : $r[0];
       };
-      goto &$AUTOLOAD;
+      goto &$autoload_copy;
     }
   }
   croak __"function/macro \"$name\" not found in $class";
@@ -466,7 +487,8 @@ if you are running from a package.
 
 Using the C<Help/Procedure Browser> is a good way to learn GIMP's
 Procedural Database (PDB). For referencing functions you already know of,
-the included script L<gimpdoc> is useful.
+the included script L<gimpdoc> is useful. B<Be warned Gimp-Perl does
+not allow use of deprecated GIMP procedures>. You'll thank me in time.
 
 Some highlights:
 
