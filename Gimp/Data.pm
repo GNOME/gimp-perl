@@ -7,8 +7,8 @@ use POSIX qw(locale_h);
 sub freeze($) {
    my $data = shift;
    return $data unless ref $data or _looks_frozen($data);
-   require Data::Dumper;
    my $locale = setlocale(LC_NUMERIC); setlocale(LC_NUMERIC, "C");
+   require Data::Dumper;
    $data = Data::Dumper->new([$data]);
    $data->Purity(1)->Terse(0);
    my $frozen = $data->Dump;
