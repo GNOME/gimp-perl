@@ -686,6 +686,7 @@ sub interact($$$$@) {
   can_default $button 1;
   grab_default $button;
   $w->signal_connect(destroy => sub { $mainloop->quit; });
+  set_transient($w);
 
   show_all $table;
   show_all $sw;
