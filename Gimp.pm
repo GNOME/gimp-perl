@@ -417,6 +417,7 @@ sub become($$) {
     bless $self, $old_class;
     Gimp::croak "$_[0] not valid $class"
   }
+  $self;
 }
 sub id { ${+shift} }
 }
@@ -859,6 +860,8 @@ a C<Gimp::Drawable>, but you need a C<Gimp::Layer>:
 
   my ($image, $drawable, $color) = @_;
   $drawable->become('Gimp::Layer'); # now can call layer methods on it
+
+Returns C<$object>.
 
 =head4 $class->existing($id)
 
