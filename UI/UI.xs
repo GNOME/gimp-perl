@@ -7,10 +7,6 @@
 
 #include <gperl.h>
 
-/* dirty is used in gimp.h AND in perl < 5.005 or with PERL_POLLUTE.  */
-#ifdef dirty
-# undef dirty
-#endif
 #include <libgimp/gimp.h>
 #include <libgimp/gimpui.h>
 #ifdef GIMP_HAVE_EXPORT
@@ -137,6 +133,9 @@ typedef GtkWidget GimpSizeEntry_own;
 typedef GtkWidget GimpUnitMenu_own;
 
 MODULE = Gimp::UI	PACKAGE = Gimp::UI
+
+BOOT:
+	gimp_ui_init (g_strdup (SvPV_nolen (get_sv("0", 0))), 0);
 
 PROTOTYPES: ENABLE
 
