@@ -1436,7 +1436,7 @@ gimp_procedural_db_query(name, blurb, help, author, copyright, date, proc_type)
   const char *proc_type
 INIT:
   gint num_matches;
-  const gchar **procedure_names;
+  gchar **procedure_names;
   int i;
 PPCODE:
   if (!gimp_procedural_db_query (
