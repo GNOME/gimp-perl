@@ -9,17 +9,10 @@ use strict;
 use warnings;
 #$Gimp::verbose = 3;
 
+use POSIX qw(fmod);
 sub saw {  # a sawtooth function on PI
-  my ($val) = @_;
-  if ($val < PI/2.0) {
-    return $val/PI;
-  } elsif ($val < PI) {
-    return $val/PI - 1;
-  } elsif ($val < PI*1.5) {
-    return $val/PI;
-  } else {
-    return $val/PI - 1;
-  }
+  my $val = shift() / PI;
+  return $val - (fmod($val, 1.0) < 0.5 ? 0 : 1);
 }
 
 sub spin_layer { # the function for actually spinning the layer

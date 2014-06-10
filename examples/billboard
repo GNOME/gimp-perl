@@ -7,29 +7,20 @@ use strict;
 use warnings;
 use constant PI => 3.14159;
 
-# Uncomment below to spew forth much data about whats going on.
-
+use POSIX qw(fmod);
 sub saw {  # a sawtooth function on PI
-  my $val = @_;
-  if ($val < PI * 0.5) {
-    return $val/PI ;
-  } elsif ($val < PI) {
-    return -1 + $val/PI;
-  } elsif ($val < PI * 1.5) {
-    return $val/PI ;
-  } else {
-    return -1 + $val/PI;
-  }
+  my $val = shift() / PI;
+  return $val - (fmod($val, 1.0) < 0.5 ? 0 : 1);
 }
 
 sub spin_layer { # the function for actually spinning the layer
   my ($img, $spin, $destination, $numframes, $prp, $blinds) = @_;
   # Now lets spin it!
-  $stepsize = 3.14159/$numframes; # in radians
-  for ($i=0; $i<=3.14159; $i+=$stepsize) {
-    Gimp->progress_update ($i/3.14159);
+  $stepsize = PI/$numframes; # in radians
+  for ($i=0; $i<=PI; $i+=$stepsize) {
+    Gimp->progress_update ($i/PI);
     # create a new layer for spinning
-    $framelay = ($i < 3.14159/2.0) ?  $spin->copy(1) : $destination->copy(1);
+    $framelay = ($i < PI/2.0) ?  $spin->copy(1) : $destination->copy(1);
     $img->insert_layer($framelay, 0, 0);
     # spin it a step
     # Here I need to make the proper selection, repeatedly if necessary
