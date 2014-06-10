@@ -314,13 +314,13 @@ sub _find_digits {
 }
 
 sub help_window(\$$$$) {
-   my ($helpwin, $parent, $title, $help) = @_;
+   my ($helpwin, $parent, $title, $blurb) = @_;
    unless ($$helpwin) {
-      $$helpwin = new Gtk2::Dialog;
-      $$helpwin->set_title(sprintf __"Help for %s", $title);
+      $$helpwin = new Gtk2::Dialog sprintf(__"Help for %s", $title), $parent, [];
       $$helpwin->action_area->set_border_width (2);
-      my $tophelp = new Gtk2::Label $help;
+      my $tophelp = new Gtk2::Label $blurb;
       $tophelp->set_alignment(0.5,0.5);
+      $tophelp->set_line_wrap(1);
       $$helpwin->vbox->pack_start($tophelp,0,1,3);
       my $sw = new Gtk2::ScrolledWindow undef,undef;
       $sw->set_policy (-automatic, -automatic);
@@ -665,7 +665,7 @@ sub interact($$$$@) {
   my $mainloop = Glib::MainLoop->new;
   my $button = $w->add_button('gtk-help', 3);
   $button->signal_connect(clicked => sub {
-    help_window($helpwin, $w, $title, $help);
+    help_window($helpwin, $w, $title, $blurb);
   });
   $button = $w->add_button('gimp-reset', 2);
   $button->signal_connect(clicked => sub {
