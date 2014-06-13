@@ -7,7 +7,6 @@ use Gimp;
 use Gimp::Fu;
 use Gimp::Extension;
 use Gimp::Data;
-use File::Path 'make_path';
 use List::Util qw(min max);
 
 my $SAVEDIR = "$ENV{HOME}/.gimp-autosave2";
@@ -29,7 +28,7 @@ sub save_dirty {
   my @images = grep { $_->is_dirty } Gimp::Image->list;
   return 1 unless @images;
   warn "$$-save_dirty got @images" if $Gimp::verbose >= 2;
-  make_path $SAVEDIR or die "$SAVEDIR: $!\n" unless -d $SAVEDIR;
+  mkdir $SAVEDIR or die "$SAVEDIR: $!\n" unless -d $SAVEDIR;
   my @openfiles;
   for my $i (@images) {
     my $file = $i->get_filename // '';
