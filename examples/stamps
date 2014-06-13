@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-use Gimp qw(:auto __ N_);
+use Gimp;
 use Gimp::Fu;
 use strict;
 use warnings;
@@ -8,13 +8,13 @@ use warnings;
 N_"/Xtns/Render"; # dummy translation for i18n bugs
 
 podregister {
-  gimp_context_set_background($paper);
-  my $img = gimp_image_new($size, $size, RGB);
-  my $layer = gimp_layer_new($img, $size, $size, RGB_IMAGE, "Layer 1", 100, NORMAL_MODE);
-  gimp_image_insert_layer($layer, 0, -1);
-  gimp_context_set_background($hole);
-  $layer->gimp_edit_fill(BACKGROUND_FILL);
-  gimp_selection_none($img);
+  Gimp::Context->set_background($paper);
+  my $img = Gimp::Image->new($size, $size, RGB);
+  my $layer = $img->layer_new($size, $size, RGB_IMAGE, "Layer 1", 100, NORMAL_MODE);
+  $img->insert_layer($layer, 0, -1);
+  Gimp::Context->set_background($hole);
+  $layer->edit_fill(BACKGROUND_FILL);
+  $img->selection_none;
   my $ncircles = int(($size + $gap) / ($diameter + $gap));
   my $x = 0;
   for (my $i=0; $i<$ncircles; $i++) {
@@ -22,12 +22,12 @@ podregister {
     $img->select_ellipse( CHANNEL_OP_ADD, 0, $x, $diameter, $diameter);
     $x += $diameter + $gap;
   }
-  gimp_context_set_background($paper);
-  gimp_edit_fill($layer, BACKGROUND_FILL);
-  gimp_selection_none($img);
+  Gimp::Context->set_background($paper);
+  $layer->edit_fill(BACKGROUND_FILL);
+  $img->selection_none;
 # here, at last, comes the clever part! :-)
   $layer->offset(1, 0, -($diameter / 2), -($diameter / 2));
-  eval { gimp_display_new($img); };
+  eval { Gimp::Display->new($img); };
   return $img;
 };
 
@@ -65,5 +65,4 @@ Claes G Lindblad <claesg@algonet.se>
 =head1 LICENSE
 
 Claes G Lindblad <claesg@algonet.se>
-
-Distributed under the terms of the GNU public license, v2 or higher.
+Distributed under the terms of the GNU Public License, v2 or higher.

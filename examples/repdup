@@ -1,24 +1,23 @@
 #!/usr/bin/perl -w
 
-use Gimp qw(:auto __ N_);
+use Gimp;
 use Gimp::Fu;
 use strict;
 use warnings;
 
 podregister {
   $image->undo_group_start;
-  my @b = gimp_selection_bounds($image);
+  my @b = $image->selection_bounds;
   my $w = $b[3] - $b[1];
   my $h = $b[4] - $b[2];
-  gimp_edit_copy($drawable);
-  gimp_selection_none($image);
+  $drawable->edit_copy;
+  $image->selection_none;
   for (my $i = 0; $i < $repeats; $i++) {
-    $b[1] = $b[1] + $xoffset;
-    $b[2] = $b[2] + $yoffset;
+    $b[1] += $xoffset;
+    $b[2] += $yoffset;
     $image->select_rectangle(CHANNEL_OP_REPLACE, @b[1,2], $w, $h);
-    my $bit_bucket = gimp_edit_paste($drawable, 0);
-    gimp_floating_sel_anchor($bit_bucket);
-    gimp_selection_none($image);
+    $drawable->edit_paste(FALSE)->floating_sel_anchor;
+    $image->selection_none
   }
   $image->undo_group_end;
   return;

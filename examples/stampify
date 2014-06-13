@@ -1,25 +1,25 @@
 #!/usr/bin/perl -w
 
-use Gimp qw(:auto __ N_);
+use Gimp;
 use Gimp::Fu;
 use strict;
 use warnings;
 
 podregister {
-  $nw = int(gimp_image_width($image) + 2 * $marg + $diameter);
-  $nh = int(gimp_image_height($image) + 2 * $marg + $diameter);
-  my $img2 = gimp_image_new($nw, $nh, RGB);
-  my $layer1 = gimp_layer_new($img2, $nw, $nh, RGBA_IMAGE, "Layer 1", 100, NORMAL_MODE);
-  gimp_image_insert_layer($img2, $layer1, 0, 0);
-  gimp_image_set_active_layer($img2, $layer1);
-  gimp_context_set_background($paper);
-  gimp_drawable_fill($layer1, 1);
+  my $nw = int($image->width + 2 * $marg + $diameter);
+  my $nh = int($image->height + 2 * $marg + $diameter);
+  my $img2 = Gimp::Image->new($nw, $nh, RGB);
+  my $layer1 = $img2->layer_new($nw, $nh, RGBA_IMAGE, "Layer 1", 100, NORMAL_MODE);
+  $img2->insert_layer($layer1, 0, 0);
+  $img2->set_active_layer($layer1);
+  Gimp::Context->set_background($paper);
+  $layer1->edit_fill(BACKGROUND_FILL);
 # create horisontal holes
-  gimp_selection_none($img2);
+  $img2->selection_none;
   my $nholes = int (($nw + $gap) / ($diameter + $gap) + 0.5);
-  $pos = 0;
-  for ($i = 0; $i<$nholes; $i++) {
-    gimp_image_select_ellipse($img2,
+  my $pos = 0;
+  for (my $i = 0; $i<$nholes; $i++) {
+    $img2->select_ellipse(
       CHANNEL_OP_ADD, $pos, 0,
       $diameter, $diameter,
     );
@@ -27,24 +27,19 @@ podregister {
   }
 # create vertical holes
   $pos = 0;
-  for ($i = 0; $i<$nholes; $i++) {
-    gimp_image_select_ellipse(
-      $img2, CHANNEL_OP_ADD, 0, $pos,
-      $diameter, $diameter,
-    );
+  for (my $i = 0; $i<$nholes; $i++) {
+    $img2->select_ellipse(CHANNEL_OP_ADD, 0, $pos, $diameter, $diameter);
     $pos = $pos + $diameter + $gap;
   }
-  gimp_context_set_background($hole);
-  gimp_edit_fill($layer1, BACKGROUND_FILL);
-  gimp_selection_none($img2);
+  Gimp::Context->set_background($hole);
+  $layer1->edit_fill(BACKGROUND_FILL);
+  $img2->selection_none;
 # here comes the clever part! :-)
 # offset horis and vert holes by half the diameter
-  gimp_drawable_offset($layer1, 1, 0, -($diameter / 2), -($diameter / 2));
-# insert $image into a new layer in $img2
-#		gimp_selection_all($image);
-  gimp_edit_copy($drawable);
-  my $float = gimp_edit_paste($layer1, 0);
-  gimp_floating_sel_anchor($float);
+  $layer1->offset(TRUE, OFFSET_BACKGROUND, -($diameter / 2), -($diameter / 2));
+  $image->selection_all;
+  $drawable->edit_copy;
+  $layer1->edit_paste(FALSE)->floating_sel_anchor;
 # and return command to The Gimp.
   eval { Gimp::Display->new($img2); };
   return $img2;
