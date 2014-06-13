@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-use Gimp qw(:auto __ N_);
+use Gimp;
 use Gimp::Fu;
 use Gimp::Util;
 use strict;
@@ -12,12 +12,12 @@ sub randint {
 }
 
 podregister {
-    eval { $image->undo_group_start };
+    $image->undo_group_start;
     Gimp::Context->push();
-    my ($sel,$x1,$y1,$x2,$y2) = $image->gimp_selection_bounds;
+    my ($sel,$x1,$y1,$x2,$y2) = $image->selection_bounds;
     srand();
-    my @gradientlist = gimp_gradients_get_list("");
-    Gimp->progress_init("Random blends...");
+    my @gradientlist = Gimp::Gradients->get_list("");
+    Gimp::Progress->init("Random blends...");
     for (my $i=0; $i<$numgradients; $i++) {
         Gimp::Context->set_gradient(@gradientlist[randint($#gradientlist)]);
 	$drawable->edit_blend(CUSTOM_MODE,
@@ -36,9 +36,9 @@ podregister {
                        randint($x2-$x1)+$x1, # x2
                        randint($y2-$y1)+$y1, # y2
                        );
-        Gimp->progress_update($i/(1.0*$numgradients));
+        Gimp::Progress->update($i / (1.0 * $numgradients));
     }
-    eval { $image->undo_group_end };
+    $image->undo_group_end;
     Gimp::Context->pop();
     return();
 };
@@ -55,7 +55,9 @@ random_blends - Perform N random blends
 
 =head1 DESCRIPTION
 
-A random approach to art, using the blend tool with DIFFERENCE_MODE.  Alpha is not affected; best used on opaque background.  Just try it. It might be good.
+A random approach to art, using the blend tool with DIFFERENCE_MODE.
+Alpha is not affected; best used on opaque background.
+Just try it. It might be good.
 
 =head1 PARAMETERS
 

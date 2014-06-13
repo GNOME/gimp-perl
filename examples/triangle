@@ -1,11 +1,12 @@
 #!/usr/bin/perl -w
 
-use Gimp qw(:auto __ N_);
+use Gimp;
 use Gimp::Fu;
 use strict;
 use warnings;
 
 podregister {
+  my ($w, $h, $lista);
   $w = $image->width();
   $h = $image->height();
   if ($type == 0) {
