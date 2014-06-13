@@ -24,7 +24,7 @@ sub spin_layer { # the function for actually spinning the layer
   my $stepsize = PI/$numframes; # in radians
   $frameno = 0;
   for (my $i=0; $i<=PI; $i+=$stepsize) {
-    Gimp->progress_update ($i/PI);
+    Gimp::Progress->update ($i/PI);
     # create a new layer for spinning
     $framelay = ($i < PI/2.0) ? $source->copy(1) : $destination->copy(1);
     $img->insert_layer($framelay, 0, 0);
@@ -42,7 +42,7 @@ sub spin_layer { # the function for actually spinning the layer
     # height must be != 0
     $y3++ if ($y1 == $y3);
     my $saw_prp_width = saw($i)*$prp*$framelay->width;
-    $floater = $floater->Gimp::Item::transform_perspective(
+    $floater = $floater->transform_perspective(
       $x[1]+$saw_prp_width,$y1,
       $x[3]-$saw_prp_width,$y1,
       $x[1]-$saw_prp_width,$y3,
@@ -61,11 +61,11 @@ podregister {
   Gimp::Context->push;
   Gimp::Context->set_background($color);
   $perspective /= 255.0; # PF_SLIDER doesn't work right for < 1
-  Gimp->progress_init(__"Seth Spin...");
+  Gimp::Progress->init(__"Seth Spin...");
   # Copy source and destination to new image
   my $maxwide = max($drawable->width, $destination->width);
   my $maxhigh = max($drawable->height, $destination->height);
-  my $img = Gimp->image_new($maxwide, $maxhigh, RGB);
+  my $img = Gimp::Image->new($maxwide, $maxhigh, RGB);
   my $tmpimglayer = $img->add_new_layer(0,3,1); # have to have a layer before displaying
   eval { Gimp::Display->new($img); };
   $drawable->edit_copy;
