@@ -147,7 +147,7 @@ gallerymaker - Generate your gallery in HTML format + some picture improvements
 
 =head1 SYNOPSIS
 
-<Image>/Filters/Render/Gallery Maker
+<Image>/File/Create/HTML Gallery
 
 =head1 DESCRIPTION
 
