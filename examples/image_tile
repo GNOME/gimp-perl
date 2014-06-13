@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-use Gimp qw(:auto __ N_);
+use Gimp;
 use Gimp::Fu;
 use Fcntl qw(O_RDWR O_CREAT O_TRUNC);
 use DB_File;
@@ -12,36 +12,30 @@ my $debug = 0;
 
 podregister {
   my $subimages = 0;
-  my $TOP = "$ENV{HOME}/.gimp";
+  my $TOP = "$ENV{HOME}/.gimp-imagetile";
   if (! -d $TOP) {
-    $TOP = "/tmp";
-    if (! -d $TOP) {
-      die "Don't know where to put temporary files!";
-    }
+    mkdir $TOP, 0755 or die "Don't know where to put temporary files!" unless -d $TOP
   }
-
   # Use C-Shell style file globbing to expand given directories, and
   # allow them to be space-separated.
   my @dirs = map {glob $_} split /\s+/, $dirs;
   print "DEBUG: Dir list is ", join(", ", @dirs), "\n" if $debug;
   my $dir;
-  my $imgwidth = gimp_drawable_width($drawable);
-  my $imgheight = gimp_drawable_height($drawable);
-  my $xtilewidth = int($imgwidth/$xtiles);
-  my $ytileheight = int($imgheight/$ytiles);
-  my $aspect = $xtilewidth/$ytileheight;
+  my $imgwidth = $drawable->width;
+  my $imgheight = $drawable->height;
+  my $xtilewidth = int($imgwidth / $xtiles);
+  my $ytileheight = int($imgheight / $ytiles);
+  my $aspect = $xtilewidth / $ytileheight;
   my $s_aspect = sprintf("%0.3f",$aspect);
-  my $type = gimp_image_base_type($image);
+  my $type = $image->base_type;
   my $ndone=0;
-  gimp_image_undo_disable($image);
-  gimp_progress_init("Image Tiling...",-1);
-
+  $image->undo_disable;
+  Gimp::Progress->init("Image Tiling...",-1);
   my %tile_cache; # Tied to image tile database
   my %wt_cache;
   my $stored_keys = 0; # Number of keys stored to date.
   my $db; # DB_File database reference
   my $wdb;
-
   # One cache file holds the image color samples, which may get re-used
   # between runs.
   my $cache_file = "$TOP/image_tile.${s_aspect}.${xcells}X${ycells}";
@@ -62,7 +56,7 @@ podregister {
   # Loop over directories, looking for images
   foreach $dir (@dirs) {
     print "DEBUG: **** load images from $dir\n" if $debug;
-    gimp_progress_update((40/@dirs)*($ndone++)/100);
+    Gimp::Progress->update((40/@dirs)*($ndone++)/100);
     local *DIR;
     if (opendir(DIR,$dir)) {
       my $file;
@@ -73,7 +67,7 @@ podregister {
       my $filesdone=0;
       foreach $file (@files) {
 	print "DEBUG: Load file: $file\n" if $debug;
-	gimp_progress_update((40/@dirs)*($ndone-1+($filesdone/@files))/100);
+	Gimp::Progress->update((40/@dirs)*($ndone-1+($filesdone/@files))/100);
 	$filesdone++;
 	next unless -f "$dir/$file" && -s "$dir/$file";
 	if (defined $tile_cache{"$dir/$file"}) {
@@ -84,31 +78,28 @@ podregister {
 	  my $img;
 	  $file = "$dir/$file";
 	  # Open the sub-image, record info about it and close it.
-	  eval {
-	    $img = gimp_file_load($file,$file);
-	  };
+	  eval { $img = Gimp->file_load($file,$file) };
 	  next if $@ || !defined($img) || !$img;
-	  my $subtype = gimp_image_base_type($img);
+	  my $subtype = $img->base_type;
 	  if ($subtype != $type) {
 	    if ($type == RGB_IMAGE) {
-	      gimp_image_convert_rgb($img);
+	      $img->convert_rgb;
 	    } elsif ($type == GRAY_IMAGE) {
-	      gimp_image_convert_grayscale($img);
+	      $img->convert_grayscale;
 	    } elsif ($type == INDEXED_IMAGE) {
-	      gimp_image_convert_indexed($img,1,256);
+	      $img->convert_indexed(1, 256);
 	    }
 	  }
-	  my $cells = get_image_cells($img,$xcells,$ycells,
-				      $xtilewidth/$ytileheight);
+	  my $cells = get_image_cells($img, $xcells, $ycells, $xtilewidth / $ytileheight);
 	  $wt_cache{$file} = 0;
 	  $tile_cache{$file} = $$cells;
 	  $subimages++;
 	  $db->sync(0) if ++$stored_keys % 16 == 0;
-	  gimp_image_delete($img);
+	  $img->delete;
 	}
       }
     } else {
-      gimp_message("Cannot open $dir: $!");
+      Gimp->message("Cannot open $dir: $!");
     }
   }
 
@@ -120,20 +111,16 @@ podregister {
   $wdb->sync(0);
 
   # Now store color info for target image
-  my $dup = gimp_image_new($imgwidth,$imgheight,RGB_IMAGE);
-  gimp_edit_copy($drawable); # gimp 1.1 -deleted $image
-  my $back =
-    gimp_layer_new($dup,$imgwidth,$imgheight,RGB_IMAGE,"Target",100,NORMAL_MODE);
-  gimp_image_insert_layer($dup,$back,0,0);
-  my $sel = gimp_edit_paste($back,0); # gimp 1.1 -deleted $dup
-  gimp_floating_sel_anchor($sel);
-  my $oimage = get_image_cells($dup,$xtiles*$xcells,$ytiles*$ycells,
-			       $imgwidth/$imgheight,40,60);
-  gimp_image_delete($dup);
-  undef $sel;
+  my $dup = Gimp::Image->new($imgwidth,$imgheight,RGB_IMAGE);
+  $drawable->edit_copy;
+  my $back = $dup->layer_new($imgwidth, $imgheight, RGB_IMAGE, "Target", 100, NORMAL_MODE);
+  $dup->insert_layer($back, 0, 0);
+  $back->edit_paste(FALSE)->floating_sel_anchor;
+  my $oimage = get_image_cells($dup, $xtiles*$xcells, $ytiles*$ycells, $imgwidth/$imgheight, 40, 60);
+  $dup->delete;
   undef $back;
   undef $dup;
-  gimp_progress_update(60/100);
+  Gimp::Progress->update(60/100);
 
   # Now we have the image data, so it's time to start mapping
   # in the sub-images.
@@ -158,7 +145,7 @@ podregister {
   # Now, map in the sub-images according to the random order determined, above
   foreach my $coord (@todo) {
     my($x,$y) = split /,/,$coord,2;
-    gimp_progress_update((60+40/($xtiles*$ytiles)*($ndone++))/100);
+    Gimp::Progress->update((60+40/($xtiles*$ytiles)*($ndone++))/100);
     my $minmatch = undef;
     my $matchid;
     # Create a cache of all of the cell samples from the original image for
@@ -233,9 +220,8 @@ podregister {
   untie %wt_cache;
   unlink($wt_file);
   unlink($cache_file) if $cleanup;
-  gimp_progress_update(1);
-  gimp_image_undo_enable($image);
-  gimp_displays_flush();
+  Gimp::Progress->update(1);
+  $image->undo_enable;
   ();
 };
 
@@ -243,37 +229,33 @@ podregister {
 # Works destructively on IMAGE, and returns a list of anon-lists which
 # contain the color samples for the given IMAGE.
 sub get_image_cells {
-  my $img = shift;
-  my $xcells = shift;
-  my $ycells = shift;
-  my $target_aspect = shift;
-  my $start_complete = shift;
-  my $end_complete = shift;
+  my ($img, $xcells, $ycells, $target_aspect, $start_complete, $end_complete) = @_;
   # print "Target aspect: $target_aspect\n";
-  my $file = gimp_image_get_filename($img);
+  my $file = $img->get_filename;
   # print "$file: ";
-  my $width = gimp_image_width($img)+0;
+  my $width = $img->width;
   # print "width: $width ";
-  my $height = gimp_image_height($img)+0;
+  my $height = $img->height;
   # print "height: $height\n";
   my $cells = "\0\0\0" x ($xcells * $ycells);
   return () if $width < 1 || $height < 1;
 
   # First crop to fit tiles
-  match_aspect($img,$target_aspect,$width,$height);
+  match_aspect($img, $target_aspect, $width, $height);
 
   # Now, scale down to xcells by ycells for color sampling
   # NOTE: We will re-open this image later if it is chosen.
   #       This scaling is just to get color samples.
-  gimp_image_scale($img,$xcells,$ycells);
-  my $draw = gimp_image_get_active_drawable($img);
+  $img->scale($xcells, $ycells);
+  my $draw = $img->get_active_drawable;
   for(my $x=0;$x<$xcells;$x++) {
     if (defined($start_complete)) {
-      gimp_progress_update(($start_complete+
+      Gimp::Progress->update(($start_complete+
 			    ($end_complete-$start_complete)*$x/$xcells)/100);
     }
     for(my $y=0;$y<$ycells;$y++) {
-      my $color = gimp_image_pick_color($draw,$x,$y,0,1,1.0); # Gimp 1.1 -deleted $img
+      my $color = eval { $draw->pick_color($x, $y, FALSE, TRUE, 1.0) };
+      next if ($@);
       my @c;
       if ($DO_HSV) {
 	@c = rgb2hsv(@$color);
@@ -289,22 +271,18 @@ sub get_image_cells {
 # Take IMAGE, TARGET_ASPECT, WIDTH (of image), HEIGHT (of image)
 # Crops IMAGE to match aspect ratio of TARGET_ASPECT.
 sub match_aspect {
-  my $img = shift;
-  my $target_aspect = shift;
-  my $width = shift;
-  my $height = shift;
+  my ($img, $target_aspect, $width, $height) = @_;
   my $aspect = $width/$height;
-
   if ($aspect < $target_aspect) {
-    my $oldheight=$height;
-    $height = int($width/$target_aspect);
+    my $oldheight = $height;
+    $height = int($width / $target_aspect);
     # print "Image was $width X $oldheight, cropping to $width X $height\n";
-    gimp_image_crop($img,$width,$height,0,int(($oldheight-$height)/2));
+    $img->crop($width, $height, 0, int(($oldheight-$height) / 2) );
   } elsif ($aspect > $target_aspect) {
-    my $oldwidth=$width;
-    $width = int($target_aspect*$height);
+    my $oldwidth = $width;
+    $width = int($target_aspect * $height);
     # print "Image was $oldwidth X $height, cropping to $width X $height\n";
-    gimp_image_crop($img,$width,$height,int(($oldwidth-$width)/2),0);
+    $img->crop($width, $height, int(($oldwidth-$width) / 2), 0);
   }
 }
 
@@ -312,23 +290,17 @@ sub match_aspect {
 # Opens image referenced by INFO->{name} and scale/crop to fit in rectagnle
 # described by X,Y,WIDTH,HEIGHT
 sub overlay_image {
-  my $draw = shift;
-  my $file = shift;
-  my $x = shift;
-  my $y = shift;
-  my $width = shift;
-  my $height = shift;
-  my $img = gimp_file_load($file,$file);
-  my $subwidth = gimp_image_width($img);
-  my $subheight = gimp_image_height($img);
-  match_aspect($img,$width/$height,$subwidth,$subheight);
-  gimp_image_scale($img,$width,$height);
-  gimp_edit_copy(gimp_image_get_active_drawable($img)); #gimp 1.1 -deleted $img
-  my $baseimg = gimp_item_get_image($draw);
-  gimp_image_select_rectangle(CHANNEL_OP_REPLACE,$baseimg,$x,$y,$width,$height);
-  my $sel = gimp_edit_paste($draw,0); # gimp 1.1 -deleted $baseimg
-  gimp_floating_sel_anchor($sel);
-  gimp_image_delete($img);
+  my ($draw, $file, $x, $y, $width, $height) = @_;
+  my $img = Gimp->file_load($file, $file);
+  my $subwidth = $img->width;
+  my $subheight = $img->height;
+  match_aspect($img, $width/$height, $subwidth, $subheight);
+  $img->scale($width, $height);
+  $img->get_active_drawable->edit_copy;
+  my $baseimg = $draw->get_image;
+  $baseimg->select_rectangle(CHANNEL_OP_REPLACE, $x, $y, $width, $height);
+  $draw->edit_paste(FALSE)->floating_sel_anchor;
+  $img->delete;
 }
 
 # Take a Red, Green, Blue color value and return Hue, Saturation and Value
