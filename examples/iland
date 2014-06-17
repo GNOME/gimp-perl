@@ -6,85 +6,85 @@
 #	  Problem resides in the brutal m/slice.
 #	  I hope to find out some artifact to use PDL more efficiently for this "non-matrix" algorithm.
 
-use Gimp qw(:auto __ N_);
+use Gimp;
 use Gimp::Fu;
 use PDL::LiteF;
 use strict;
 use warnings;
 
 podregister {
-  #gimp_tile_cache_size(20000);
-  gimp_selection_none($image);
-  plug_in_rotate(RUN_NONINTERACTIVE, $image, -1, $camerapos, 1) if ($camerapos != 0);
-  $width=gimp_image_width($image);
-  $height=gimp_image_height($image);
-  my $gdrawable=$drawable->get();
-
+  $image->selection_none;
+  $drawable->transform_rotate_simple($camerapos, TRUE, 0, 0) if $camerapos >= 0;
+  $image->resize_to_layers;
+  my $width = $image->width;
+  my $height = $image->height;
+  my $gdrawable = $drawable->get();
   #Pixel region of selection
-  my $src= new Gimp::PixelRgn ($drawable, 0,0,$width, $height, 0, 0);
-  my $newimage=gimp_image_new($src->w, $src->h, 0);
-  $layer=gimp_layer_new($newimage,$src->w, $src->h, RGB_IMAGE, "L1", 100, NORMAL_MODE);
-  gimp_image_insert_layer($layer, 0, -1);
-  $newdrawable=gimp_get_image_active_drawable($newimage);
-  my $dest = new Gimp::PixelRgn ($newdrawable, 0,0,$width, $height,1,1);
-  Gimp->progress_init("Rendering...");
-  my $relord=$src->w/255;
-
-  gimp_drawable_fill($newdrawable, 0);
-  $delta=1 if ($delta<1);
-  for (my $y=0; $y<$src->h; $y++){
-    $row=$src->get_row(0, $y, $src->w);
-    my $drow=$row&0;
-    $red=$row->slice($component);
-    $dred=$drow->slice(0);
-    $dgreen=$drow->slice(1);
-    $dblue=$drow->slice(2);
-    for(my $x=0;$x<$src->w;$x++) {
-      $r=at($red,0,$x);
-      if ($r>$floor) {
-	my $remain=$r;
-	my $currentx=$width-$r*$relord+($x/$elevation);
+  my $src = Gimp::PixelRgn->new($drawable, 0, 0, $width, $height, 0, 0);
+  my $newimage = Gimp::Image->new($src->w, $src->h, 0);
+  my $layer = $newimage->layer_new($src->w, $src->h, RGB_IMAGE, "L1", 100, NORMAL_MODE);
+  $newimage->insert_layer($layer, 0, -1);
+  my $newdrawable = $newimage->get_active_drawable;
+  my $dest = Gimp::PixelRgn->new($newdrawable, 0, 0, $width, $height, 1, 1);
+  Gimp::Progress->init("Rendering...");
+  my $relord = $src->w / 255;
+  $newdrawable->fill(FOREGROUND_FILL);
+  $delta = 1 if $delta < 1;
+  for (my $y = 0; $y < $src->h; $y++){
+    my $row = $src->get_row(0, $y, $src->w);
+    my $drow = $row&0;
+    my $red = $row->slice($component);
+    my $dred = $drow->slice(0);
+    my $dgreen = $drow->slice(1);
+    my $dblue = $drow->slice(2);
+    for (my $x = 0; $x < $src->w; $x++) {
+      my $r = at($red, 0, $x);
+      if ($r > $floor) {
+	my $remain = $r;
+	my $currentx = $width - $r * $relord + ($x / $elevation);
 	#Apply elevation following the x offset in original picture
-	while ($remain>0 && $currentx<$src->w) {
-	  if($remain>150){
-	    set ($dblue,0,$currentx,$remain);
-	    set ($dred,0,$currentx,0);
-	    set ($dgreen,0,$currentx,$remain);
+	while ($remain > 0 && $currentx < $src->w) {
+	  if ($remain > 150) {
+	    set ($dblue, 0, $currentx, $remain);
+	    set ($dred, 0, $currentx, 0);
+	    set ($dgreen, 0, $currentx, $remain);
 	  }
-	  if($remain<150 && $remain>50){
-	    set ($dgreen,0,$currentx,$remain+55);
-	    set ($dred,0,$currentx,0);
-	    set ($dblue,0,$currentx,0);
+	  if ($remain < 150 && $remain > 50) {
+	    set ($dgreen, 0, $currentx, $remain + 55);
+	    set ($dred, 0, $currentx, 0);
+	    set ($dblue, 0, $currentx, 0);
 	  }
-	  if($remain<50){
-	    set ($dred,0,$currentx,0);
-	    set ($dgreen,0,$currentx,0);
-	    set ($dblue,0,$currentx,$remain+200);
+	  if ($remain < 50) {
+	    set ($dred, 0, $currentx, 0);
+	    set ($dgreen, 0, $currentx, 0);
+	    set ($dblue, 0, $currentx, $remain + 200);
 	  }
-	  $remain-=$delta;
+	  $remain -= $delta;
 	  $currentx++;
 	}
       }
     }
-    $dest->set_row($drow, 0,$y);
-    Gimp->progress_update($y/$src->h);
+    $dest->set_row($drow, 0, $y);
+    Gimp::Progress->update($y / $src->h);
   }
-  Gimp->progress_update(1);
-  $newdrawable->merge_shadow(1);
-  $newdrawable->update(0,0,$width, $height);
-  plug_in_rotate($newdrawable,1,1);
-  $newdrawable->merge_shadow(1);
-  $newdrawable->update(0,0,$width, $height);
-
+  Gimp::Progress->update(1);
+  $newdrawable->merge_shadow(TRUE);
+  $newdrawable->update(0, 0, $width, $height);
+  ##WITH THE FOLLOWING CALL TO gimp-item-transform-rotate-simple
+  ##it crashes badly here-  With the plugin_rotate_call it'll work
+  $newdrawable->plug_in_rotate(1, TRUE);
+  #$newdrawable->transform_rotate_simple(ROTATE_90, TRUE, 0, 0);
+  #$image->resize_to_layers;
+  $newdrawable->merge_shadow(TRUE);
+  $newdrawable->update(0, 0, $width, $height);
   eval { Gimp::Display->new($newimage); };
-
   #Original pic => original state
-  if ($camerapos==3){
-    $camerapos=1;
-  } elsif ($camerapos==1) {
-    $camerapos=3 ;
-  }
-  plug_in_rotate($image, -1, $camerapos, 1) if ($camerapos != 0);
+   if ($camerapos == 2) {
+     $camerapos = 0;
+   } elsif ($camerapos == 0) {
+     $camerapos = 2;
+   }
+   $drawable->transform_rotate_simple($camerapos, TRUE, 0, 0) if $camerapos >= 0;
   ();
 };
 
@@ -119,11 +119,11 @@ Fabian Frederick <fabian.frederick@gmx.fr>
 
 =head1 PARAMETERS
 
-  [PF_SLIDER, "floor", "Floor", 100, [0, 255]],
+  [PF_SLIDER, "floor", "Floor", 100, [0, 255, 5]],
   [PF_RADIO, "component", "Active component", 0, [ Red => 0, Green => 1, Blue => 2]],
   [PF_SLIDER, "delta", "Delta color", 6, [0, 100]],
   [PF_FLOAT, "elevation", "Elevation argument should be 2 or 3", 2],
-  [PF_RADIO, "camerapos", "Camera position", 0, [ Right => 0, Bottom => 3, Left => 2, Top => 1]]
+  [PF_RADIO, "camerapos", "Camera position", -1, [ Right => -1, Bottom => 2, Left => 1, Top => 0]]
 
 =head1 LICENSE
 
