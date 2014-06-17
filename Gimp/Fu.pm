@@ -324,7 +324,7 @@ sub make_ui_closure {
          }
       }
       warn "perlsub: rm=$run_mode" if $Gimp::verbose >= 2;
-      if ($run_mode == Gimp::RUN_NONINTERACTIVE or not defined $run_mode) {
+      if ($run_mode == Gimp::RUN_NONINTERACTIVE) {
          # nop
       } elsif ($run_mode == Gimp::RUN_INTERACTIVE
           || $run_mode == Gimp::RUN_WITH_LAST_VALS) {
