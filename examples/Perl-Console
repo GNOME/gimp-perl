@@ -5,6 +5,7 @@ use warnings;
 #BEGIN { $Gimp::verbose = 1; }
 use Gimp;
 use Gimp::Fu;
+use Gimp::UI; # will initialise GIMP UI including theme
 use Gtk2::Gdk::Keysyms;
 
 my $INIT_TEXT = "Gimp-Perl Console v1.0\n\n";
