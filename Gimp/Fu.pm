@@ -164,10 +164,10 @@ sub string2pf($$) {
       if ((my $arg) = $s =~ /%(.+)/) {
 	 if ($arg eq 'a') {
 	    $latest_image->get_active_drawable;
-	 } elsif ((my $file, $arg) = $arg =~ /(.*):(\d+)/) {
+	 } elsif (my ($file, $subarg) = $arg =~ /(.*):(\d+)/) {
 	    $latest_imagefile = $file;
 	    $latest_image = Gimp->file_load(Gimp::RUN_NONINTERACTIVE, $file, $file),
-	    ($latest_image->get_layers)[$arg]->become('Gimp::Drawable');
+	    ($latest_image->get_layers)[$subarg]->become('Gimp::Drawable');
 	 } else {
 	    die "Drawable % argument not integer\n"
 	       unless $arg eq int $arg;
