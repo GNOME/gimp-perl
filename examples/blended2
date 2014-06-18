@@ -85,7 +85,7 @@ make_bevel_logos - A script to get blended beveled logos
 
 =head1 SYNOPSIS
 
-<Image>/Filters/Render/Blended Logo...
+<Image>/Filters/Render/_Blended Logo...
 
 =head1 DESCRIPTION
 
@@ -102,7 +102,7 @@ Bevel Logo.
  [PF_COLOUR	, 'bl2',   "2nd blend colour", [255, 0, 0]],
  [PF_SLIDER	, 'elev', "Strength of bevel", 45.00, [0.00, 60.00, 0.50]],
  [PF_SLIDER	, 'depth', "Depth of bevel", 4, [1, 20, 1]],
- [PF_RADIO	, 'transparency', "The user's choice for an alpha or colored background", 0, [Background => 0, Transparent => 1]],
+ [PF_RADIO	, 'transparency', "Background", 0, [Solid => 0, Transparent => 1]],
 
 =head1 RETURN VALUES
 
