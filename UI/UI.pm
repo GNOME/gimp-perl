@@ -450,7 +450,7 @@ my %PF2INFO = (
       my $val;
       my $l = new Gtk2::Label "!error!";
       my $setval = sub {
-	$val = shift;
+	$val = shift // '';
 	$val =~ s#\s*(Bold)?\s*(Italic)?\s*\d+$##; # vim highlighter
 	unless (defined $val && $fs->set_font_name ("$val 10")) {
 	  warn sprintf __"Illegal default font description: %s\n", $val
