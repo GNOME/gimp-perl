@@ -143,7 +143,8 @@ void
 set_transient(window)
   GtkWindow *window
   CODE:
-    gimp_window_set_transient (window);
+    if (gimp_display_name())
+      gimp_window_set_transient (window);
 
 gint32
 export_image(image_ID, drawable_ID, format_name, capabilities)
