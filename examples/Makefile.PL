@@ -39,6 +39,7 @@ my @pins = qw(
   redeye
   pixelmap
   image_tile
+  iland
 );
 
 sub install_plugin_target {

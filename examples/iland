@@ -13,41 +13,41 @@ use strict;
 use warnings;
 
 podregister {
-  $image->selection_none;
+  $image->selection_none if ($image->selection_bounds)[0];
   $drawable->transform_rotate_simple($camerapos, TRUE, 0, 0) if $camerapos >= 0;
-  $image->resize_to_layers;
-  my $width = $image->width;
-  my $height = $image->height;
-  my $gdrawable = $drawable->get();
+  my $width = $drawable->width;
+  my $height = $drawable->height;
   #Pixel region of selection
   my $src = Gimp::PixelRgn->new($drawable, 0, 0, $width, $height, 0, 0);
-  my $newimage = Gimp::Image->new($src->w, $src->h, RGB);
+  my $newimage = Gimp::Image->new($width, $height, RGB);
+  my $alpha = $drawable->has_alpha;
   my $layer = $newimage->layer_new(
-    $src->w, $src->h,
-    RGB_IMAGE,
+    $width, $height,
+    $alpha ? RGBA_IMAGE : RGB_IMAGE,
     "L1", 100, NORMAL_MODE
   );
   $newimage->insert_layer($layer, 0, -1);
   my $newdrawable = $newimage->get_active_drawable;
   my $dest = Gimp::PixelRgn->new($newdrawable, 0, 0, $width, $height, 1, 1);
   Gimp::Progress->init("Rendering...");
-  my $relord = $src->w / 255;
+  my $relord = $width / 255;
   $newdrawable->fill(FOREGROUND_FILL);
   $delta = 1 if $delta < 1;
-  for (my $y = 0; $y < $src->h; $y++){
-    my $row = $src->get_row(0, $y, $src->w);
+  for (my $y = 0; $y < $height; $y++){
+    my $row = $src->get_row(0, $y, $width);
     my $drow = $row&0;
     my $red = $row->slice($component);
     my $dred = $drow->slice(0);
     my $dgreen = $drow->slice(1);
     my $dblue = $drow->slice(2);
-    for (my $x = 0; $x < $src->w; $x++) {
+    $drow->slice(3) .= 255 if $alpha;
+    for (my $x = 0; $x < $width; $x++) {
       my $r = at($red, 0, $x);
       next if $r <= $floor;
       my $remain = $r;
       my $currentx = $width - $r * $relord + ($x / $elevation);
       #Apply elevation following the x offset in original picture
-      while ($remain > 0 && $currentx < $src->w) {
+      while ($remain > 0 && $currentx < $width) {
 	if ($remain > 150) {
 	  set ($dred, 0, $currentx, 0);
 	  set ($dgreen, 0, $currentx, $remain);
@@ -68,26 +68,22 @@ podregister {
       }
     }
     $dest->set_row($drow, 0, $y);
-    Gimp::Progress->update($y / $src->h);
+    Gimp::Progress->update($y / $height);
   }
   Gimp::Progress->update(1);
-  $newdrawable->merge_shadow(TRUE);
+#  die "merge_shadow failed for $newdrawable\n" unless
+    $newdrawable->merge_shadow(TRUE); # returns false but works and is needed
   $newdrawable->update(0, 0, $width, $height);
-  ##WITH THE FOLLOWING CALL TO gimp-item-transform-rotate-simple
-  ##it crashes badly here-  With the plugin_rotate_call it'll work
-  $newdrawable->plug_in_rotate(1, TRUE);
-  #$newdrawable->transform_rotate_simple(ROTATE_90, TRUE, 0, 0);
-  #$image->resize_to_layers;
-  $newdrawable->merge_shadow(TRUE);
-  $newdrawable->update(0, 0, $width, $height);
+  $newdrawable->transform_rotate_simple(ROTATE_90, TRUE, 0, 0);
+  $newimage->resize_to_layers;
   eval { Gimp::Display->new($newimage); };
   #Original pic => original state
-   if ($camerapos == 2) {
-     $camerapos = 0;
-   } elsif ($camerapos == 0) {
-     $camerapos = 2;
-   }
-   $drawable->transform_rotate_simple($camerapos, TRUE, 0, 0) if $camerapos >= 0;
+  if ($camerapos == 2) {
+    $camerapos = 0;
+  } elsif ($camerapos == 0) {
+    $camerapos = 2;
+  }
+  $drawable->transform_rotate_simple($camerapos, TRUE, 0, 0) if $camerapos >= 0;
   return $newimage;
 };
 
@@ -104,9 +100,9 @@ intensitylandscape - Generate an intensity based landscape
 
 =head1 DESCRIPTION
 
-Generate an alpha landscape based on intensity.  The result is an
+Generate an alpha landscape based on intensity. The result is an
 interpolated view as if you were looking from one side of the original
-picture (which is an taken as an apical view).
+picture (which is taken as an apical view).
 
 =head1 AUTHOR
 
@@ -118,13 +114,13 @@ Fabian Frederick <fabian.frederick@gmx.fr>
 
 =head1 IMAGE TYPES
 
-*
+RGB*
 
 =head1 PARAMETERS
 
   [PF_SLIDER, "floor", "Floor", 100, [0, 255, 5]],
   [PF_RADIO, "component", "Active component", 0, [ Red => 0, Green => 1, Blue => 2]],
-  [PF_SLIDER, "delta", "Delta color", 6, [0, 100]],
+  [PF_SLIDER, "delta", "Delta color", 6, [1, 100, 1]],
   [PF_FLOAT, "elevation", "Elevation argument should be 2 or 3", 2],
   [PF_RADIO, "camerapos", "Camera position", -1, [ Right => -1, Bottom => 2, Left => 1, Top => 0]]
 
