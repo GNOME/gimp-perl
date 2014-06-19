@@ -373,10 +373,14 @@ _pseudoclass qw(Pattern	        gimp_pattern_);
 
 {
 package Gimp::PixelRgn;
+use vars qw(@CARP_NOT); # package scope
+@CARP_NOT = qw(Gimp);
 
 sub new($$$$$$$$) {
    shift;
-   Gimp::PixelRgn->init(@_);
+   my $self = eval { Gimp::PixelRgn->init(@_); };
+   die "Args=(@_): ".$@ if $@;
+   $self;
 }
 }
 
