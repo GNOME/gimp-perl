@@ -29,21 +29,23 @@ podregister {
   $newimage->insert_layer($layer, 0, -1);
   my $newdrawable = $newimage->get_active_drawable;
   my $dest = Gimp::PixelRgn->new($newdrawable, 0, 0, $width, $height, 1, 1);
+#  my $srcdata = $src->data;
   my $srcdata = $src->get_rect($drawable->bounds);
+  my $destdata = $srcdata->zeroes;
   Gimp::Progress->init("Rendering...");
   my $relord = $width / 255;
   $newdrawable->fill(FOREGROUND_FILL);
   $delta = 1 if $delta < 1;
   for (my $y = 0; $y < $height; $y++){
     my $row = $srcdata->slice('', '', "($y)");
-    my $drow = $row&0;
-    my $red = $row->slice($component);
+    my $drow = $destdata->slice('', '', "($y)");
+    my $red = $row->slice("($component)");
     my $dred = $drow->slice("(0)");
     my $dgreen = $drow->slice("(1)");
     my $dblue = $drow->slice("(2)");
     $drow->slice(3) .= 255 if $alpha;
     for (my $x = 0; $x < $width; $x++) {
-      my $r = at($red, 0, $x);
+      my $r = at($red, $x);
       next if $r <= $floor;
       my $remain = $r;
       my $currentx = $width - $r * $relord + ($x / $elevation);
@@ -68,10 +70,11 @@ podregister {
 	$currentx++;
       }
     }
-    $dest->set_row($drow, 0, $y);
     Gimp::Progress->update($y / $height);
   }
   Gimp::Progress->update(1);
+#  $dest->data($destdata);
+  $dest->set_rect($destdata, 0, 0);
 #  die "merge_shadow failed for $newdrawable\n" unless
     $newdrawable->merge_shadow(TRUE); # returns false but works and is needed
   $newdrawable->update(0, 0, $width, $height);
