@@ -29,17 +29,18 @@ podregister {
   $newimage->insert_layer($layer, 0, -1);
   my $newdrawable = $newimage->get_active_drawable;
   my $dest = Gimp::PixelRgn->new($newdrawable, 0, 0, $width, $height, 1, 1);
+  my $srcdata = $src->get_rect($drawable->bounds);
   Gimp::Progress->init("Rendering...");
   my $relord = $width / 255;
   $newdrawable->fill(FOREGROUND_FILL);
   $delta = 1 if $delta < 1;
   for (my $y = 0; $y < $height; $y++){
-    my $row = $src->get_row(0, $y, $width);
+    my $row = $srcdata->slice('', '', "($y)");
     my $drow = $row&0;
     my $red = $row->slice($component);
-    my $dred = $drow->slice(0);
-    my $dgreen = $drow->slice(1);
-    my $dblue = $drow->slice(2);
+    my $dred = $drow->slice("(0)");
+    my $dgreen = $drow->slice("(1)");
+    my $dblue = $drow->slice("(2)");
     $drow->slice(3) .= 255 if $alpha;
     for (my $x = 0; $x < $width; $x++) {
       my $r = at($red, 0, $x);
@@ -49,19 +50,19 @@ podregister {
       #Apply elevation following the x offset in original picture
       while ($remain > 0 && $currentx < $width) {
 	if ($remain > 150) {
-	  set ($dred, 0, $currentx, 0);
-	  set ($dgreen, 0, $currentx, $remain);
-	  set ($dblue, 0, $currentx, $remain);
+	  set ($dred, $currentx, 0);
+	  set ($dgreen, $currentx, $remain);
+	  set ($dblue, $currentx, $remain);
 	}
 	if ($remain < 150 && $remain > 50) {
-	  set ($dred, 0, $currentx, 0);
-	  set ($dgreen, 0, $currentx, $remain + 55);
-	  set ($dblue, 0, $currentx, 0);
+	  set ($dred, $currentx, 0);
+	  set ($dgreen, $currentx, $remain + 55);
+	  set ($dblue, $currentx, 0);
 	}
 	if ($remain < 50) {
-	  set ($dred, 0, $currentx, 0);
-	  set ($dgreen, 0, $currentx, 0);
-	  set ($dblue, 0, $currentx, $remain + 200);
+	  set ($dred, $currentx, 0);
+	  set ($dgreen, $currentx, 0);
+	  set ($dblue, $currentx, $remain + 200);
 	}
 	$remain -= $delta;
 	$currentx++;
