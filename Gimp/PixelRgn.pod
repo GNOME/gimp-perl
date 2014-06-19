@@ -104,6 +104,16 @@ And the corresponding set-functions:
 Please note that (unlike the C functions they call), the size arguments
 (width and/or height) are omitted; they are calculated from the piddle.
 
+The dimensions of the piddle are, for a rectangle (due to how GIMP stores
+the data):
+
+  ($bytesperpixel, $width, $height) = $r->get_rect($l->bounds)->dims;
+
+For a row or column:
+
+  ($bytesperpixel, $width) = $r->get_row(0, 0, $width)->dims;
+  ($bytesperpixel, $height) = $r->get_col(0, 0, $height)->dims;
+
 =head1 EXAMPLES
 
 Functions demonstrating getting and setting the colour of a pixel on an
