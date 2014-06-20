@@ -123,7 +123,9 @@ sub process_input {
     $output = "Error stringifying output: $@" if $@;
   }
   chomp $output;
-  "> $input\n$output";
+  my $to_add = "> $input\n$output";
+  $to_add =~ s#\0#\\0#g;
+  $to_add;
 }
 __END__
 
