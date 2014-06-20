@@ -315,12 +315,14 @@ static SV *new_gpixelrgn (SV *gdrawable, int x, int y, int width, int height, in
   static HV *stash;
   SV *sv = newSVn (sizeof (GimpPixelRgn));
   GimpPixelRgn *pr = (GimpPixelRgn *)SvPV_nolen(sv);
+  verbose_printf (2, "new_gpixelrgn(%d, %d, %d, %d, %d, %d)\n", x, y, width, height, dirty, shadow);
 
   if (!stash)
     stash = gv_stashpv (PKG_PIXELRGN, 1);
 
   GimpDrawable *gd = old_gdrawable(gdrawable);
   gimp_pixel_rgn_init (pr, gd, x, y, width, height, dirty, shadow);
+  verbose_printf (2, "gimp_pixel_rgn now={%d, %d, %d, %d, %d, %d}\n", pr->bpp, pr->rowstride, pr->x, pr->y, pr->w, pr->h, pr->dirty, pr->shadow);
 
   sv_magic (sv, SvRV(gdrawable), '~', 0, 0);
   mg_find (sv, '~')->mg_virtual = &vtbl_gpixelrgn;
@@ -2156,6 +2158,9 @@ gimp_pixel_rgn_data(pr,newdata=0)
 	GimpPixelRgn_PDL *	pr
 	pdl * newdata
 	CODE:
+	verbose_printf (2, "gimp_pixel_rgn_data(%lx, %lx)\n", (long)pr, (long)newdata);
+	if (!pr->rowstride)
+	  croak("gimp_pixel_rgn_data called, rowstride == 0; only call within an iterator!");
 	if (newdata)
 	  {
 	    guchar *src;

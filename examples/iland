@@ -29,7 +29,6 @@ podregister {
   $newimage->insert_layer($layer, 0, -1);
   my $newdrawable = $newimage->get_active_drawable;
   my $dest = Gimp::PixelRgn->new($newdrawable, 0, 0, $width, $height, 1, 1);
-#  my $srcdata = $src->data;
   my $srcdata = $src->get_rect($drawable->bounds);
   my $destdata = $srcdata->zeroes;
   Gimp::Progress->init("Rendering...");
@@ -73,7 +72,6 @@ podregister {
     Gimp::Progress->update($y / $height);
   }
   Gimp::Progress->update(1);
-#  $dest->data($destdata);
   $dest->set_rect($destdata, 0, 0);
 #  die "merge_shadow failed for $newdrawable\n" unless
     $newdrawable->merge_shadow(TRUE); # returns false but works and is needed
