@@ -48,11 +48,7 @@ package Gimp::UI::Combo;
 use Gimp ('__');
 our @ISA = 'Gtk2::ComboBox';
 
-sub image_name {
-   my $name = $_[0]->get_filename;
-   $name = "Untitled-".${$_[0]} if $name eq "";
-   $name;
-}
+sub image_name { $_[0]->get_filename || "Untitled-".${$_[0]}; }
 
 sub Gimp::UI::Combo::Image::_items {
   +{ map { (image_name($_) => $_) } Gimp::Image->list }
@@ -441,7 +437,7 @@ my %PF2INFO = (
     my ($a, $s, $g);
     if ($Gimp::interface_pkg ne 'Gimp::Net') {
       $a = new Gimp::UI::FontSelectButton $desc, $default;
-      $s = sub { $a->set_font($_[0]) };
+      $s = sub { $a->set_font($_[0] || 'Arial') };
       $g = sub { $a->get_font };
 #      _instrument($a);
     } else {
