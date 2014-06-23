@@ -22,7 +22,7 @@ package Gimp::Net;
 # Aelem1\0elem2...
 # Rclass\0scalar-value
 
-BEGIN { warn "$$-Loading ".__PACKAGE__ if $Gimp::verbose; }
+BEGIN { warn "$$-Loading ".__PACKAGE__ if $Gimp::verbose >= 2; }
 
 use strict;
 use warnings;
@@ -67,7 +67,7 @@ sub command {
 
 sub import {
    my $pkg = shift;
-   warn "$$-$pkg->import(@_)" if $Gimp::verbose;
+   warn "$$-$pkg->import(@_)" if $Gimp::verbose >= 2;
    return if @_;
    # overwrite some destroy functions
    *Gimp::Tile::DESTROY=
@@ -79,7 +79,7 @@ sub import {
 }
 
 sub gimp_call_procedure {
-   warn "$$-Net::gimp_call_procedure(@_)" if $Gimp::verbose;
+   warn "$$-Net::gimp_call_procedure(@_)" if $Gimp::verbose >= 2;
    my @response = command("EXEC", $Gimp::verbose, @_);
    my $die_text = shift @response;
    Gimp::recroak(Gimp::exception_strip(__FILE__, $die_text)) if $die_text;
@@ -100,7 +100,7 @@ my $PROC_SF = 'extension-perl-server';
 sub start_server {
    my $opt = shift;
    $opt = $Gimp::spawn_opts unless $opt;
-   warn __"$$-start_server($opt)" if $Gimp::verbose;
+   warn __"$$-start_server($opt)" if $Gimp::verbose >= 2;
    croak __"unable to create socketpair for gimp communications: $!"
       unless ($server_fh, my $gimp_fh) =
 	 IO::Socket->socketpair(AF_UNIX, SOCK_STREAM, PF_UNSPEC);
@@ -123,11 +123,11 @@ sub start_server {
    my @exec_args = ($Gimp::Config{GIMP}, qw(--no-splash --console-messages));
    push @exec_args, "--no-data" if $opt=~s/(^|:)no-?data//;
    push @exec_args, "-i" unless $opt=~s/(^|:)gui//;
-   push @exec_args, "--verbose" if $Gimp::verbose;
+   push @exec_args, "--verbose" if $Gimp::verbose >= 2;
    push @exec_args, qw(--pdb-compat-mode off);
    push @exec_args, qw(--batch-interpreter plug-in-script-fu-eval -b);
    push @exec_args, "(if (defined? '$PROC_SF) ($PROC_SF $args)) (gimp-quit 0)";
-   warn __"$$-exec @exec_args\n" if $Gimp::verbose;
+   warn __"$$-exec @exec_args\n" if $Gimp::verbose >= 2;
    { exec @exec_args; } # block to suppress warning
    croak __"unable to exec: $!";
 }
@@ -160,7 +160,7 @@ sub try_connect {
 }
 
 sub gimp_init {
-   warn "$$-gimp_init(@_)" if $Gimp::verbose;
+   warn "$$-gimp_init(@_)" if $Gimp::verbose >= 2;
    if (@_) {
       $server_fh = try_connect ($_[0]);
    } elsif (defined($Gimp::host)) {
@@ -193,7 +193,7 @@ sub gimp_init {
 }
 
 sub gimp_end {
-   warn "$$-gimp_end - gimp_pid=$gimp_pid" if $Gimp::verbose;
+   warn "$$-gimp_end - gimp_pid=$gimp_pid" if $Gimp::verbose >= 2;
    $initialized = 0;
    if ($gimp_pid and $server_fh) {
       server_quit;
@@ -313,7 +313,7 @@ sub handle_request($) {
 }
 
 sub on_accept {
-  warn "$$-on_accept(@_)" if $Gimp::verbose;
+  warn "$$-on_accept(@_)" if $Gimp::verbose >= 2;
   my $h = shift;
   slog sprintf __"new connection(%d)%s",
     $h->fileno,
@@ -334,7 +334,7 @@ sub on_input {
 }
 
 sub setup_listen_unix {
-  warn "$$-setup_listen_unix(@_)" if $Gimp::verbose;
+  warn "$$-setup_listen_unix(@_)" if $Gimp::verbose >= 2;
   use autodie;
   use File::Basename;
   my $host = shift;
@@ -348,7 +348,7 @@ sub setup_listen_unix {
 }
 
 sub setup_listen_tcp {
-  warn "$$-setup_listen_tcp(@_)" if $Gimp::verbose;
+  warn "$$-setup_listen_tcp(@_)" if $Gimp::verbose >= 2;
   use autodie;
   my $host = shift;
   ($host, my $port)=split /:/,$host;
@@ -362,7 +362,7 @@ sub setup_listen_tcp {
 
 sub perl_server_run {
   (my $filehandle, $Gimp::verbose) = @_;
-  warn "$$-".__PACKAGE__."::perl_server_run(@_)\n" if $Gimp::verbose;
+  warn "$$-".__PACKAGE__."::perl_server_run(@_)\n" if $Gimp::verbose >= 2;
   if ($Gimp::Fu::run_mode == &Gimp::RUN_NONINTERACTIVE) {
       die __"unable to open Gimp::Net communications socket: $!\n"
 	 unless open my $fh,"+<&$filehandle";

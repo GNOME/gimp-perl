@@ -34,7 +34,7 @@ Gimp::on_query {
 sub podregister (&) {
    my @procinfo = fixup_args(('')x9, @_);
    Gimp::register_callback $procinfo[0] => sub {
-      warn "$$-Gimp::Extension sub: $procinfo[0](@_)" if $Gimp::verbose;
+      warn "$$-Gimp::Extension sub: $procinfo[0](@_)" if $Gimp::verbose >= 2;
       for my $tp (@temp_procs) {
 	 my @tpinfo = (
 	    @{$tp}[0..2],

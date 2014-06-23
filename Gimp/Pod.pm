@@ -12,7 +12,7 @@ use Pod::Simple::SimpleTree;
 our @EXPORT = qw(fixup_args make_arg_line);
 our $VERSION = "2.30_05";
 
-warn "$$-Loading ".__PACKAGE__ if $Gimp::verbose;
+warn "$$-Loading ".__PACKAGE__ if $Gimp::verbose >= 2;
 
 sub __ ($) { goto &Gimp::__ }
 

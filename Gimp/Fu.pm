@@ -209,7 +209,7 @@ Gimp::on_net {
 	 ("$_=s"=>sub {$args[$mangleparam2index{$_[0]}] = $_[1]; $interact--;})
       } keys %mangleparam2index,
    );
-   warn "$$-".__PACKAGE__." on_net (@args) (@ARGV) '$interact'" if $Gimp::verbose;
+   warn "$$-".__PACKAGE__." on_net (@args) (@ARGV) '$interact'" if $Gimp::verbose >= 2;
    die "$0: too many arguments. Try $0 --help\n" if @ARGV > @$params;
    $interact -= @ARGV;
    map { $args[$_] = $ARGV[$_] } (0..$#ARGV); # can mix & match --args and bare
@@ -383,7 +383,7 @@ sub register($$$$$$$$$;@) {
 
 sub save_image($$) {
    my($img,$path)=@_;
-   warn "saving image $path\n" if $Gimp::verbose;
+   warn "saving image $path\n" if $Gimp::verbose >= 2;
    my $flatten=0;
    my $interlace=0;
    my $quality=0.75;

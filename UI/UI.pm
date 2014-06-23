@@ -90,7 +90,7 @@ sub get_active_scalar {
 }
 
 sub reload {
-  warn __PACKAGE__ . "::reload(@_)" if $Gimp::verbose;
+  warn __PACKAGE__ . "::reload(@_)" if $Gimp::verbose >= 2;
   my ($self) = @_;
   my $count = keys %{ $self->{GIMPUI_text2scalar} };
   $self->remove_text(0) while $count--;
@@ -339,7 +339,7 @@ sub help_window(\$$$$) {
 }
 
 sub _instrument {
-  return unless $Gimp::verbose;
+  return unless $Gimp::verbose >= 2;
   my $obj = shift;
   my $class = ref $obj;
   my %sig2done;
@@ -619,8 +619,8 @@ my %PF2INFO = (
   },
 );
 
-sub interact($$$$@) {
-  warn __PACKAGE__ . "::interact(@_)" if $Gimp::verbose;
+sub interact {
+  warn __PACKAGE__ . "::interact(@_)" if $Gimp::verbose >= 2;
   my ($function, $blurb, $help, $params, $menupath) = splice @_, 0, 5;
   my (@getvals, @setvals, @lastvals, @defaults);
   my $helpwin;
@@ -655,7 +655,7 @@ sub interact($$$$@) {
     $value=$default unless defined $value;
     die sprintf __"Unsupported argumenttype %s for %s\n", $type, $name
       unless $PF2INFO{$type};
-    my ($a, $sv, $gv) = $PF2INFO{$type}->( $name,$desc,$default,$extra,$value);
+    my ($a, $sv, $gv) = $PF2INFO{$type}->($name,$desc,$default,$extra,$value);
     push @setvals, $sv;
     push @getvals, $gv;
     push @lastvals, $value;

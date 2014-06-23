@@ -8,7 +8,7 @@ BEGIN {
    $VERSION = "2.30_05";
    require XSLoader;
    XSLoader::load Gimp::Lib $VERSION;
-   warn "$$-Loading ".__PACKAGE__ if $Gimp::verbose;
+   warn "$$-Loading ".__PACKAGE__ if $Gimp::verbose >= 2;
 }
 
 sub gimp_init {

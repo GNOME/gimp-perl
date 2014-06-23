@@ -223,7 +223,7 @@ if ($interface_type=~/^lib$/i) {
 } else {
    croak __"interface '$interface_type' unsupported.";
 }
-warn "$$-Using interface '$interface_type'" if $Gimp::verbose;
+warn "$$-Using interface '$interface_type'" if $Gimp::verbose >= 2;
 
 eval "require $interface_pkg" or croak $@;
 $interface_pkg->import;
@@ -246,7 +246,7 @@ my %ignore_function = (DESTROY => 1);
 @PREFIXES=("gimp_", "");
 
 sub ignore_functions(@) {
-   warn "$$-IGNORING(@_)" if $Gimp::verbose;
+   warn "$$-IGNORING(@_)" if $Gimp::verbose >= 2;
    @ignore_function{@_}++;
 }
 
@@ -309,7 +309,7 @@ sub AUTOLOAD {
 	warn "$$-gimp_call_procedure{0}(@_)" if $Gimp::verbose >= 2;
 	shift unless ref $_[0];
 	unshift @_, $sub;
-	warn "$$-gimp_call_procedure{1}(@_)" if $Gimp::verbose;
+	warn "$$-gimp_call_procedure{1}(@_)" if $Gimp::verbose >= 2;
 	my @r = eval { gimp_call_procedure (@_) };
 	recroak exception_strip(__FILE__, $@) if $@; wantarray ? @r : $r[0];
       };
