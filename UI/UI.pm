@@ -468,13 +468,29 @@ my %PF2INFO = (
   },
   &PF_COLOR => sub {
     my ($name,$desc,$default,$extra,$value) = @_;
-    $default = [0.8,0.6,0.1] unless defined $default;
-    $default = Gimp::canonicalize_color($default);
-    my $b = new Gimp::UI::ColorButton $desc, 90, 14, $default, 'small-checks';
-#    _instrument($b);
-    ($b, sub {
-      $b->set_color (defined $_[0] ? Gimp::canonicalize_color $_[0] : [0.8,0.6,0.1])
-    }, sub { $b->get_color });
+    my ($a, $s, $g);
+    if ($Gimp::interface_pkg eq 'Gimp::Net') {
+      $a = Gtk2::ColorButton->new;
+      $s = sub {
+	my $colour = Gimp::canonicalize_color(shift // [0.8,0.6,0.1]);
+	my @rgb = map { $_ * ((1<<16)-1) } @$colour[0..2];
+	$a->set_color(Gtk2::Gdk::Color->new(@rgb));
+      };
+      $g = sub {
+	my $gc = $a->get_color;
+	my @c = map { $_ / ((1<<16)-1) } $gc->red, $gc->green, $gc->blue;
+	\@c;
+      };
+    } else {
+      $default = Gimp::canonicalize_color($default // [0.8,0.6,0.1]);
+      $a = new Gimp::UI::ColorButton $desc, 90, 14, $default, 'small-checks';
+#      _instrument($a);
+      $s = sub {
+	$a->set_color(Gimp::canonicalize_color(shift // [0.8,0.6,0.1]));
+      };
+      $g = sub { $a->get_color };
+    }
+    ($a, $s, $g);
   },
   &PF_TOGGLE => sub {
     my $a = new Gtk2::CheckButton;
