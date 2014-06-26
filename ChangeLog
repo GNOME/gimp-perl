@@ -485,7 +485,7 @@
 	* examples/example-net: commented
 	* examples/example-oo:  use Gimp qw(:auto) important! Also,
 	register as a PLUGIN not an EXTENSION.  Works now!
-	* exmaples/fade-alpha: put in the <Image>/Layer/Transparency menu
+	* examples/fade-alpha: put in the <Image>/Layer/Transparency menu
 	* examples/gouge: uncommented 2 registration strings.
 	* examples/guides_to_selection: reworded description, so it will
 	hopefully be a bit more obvious what it does.
@@ -1220,7 +1220,7 @@
 	- enable embedded pod sections in standard register arguments.
         - improved scm2perl ever so slightly.
         - fixed xpm off-by-one bug in embedxpm (and added embedxpm).
-        - fixed off-by-one error in Gimp::Fu and exmaples/PDB.
+        - fixed off-by-one error in Gimp::Fu and examples/PDB.
 
 1.093 Tue Jun 15 21:48:48 CEST 1999
 	- possible workaround for Gimp::Util::gimp_layer_get_position.
