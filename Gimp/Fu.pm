@@ -448,7 +448,7 @@ sub main {
            -i | --interact            let the user edit the values first
 EOF
    print "           -p <procedure> (one of @{[
-      map { my $s = $_->[0]; $s =~ s/^(?:perl_fu|plug_in)_//; $s } @scripts
+      map { $_->[0] =~ s/^(?:perl_fu|plug_in)_//r; } @scripts
    ]})\n" if @scripts > 1;
    print "       script-arguments are\n" if @{($this // [])->[9] // []};
    for(@{($this // [])->[9] // []}) {
