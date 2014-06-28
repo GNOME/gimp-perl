@@ -53,6 +53,7 @@ WriteMakefile(
     Gtk2::Ex::PodViewer	=> 0,
     IO::Scalar		=> 0,
     Web::Scraper	=> 0,
+    HTML::Entities	=> 0,
   },
   META_MERGE => {
     "meta-spec" => { version => 2 },
