@@ -1,9 +1,16 @@
-Items as of 2014-04-29 (by Ed J)
+Items as of 2014-06-30 (by Ed J)
 * gimp-plugins-refresh: load is
   app/plug-in/gimppluginmanager.c:gimp_plug_in_manager_query_new, closedown
   is ./app/plug-in/gimppluginmanager.c:gimp_plug_in_manager_exit
   - issue with removing menus, probably stored in _plug_in data
   PDB call added in tools/pdbgen/pdb/gimp.pdb
+* Progress bar in UI:
+  - adding $code to Gimp::UI::interact so the interact can run the code itself;
+  - adding a Gimp::UI::ProgressBar;
+  - allowing the UI to keep updating itself while the code runs - probably
+    with a Gimp::proc_hook, registered when interact starts and $code is
+    defined, called every time a PDB call is made, to process all pending
+    UI events.
 * e/fade-alpha should generate buttons, not hardcode
 * Gimp/Lib.xs is huge, and not very XS-y - lots of it is manually
   pushing GIMP data structures onto perl stack and vice versa. Figure
@@ -16,9 +23,6 @@ Items as of 2014-04-29 (by Ed J)
 * Restructure dirs so all libs under lib/ using ExtUtils::MakeMaker::BigHelper
 * http://search.cpan.org/dist/Glib-Object-Introspection/
 * Add Browse to console - plug-ins/script-fu/script-fu-console.c
-* registry_viewer should use threads: http://www.perlmonks.org/?node_id=470661
-  http://perldoc.perl.org/perlthrtut.html#Controlling-access:-lock%28%29
-  http://gtk2-perl.sourceforge.net/doc/pod/Gtk2.html#INITIALIZATION
 * interactive collab image-editing:
   http://users.telenet.be/blendix/verse/#gimp_plugin
   https://github.com/verse/verse/wiki/Tutorial-Simple-C-Verse-Client
