@@ -37,11 +37,7 @@ $pkg->add_pm(map { ($_ => "\$(INST_LIB)/$_") } qw(Gimp.pm));
 $pkg->save_config('Gimp/IFiles.pm');
 
 WriteMakefile(
-  dist	=> {
-    PREOP	=> 'make setver && chmod -R u=rwX,go=rX . ;',
-    COMPRESS	=> 'gzip -9v',
-    SUFFIX	=> '.gz',
-  },
+  dist	=> { PREOP => 'make setver && chmod -R u=rwX,go=rX . ;' },
   MIN_PERL_VERSION => '5.014001',
   PREREQ_PM	=> {
     Gtk2		=> 1.0,
