@@ -19,6 +19,10 @@ my %KEYVAL2HANDLER = (
   $Gtk2::Gdk::Keysyms{KP_Down} => \&key_down,
   $Gtk2::Gdk::Keysyms{Down} => \&key_down,
 );
+my @INIT_COMMANDS = (
+  '($i) = Gimp::Image->list',
+  '($l) = $i->get_layers if $i',
+);
 my @history;
 my $history_index = 0;
 
@@ -28,7 +32,9 @@ podregister {
   $window->signal_connect('delete_event' => sub { Gtk2->main_quit; });
   $window->set_border_width(5);
   $window->set_title($TITLE);
-  $window->add(ret_vbox($INIT_TEXT));
+  my ($buffer, $vbox) = make_vbox($INIT_TEXT);
+  for my $line (@INIT_COMMANDS) { gui_process_command($buffer, $line); }
+  $window->add($vbox);
   $window->show;
   Gtk2->main;
 };
@@ -43,7 +49,12 @@ sub key_return {
   return if $line =~ m/^\s*$/; # ignore empty lines
   push @history, $line unless @history > 0 and $line eq $history[-1];
   $history_index = @history;
-  $buffer->insert($buffer->get_end_iter, "\n".process_input($line)); 
+  gui_process_command($buffer, $line);
+}
+
+sub gui_process_command {
+  my ($buffer, $line) = @_;
+  $buffer->insert($buffer->get_end_iter, "\n".process_input($line));
 }
 
 sub entry_newtext {
@@ -64,7 +75,7 @@ sub key_down {
   entry_newtext($e, $history[++$history_index] // '');
 }
 
-sub ret_vbox {
+sub make_vbox {
   my ($text) = @_;
   my $vbox = Gtk2::VBox->new(FALSE,0);
 
@@ -108,7 +119,7 @@ sub ret_vbox {
   $vbox->pack_start($hbox,FALSE,TRUE,4);
   $vbox->set_focus_child($hbox);
   $vbox->show_all;
-  return $vbox;
+  return ($buffer, $vbox);
 }
 
 sub process_input {
@@ -139,13 +150,18 @@ perl_fu_console - Gimp-Perl console
 
 =head1 DESCRIPTION
 
-Console for running Gimp-Perl commands and seeing output.
+Console for running Gimp-Perl commands and seeing output. Runs a couple
+of commands for you on startup, setting C<$i> to the current image,
+if any, and C<$l> to that image's active layer.
+
+Be warned that for many operations, the display(s) will not be updated,
+and you'll need to do C<Gimp-E<gt>displays_flush> to see changes.
 
 Try this:
 
- $i = Gimp::Plugin->inner_bevel('Arial', 80, "Perl", 'red', 'purple', 132, 30, 7, 2)
- Gimp::Display->new($i)
- $i->get_layers
+ $b = Gimp::Plugin->inner_bevel('Arial', 80, "Perl", 'red', 'purple', 132, 30, 7, 2)
+ Gimp::Display->new($b)
+ $b->get_layers
 
 You can run the console from the command line, and it will work in
 "batch mode":
