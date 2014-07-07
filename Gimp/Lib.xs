@@ -1551,7 +1551,7 @@ PPCODE:
       i < nparams ? __("not enough") : __("too many"),
       proc_name,
       nparams,
-      i
+      items - 1 /* -1 because 0th is proc_name */
     );
 
     if (nparams)
