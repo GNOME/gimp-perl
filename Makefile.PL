@@ -9,7 +9,7 @@ require './config.pl';
 
 sub MY::postamble {
    my $self=shift;
-   <<EOF;
+   <<'EOF';
 install-po:
 	cd po && \$(MAKE) install
 
@@ -22,7 +22,7 @@ tags: .
 
 # set \$VERSION in all modules
 setver:
-	\$(PERL) -pi -e 's/^(\\s*(?:our)?\\s*\\\$\$VERSION\\s*=\\s*).*;/\$\${1}"\$(VERSION)";/' Gimp/*.pm UI/*.pm Net/*.pm
+	$(PERL) -pi -e 's/^(\s*(?:our)?\s*\$$VERSION\s*=\s*)[^a-z]*;/$${1}"$(VERSION)";/' Gimp/*.pm UI/*.pm Net/*.pm
 
 EOF
 }
