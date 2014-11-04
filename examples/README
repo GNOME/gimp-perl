@@ -8,9 +8,5 @@ http://www.ualberta.ca/~cwant/gimp/postprocess.html
 	Using Gimp-Perl for animation post-processing; some very neat effects
 	produced here.
 
-http://bbgallery.sourceforge.net/
-	Gimp-Perl usage to create thumbnail gallerys.  No idea if its supported
-	for Gimp-Perl 2.0 or not.
-
-http://imagic.weizmann.ac.il/~dov/gimp/perl-tut-2.0/
-	Dov Grobgeld's excellent intro to Gimp-Perl, updated for 2.0
+http://www.gimp.org/tutorials/Basic_Perl/
+	Dov Grobgeld's excellent intro to Gimp-Perl, updated for 2.31
