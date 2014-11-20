@@ -622,6 +622,7 @@ my %PF2INFO = (
 sub interact {
   warn __PACKAGE__ . "::interact(@_)" if $Gimp::verbose >= 2;
   my ($function, $blurb, $help, $params, $menupath, $code) = splice @_, 0, 6;
+  my ($silent_vals, $start_vals) = @_;
   my (@getvals, @setvals, @lastvals, @defaults);
   my $helpwin;
 
@@ -651,7 +652,7 @@ sub interact {
   my $row = 0;
   for(@$params) {
     my ($type,$name,$desc,$default,$extra)=@$_;
-    my ($value)=shift;
+    my ($value)=shift @$start_vals;
     $value=$default unless defined $value;
     die sprintf __"Unsupported argumenttype %s for %s\n", $type, $name
       unless $PF2INFO{$type};
@@ -689,7 +690,6 @@ sub interact {
   $button->signal_connect(clicked => sub {
     $mainloop->quit;
   });
-  my @uservals;
   can_default $button 1;
   $button = $w->add_button('gtk-ok', 1);
   $button->signal_connect(clicked => sub {
@@ -710,10 +710,11 @@ sub interact {
   show_all $w;
   $mainloop->run;
   die $exception_text if $exception_text;
-  @uservals = map {&$_} @getvals if $res;
+  my @input_vals = map {&$_} @getvals if $res;
+  my @return_vals = $code->(@$silent_vals, @input_vals) if $res and $code;
   $w->destroy;
-  return unless $res;
-  return (1, @uservals);
+  return (0, \@input_vals, []) unless $res;
+  return (1, \@input_vals, \@return_vals);
 }
 
 1;
@@ -744,13 +745,11 @@ C<examples/example-no-fu>.
  $button = new Gimp::UI::GradientSelect;
 
  # if $code = undef, just run the UI and return the Ok/Cancel and values
- ($result, @new_vals) = Gimp::UI::interact(
-   $functionname, $blurb, $help, $params, $menupath, undef, @previous_vals
+ ($result, \@input_vals, \@return_vals) = Gimp::UI::interact(
+   $functionname, $blurb, $help, $params, $menupath, $code,
+   \@silent_vals, # don't show in UI or return in \@input_vals
+   \@start_vals, # do show in UI and return in \@input_vals
  ); # $result = true if "Ok", false if "Cancel"
-
- @return_vals = Gimp::UI::interact(
-   $functionname, $blurb, $help, $params, $menupath, \&code, @previous_vals
- );
 
 =back
 

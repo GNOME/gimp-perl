@@ -230,10 +230,11 @@ Gimp::on_net {
       push @$params, [
 	 PF_FILE, 'gimp_fu_outputfile', 'Output file', $latest_imagefile
       ] unless $outputfile;
-      (my $res,@args)=interact(
-	$function, $blurb, $help, $params, $menupath, undef, @args
+      (my $res, my $input_vals, undef)=interact(
+	$function, $blurb, $help, $params, $menupath, undef, [], \@args
       );
       return unless $res;
+      @args = @$input_vals;
       $outputfile = pop @args unless $outputfile;
    }
    my $input_image = $args[0] if ref $args[0] eq "Gimp::Image";
@@ -300,7 +301,14 @@ sub make_ui_closure {
    sub {
       warn "$$-Gimp::Fu closure: (@_)\n" if $Gimp::verbose >= 2;
       $run_mode = defined($menupath) ? shift : Gimp::RUN_NONINTERACTIVE;
-      my(@pre,@defaults,@lastvals);
+      if (
+	 $run_mode != Gimp::RUN_NONINTERACTIVE and
+	 $run_mode != Gimp::RUN_INTERACTIVE and
+         $run_mode != Gimp::RUN_WITH_LAST_VALS
+      ) {
+         die __"run_mode must be INTERACTIVE, NONINTERACTIVE or RUN_WITH_LAST_VALS\n";
+      }
+      my @pre;
 
       # set default arguments
       for (0..$#{$params}) {
@@ -329,10 +337,12 @@ sub make_ui_closure {
          }
       }
       warn "perlsub: rm=$run_mode" if $Gimp::verbose >= 2;
+      warn "$$-Gimp::Fu-generated sub: $function(",join(",",(@pre,@_)),")\n"
+	 if $Gimp::verbose >= 2;
+      my @retvals;
       if ($run_mode == Gimp::RUN_NONINTERACTIVE) {
-         # nop
-      } elsif ($run_mode == Gimp::RUN_INTERACTIVE
-          || $run_mode == Gimp::RUN_WITH_LAST_VALS) {
+	 @retvals = $code->(@pre, @_);
+      } else {
          my $fudata = $Gimp::Data{"$function/_fu_data"};
 	 if ($fudata) {
 	    my $data_savetime = shift @$fudata;
@@ -345,37 +355,28 @@ sub make_ui_closure {
 	    require Data::Dumper;
 	    warn "$$-retrieved fudata: ", Data::Dumper::Dumper($fudata);
 	 }
-
          if ($run_mode == Gimp::RUN_WITH_LAST_VALS && $fudata) {
-            @_ = @$fudata;
-         } else {
-            if (@_) {
-               # prevent the standard arguments from showing up in interact
-               my @hide = splice @$params, 0, scalar @pre;
-
-               my $res;
-               ($res,@_) = interact(
-		  $function, $blurb, $help, $params, $menupath, undef, @$fudata
-	       );
-               return (undef) x @$results unless $res;
-
-               unshift @$params, @hide;
-            }
+	    @retvals = $code->(@pre, @$fudata);
+         } elsif (!@_) {
+	    @retvals = $code->(@pre, @_);
+	 } else {
+	    # prevent the standard arguments from showing up in interact
+	    my @hide = splice @$params, 0, scalar @pre;
+	    my ($res, $input_vals, $return_vals) = interact(
+	       $function, $blurb, $help, $params, $menupath, $code,
+	       \@pre, $fudata,
+	    );
+	    return (undef) x @$results unless $res;
+	    unshift @$params, @hide;
+	    @_ = @$input_vals;
+	    @retvals = @$return_vals;
          }
-      } else {
-         die __"run_mode must be INTERACTIVE, NONINTERACTIVE or RUN_WITH_LAST_VALS\n";
+	 if ($Gimp::verbose >= 2) {
+	    require Data::Dumper;
+	    warn "$$-storing fudata: ", Data::Dumper::Dumper(\@_);
+	 }
+	 $Gimp::Data{"$function/_fu_data"}=[time, @_];
       }
-
-      if ($Gimp::verbose >= 2) {
-	 require Data::Dumper;
-	 warn "$$-storing fudata: ", Data::Dumper::Dumper(\@_);
-      }
-      $Gimp::Data{"$function/_fu_data"}=[time, @_];
-
-      warn "$$-Gimp::Fu-generated sub: $function(",join(",",(@pre,@_)),")\n"
-	 if $Gimp::verbose >= 2;
-
-      my @retvals = $code->(@pre,@_);
       Gimp->displays_flush;
       wantarray ? @retvals : $retvals[0];
    };
