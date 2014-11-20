@@ -5,7 +5,6 @@ Items as of 2014-06-30 (by Ed J)
   - issue with removing menus, probably stored in _plug_in data
   PDB call added in tools/pdbgen/pdb/gimp.pdb
 * Progress bar in UI:
-  - adding $code to Gimp::UI::interact so the interact can run the code itself;
   - adding a Gimp::UI::ProgressBar;
   - allowing the UI to keep updating itself while the code runs - probably
     with a Gimp::proc_hook, registered when interact starts and $code is

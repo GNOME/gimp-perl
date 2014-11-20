@@ -621,7 +621,7 @@ my %PF2INFO = (
 
 sub interact {
   warn __PACKAGE__ . "::interact(@_)" if $Gimp::verbose >= 2;
-  my ($function, $blurb, $help, $params, $menupath) = splice @_, 0, 5;
+  my ($function, $blurb, $help, $params, $menupath, $code) = splice @_, 0, 6;
   my (@getvals, @setvals, @lastvals, @defaults);
   my $helpwin;
 
@@ -689,6 +689,7 @@ sub interact {
   $button->signal_connect(clicked => sub {
     $mainloop->quit;
   });
+  my @uservals;
   can_default $button 1;
   $button = $w->add_button('gtk-ok', 1);
   $button->signal_connect(clicked => sub {
@@ -709,10 +710,10 @@ sub interact {
   show_all $w;
   $mainloop->run;
   die $exception_text if $exception_text;
-  my @retvals = map {&$_} @getvals if $res;
+  @uservals = map {&$_} @getvals if $res;
   $w->destroy;
   return unless $res;
-  return (1, @retvals);
+  return (1, @uservals);
 }
 
 1;
@@ -742,9 +743,14 @@ C<examples/example-no-fu>.
  $button = new Gimp::UI::BrushSelect;
  $button = new Gimp::UI::GradientSelect;
 
+ # if $code = undef, just run the UI and return the Ok/Cancel and values
  ($result, @new_vals) = Gimp::UI::interact(
-   $functionname, $blurb, $help, $params, $menupath, @previous_vals
+   $functionname, $blurb, $help, $params, $menupath, undef, @previous_vals
  ); # $result = true if "Ok", false if "Cancel"
+
+ @return_vals = Gimp::UI::interact(
+   $functionname, $blurb, $help, $params, $menupath, \&code, @previous_vals
+ );
 
 =back
 

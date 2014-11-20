@@ -230,7 +230,9 @@ Gimp::on_net {
       push @$params, [
 	 PF_FILE, 'gimp_fu_outputfile', 'Output file', $latest_imagefile
       ] unless $outputfile;
-      (my $res,@args)=interact($function,$blurb,$help,$params,$menupath,@args);
+      (my $res,@args)=interact(
+	$function, $blurb, $help, $params, $menupath, undef, @args
+      );
       return unless $res;
       $outputfile = pop @args unless $outputfile;
    }
@@ -352,7 +354,9 @@ sub make_ui_closure {
                my @hide = splice @$params, 0, scalar @pre;
 
                my $res;
-               ($res,@_)=interact($function,$blurb,$help,$params,$menupath,@$fudata);
+               ($res,@_) = interact(
+		  $function, $blurb, $help, $params, $menupath, undef, @$fudata
+	       );
                return (undef) x @$results unless $res;
 
                unshift @$params, @hide;
