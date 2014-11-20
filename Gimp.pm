@@ -195,6 +195,9 @@ sub callback {
   } elsif ($type eq "-quit") {
     @cb = cbchain(qw(quit));
     for (@cb) { &$_ }
+  } elsif ($type eq "-proc") {
+    @cb = cbchain(qw(proc));
+    for (@cb) { &$_ }
   }
 }
 
@@ -208,6 +211,7 @@ sub on_net  (&) { register_callback "net"  , $_[0] }
 sub on_lib  (&) { register_callback "lib"  , $_[0] }
 sub on_run  (&) { register_callback "run"  , $_[0] }
 sub on_quit  (&) { register_callback "quit"  , $_[0] }
+sub on_proc  (&) { register_callback "proc"  , $_[0] }
 
 sub main {
    no strict 'refs';
@@ -681,6 +685,10 @@ plug-in writer.  This does not apply if using C<Gimp::Fu>, as these are
 done automatically. These are specifically how your program can fit into
 the model of query, run and quit hooks.
 
+The additional C<on_proc> is how to supply code that will be run every
+time a GIMP PDB call is made. This is mainly useful for updating the
+progress bar on a plugin.
+
 =head3 Gimp::on_query
 
 Do any activities that must be performed at GIMP startup, when the
@@ -704,6 +712,10 @@ Run when anything calls it (network or lib).
 
 Run when plugin terminates - allows a plugin (or extension, see below)
 to clean up after itself before it actually exits.
+
+=head3 Gimp::on_proc
+
+Run each time a PDB call is made. Currently only operates in "lib mode".
 
 =head1 OUTLINE OF A GIMP EXTENSION
 

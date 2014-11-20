@@ -1488,6 +1488,8 @@ PPCODE:
   )
     croak (__("gimp procedure '%s' not found"), proc_name);
 
+  try_call ("-proc");
+
   int runmode_firstparam = nparams
 		&& params[0].type == GIMP_PDB_INT32
 		&& (!strcmp (params[0].name, "run_mode") || !strcmp (params[0].name, "run-mode"));

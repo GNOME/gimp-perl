@@ -6,10 +6,6 @@ Items as of 2014-06-30 (by Ed J)
   PDB call added in tools/pdbgen/pdb/gimp.pdb
 * Progress bar in UI:
   - adding a Gimp::UI::ProgressBar;
-  - allowing the UI to keep updating itself while the code runs - probably
-    with a Gimp::proc_hook, registered when interact starts and $code is
-    defined, called every time a PDB call is made, to process all pending
-    UI events.
 * e/fade-alpha should generate buttons, not hardcode
 * Gimp/Lib.xs is huge, and not very XS-y - lots of it is manually
   pushing GIMP data structures onto perl stack and vice versa. Figure
