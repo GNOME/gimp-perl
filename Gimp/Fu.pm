@@ -134,7 +134,7 @@ sub find_script {
 my ($latest_image, $latest_imagefile);
 
 sub string2pf($$) {
-   my ($s, $type, $name, $desc) = ($_[0], @{$_[1]});
+   my ($s, $type, $name, $desc) = ($_[0] // '', @{$_[1]});
    if($pf2info{$type}->[2] or $type == PF_RADIO) {
       $s;
    } elsif($pf2info{$type}->[0] =~ /integer/) {
