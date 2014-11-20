@@ -242,14 +242,17 @@ Gimp::on_net {
       my @images = grep { defined $_ and ref $_ eq "Gimp::Image" } @retvals;
       if (@images) {
 	 for my $i (0..$#images) {
-	    my $path = sprintf $outputfile, $i;
+	    my $path = $outputfile =~ /%d/
+	       ? sprintf $outputfile, $i : $outputfile;
 	    if (@images > 1 and $path eq $outputfile) {
 	       $path=~s/\.(?=[^.]*$)/$i./; # insert number before last dot
 	    }
 	    save_image($images[$i],$path);
 	 }
       } elsif ($input_image) {
-	 save_image($input_image, sprintf $outputfile, 0);
+	 my $path = $outputfile =~ /%d/
+	    ? sprintf $outputfile, 0 : $outputfile;
+	 save_image($input_image, $path);
       } else {
 	 die "$0: outputfile specified but plugin returned no image and no input image\n" unless $menupath =~ /^<Toolbox>/;
       }
