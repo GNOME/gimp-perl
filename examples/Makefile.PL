@@ -1,10 +1,9 @@
 require 5.008;
 use ExtUtils::MakeMaker;
 use File::Basename;
+use Alien::Gimp;
 use strict;
 use warnings;
-
-require '../config.pl';
 
 # list of standard plugins
 our %cfg;
@@ -69,11 +68,12 @@ EOF
 undef &MY::postamble; # suppress warning
 *MY::postamble = sub {
    my $self=shift;
-   my $UT = "$cfg{GIMPTOOL} --uninstall-admin-bin";
+   my $UT = Alien::Gimp->gimptool . " --uninstall-admin-bin";
+   my $plugindir = Alien::Gimp->gimpplugindir;
    <<EOF;
 
 INST_PLUGINS = ../blib/plugins
-GIMP_PLUGINS = $cfg{gimpplugindir}
+GIMP_PLUGINS = $plugindir
 
 \$(INST_PLUGINS)\$(DFSEP).exists :: Makefile.PL
 	\$(NOECHO) \$(MKPATH) \$(INST_PLUGINS)
@@ -101,8 +101,7 @@ EOF
 WriteMakefile(
     'NAME'	=> 'Gimp',
     'VERSION_FROM' => '../Gimp.pm',
-    'clean'	=> { FILES => qq(Makefile.old) },
     NO_MYMETA	=> 1,
     NO_META	=> 1,
-    macro	=> { GTINSTALL => "$cfg{GIMPTOOL} --install-admin-bin" },
+    macro	=> { GTINSTALL => Alien::Gimp->gimptool . " --install-admin-bin" },
 );

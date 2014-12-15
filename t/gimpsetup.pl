@@ -10,11 +10,11 @@ use strict;
 use Config;
 use File::Temp;
 use IO::All;
-require Gimp::Config;
+require Alien::Gimp;
 
 our $DEBUG = 0 unless defined $DEBUG;
 
-my $sysplugins = $Gimp::Config{gimpplugindir};
+my $sysplugins = Alien::Gimp->gimpplugindir;
 die "plugins dir: $!" unless -d $sysplugins;
 die "script-fu not executable: $!" unless -x "$sysplugins/script-fu";
 

@@ -1,11 +1,6 @@
 require 5.008;
 use ExtUtils::Depends;
-use Data::Dumper qw(Dumper);
 use ExtUtils::MakeMaker;
-use IO::All;
-
-our %cfg;
-require './config.pl';
 
 sub MY::postamble {
    my $self=shift;
@@ -27,29 +22,30 @@ setver:
 EOF
 }
 
-my $cfg = io("Gimp/Config.pm.in")->all or die "Gimp/Config.pm.in: $!\n";
-$cfg =~ s/#CFG#/Data::Dumper->Dump([\%cfg], ['*Gimp::Config'])/e;
-io("Gimp/Config.pm")->print($cfg) or die "Gimp/Config.pm: $!\n";
-
-my $pkg = new ExtUtils::Depends Gimp, Gtk2;
-$pkg->set_inc($cfg{GIMP_CFLAGS});
+my $pkg = ExtUtils::Depends->new(qw(Gimp Alien::Gimp Gtk2 PDL));
 $pkg->add_pm(map { ($_ => "\$(INST_LIB)/$_") } qw(Gimp.pm));
+$pkg->add_typemaps("typemap");
 $pkg->save_config('Gimp/IFiles.pm');
 
 WriteMakefile(
+  NAME	=> 'Gimp',
+  VERSION_FROM => 'Gimp.pm',
   dist	=> { PREOP => 'make setver && chmod -R u=rwX,go=rX . ;' },
   MIN_PERL_VERSION => '5.014001',
   PREREQ_PM	=> {
     Gtk2		=> 1.0,
-    PDL			=> 2.0,
+    'PDL'		=> '2.007_04',
     Data::Dumper	=> 2.0,
     IO::All		=> 0,
-    ExtUtils::Depends	=> 0,
-    ExtUtils::PkgConfig	=> 0,
+    ExtUtils::Depends	=> '0.402',
+    'Alien::Gimp'	=> '0.01',
     Gtk2::Ex::PodViewer	=> 0,
     IO::Scalar		=> 0,
     Web::Scraper	=> 0,
     HTML::Entities	=> 0,
+  },
+  TEST_REQUIRES	=> {
+    'Test::More'	=> '0.88',
   },
   META_MERGE => {
     "meta-spec" => { version => 2 },
@@ -62,10 +58,7 @@ WriteMakefile(
     },
   },
   DIR	=> [ qw/Gimp Net UI examples/ ],
-  NAME	=> 'Gimp',
-  VERSION_FROM => 'Gimp.pm',
   EXE_FILES => [ map { "utils/$_" } qw(gimpdoc xcftopnm embedxpm scm2perl) ],
-  realclean	=> { FILES => "Makefile" },
-  clean	=> { FILES => "Makefile.old stamp-h Gimp/Config.pm Gimp/IFiles.pm" },
+  clean	=> { FILES => "Gimp/IFiles.pm" },
   $pkg->get_makefile_vars,
 );

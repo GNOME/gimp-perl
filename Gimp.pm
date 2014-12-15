@@ -1227,5 +1227,4 @@ Ed J (2.3000_01+)
 =head1 SEE ALSO
 
 perl(1), gimp(1), L<Gimp::Fu>, L<Gimp::PixelRgn>, L<Gimp::UI>,
-L<Gimp::Util>, L<Gimp::Data>, L<Gimp::Config>, L<Gimp::Net>, and
-L<Gimp::Lib>.
+L<Gimp::Util>, L<Gimp::Data>, L<Gimp::Net>, and L<Gimp::Lib>.

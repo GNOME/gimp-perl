@@ -1,21 +1,15 @@
+use strict;
+use warnings;
 use ExtUtils::MakeMaker;
-use ExtUtils::Depends;
-require PDL::Core::Dev;
 
-require '../config.pl';
-
-my $pkg = new ExtUtils::Depends Gimp;
-$pkg->set_inc($cfg{GIMP_CFLAGS}.' '.&PDL::Core::Dev::PDL_INCLUDE);
-$pkg->set_libs("$cfg{GIMP_LIBS} $cfg{INTLLIBS}");
-$pkg->add_typemaps("$topdir/typemap", &PDL::Core::Dev::PDL_TYPEMAP);
-$pkg->add_pm(
-  map { ($_ => "\$(INST_LIB)/Gimp/$_") } grep { $_ ne 'IFiles.pm' } glob '*.pm'
-);
+my $pkg = ExtUtils::Depends->new(qw(Gimp Alien::Gimp Gtk2 PDL));
+$pkg->add_typemaps("../typemap");
+$pkg->set_inc('-I.. -Ddatadir=""');
 
 WriteMakefile(
     'NAME'	=> 'Gimp::Lib',
-    'VERSION_FROM' => '../Gimp.pm',
-    $pkg->get_makefile_vars,
+    'VERSION_FROM' => 'Lib.pm',
     NO_MYMETA	=> 1,
     NO_META	=> 1,
+    $pkg->get_makefile_vars,
 );

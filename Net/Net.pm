@@ -105,7 +105,7 @@ sub start_server {
       unless ($server_fh, my $gimp_fh) =
 	 IO::Socket->socketpair(AF_UNIX, SOCK_STREAM, PF_UNSPEC);
    # do it here so it is done only once
-   require Gimp::Config;
+   require Alien::Gimp;
    $gimp_pid = fork;
    croak __"unable to fork: $!" if $gimp_pid < 0;
    if ($gimp_pid > 0) {
@@ -120,7 +120,7 @@ sub start_server {
      &Gimp::RUN_NONINTERACTIVE,
      fileno($gimp_fh),
      int($Gimp::verbose);
-   my @exec_args = ($Gimp::Config{GIMP}, qw(--no-splash --console-messages));
+   my @exec_args = (Alien::Gimp->gimp, qw(--no-splash --console-messages));
    push @exec_args, "--no-data" if $opt=~s/(^|:)no-?data//;
    push @exec_args, "-i" unless $opt=~s/(^|:)gui//;
    push @exec_args, "--verbose" if $Gimp::verbose >= 2;

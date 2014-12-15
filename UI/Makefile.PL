@@ -1,18 +1,15 @@
+use strict;
+use warnings;
 use ExtUtils::MakeMaker;
-use ExtUtils::Depends;
 
-require '../config.pl';
-
-my $pkg = new ExtUtils::Depends Gimp, Gtk2;
-$pkg->set_inc($cfg{GIMP_CFLAGS});
-$pkg->set_libs($cfg{GIMP_LIBS});
-$pkg->add_pm('UI.pm' => '$(INST_LIBDIR)/UI.pm');
-$pkg->add_typemaps("$topdir/typemap");
+my $pkg = ExtUtils::Depends->new(qw(Gimp Alien::Gimp Gtk2 PDL));
+$pkg->add_typemaps("../typemap");
+$pkg->set_inc('-I.. -Ddatadir=""');
 
 WriteMakefile(
   'NAME'	=> 'Gimp::UI',
-  'VERSION_FROM' => '../Gimp.pm',
-  $pkg->get_makefile_vars,
+  'VERSION_FROM' => 'UI.pm',
   NO_MYMETA	=> 1,
   NO_META	=> 1,
+  $pkg->get_makefile_vars,
 );

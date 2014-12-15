@@ -179,7 +179,7 @@ sub do_file {
 }
 
 podregister {
-  require Gimp::Config;
+  require Alien::Gimp;
   require Gtk2::SimpleList;
   require File::Temp;
   require URI;
@@ -281,9 +281,10 @@ podregister {
                sub {
                  my ($file, $dir) = @_;
                  $status->set_text('installing: '.$f->{name}||$f->{desc});
-                 die ("couldn't $Gimp::Config{GIMPTOOL} ",
+		 my $tool = Alien::Gimp->gimptool;
+                 die ("couldn't $tool ",
                       "--install-script $file: $!")
-                  unless system ($Gimp::Config{GIMPTOOL},
+                 unless system ($tool,
                                  '--install-script', $file) == 0;
                  $status->set_text('installed, refreshing');
                  Gimp->script_fu_refresh();
