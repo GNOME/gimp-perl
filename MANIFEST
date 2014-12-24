@@ -12,7 +12,6 @@ README
 README.win32
 TODO
 Gimp/ColorDB.pm
-Gimp/Config.pm.in
 Gimp/Constant.pm
 Gimp/Data.pm
 Gimp/Extension.pm
@@ -29,10 +28,8 @@ Net/Makefile.PL
 Net/Net.pm
 Net/Net.xs
 UI/Makefile.PL
-UI/typemap
 UI/UI.pm
 UI/UI.xs
-config.pl
 examples/Makefile.PL
 examples/Perl-Server
 examples/Perl-Console
