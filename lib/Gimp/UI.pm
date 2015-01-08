@@ -711,6 +711,7 @@ sub interact {
   $mainloop->run;
   die $exception_text if $exception_text;
   my @input_vals = map {&$_} @getvals if $res;
+  Gimp::on_proc(sub { warn "proc(@_)" });
   my @return_vals = $code->(@$silent_vals, @input_vals) if $res and $code;
   $w->destroy;
   return (0, \@input_vals, []) unless $res;

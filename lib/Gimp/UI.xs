@@ -443,6 +443,14 @@ BOOT:
 #void        gimp_pixmap_set      (GimpPixmap  *pixmap,
 #				  gchar      **xpm_data);
 
+MODULE = Gimp::UI PACKAGE = Gimp::UI::ProgressBar PREFIX = gimp_progress_bar_
+
+BOOT:
+	gperl_register_object (GIMP_TYPE_PROGRESS_BAR, "Gimp::UI::ProgressBar");
+
+GtkWidget * gimp_progress_bar_new (SV *unused_class)
+	C_ARGS:
+
 MODULE = Gimp::UI	PACKAGE = Gimp::UI::SizeEntry	PREFIX = gimp_size_entry_
 
 BOOT:
