@@ -12,9 +12,9 @@
 #include "perl.h"
 #include "XSUB.h"
 #define NEED_newCONSTSUB
-#include "gppport.h"
+#include "Gimp/gppport.h"
 
-#include "perl-intl.h"
+#include "Gimp/perl-intl.h"
 
 /* FIXME */
 /* dirty is used in gimp.h.  */
@@ -27,7 +27,7 @@
 # include <signal.h>
 #endif
 
-#include "gimp-perl.h"
+#include "Gimp/gimp-perl.h"
 
 MODULE = Gimp	PACKAGE = Gimp
 
