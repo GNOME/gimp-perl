@@ -86,7 +86,7 @@ GIMP_PLUGINS = $plugindir
 
 install :: install-plugins
 
-pure_all :: pure_plugins
+pure_nolink :: pure_plugins
 
 pure_plugins : @{[ map { "\$(INST_PLUGINS)/".basename($_) } @pins ]}
 
@@ -100,7 +100,7 @@ EOF
 
 WriteMakefile(
     'NAME'	=> 'Gimp',
-    'VERSION_FROM' => '../Gimp.pm',
+    'VERSION_FROM' => '../lib/Gimp.pm',
     NO_MYMETA	=> 1,
     NO_META	=> 1,
     macro	=> { GTINSTALL => Alien::Gimp->gimptool . " --install-admin-bin" },

@@ -20,7 +20,7 @@
 #define pTHX_
 #endif
 
-#include "../perl-intl.h"
+#include "perl-intl.h"
 
 /* dirty is used in gimp.h AND in perl < 5.005 or with PERL_POLLUTE.  */
 #ifdef dirty

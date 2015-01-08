@@ -11,7 +11,7 @@
 # define printf PerlIO_stdoutf
 #endif
 
-#include "../perl-intl.h"
+#include "perl-intl.h"
 
 #define is_dynamic(sv)				\
 	(strEQ ((sv), "Gimp::Tile")		\
