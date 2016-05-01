@@ -86,7 +86,7 @@ GIMP_PLUGINS = $plugindir
 
 install :: install-plugins
 
-pure_nolink :: pure_plugins
+pure_all :: pure_plugins
 
 pure_plugins : @{[ map { "\$(INST_PLUGINS)/".basename($_) } @pins ]}
 

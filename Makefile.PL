@@ -50,7 +50,7 @@ WriteMakefile(
     HTML::Entities	=> 0,
   },
   CONFIGURE_REQUIRES	=> {
-    'ExtUtils::MakeMaker'	=> '7.05_06', # XSMULTI
+    'ExtUtils::MakeMaker'	=> '7.14', # XSMULTI
   },
   TEST_REQUIRES	=> {
     'Test::More'	=> '0.88',
