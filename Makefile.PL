@@ -29,7 +29,6 @@ mkdir $IDIR unless -d $IDIR;
 $pkg->save_config($IFILES);
 # reinit so no PM which breaks XSMULTI
 $pkg = ExtUtils::Depends->new(qw(Gimp Alien::Gimp Gtk2 PDL));
-# don't know why need -I here, works in EUMM "multi" test without
 $pkg->set_inc(q{-Ddatadir='""'});
 
 WriteMakefile(
