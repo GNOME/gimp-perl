@@ -1,6 +1,106 @@
 Revision history for Perl module Gimp
 
+2.3000_01 2014-04-19 Ed J
+
+    - Make Gimp::Fu scripts run right from command line. Bug 728545
+    - Make Perl-Server be extension, clean up on exit. Bug 728541
+    - Add Gimp::on_quit. Bug 728539
+    - Remove allowing just PF_IMAGE as return parameter. Bug 728538
+    - Delete Gimp::Net::*lock, move constants to XS. Bug 728537
+    - Make ColorDB able to handle spaces in names. Bug 728535
+    - Restore logo.xpm. Bug Bug 728394
+    - Stop Gimp::Fu constantly doing set_trace(0). Bug 728233
+    - Rip out Gimp::logger. Bug 728164
+    - Support ExtUtils::Depends. Bug 728161
+    - Integrate Changes into ChangeLog, delete/rename minor files. Bug 728159
+    - Put Gimp::Fu POD after __END__, check param cache timestamp. Bug 728156
+    - Make Gimp::UI use sliders/spinners for PF_INT*. Bug 728070
+    - Make plugin return values match PDB signature. Bug 728069
+    - Document how to make gimp-perl extension. Bug 728068
+    - Test and document PDL in plugin mode. Bug 725619
+    - Test supplied plugins, delete Gimp::Feature. Bug 727126
+    - Complete move of Perl Server to examples/. Bug 727126
+    - Tools to find deprecated GIMP procs, changes of those. Bug 727127
+    - Update examples/windify to GIMP 2.8.10. Bug 534130
+    - Remove obsolete Gimp/Compat.pm. Bug 727128
+    - Eliminate unnecessary stderr now exceptions handled. Bug 727108
+    - Fix TODO to use utf8. Bug 727122
+    - Gimp/Module.pm goes, MANIFEST tidied. Bug 727106
+    - Get rid of old enum stuff. Bug 727098
+    - Load enums from GIMP, not hardcoding. Bug 502556
+    - Tidy Gimp::Net code. Bug 727002
+    - Namespace pollution iff ':pollute'. Bug 726952
+    - Makefile.PL's were putting libs before .o. Bug 726930
+    - All net-mode code into Gimp::Net. Bug 726862
+
+    - Move canonicalize_colour, set_rgb_data and DATA. Bug 726843
+
+    - Use GIMP font selector, not Gtk one. Bug 502558
+
+    - Examples had syntax, old menu locations. Bug 526998
+
+    - 'install' target now correctly installs plugins. Bug 574572
+
+    - Pass $Gimp::verbose in Gimp::Net mode. Bug 726751
+
+    - Plugin empty input params fixed. Bug 726488
+
+    - Eliminate some memory leaking. Bug 525016
+
+    - PF_ADJUSTMENT default handling now correct. Bug 144564
+
+    - Plugin exceptions now passed correctly. Bug #726439
+
+    - Plugins return values; some tidying. Bug #726387
+
+    - Use gimp_procedural_db_proc_exists. Bug #726213
+
+    - Test perl plugin functionality. Bug #726085
+
+    - Errors are fatal and reported right. Bug #726084
+
+    - Code/doc tidy-up - no substantive changes. Fixes bug #726082.
+
+    - Update to ITEM and VECTORS. Added test of changes. Patch by Ed J. Bug #725487
+
+    - Patch by Ed J to update gppport.h and eliminate warnings. Closes bug #725475.
+
+    - Removed execute perms from po/pt.po file.
+
+    - Updated list of files in POTFILE.in using patch from Ed J
+    - Don't assume first colour palette will have 256 colours
+    - Added support for COLORARRAY and VECTORS
+    - updated tests
+    - Make Gimp::Net fail gracefully if gimp-perl fails rather than hanging.
+    - Updated URL for basic GIMP Perl tutorial. Spotted by Ed J. (See bug #722468)
+    - Added ITEM support and allow tests to pass. Fix by Ed J for bug #722430.
+    - Changed format of version number to be more like that of a Perl module.
+    - Generate MYMETA.* files with git repository URLs. Fix bug #721601.
+
 2.3 2014-01-05 Ed J
+
+    - Removed obsolete file. Patch from Ed J closes bug #721506.
+
+    - Corrected and updated some of the information in the README.
+
+    - Updated to require the 2.8 version of GIMP.
+
+    - Fixed compile when building for GIMP 2.8 or later. From changes by Ed J.
+
+    - po/ru.po: converted the file from obsolete KOI8-R to UTF-8
+
+    - Updated project information and corrected an e-mail address.
+
+    - Updated EXE_FILES to refer to location of recently moved executable scripts.
+
+    - Set permissions on colorhtml example script to mark it as executable.
+
+    - Stripped file of bytes which made it get treated as a binary file.
+
+    - Updated example scripts so they no longer use deprecated PDB procedures.
+      NOTE: There might still be some use of deprecated procedures where the
+      procedures are accessed as member functions of object based variables.
+    - Moved some scripts in to a utils directory. Updated MANIFEST and TODO files.
 
   - s?/opt/bin/perl?/usr/bin/perl? on:
     - examples/animate_cells
