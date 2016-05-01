@@ -1,5 +1,66 @@
 Revision history for Perl module Gimp
 
+2.31 2014-06-01
+
+    API:
+    - $Gimp::verbose == 1 only give PDB calls.
+    - Handle undef better in Gimp::UI.
+    - Make ->become return object.
+    - Don't allow use of deprecated PDB procs.
+    - Add gimp_procedural_db_query to Lib.xs.
+    - Gimp::Net Gimp::UI for FONT graceful handling undef default.
+    - set_transient no-op if no UI.
+    - Use Gimp::UI to init GIMP theme.
+    - Use gimp_ui_init.
+
+    Doc:
+    - Doc that $region->data only good in iterator. Also address bug 731935.
+    - Document Gimp::PixelRgn PDL dims.
+    - Meaningful variable description.
+
+    Plugins:
+    - registry_viewer, using IO::Async
+    - iland plugin updates:
+      - iland only set data after finished work.
+      - iland call get_row less.
+      - iland RGB only, work with alpha, merge_shadow only once.
+      - Make iland return created image.
+    - Changes contributed by michele.gherlone@liceoberchet.it:
+      - Iland modification and rewriting
+      - Gallery changes and some defaults modifications
+      - Tidy-up for repdup, stamps, stampify, randomblend, image_tile and triangle plugins
+      - Tidy ups for frame_filter, glowing_steel, goldenmean, warp-sharp
+      - Xachlego tidy up and webify fix
+    - Make gallery work with GIF.
+    - Use correct OO notation on sethspin.
+    - gallerymaker lives under File/Create.
+    - Install image_tile by default.
+    - Simplify saw functions.
+
+    Build:
+    - HTML::Entities needed by Web::Scraper in RV.
+    - Use mkdir as $HOME will always exist.
+
+    Bug fixes:
+    - Protect Gtk2 from NUL by sub-ing. Bug 731935
+    - Make Gimp::UI handle PF_COLOUR when Gimp::Net. Bug 731805
+    - Improve error reporting on Gimp::PixelRgn->new.
+    - Fix string2pf losing %arg for drawable.
+    - run_mode can only be defined.
+    - Tidy up help window.
+    - Make Gimp::UI load Gtk2 with C LC_NUMERIC locale.
+    - Initialise bump_?off, tidy-up.
+    - Use epsilon in colour floating-point comparison. Bug 730958
+    - Since ->become checks validity, no need to do manually.
+    - Gimp::Base->existing and become now check validity; test that.
+    - There is no bucket_fill, only edit_bucket_fill. Use tests!
+    - Make Gimp::Net pass floats as floats using "C" locale.
+    - Use gimp_window_set_transient. Bug 727578.
+    - Data::Dumper needs localised-number protection too - seems all XS do.
+    - More delocalising numbers stored in Gimp::Data.
+    - C types correction.
+    - No parameters, no POD needed.
+
 2.30_05 2014-05-28
 
     - build system: Properly enable _ in $VERSION.
