@@ -1,5 +1,31 @@
 Revision history for Perl module Gimp
 
+2.31_01 2016-05-01
+
+    API:
+    - Add on_proc hook called in lib mode only
+    - Correctly handle returning of selected vals for storing
+    - Add code param to UI::interact
+
+    Doc:
+    - Update examples README with updated tutorial location
+
+    Plugins:
+    - Perl-Console now runs commands on startup.
+
+    Build:
+    - update to proper Changes format
+    - update to use EUMM XSMULTI
+    - remove from MANIFEST MYMETA.* (oops)
+    - Move build system to using Alien::Gimp, unify typemaps
+    - Reduce false positives in make setver.
+    - dist target doesn't need gzip specified.
+
+    Bug fixes:
+    - Avoid 5.21 sprintf warnings if no %d
+    - Avoid uninit warning
+    - If too many args to PDB call, report how many right.
+
 2.31 2014-06-01
 
     API:
