@@ -1,5 +1,27 @@
 Revision history for Perl module Gimp
 
+2.30_02 2014-05-01
+
+    - delete obsolete files
+    - doc improvements
+    - Include text from Dov's github archive.
+    - Doc Gimp::Fu command-line support.
+    - Tidy example docs and param descriptions.
+    - Add dialog scrollbars if necessary.
+    - Improve variable descriptions.
+    - Use Gtk2::Ex::PodViewer
+    - make examples use OO style
+    - Report exceptions in script context.
+    - Fix return-value bug in register.
+    - add_new_layer name more useful. POD after __END__.
+    - Exception-passing now croak() only if not \n$.
+    - doc, implement "podregister" source-filter feature
+    - Gimp::UI use strict, override Glib exception handling
+    - Example plugin with non-Gimp::Fu UI
+    - Make File/Create examples display new images. Bug 728569
+    - Make examples/xachshadows work with alpha-less layer. Bug 728567
+    - Support installing plugins in user GIMP dir. Bug 728566
+
 2.3000_01 2014-04-19 Ed J
 
     - Make Gimp::Fu scripts run right from command line. Bug 728545
