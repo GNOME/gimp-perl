@@ -131,6 +131,8 @@ po/vi.po
 po/zh_CN.po
 po/zh_TW.po
 pxgettext
+t/02-netplugin.t
+t/02-supplied.t
 t/data.t
 t/examples-api.pl
 t/extension.t
@@ -138,11 +140,9 @@ t/gimppod.t
 t/gimpsetup.pl
 t/import.t
 t/load.t
-t/netplugin.t
 t/pdl.t
 t/perlplugin.t
 t/run.t
-t/supplied.t
 utils/embedxpm
 utils/find-deprecated-procs.pl
 utils/gimpdoc

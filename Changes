@@ -20,6 +20,7 @@ Revision history for Perl module Gimp
     - Move build system to using Alien::Gimp, unify typemaps
     - Reduce false positives in make setver.
     - dist target doesn't need gzip specified.
+    - make parallel test run faster by starting slow ones first
 
     Bug fixes:
     - Avoid 5.21 sprintf warnings if no %d
