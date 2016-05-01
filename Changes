@@ -1,5 +1,43 @@
 Revision history for Perl module Gimp
 
+2.30_04 2014-05-24
+
+    - use strict and warnings, and tidy-up.
+    - Autosave2 - reloads files on GIMP start.
+    - No more ignore GUI functions - instead trap exceptions; more idiomatic.
+    - Allow any data in Gimp::Data, not just array-ref.
+    - Update Gimp::Data to GIMP 2.8 parasite procs.
+    - Improve Gimp::Fu cmd-line working - no UI if no params, fix redef warning.
+    - Finish removing plugins.
+    - roundsel licence problem.
+    - translogo obsolete.
+    - blended2 redundant with innerbevel.
+    - Use <Toolbox> where appropriate.
+    - Allow <Toolbox>/(anything).
+    - Remove useless test.
+    - Don't try to DESTROY if socket closed.
+    - Improve handling of non-num when expected num.
+    - Keep TODO up to date.
+    - Update demo extension.
+    - If temp proc no params, don't get from top-level!
+    - Implement G::E::podregister_temp, with Gimp::Fu UI.
+    - Allow fixup_args to eval text for PARAMS/RETVALS.
+    - Make fixup_args also add "perl_fu_" etc.
+    - Run mode added except for <None>, remove from sub params into $*::run_mode.
+    - Reflect multi-level verbose.
+    - Move auto-add of params to Gimp::Pod::fixup_args.
+    - Verbose can go all the way up to 11 now.
+    - Test podregister (and interaction with register)!
+    - LICENSE tidyup.
+    - Deeper ->section[s] methods.
+    - Move to Pod::Simple::SimpleTree.
+    - Add Perl-Console.
+    - Allow ->existing with literal.
+    - drawable_box accidentally ignored param.
+    - Make available Gimp->get_pdb_error.
+    - Gimp::UI uses own mainloop so as not to harm Extension one.
+    - Doc $result return from interact().
+
 2.30_03 2014-05-16
 
     - No "setver" on Gimp.pm itself.
