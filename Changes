@@ -1,5 +1,28 @@
 Revision history for Perl module Gimp
 
+2.30_05 2014-05-28
+
+    - build system: Properly enable _ in $VERSION.
+    - update xach-lego2
+    - Distrib t/data.t.
+    - Include blended2 and translogo in distrib and install.
+    - blended2_translogo_uncorrupted_final3
+    - Add registry_viewer.
+    - Update OO usage docs.
+    - Handle stringification error.
+    - Stringify Gimp::Parasite right.
+    - Implement, test, doc full(er) tied %Gimp::Data.
+    - Test Gimp::Data.
+    - Don't ignore GUI functions in PS.
+    - Remove :auto2.
+    - Gimp::Data doc update.
+    - Convert to indexed if GIF and export_image doesn't do.
+    - Handle alpha channel right.
+    - Move UI-less export_image faking into actual XS function.
+    - Allow --help to work with single-proc scripts again.
+    - Add gimp_display_name.
+    - Handle undef returns.
+
 2.30_04 2014-05-24
 
     - use strict and warnings, and tidy-up.
