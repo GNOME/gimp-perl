@@ -1,5 +1,61 @@
 Revision history for Perl module Gimp
 
+2.30_03 2014-05-16
+
+    - No "setver" on Gimp.pm itself.
+    - TODO item for podregister_ui.
+    - Last trace of set_trace.
+    - No more set_trace. Lib.xs now responds to $Gimp::verbose.
+    - Avoid undef $Gimp::verbose in t/gimppod.t
+    - Multi-level verbose.
+    - Strip down args on Perl-Server.
+    - Allow (and test) command-line running of multi-proc scripts.
+    - No more :auto in tests.
+    - Make Gimp::Net pass PDL objects right.
+    - Document non-PDL pixel functions.
+    - Improve "usage" message.
+    - Provide default gradient.
+    - Use "our" not "use vars".
+    - Delete obsolete exception-handling scheme remnants.
+    - Make Gimp::Fu handle <Load> and <Save>.
+    - Command-line handle PF_RADIO, no crash on Gimp::UI::export_image.
+    - Improve exceptions keeping user-source location.
+    - Fixed 15-year old cut and paste error.
+    - Document UI::interact slightly.
+    - Fix register_temp params taken in wrong order!
+    - Gimp::Fu no -o issue sorted.
+    - save_image: No flatten by default, remove "filetype" at start.
+    - Fixup for no deprecated PDB procs, add IMAGE return.
+    - Disable deprecated PDB procs.
+    - Allow <None> as menu, turn to undef.
+    - Update obsolete PDB procedures.
+    - Update deprecated PDB procs.
+    - Add %filename:\d+ to drawable on command line.
+    - If on_net and $interact and no $outputfile, ask.
+    - Finish Gtk2::FileChooserDialog changeover.
+    - Use filesystem not "recent".
+    - Allow "bad" inputs if $interact true.
+    - Nested Dialog->run doesn't work.
+    - Slight improvement on initial Dialog show.
+    - Make Gimp::Fu always process cmd-line args before possible interact().
+    - Use Gtk2::Dialog->run.
+    - Update TODO
+    - Switch dropdown to ComboBox, add Browse and Refresh to image/drawables.
+    - Exercise INT8 code.
+    - Make UI.pm data-driven, not if-ladder.
+    - Font-select crashes if Gimp::Net - use Gtk2 then.
+    - Make PF_TEXT UI work.
+    - Implement register_temp.
+    - Implement add_listener.
+    - =head3 shouldn't be so long.
+    - Run-mode can also be GIMP_RUN_WITH_LAST_VALS.
+    - Make Gimp::Extension, first cut.
+    - Eliminate remnant of cut&paste during earlier work.
+    - Test non-present POD section behaviour.
+    - Move fixup_args into Gimp::Pod.
+    - Fix false negatives on setver.
+    - Return values, display new image.
+
 2.30_02 2014-05-01
 
     - delete obsolete files
