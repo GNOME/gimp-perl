@@ -4,6 +4,7 @@ Revision history for Perl module Gimp
 
     Bug fixes:
     - reduce hardcoding in t/02-netplugin.t
+    - make t/02-netplugin.t ignore RANDR error
 
 2.31_01 2016-05-01
 
