@@ -1,5 +1,10 @@
 Revision history for Perl module Gimp
 
+2.31_02 2016-05-02
+
+    Bug fixes:
+    - reduce hardcoding in t/02-netplugin.t
+
 2.31_01 2016-05-01
 
     API:

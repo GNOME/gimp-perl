@@ -1,15 +1,16 @@
 use strict;
 use Test::More;
 our ($dir, $DEBUG);
+my @PLUGINS;
 BEGIN {
 #  $Gimp::verbose = 3;
+  @PLUGINS = qw(dots glowing_steel map_to_gradient redeye);
   $DEBUG = 0;
   require 't/gimpsetup.pl';
   # most minimal and elegant would be to symlink sandbox gimp-dir's
   # plug-ins to our blib/plugins dir, but not portable to windows
   my $blibdir = 'blib/plugins';
-  my @plugins = map { "$blibdir/$_" }
-    qw(dots glowing_steel map_to_gradient redeye);
+  my @plugins = map { "$blibdir/$_" } @PLUGINS;
   map {
     warn "inst $_\n" if $Gimp::verbose;
     write_plugin($DEBUG, $_, io($_)->all);
@@ -28,7 +29,7 @@ use IO::Select; # needed because output can be big and it can block!
 our (@testbench, %proc2file, %file2procs);
 require 't/examples-api.pl';
 
-my %plug2yes = map { ($_=>1) } qw(dots glowing_steel map_to_gradient red_eye);
+my %plug2yes = map { ($_=>1) } @PLUGINS;
 @testbench = grep { $plug2yes{$_->[0]} } @testbench;
 my @duptest = @{$testbench[0]};
 $duptest[3] = [ @{$duptest[3]} ]; # don't change original
