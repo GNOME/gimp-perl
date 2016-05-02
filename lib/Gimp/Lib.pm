@@ -5,7 +5,7 @@ use warnings;
 use vars qw($VERSION @ISA);
 
 BEGIN {
-   $VERSION = "2.31_01";
+   $VERSION = "2.31_02";
    require XSLoader;
    XSLoader::load Gimp::Lib $VERSION;
    warn "$$-Loading ".__PACKAGE__ if $Gimp::verbose >= 2;
