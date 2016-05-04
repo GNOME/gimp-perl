@@ -31,30 +31,34 @@ $pkg->save_config($IFILES);
 $pkg = ExtUtils::Depends->new(qw(Gimp Alien::Gimp Gtk2 PDL));
 $pkg->set_inc(q{-Ddatadir='""'});
 
+my $runtime_reqs = {
+  Gtk2		=> 1.0,
+  'PDL'		=> '2.007_04',
+  Data::Dumper	=> 2.0,
+  IO::All		=> 0,
+  Gtk2::Ex::PodViewer	=> 0,
+  IO::Scalar		=> 0,
+  Web::Scraper	=> 0,
+  HTML::Entities	=> 0,
+};
+
 WriteMakefile(
   NAME	=> 'Gimp',
   VERSION_FROM => 'lib/Gimp.pm',
   dist	=> { PREOP => 'make setver && chmod -R u=rwX,go=rX . ;' },
   XSMULTI => 1,
   MIN_PERL_VERSION => '5.014001',
-  PREREQ_PM	=> {
-    Gtk2		=> 1.0,
-    'PDL'		=> '2.007_04',
-    Data::Dumper	=> 2.0,
-    IO::All		=> 0,
-    ExtUtils::Depends	=> '0.402',
-    'Alien::Gimp'	=> '0.01',
-    Gtk2::Ex::PodViewer	=> 0,
-    IO::Scalar		=> 0,
-    Web::Scraper	=> 0,
-    HTML::Entities	=> 0,
-  },
   CONFIGURE_REQUIRES	=> {
     'ExtUtils::MakeMaker'	=> '7.14', # XSMULTI
+    ExtUtils::Depends	=> '0.402',
+    'Alien::Gimp'	=> '0.01',
+    IO::All		=> 0,
   },
   TEST_REQUIRES	=> {
     'Test::More'	=> '0.88',
+    %$runtime_reqs, # since tests exercise all plugins
   },
+  PREREQ_PM	=> $runtime_reqs,
   META_MERGE => {
     "meta-spec" => { version => 2 },
     resources => {
