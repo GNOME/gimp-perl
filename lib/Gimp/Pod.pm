@@ -10,7 +10,7 @@ use base 'Exporter';
 use Pod::Simple::SimpleTree;
 
 our @EXPORT = qw(fixup_args make_arg_line);
-our $VERSION = "2.31_03";
+our $VERSION = "2.31_04";
 
 warn "$$-Loading ".__PACKAGE__ if $Gimp::verbose >= 2;
 
