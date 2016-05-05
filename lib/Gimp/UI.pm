@@ -15,7 +15,7 @@ use warnings;
 our (@ISA, $VERSION);
 BEGIN {
    no locale;
-   $VERSION = "2.31_04";
+   $VERSION = "2.31_05";
    eval {
       require XSLoader;
       XSLoader::load Gimp::UI $VERSION;

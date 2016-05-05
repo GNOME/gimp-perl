@@ -5,7 +5,7 @@ use strict qw(vars);
 our ($VERSION, @EXPORT, @PARAMS, @INXS);
 
 BEGIN {
-   $VERSION = "2.31_04";
+   $VERSION = "2.31_05";
 # XS code in Gimp.xs... for now
 #   eval {
 #      require XSLoader;
