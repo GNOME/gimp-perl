@@ -22,13 +22,14 @@ setver:
 EOF
 }
 
-my $pkg = ExtUtils::Depends->new(qw(Gimp Alien::Gimp Gtk2 PDL));
+my @ext_deps = qw(Alien::Gimp Gtk2 PDL);
+my $pkg = ExtUtils::Depends->new('Gimp', @ext_deps);
 my $IDIR = 'lib/Gimp/Install';
 my $IFILES = "$IDIR/Files.pm";
 mkdir $IDIR unless -d $IDIR;
 $pkg->save_config($IFILES);
 # reinit so no PM which breaks XSMULTI
-$pkg = ExtUtils::Depends->new(qw(Gimp Alien::Gimp Gtk2 PDL));
+$pkg = ExtUtils::Depends->new('Gimp', @ext_deps);
 $pkg->set_inc(q{-Ddatadir='""'});
 
 my $runtime_reqs = {
