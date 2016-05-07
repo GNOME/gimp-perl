@@ -54,6 +54,8 @@ WriteMakefile(
     ExtUtils::Depends	=> '0.402',
     'Alien::Gimp'	=> '0.01',
     IO::All		=> 0,
+    Gtk2		=> 1.0,
+    'PDL'		=> '2.007_04',
   },
   TEST_REQUIRES	=> {
     'Test::More'	=> '0.88',
