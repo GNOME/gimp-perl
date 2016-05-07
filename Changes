@@ -1,5 +1,10 @@
 Revision history for Perl module Gimp
 
+2.31_07 2016-05-07
+
+    Build:
+    - fixes to configure-time dependencies
+
 2.31_06 2016-05-07
 
     Bug fixes:
