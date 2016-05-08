@@ -41,6 +41,7 @@ my $runtime_reqs = {
   IO::Scalar		=> 0,
   Web::Scraper	=> 0,
   HTML::Entities	=> 0,
+  'Alien::Gimp'	=> '0.01',
 };
 
 WriteMakefile(
