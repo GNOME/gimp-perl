@@ -14,7 +14,7 @@ our @EXPORT_OK = qw(
 
 sub __ ($); # declare - defined in Gimp
 
-our $VERSION = "2.31_07";
+our $VERSION = "2.32";
 
 sub get_state() {
    [
