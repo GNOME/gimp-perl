@@ -5,7 +5,6 @@
          xmlns="http://usefulinc.com/ns/doap#">
   <name xml:lang="en">GIMP Perl</name>
   <shortdesc xml:lang="en">GIMP plug-in allowing Perl automation</shortdesc>
-  <homepage rdf:resource="https://git.gnome.org/browse/gimp-perl/" />
   <download-page rdf:resource="http://search.cpan.org/dist/Gimp/" />
 <!--
   <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/desktop-devel-list" />
