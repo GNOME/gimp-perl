@@ -1,6 +1,6 @@
 Revision history for Perl module Gimp
 
-2.33
+2.33 2019-04-11
  - Makefile.PL survive non-conf deps so can say what deps are
  - update metadata
 
