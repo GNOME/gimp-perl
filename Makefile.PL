@@ -23,15 +23,18 @@ setver:
 EOF
 }
 
-my @ext_deps = qw(Alien::Gimp Gtk2 PDL);
-my $pkg = ExtUtils::Depends->new('Gimp', @ext_deps);
 my $IDIR = 'lib/Gimp/Install';
 my $IFILES = "$IDIR/Files.pm";
-mkdir $IDIR unless -d $IDIR;
-$pkg->save_config($IFILES);
-# reinit so no PM which breaks XSMULTI
-$pkg = ExtUtils::Depends->new('Gimp', @ext_deps);
-$pkg->set_inc(q{-Ddatadir='""'});
+my $pkg = eval {
+  my @ext_deps = qw(Alien::Gimp Gtk2 PDL);
+  my $pkg = ExtUtils::Depends->new('Gimp', @ext_deps);
+  mkdir $IDIR unless -d $IDIR;
+  $pkg->save_config($IFILES);
+  # reinit so no PM which breaks XSMULTI
+  $pkg = ExtUtils::Depends->new('Gimp', @ext_deps);
+  $pkg->set_inc(q{-Ddatadir='""'});
+  $pkg;
+};
 
 my $runtime_reqs = {
   'Gtk2'		=> 1.0,
@@ -77,5 +80,5 @@ WriteMakefile(
   DIR	=> [ qw/examples/ ], # exclude po
   EXE_FILES => [ map { "utils/$_" } qw(gimpdoc xcftopnm embedxpm scm2perl) ],
   clean	=> { FILES => $IFILES },
-  $pkg->get_makefile_vars,
+  ($pkg ? $pkg->get_makefile_vars : ()),
 );
