@@ -1,4 +1,5 @@
-require 5.008;
+use strict;
+use warnings;
 use ExtUtils::Depends;
 use ExtUtils::MakeMaker;
 
@@ -33,14 +34,14 @@ $pkg = ExtUtils::Depends->new('Gimp', @ext_deps);
 $pkg->set_inc(q{-Ddatadir='""'});
 
 my $runtime_reqs = {
-  Gtk2		=> 1.0,
+  'Gtk2'		=> 1.0,
   'PDL'		=> '2.007_04',
-  Data::Dumper	=> 2.0,
-  IO::All		=> 0,
-  Gtk2::Ex::PodViewer	=> 0,
-  IO::Scalar		=> 0,
-  Web::Scraper	=> 0,
-  HTML::Entities	=> 0,
+  'Data::Dumper'	=> 2.0,
+  'IO::All'		=> 0,
+  'Gtk2::Ex::PodViewer'	=> 0,
+  'IO::Scalar'		=> 0,
+  'Web::Scraper'	=> 0,
+  'HTML::Entities'	=> 0,
   'Alien::Gimp'	=> '0.01',
 };
 
@@ -52,10 +53,10 @@ WriteMakefile(
   MIN_PERL_VERSION => '5.014001',
   CONFIGURE_REQUIRES	=> {
     'ExtUtils::MakeMaker'	=> '7.14', # XSMULTI
-    ExtUtils::Depends	=> '0.402',
+    'ExtUtils::Depends'	=> '0.402',
     'Alien::Gimp'	=> '0.01',
-    IO::All		=> 0,
-    Gtk2		=> 1.0,
+    'IO::All'		=> 0,
+    'Gtk2'		=> 1.0,
     'PDL'		=> '2.007_04',
   },
   TEST_REQUIRES	=> {
