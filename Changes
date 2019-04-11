@@ -2,6 +2,7 @@ Revision history for Perl module Gimp
 
 2.33
  - Makefile.PL survive non-conf deps so can say what deps are
+ - update metadata
 
 2.32 2016-05-08
 

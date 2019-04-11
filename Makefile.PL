@@ -70,10 +70,11 @@ WriteMakefile(
   META_MERGE => {
     "meta-spec" => { version => 2 },
     resources => {
+      x_IRC => 'irc://irc.gnome.org/#gimp',
       repository => {
 	type => 'git',
-	url => 'git://git.gnome.org/gimp-perl',
-	web => 'https://git.gnome.org/browse/gimp-perl/',
+	url => 'git@gitlab.gnome.org:GNOME/gimp-perl.git',
+	web => 'https://gitlab.gnome.org/GNOME/gimp-perl/',
       },
     },
   },
