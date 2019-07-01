@@ -12,11 +12,19 @@
 -->
   <bug-database rdf:resource="https://gitlab.gnome.org/GNOME/gimp-perl/issues/" />
   <!-- <category rdf:resource="http://api.gnome.org/doap-extensions#bindings" /> -->
+
   <maintainer>
     <foaf:Person>
       <foaf:name>Ed J</foaf:name>
       <foaf:mbox rdf:resource="mailto:edj@src.gnome.org" />
       <gnome:userid>edj</gnome:userid>
+    </foaf:Person>
+  </maintainer>
+
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Michael Natterer</foaf:name>
+      <gnome:userid>mitch</gnome:userid>
     </foaf:Person>
   </maintainer>
 </Project>
