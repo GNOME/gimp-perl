@@ -431,7 +431,7 @@ sub save_image($$) {
       );
    } elsif ($type eq "GIF") {
       unless ($layer->is_indexed) {
-         $img->convert_indexed(2, Gimp::MAKE_PALETTE, 256, 1, 1, "");
+         $img->convert_indexed(2, Gimp::CONVERT_PALETTE_GENERATE, 256, 1, 1, "");
       }
       $layer->file_gif_save($path,$path,$interlace,$loop,$delay,$dispose);
    } elsif ($type eq "PNG") {

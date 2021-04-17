@@ -20,8 +20,8 @@ podregister {
     Gimp::Progress->init("Random blends...");
     for (my $i=0; $i<$numgradients; $i++) {
         Gimp::Context->set_gradient(@gradientlist[randint($#gradientlist)]);
-	$drawable->edit_blend(CUSTOM_MODE,
-                       DIFFERENCE_MODE,
+	$drawable->edit_blend(BLEND_CUSTOM,
+                       LAYER_MODE_DIFFERENCE_LEGACY,
                        randint(10),      # gradient type
                        randint(100),     # opacity
                        0,                # offset
@@ -55,7 +55,7 @@ random_blends - Perform N random blends
 
 =head1 DESCRIPTION
 
-A random approach to art, using the blend tool with DIFFERENCE_MODE.
+A random approach to art, using the blend tool with LAYER_MODE_DIFFERENCE_LEGACY.
 Alpha is not affected; best used on opaque background.
 Just try it. It might be good.
 

@@ -21,7 +21,7 @@ podregister {
   my $dm = Gimp::Image->new($xsize, $ysize, 1);
   # It needs to have 2 layers
   my $dmlayer = Gimp::Layer->new($dm, $xsize, $ysize, GRAY_IMAGE, "newlayer",
-    100, NORMAL_MODE);
+    100, LAYER_MODE_NORMAL_LEGACY);
   $dm->insert_layer($dmlayer, 0, 0);
 
   # Create the layers, one-by-one

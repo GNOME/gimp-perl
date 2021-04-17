@@ -147,7 +147,7 @@ use Gimp qw(:DEFAULT net_init=spawn/);
 
 ok((my $i = Gimp::Image->new(10,10,RGB)), 'new image');
 ok(
-  (my $l0 = $i->layer_new(10,10,RGBA_IMAGE,"new layer",100,VALUE_MODE)),
+  (my $l0 = $i->layer_new(10,10,RGBA_IMAGE,"new layer",100,LAYER_MODE_HSV_VALUE_LEGACY)),
   'make layer',
 );
 ok(!$i->insert_layer($l0,0,0), 'insert layer');

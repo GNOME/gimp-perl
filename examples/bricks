@@ -76,7 +76,7 @@ podregister {
   }
   $image->undo_group_end;
   Gimp::Context->set_background ($color);
-  my $layerb = $image->image_add_new_layer(1,BACKGROUND_FILL,0);
+  my $layerb = $image->image_add_new_layer(1,FILL_BACKGROUND,0);
   $image->selection_all;
   if ($borderpatuse) {
     Gimp::Context->set_pattern($borderpattern);
