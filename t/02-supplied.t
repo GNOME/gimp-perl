@@ -26,7 +26,7 @@ BEGIN {
 use Gimp qw(:consts), "net_init=spawn/";
 
 our @testbench;
-require 't/examples-api.pl';
+require './t/examples-api.pl';
 
 for my $test (@testbench) {
   my ($actualparams, $tempdir, $tempfile) = setup_args(@$test);

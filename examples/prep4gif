@@ -25,7 +25,7 @@ podregister {
 
   my $layer_mask = $foreground->create_mask(ADD_MASK_ALPHA);
   $foreground->add_mask ($layer_mask);
-  $layer_mask->threshold($threshold, 255);
+  $layer_mask->threshold(HISTOGRAM_VALUE, $threshold/255, 1.0);
 
 # Transfer layer mask to selection, and grow the selection
   $out->select_item(CHANNEL_OP_REPLACE, $foreground);

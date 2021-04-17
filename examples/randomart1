@@ -51,16 +51,12 @@ podregister {
       Gimp::Context->set_background([rand(256)/256.0,rand(256)/256.0,rand(256)/256.0]);
 
       # Und erzeuge einen Farbverlauf über das Bild
-      $layer->edit_blend (BLEND_FG_BG_HSV,
-		     LAYER_MODE_DIFFERENCE_LEGACY,
+      $layer->edit_gradient_fill(
 		     GRADIENT_LINEAR,         # gradient type
-		     100,                     # opacity
 		     0,                       # offset
-		     REPEAT_TRIANGULAR,       # repeat
-		     0,                       # reverse
 		     $super,                  # supersampling
-		     2,
-		     3,
+		     2, # supersample offset
+		     3, # supersample threshold
 		     0,                       # no dithering
 		     $width/2,                    # x1
 		     $height/2,                    # y1

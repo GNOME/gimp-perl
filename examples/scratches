@@ -19,7 +19,7 @@ sub new_scratchlayer {
     $layer->fill (FILL_WHITE);
     $layer->noisify (0, 1, 1, 1, 0);
     $layer->mblur (0, $length, $angle, 0, 0);
-    $layer->levels (HISTOGRAM_VALUE, 120, 255, 0.3, 0, 255);
+    $layer->levels(HISTOGRAM_VALUE, 120/255, 1.0, 1, 0.3, 0, 1.0, 1);
     $layer;
 }
 

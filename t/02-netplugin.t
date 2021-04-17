@@ -29,7 +29,7 @@ use Symbol 'gensym';
 use IO::Select; # needed because output can be big and it can block!
 
 our (@testbench, %proc2file, %file2procs);
-require 't/examples-api.pl';
+require './t/examples-api.pl';
 
 my %plug2yes = map { ($_=>1) } @PLUGINS;
 @testbench = grep { $plug2yes{$_->[0]} } @testbench;

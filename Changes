@@ -1,5 +1,6 @@
 - updated constants to GIMP 2.10 versions
 - remove menu path up to last / and call gimp_plugin_menu_register with that
+- updated scripts to 2.10 PDB calls
 
 2.33 2019-04-11
  - Makefile.PL survive non-conf deps so can say what deps are
