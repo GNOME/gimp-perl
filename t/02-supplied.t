@@ -8,7 +8,7 @@ BEGIN {
 #  $Gimp::verbose = 3;
   $ENV{LC_ALL} = 'en_GB.UTF-8'; # 5.20.0 in de_DE fails on "use 5.006_001"
   $DEBUG = 0;
-  require 't/gimpsetup.pl';
+  require './t/gimpsetup.pl';
   # most minimal and elegant would be to symlink sandbox gimp-dir's
   # plug-ins to our blib/plugins dir, but not portable to windows
   my $blibdir = 'blib/plugins';

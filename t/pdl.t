@@ -5,7 +5,7 @@ my $pdl_operations;
 BEGIN {
 #  $Gimp::verbose = 1;
   $DEBUG = 0;
-  require 't/gimpsetup.pl';
+  require './t/gimpsetup.pl';
   $pdl_operations = <<'EOF';
 use PDL;
 

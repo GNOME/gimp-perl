@@ -8,7 +8,7 @@ BEGIN {
   @PLUGINS = qw(dots glowing_steel map_to_gradient redeye);
   $LIKE_RX = qr/^(Xlib:\s*extension "RANDR" missing.*|)$/m;
   $DEBUG = 0;
-  require 't/gimpsetup.pl';
+  require './t/gimpsetup.pl';
   # most minimal and elegant would be to symlink sandbox gimp-dir's
   # plug-ins to our blib/plugins dir, but not portable to windows
   my $blibdir = 'blib/plugins';
