@@ -959,6 +959,9 @@ C<[PARAM_TYPE, "NAME", "DESCRIPTION"]>, e.g.:
      );
   };
 
+This will remove the full menu path (up to the last C</>) and call
+C<gimp_plugin_menu_register> with it behind the scenes.
+
 =head3 Gimp::Progress->init(message,[display])
 
 =head3 Gimp::Progress->update(percentage)

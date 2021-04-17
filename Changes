@@ -1,4 +1,5 @@
-Revision history for Perl module Gimp
+- updated constants to GIMP 2.10 versions
+- remove menu path up to last / and call gimp_plugin_menu_register with that
 
 2.33 2019-04-11
  - Makefile.PL survive non-conf deps so can say what deps are
