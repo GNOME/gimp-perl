@@ -5,7 +5,6 @@
 
 #include <libgimp/gimp.h>
 
-#define PDL_clean_namespace
 #include <pdlcore.h>
 
 /* various functions allocate static buffers, STILL.  */
@@ -67,7 +66,7 @@ static void need_pdl (void)
 
 static pdl *new_pdl (int a, int b, int c)
 {
-  pdl *p = PDL->new();
+  pdl *p = PDL->pdlnew();
   PDL_Indx dims[3];
   int ndims = 0;
 
@@ -2184,7 +2183,7 @@ gimp_pixel_rgn_data(pr,newdata=0)
 	  }
 	else
 	  {
-	    pdl *p = PDL->new();
+	    pdl *p = PDL->pdlnew();
 	    PDL_Indx dims[3];
 
 	    dims[0] = pr->bpp;
