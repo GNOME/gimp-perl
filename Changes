@@ -1,3 +1,4 @@
+2.35 2021-09-09
 - ignore GEGL-WARNING too
 - use less-obsolete PDL->get_convertedpdl API
 
