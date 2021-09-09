@@ -1,4 +1,5 @@
 - ignore GEGL-WARNING too
+- use less-obsolete PDL->get_convertedpdl API
 
 2.34 2021-04-17
 - updated constants to GIMP 2.10 versions
