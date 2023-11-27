@@ -7,9 +7,8 @@
   <shortdesc xml:lang="en">GIMP plug-in allowing Perl automation</shortdesc>
   <homepage rdf:resource="https://metacpan.org/pod/Gimp" />
   <download-page rdf:resource="http://search.cpan.org/dist/Gimp/" />
-<!--
-  <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/desktop-devel-list" />
--->
+  <developer-forum rdf:resource="https://discourse.gnome.org/tag/gimp" />
+  <support-forum rdf:resource="https://discourse.gnome.org/tag/gimp" />
   <bug-database rdf:resource="https://gitlab.gnome.org/GNOME/gimp-perl/issues/" />
   <!-- <category rdf:resource="http://api.gnome.org/doap-extensions#bindings" /> -->
 
