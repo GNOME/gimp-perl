@@ -31,6 +31,7 @@ podregister {
   my $dest = Gimp::PixelRgn->new($newdrawable, 0, 0, $width, $height, 1, 1);
   my $srcdata = $src->get_rect($drawable->bounds);
   my $destdata = $srcdata->zeroes;
+  $destdata->slice(3) .= 255 if $alpha;
   Gimp::Progress->init("Rendering...");
   my $relord = $width / 255;
   $newdrawable->fill(FILL_FOREGROUND);
@@ -42,7 +43,6 @@ podregister {
     my $dred = $drow->slice("(0)");
     my $dgreen = $drow->slice("(1)");
     my $dblue = $drow->slice("(2)");
-    $drow->slice(3) .= 255 if $alpha;
     for (my $x = 0; $x < $width; $x++) {
       my $r = at($red, $x);
       next if $r <= $floor;
