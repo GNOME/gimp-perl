@@ -50,6 +50,7 @@ examples/randomblends
 examples/README
 examples/redeye
 examples/registry_viewer
+examples/registry_viewer.threads
 examples/repdup
 examples/scratches
 examples/selective_sharpen
@@ -88,7 +89,7 @@ lib/Gimp/UI.xs
 lib/Gimp/Util.pm
 MAINTAINERS
 Makefile.PL
-MANIFEST
+MANIFEST			This list of files
 po/ca.po
 po/ChangeLog
 po/cs.po
